@@ -2,6 +2,8 @@
 
 Pixelium Design – 基于 Vue 的像素风 UI 组件库，使用 TypeScript 与 Vite 构建。怀旧像素美学、可树摇组件、深浅主题，开箱即用的类型安全。
 
+[English](./README.md)
+
 ## 技术栈
 - **Vue 3** – 支持 Composition API 与 vapor 模式等全部现代特性。  
 - **TypeScript** – 基于 TS 类型系统，开箱即用的类型安全。  
