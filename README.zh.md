@@ -20,4 +20,4 @@ Pixelium Design – 基于 Vue 的像素风 UI 组件库，使用 TypeScript 与
 Pixelium-Design 使用[ MIT 许可证](./LICENSE)发布。  
 本项目使用的第三方资源：  
 - **字体**：[Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font)，采用 [SIL OFL 1.1](https://github.com/TakWolf/fusion-pixel-font/blob/master/LICENSE-OFL) 许可证  
-- **图标**：[pixel-icon-library](https://github.com/hackernoon/pixel-icon-library)，采用 [CC BY 4.0 International](https://pixeliconlibrary.com/license/) 许可证
+- **图标**：Icons from Pixel Icon Library by HackerNoon，[pixel-icon-library](https://github.com/hackernoon/pixel-icon-library)，采用 [CC BY 4.0 International](https://pixeliconlibrary.com/license/) 许可证
