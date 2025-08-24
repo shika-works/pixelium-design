@@ -2,6 +2,8 @@
 
 Pixelium Design – A pixel-art UI component library for Vue, built with TypeScript and Vite. Nostalgic aesthetics, tree-shakable components, dark/light themes, and full type safety out of the box.
 
+[中文](./README.zh.md)
+
 ## Tech Stack
 - **Vue 3** – Full modern features including Composition API and vapor mode.  
 - **TypeScript** – Built on TS type system for out-of-the-box type safety.  
