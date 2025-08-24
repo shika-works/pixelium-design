@@ -15,7 +15,7 @@ Pixelium Design – A pixel-art UI component library for Vue, built with TypeScr
 - **Dark Mode** – Supports dark mode, following system preference or manual toggle.
 
 ## License
-Pixelium-Design is released under the [MIT License].  
+Pixelium-Design is released under the [MIT License](./LICENSE).  
 This project uses the following third-party assets:  
 - **Font**: [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font), licensed under [SIL OFL 1.1](https://github.com/TakWolf/fusion-pixel-font/blob/master/LICENSE-OFL)  
 - **Icons**: Icons from Pixel Icon Library by HackerNoon, [@hackernoon/pixel-icon-library](https://github.com/hackernoon/pixel-icon-library), licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/)
