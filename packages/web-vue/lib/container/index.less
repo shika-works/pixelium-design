@@ -1,0 +1,17 @@
+@import url(../share/style/index.css);
+
+.px-container {
+	@prefix: px-container;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	&.@{prefix}__has-aside {
+		flex-direction: row;
+	}
+	&.@{prefix}__horizontal {
+		flex-direction: row;
+	}
+	&.@{prefix}__vertical {
+		flex-direction: column;
+	}
+}

@@ -1,0 +1,9 @@
+@import url(./color.css);
+@import url(./layout.css);
+@import url(./animation.css);
+
+.pixelium {
+	font-family: 'Fusion Pixel Zh_hans', sans-serif;
+	line-height: var(--px-line-height);
+	font-size: var(--px-medium-font-size);
+}

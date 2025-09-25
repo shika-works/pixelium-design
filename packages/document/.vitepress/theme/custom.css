@@ -1,0 +1,219 @@
+:root {
+	--vp-layout-max-width: min(100vw, 1960px);
+	--vp-home-hero-name-color: transparent;
+	--vp-home-hero-name-background: rgba(0, 168, 145, 1);
+	--vp-button-brand-bg: rgba(0, 168, 145, 1);
+	--vp-button-brand-hover-bg: rgba(79, 184, 164, 1);
+	--vp-button-brand-active-bg: rgba(11, 128, 110, 1);
+	--vp-c-brand-1: rgba(0, 168, 145, 1);
+	--vp-home-hero-image-filter: blur(80px);
+	--vp-home-hero-name-background: linear-gradient(120deg, rgba(0, 168, 145, 1));
+	--vp-home-hero-image-background-image: linear-gradient(-45deg, rgba(77, 172, 133, 1));
+}
+img[alt='Static Badge'] {
+	display: inline-block;
+}
+.table-of-contents ul {
+	list-style-type: none;
+	padding-left: 14px;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+	background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
+	border-radius: 10px;
+	background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.03);
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+* {
+	font-family: 'Fusion Pixel Zh_hans', 'Courier New', Courier, monospace !important;
+}
+
+.VPDoc.has-aside .content-container {
+	max-width: 920px !important;
+}
+
+.vp-doc a.px-link {
+	--text-color: var(--px-neutral-10);
+	display: inline-flex;
+	color: var(--text-color);
+	cursor: pointer;
+}
+.vp-doc .px-link-icon-wrapper {
+	margin-right: 4px;
+	display: flex;
+	justify-items: center;
+}
+.vp-doc .px-link-icon-wrapper__last {
+	margin-right: 0;
+}
+.vp-doc .px-link-icon {
+	fill: var(--text-color);
+}
+.vp-doc .px-link-icon__loading {
+	animation: px-icon-spin 1s linear infinite;
+}
+.vp-doc .px-link__loading {
+	cursor: auto !important;
+}
+.vp-doc .px-link__disabled {
+	cursor: not-allowed !important;
+}
+.vp-doc .px-link.px-link__primary {
+	--text-color: var(--px-primary-6);
+}
+.vp-doc .px-link.px-link__primary:focus-visible {
+	outline-color: var(--px-primary-6);
+	outline-offset: var(--px-bit);
+}
+.vp-doc .px-link.px-link__primary.px-link__disabled {
+	--text-color: var(--px-primary-2);
+}
+.vp-doc .px-link.px-link__primary:active.px-link__loading,
+.vp-doc .px-link.px-link__primary:hover.px-link__loading {
+	--text-color: var(--px-primary-6);
+}
+.vp-doc .px-link.px-link__primary:active.px-link__disabled,
+.vp-doc .px-link.px-link__primary:hover.px-link__disabled {
+	--text-color: var(--px-primary-2);
+}
+.vp-doc .px-link.px-link__primary:hover {
+	--text-color: var(--px-primary-5);
+}
+.vp-doc .px-link.px-link__primary:active {
+	--text-color: var(--px-primary-7);
+}
+.vp-doc .px-link.px-link__sakura {
+	--text-color: var(--px-sakura-6);
+}
+.vp-doc .px-link.px-link__sakura:focus-visible {
+	outline-color: var(--px-sakura-6);
+	outline-offset: var(--px-bit);
+}
+.vp-doc .px-link.px-link__sakura.px-link__disabled {
+	--text-color: var(--px-sakura-2);
+}
+.vp-doc .px-link.px-link__sakura:active.px-link__loading,
+.vp-doc .px-link.px-link__sakura:hover.px-link__loading {
+	--text-color: var(--px-sakura-6);
+}
+.vp-doc .px-link.px-link__sakura:active.px-link__disabled,
+.vp-doc .px-link.px-link__sakura:hover.px-link__disabled {
+	--text-color: var(--px-sakura-2);
+}
+.vp-doc .px-link.px-link__sakura:hover {
+	--text-color: var(--px-sakura-5);
+}
+.vp-doc .px-link.px-link__sakura:active {
+	--text-color: var(--px-sakura-7);
+}
+.vp-doc .px-link.px-link__success {
+	--text-color: var(--px-success-6);
+}
+.vp-doc .px-link.px-link__success:focus-visible {
+	outline-color: var(--px-success-6);
+	outline-offset: var(--px-bit);
+}
+.vp-doc .px-link.px-link__success.px-link__disabled {
+	--text-color: var(--px-success-2);
+}
+.vp-doc .px-link.px-link__success:active.px-link__loading,
+.vp-doc .px-link.px-link__success:hover.px-link__loading {
+	--text-color: var(--px-success-6);
+}
+.vp-doc .px-link.px-link__success:active.px-link__disabled,
+.vp-doc .px-link.px-link__success:hover.px-link__disabled {
+	--text-color: var(--px-success-2);
+}
+.vp-doc .px-link.px-link__success:hover {
+	--text-color: var(--px-success-5);
+}
+.vp-doc .px-link.px-link__success:active {
+	--text-color: var(--px-success-7);
+}
+.vp-doc .px-link.px-link__warning {
+	--text-color: var(--px-warning-6);
+}
+.vp-doc .px-link.px-link__warning:focus-visible {
+	outline-color: var(--px-warning-6);
+	outline-offset: var(--px-bit);
+}
+.vp-doc .px-link.px-link__warning.px-link__disabled {
+	--text-color: var(--px-warning-2);
+}
+.vp-doc .px-link.px-link__warning:active.px-link__loading,
+.vp-doc .px-link.px-link__warning:hover.px-link__loading {
+	--text-color: var(--px-warning-6);
+}
+.vp-doc .px-link.px-link__warning:active.px-link__disabled,
+.vp-doc .px-link.px-link__warning:hover.px-link__disabled {
+	--text-color: var(--px-warning-2);
+}
+.vp-doc .px-link.px-link__warning:hover {
+	--text-color: var(--px-warning-5);
+}
+.vp-doc .px-link.px-link__warning:active {
+	--text-color: var(--px-warning-7);
+}
+.vp-doc .px-link.px-link__danger {
+	--text-color: var(--px-danger-6);
+}
+.vp-doc .px-link.px-link__danger:focus-visible {
+	outline-color: var(--px-danger-6);
+	outline-offset: var(--px-bit);
+}
+.vp-doc .px-link.px-link__danger.px-link__disabled {
+	--text-color: var(--px-danger-2);
+}
+.vp-doc .px-link.px-link__danger:active.px-link__loading,
+.vp-doc .px-link.px-link__danger:hover.px-link__loading {
+	--text-color: var(--px-danger-6);
+}
+.vp-doc .px-link.px-link__danger:active.px-link__disabled,
+.vp-doc .px-link.px-link__danger:hover.px-link__disabled {
+	--text-color: var(--px-danger-2);
+}
+.vp-doc .px-link.px-link__danger:hover {
+	--text-color: var(--px-danger-5);
+}
+.vp-doc .px-link.px-link__danger:active {
+	--text-color: var(--px-danger-7);
+}
+.vp-doc .px-link.px-link__info {
+	--text-color: var(--px-neutral-10);
+}
+.vp-doc .px-link.px-link__info:focus-visible {
+	outline-color: var(--px-neutral-10);
+	outline-offset: var(--px-bit);
+}
+.vp-doc .px-link.px-link__info.px-link__disabled {
+	--text-color: var(--px-neutral-6);
+}
+.vp-doc .px-link.px-link__info.px-link__disabled {
+	--text-color: var(--px-neutral-6);
+}
+.vp-doc .px-link.px-link__info:active.px-link__disabled,
+.vp-doc .px-link.px-link__info:hover.px-link__disabled {
+	--text-color: var(--px-neutral-6);
+}
+.vp-doc .px-link.px-link__info:active.px-link__loading,
+.vp-doc .px-link.px-link__info:hover.px-link__loading {
+	--text-color: var(--px-neutral-10);
+}
+.vp-doc .px-link.px-link__info:hover {
+	--text-color: var(--px-neutral-7);
+}
+.vp-doc .px-link.px-link__info:active {
+	--text-color: var(--px-neutral-8);
+}

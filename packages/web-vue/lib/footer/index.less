@@ -1,0 +1,20 @@
+@import url(../share/style/index.css);
+
+.px-footer {
+	@prefix: px-footer;
+	width: 100%;
+	padding: 0 16px;
+	background-color: var(--px-neutral-1);
+	color: var(--px-neutral-10);
+	min-height: 64px;
+	&__bordered {
+		border-top: 2px solid var(--px-neutral-3);
+	}
+	&__dark {
+		background-color: var(--px-neutral-10);
+		color: var(--px-neutral-1);
+		&.@{prefix}__bordered {
+			border-top: 2px solid var(--px-neutral-8);
+		}
+	}
+}

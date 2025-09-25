@@ -1,0 +1,52 @@
+@import url(../share/style/index.css);
+
+.px-message-box {
+	position: fixed;
+	width: 100%;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	pointer-events: none;
+	&-container {
+		padding: 0 8px 8px 8px;
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		.px-message {
+			margin-top: 16px;
+		}
+		&__top {
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			align-items: center;
+		}
+		&__top-left {
+			top: 0;
+			left: 0;
+			align-items: start;
+		}
+		&__top-right {
+			top: 0;
+			right: 0;
+			align-items: end;
+		}
+		&__bottom {
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			align-items: center;
+		}
+		&__bottom-left {
+			bottom: 0;
+			left: 0;
+			align-items: start;
+		}
+		&__bottom-right {
+			bottom: 0;
+			right: 0;
+			align-items: end;
+		}
+	}
+}

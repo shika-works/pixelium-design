@@ -1,0 +1,78 @@
+{
+	"name": "@pixelium/web-vue",
+	"version": "0.0.0-beta",
+	"type": "module",
+	"main": "./dist/pixelium-vue.js",
+	"exports": {
+		".": {
+			"import": "./dist/pixelium-vue.js",
+			"require": "./dist/pixelium-vue.cjs",
+			"types": "./dist/index.d.ts"
+		},
+		"./icon-hn": {
+			"import": "./dist/pixelium-vue-icon-hn.js",
+			"require": "./dist/pixelium-vue-icon-hn.cjs",
+			"types": "./dist/icon-hn.d.ts"
+		},
+		"./es": {
+			"import": "./es/index.js",
+			"types": "./es/index.d.ts"
+		},
+		"./icon-hn/es": {
+			"import": "./es/icons/icon-hn.js",
+			"types": "./es/icons/icon-hn.d.ts"
+		},
+		"./*": {
+			"import": "./*"
+		}
+	},
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"dev": "vite",
+		"build": "node script/build.mts",
+		"lint": "oxlint lib",
+		"lint:fix": "oxlint ./ --fix && prettier ./ --write",
+		"preview": "vite preview",
+		"release": "npm run build && npm publish --access public"
+	},
+	"peerDependencies": {
+		"vue": "^3.5.17"
+	},
+	"devDependencies": {
+		"@hackernoon/pixel-icon-library": "^1.0.6",
+		"@vitejs/plugin-vue": "^6.0.0",
+		"@vitejs/plugin-vue-jsx": "^5.1.1",
+		"dts-bundle-generator": "^9.5.1",
+		"esbuild": "^0.25.9",
+		"execa": "^9.6.0",
+		"less": "^4.4.0",
+		"oxlint": "^1.12.0",
+		"prettier": "^3.6.2",
+		"rimraf": "^6.0.1",
+		"svgo": "^4.0.0",
+		"typescript": "~5.8.3",
+		"vite": "^7.1.5",
+		"vue-macros": "3.0.0-beta.23",
+		"vue-tsc": "3.0.6"
+	},
+	"dependencies": {
+		"nanoid": "^5.1.5",
+		"parsnip-kit": "^0.0.4"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/shika-works/pixelium-design"
+	},
+	"author": {
+		"name": "Shika Kokou",
+		"url": "https://github.com/shikakokou"
+	},
+	"license": "MIT",
+	"description": "A pixel-art UI component library for Vue, built with TypeScript and Vite. Nostalgic aesthetics, tree-shakable components, dark and light themes, full type safety, ready to use right out of the box.",
+	"keywords": [
+		"pixelium-design",
+		"pixel ui lib",
+		"canvas",
+		"vue ui lib"
+	]
+}

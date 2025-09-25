@@ -1,0 +1,7 @@
+node_modules
+.vitepress/cache/*
+
+en/*
+!en/.gitkeep
+zh/*
+!zh/.gitkeep

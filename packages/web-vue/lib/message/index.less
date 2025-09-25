@@ -1,0 +1,119 @@
+@import url(../share/style/index.css);
+
+.px-message-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+	z-index: -1;
+}
+
+.px-message {
+	@prefix: px-message;
+	--text-color: var(--px-neutral-10);
+	color: var(--text-color);
+	position: relative;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	padding: 4px 8px;
+	display: flex;
+	transition: 0.25s;
+	pointer-events: auto;
+	&-fade-enter-to,
+	&-fade-leave-from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	&-fade-enter-from,
+	&-fade-leave-to {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	&-icon-wrapper {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+		margin-right: 8px;
+		svg {
+			width: 16px;
+			height: 16px;
+			fill: var(--text-color);
+			&.@{prefix}-icon__loading {
+				animation: px-icon-spin 1s linear infinite;
+			}
+		}
+	}
+	&-close-wrapper {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+		margin-left: 8px;
+		.@{prefix}-icon {
+			cursor: pointer;
+			width: 10px;
+			height: 10px;
+			fill: var(--text-color);
+			transition: 0.25s;
+		}
+	}
+	@theme: sakura, success, warning;
+	each(@theme, {
+    &.@{prefix}__@{value} {
+      --text-color: var(~"--px-@{value}-6");
+      .@{prefix}-close-wrapper > .@{prefix}-icon {
+        &:hover {
+          --text-color: var(~"--px-@{value}-5");
+        }
+        &:active {
+          --text-color: var(~"--px-@{value}-7");
+        }
+      }
+    }
+  })
+		&.@{prefix}__info {
+		--text-color: var(--px-primary-6);
+		.@{prefix}-close-wrapper > .@{prefix}-icon {
+			&:hover {
+				--text-color: var(--px-primary-5);
+			}
+			&:active {
+				--text-color: var(--px-primary-7);
+			}
+		}
+	}
+	&.@{prefix}__error {
+		--text-color: var(--px-danger-6);
+		.@{prefix}-close-wrapper > .@{prefix}-icon:hover {
+			&:hover {
+				--text-color: var(--px-danger-5);
+			}
+			&:active {
+				--text-color: var(--px-danger-7);
+			}
+		}
+	}
+	&.@{prefix}__loading {
+		--text-color: var(--px-neutral-8);
+		.@{prefix}-close-wrapper > .@{prefix}-icon:hover {
+			&:hover {
+				--text-color: var(--px-neutral-7);
+			}
+			&:active {
+				--text-color: var(--px-neutral-9);
+			}
+		}
+	}
+	&.@{prefix}__normal {
+		--text-color: var(--px-neutral-10);
+		.@{prefix}-close-wrapper > .@{prefix}-icon:hover {
+			&:hover {
+				--text-color: var(--px-neutral-9);
+			}
+			&:active {
+				--text-color: var(--px-neutral-8);
+			}
+		}
+	}
+}

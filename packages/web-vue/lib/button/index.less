@@ -1,0 +1,180 @@
+@import url(../share/style/index.css);
+
+.px-button-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+	pointer-events: none;
+}
+.px-button {
+	@prefix: px-button;
+	--button-size: var(--px-medium-size);
+	--padding-x-size: 16px;
+	--text-color: var(--px-neutral-1);
+	height: var(--button-size);
+	padding-left: var(--padding-x-size);
+	padding-right: var(--padding-x-size);
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	color: var(--text-color);
+	cursor: pointer;
+	user-select: none;
+	transition: 0.25s;
+	z-index: 0;
+	&__inner {
+		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
+		&:last-of-type {
+			padding-right: var(--padding-x-size);
+		}
+		&.@{prefix}__text {
+			padding-right: var(--padding-x-size);
+			margin-right: calc(1px + 1 * var(--px-bit));
+			&:last-of-type {
+				margin-right: 0;
+			}
+		}
+	}
+	&__circle,
+	&__square {
+		width: var(--button-size);
+		--padding-x-size: 0px;
+		justify-content: center;
+	}
+	&__large {
+		--padding-x-size: 24px;
+		--button-size: var(--px-large-size);
+	}
+	&__small {
+		--padding-x-size: 12px;
+		--button-size: var(--px-small-size);
+	}
+	&__loading {
+		cursor: auto;
+	}
+	&__block {
+		display: flex;
+		width: 100%;
+		justify-content: center;
+	}
+	&__disabled {
+		cursor: not-allowed;
+	}
+	&-icon-wrapper {
+		margin-right: 8px;
+		display: flex;
+		align-items: center;
+		&__last {
+			margin-right: 0;
+		}
+	}
+	&-icon {
+		height: 14px;
+		width: 14px;
+		fill: var(--text-color);
+		&__loading {
+			animation: px-icon-spin 1s linear infinite;
+		}
+	}
+	@theme: primary, sakura, success, warning, danger;
+	each(@theme, {
+    &.@{prefix}__@{value} {
+      &:focus-visible {
+        outline-color: var(~"--px-@{value}-6");
+        outline-offset: var(--px-bit);
+      }
+      &.@{prefix}__plain {
+        --text-color: var(~"--px-@{value}-6");
+        &.@{prefix}__disabled {
+          --text-color: var(~"--px-@{value}-3");
+        }
+        &:active, &:hover {
+          &.@{prefix}__loading {
+            --text-color: var(~"--px-@{value}-6");
+          }
+          &.@{prefix}__disabled {
+            --text-color: var(~"--px-@{value}-3");
+          }
+        }
+      }
+      &.@{prefix}__text, &.@{prefix}__outline {
+        --text-color: var(~"--px-@{value}-6");
+        &.@{prefix}__disabled {
+          --text-color: var(~"--px-@{value}-2");
+        }
+        &:active, &:hover {
+          &.@{prefix}__loading {
+            --text-color: var(~"--px-@{value}-6");
+          }
+          &.@{prefix}__disabled {
+            --text-color: var(~"--px-@{value}-2");
+          }
+        }
+      }
+      &.@{prefix}__outline {
+        &:hover {
+          --text-color: var(~"--px-@{value}-5");
+        }
+        &:active {
+          --text-color: var(~"--px-@{value}-7");
+        }
+      }
+      .@{prefix}__text {
+        &:hover {
+          --text-color: var(~"--px-@{value}-6");
+        }
+        &:active {
+          --text-color: var(~"--px-@{value}-7");
+        }
+      }
+    }
+  })
+		&.@{prefix}__info {
+		--text-color: var(--px-neutral-10);
+		&:focus-visible {
+			outline-color: var(--px-neutral-10);
+			outline-offset: var(--px-bit);
+		}
+		&.@{prefix}__disabled {
+			--text-color: var(--px-neutral-6);
+		}
+		&.@{prefix}__text,
+		&.@{prefix}__plain,
+		&.@{prefix}__outline {
+			--text-color: var(--px-neutral-10);
+			&.@{prefix}__disabled {
+				--text-color: var(--px-neutral-6);
+			}
+			&:active,
+			&:hover {
+				&.@{prefix}__disabled {
+					--text-color: var(--px-neutral-6);
+				}
+				&.@{prefix}__loading {
+					--text-color: var(--px-neutral-10);
+				}
+			}
+		}
+		&.@{prefix}__outline {
+			&:hover {
+				--text-color: var(--px-neutral-9);
+			}
+			&:active {
+				--text-color: var(--px-neutral-8);
+			}
+		}
+		.@{prefix}__text {
+			&:hover {
+				--text-color: var(--px-neutral-7);
+			}
+			&:active {
+				--text-color: var(--px-neutral-8);
+			}
+		}
+	}
+}

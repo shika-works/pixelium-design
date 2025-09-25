@@ -1,0 +1,88 @@
+@import url(../share/style/index.css);
+
+.px-link {
+	@prefix: px-link;
+	--text-color: var(--px-neutral-10);
+	display: inline-flex;
+	color: var(--text-color);
+	cursor: pointer;
+	transition: 0.25s;
+	&-icon-wrapper {
+		margin-right: 4px;
+		display: flex;
+		align-items: center;
+		&__last {
+			margin-right: 0;
+		}
+	}
+	&-icon {
+		height: 14px;
+		width: 14px;
+		fill: var(--text-color);
+		&__loading {
+			animation: px-icon-spin 1s linear infinite;
+		}
+	}
+	&__loading {
+		cursor: auto;
+	}
+	&__disabled {
+		cursor: not-allowed;
+	}
+	@theme: primary, sakura, success, warning, danger;
+	each(@theme, {
+    &.@{prefix}__@{value} {
+      --text-color: var(~"--px-@{value}-6");
+      &:focus-visible {
+        outline-color: var(~"--px-@{value}-6");
+        outline-offset: var(--px-bit);
+      }
+      &.@{prefix}__disabled {
+        --text-color: var(~"--px-@{value}-2");
+      }
+      &:active, &:hover {
+        &.@{prefix}__loading {
+          --text-color: var(~"--px-@{value}-6");
+        }
+        &.@{prefix}__disabled {
+          --text-color: var(~"--px-@{value}-2");
+        }
+      }
+      &:hover {
+        --text-color: var(~"--px-@{value}-5");
+      }
+      &:active {
+        --text-color: var(~"--px-@{value}-7");
+      }
+    }
+  })
+		&.@{prefix}__info {
+		--text-color: var(--px-neutral-10);
+		&:focus-visible {
+			outline-color: var(--px-neutral-10);
+			outline-offset: var(--px-bit);
+		}
+		&.@{prefix}__disabled {
+			--text-color: var(--px-neutral-6);
+		}
+		--text-color: var(--px-neutral-10);
+		&.@{prefix}__disabled {
+			--text-color: var(--px-neutral-6);
+		}
+		&:active,
+		&:hover {
+			&.@{prefix}__disabled {
+				--text-color: var(--px-neutral-6);
+			}
+			&.@{prefix}__loading {
+				--text-color: var(--px-neutral-10);
+			}
+		}
+		&:hover {
+			--text-color: var(--px-neutral-7);
+		}
+		&:active {
+			--text-color: var(--px-neutral-8);
+		}
+	}
+}

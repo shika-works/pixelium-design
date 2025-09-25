@@ -1,0 +1,17 @@
+@import url(../share/style/index.css);
+
+.px-button-group {
+	@prefix: px-button-group;
+	--padding-y-size: 6px;
+	--padding-x-size: 12px;
+	height: var(--button-size);
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	& > .px-button {
+		margin-left: calc(-2 * var(--px-bit) - 1px);
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+}

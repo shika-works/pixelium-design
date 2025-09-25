@@ -1,0 +1,3 @@
+template/**/*.md
+index.md
+.vitepress/dist

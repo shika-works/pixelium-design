@@ -1,0 +1,15 @@
+.prettierrc.js
+tsconfig.json
+tsconfig.app.json
+tsconfig.node.json
+vite.config.vue.ts
+vite.config.icon.ts
+dts-bundle-generator.config.json
+
+.vscode
+
+node_modules
+
+script
+plugin
+lib

@@ -1,0 +1,17 @@
+:root {
+	--px-large-size: 40px;
+	--px-medium-size: 32px;
+	--px-small-size: 24px;
+
+	--px-bit: 4px;
+
+	--px-line-height: 1.5;
+
+	--px-medium-font-size: 14px;
+	--px-large-font-size: 16px;
+	--px-small-font-size: 12px;
+
+	--px-medium-interval: 8px;
+	--px-large-interval: 12px;
+	--px-small-interval: 4px;
+}

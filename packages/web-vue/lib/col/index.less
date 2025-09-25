@@ -1,0 +1,16 @@
+@import url(../share/style/index.css);
+
+.px-col {
+	box-sizing: border-box;
+	.loop(@i) when (@i <= 24) {
+		&__span-@{i} {
+			flex: 0 0 (@i * 100% / 24);
+			width: (@i * 100% / 24);
+		}
+		&__offset-@{i} {
+			margin-left: (@i * 100% / 24);
+		}
+		.loop(@i + 1);
+	}
+	.loop(0);
+}

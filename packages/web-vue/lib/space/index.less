@@ -1,0 +1,62 @@
+@import url(../share/style/index.css);
+
+.px-space {
+	@prefix: px-space;
+
+	&__inline {
+		display: inline-block;
+	}
+
+	.justify(@type, @value) {
+		&__justify-@{type} {
+			justify-content: @value;
+		}
+	}
+	.justify(start, flex-start);
+	.justify(end, flex-end);
+	.justify(center, center);
+	.justify(space-around, space-around);
+	.justify(space-between, space-between);
+	.justify(space-evenly, space-evenly);
+
+	.align(@type, @value) {
+		&__align-@{type} {
+			align-items: @value;
+		}
+	}
+	.align(start, flex-start);
+	.align(end, flex-end);
+	.align(center, center);
+	.align(stretch, stretch);
+	&__vertical {
+		flex-direction: column;
+	}
+
+	&-inner {
+		display: flex;
+
+		.space-margin(@size) {
+			margin-top: calc(-1 * var(~'--px-@{size}-interval') / 2);
+			margin-bottom: calc(-1 * var(~'--px-@{size}-interval') / 2);
+			margin-left: calc(-1 * var(~'--px-@{size}-interval') / 2);
+			margin-right: calc(-1 * var(~'--px-@{size}-interval') / 2);
+			.px-space-item {
+				margin-top: calc(var(~'--px-@{size}-interval') / 2);
+				margin-bottom: calc(var(~'--px-@{size}-interval') / 2);
+				margin-left: calc(var(~'--px-@{size}-interval') / 2);
+				margin-right: calc(var(~'--px-@{size}-interval') / 2);
+			}
+		}
+
+		.space-margin(medium);
+		&.@{prefix}__small {
+			.space-margin(small);
+		}
+		&.@{prefix}__large {
+			.space-margin(large);
+		}
+	}
+	&__wrap {
+		flex-wrap: wrap;
+	}
+}

@@ -1,0 +1,31 @@
+{
+	"name": "pixelium-design-doc",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"docs:dev": "npm run lint:fix && npm run build && vitepress dev",
+		"docs:build": "npm run lint:fix && npm run build && vitepress build",
+		"docs:preview": "vitepress preview",
+		"build": "node script/gen-doc.mts",
+		"lint:fix": "oxlint ./ --fix && prettier ./ --write --no-cache"
+	},
+	"devDependencies": {
+		"comment-parser": "^1.4.1",
+		"oxlint": "^1.14.0",
+		"parsnip-kit": "^0.0.4",
+		"prettier": "^3.6.2",
+		"ts-morph": "^26.0.0",
+		"vitepress": "2.0.0-alpha.12"
+	},
+	"dependencies": {
+		"@pixelium/web-vue": "workspace:*",
+		"@vitepress-demo-preview/component": "^2.5.1",
+		"@vitepress-demo-preview/plugin": "^1.4.0",
+		"markdown-it-katex": "^2.0.3"
+	},
+	"engines": {
+		"node": ">=23.11.1"
+	}
+}

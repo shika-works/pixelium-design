@@ -1,0 +1,28 @@
+@import url(../share/style/index.css);
+
+.px-aside {
+	@prefix: px-aside;
+	height: auto;
+	overflow: auto;
+	background-color: var(--px-neutral-1);
+	color: var(--px-neutral-10);
+	width: 300px;
+	&__bordered {
+		border-right: 2px solid var(--px-neutral-3);
+		&.@{prefix}__right {
+			border-right: none;
+			border-left: 2px solid var(--px-neutral-3);
+		}
+	}
+	&__dark {
+		background-color: var(--px-neutral-10);
+		color: var(--px-neutral-1);
+		&.@{prefix}__bordered {
+			border-right: 2px solid var(--px-neutral-8);
+			&.@{prefix}__right {
+				border-right: none;
+				border-left: 2px solid var(--px-neutral-8);
+			}
+		}
+	}
+}

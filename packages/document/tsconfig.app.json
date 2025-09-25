@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+		"noEmit": false,
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"skipLibCheck": false,
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true,
+		"moduleDetection": "force",
+		"jsx": "preserve",
+		"jsxImportSource": "vue",
+		"noImplicitThis": true,
+		"verbatimModuleSyntax": true,
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"erasableSyntaxOnly": false,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true
+	},
+	"include": ["template/**/*.ts", "template/**/*.tsx", "template/**/*.vue"]
+}

@@ -1,0 +1,33 @@
+@import url(../share/style/index.css);
+
+.px-row {
+	&-inner {
+		display: flex;
+	}
+
+	&__wrap {
+		flex-wrap: wrap;
+	}
+
+	.justify(@type, @value) {
+		&__justify-@{type} {
+			justify-content: @value;
+		}
+	}
+	.justify(start, flex-start);
+	.justify(end, flex-end);
+	.justify(center, center);
+	.justify(space-around, space-around);
+	.justify(space-between, space-between);
+	.justify(space-evenly, space-evenly);
+
+	.align(@type, @value) {
+		&__align-@{type} {
+			align-items: @value;
+		}
+	}
+	.align(start, flex-start);
+	.align(end, flex-end);
+	.align(center, center);
+	.align(stretch, stretch);
+}

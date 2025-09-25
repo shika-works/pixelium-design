@@ -1,0 +1,7 @@
+<script setup lang="ts">
+// @ts-ignored
+const props = defineProps<{
+	size?: number
+	color?: string
+}>()
+</script>
