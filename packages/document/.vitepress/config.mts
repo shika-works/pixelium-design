@@ -22,8 +22,8 @@ export default defineConfig({
 			md.use(markdownItKatex)
 		}
 	},
-	head: [['link', { rel: 'icon', href: '/pixelium/logo.png' }]],
-	base: '/pixelium/',
+	head: [['link', { rel: 'icon', href: '/pixelium-design/logo.png' }]],
+	base: '/pixelium-design/',
 	locales: {
 		zh: { label: '中文', ...zh },
 		en: { label: 'English', ...en }
