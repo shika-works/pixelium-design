@@ -41,7 +41,7 @@ The button comes in four shapes: `'default'` (default), `'round'`, `'circle'`, a
 
 [[[en
 ## Button Sizes
-The button’s style can be adjusted using the `size` prop, which offers three options: `'default'` (default), `'small'`, and `'large'`.
+The button's style can be adjusted using the `size` prop, which offers three options: `'default'` (default), `'small'`, and `'large'`.
 ]]]
 [[[zh
 ## 按钮尺寸
@@ -61,7 +61,7 @@ The button’s style can be adjusted using the `size` prop, which offers three o
 
 [[[en
 ## Loading Status
-`loading` sets whether the button is in a loading state. When true, the button’s native `disabled` attribute becomes `"true"` and the button will not respond to `click` events.
+`loading` sets whether the button is in a loading state. When true, the button's native `disabled` attribute becomes `"true"` and the button will not respond to `click` events.
 ]]]
 [[[zh
 ## 加载状态
@@ -102,7 +102,7 @@ Custom primary color: the component will generate a complete color palette based
 [[[zh
 ## 圆角边框
 `borderRadius` 设置按钮圆角，优先级高于 `shape`，与 CSS `border-radius` 行为一致。
-> 圆角渲染还有需要优化的地方，整体不影响使用
+> 精力和技术力不太充足，自定义圆角还有需要优化的地方，但整体不影响使用。
 - 单值或长度为 1 的数组 → 四角同时生效；
 - 长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；
 - 长度为 3 的数组 → [左上, 右上 & 左下, 右下]；
@@ -111,7 +111,7 @@ Custom primary color: the component will generate a complete color palette based
 [[[en
 ## Rounded Corner Border
 `borderRadius` sets the button's rounded corners, has a higher priority than `shape`, and behaves consistently with CSS `border-radius`.
-> There is still room for optimization in border-radius rendering, but it doesn't affect overall usability.
+> Due to limited time and technical resources, custom border-radius still needs optimization, but it does not affect overall usability.
 - A single value or an array of length 1 → applies to all four corners simultaneously;
 - An array of length 2 → [top-left & bottom-right, top-right & bottom-left];
 - An array of length 3 → [top-left, top-right & bottom-left, bottom-right];
@@ -167,17 +167,18 @@ slots.icon: The button's icon.
 borderRadius: 圆角半径，优先级高于 `shape`，将覆盖 Button 子组件的 `borderRadius`，圆角仅作用于两侧 Button 子组件的外侧边框。与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 shape: 按钮形状，将覆盖 Button 子组件的 `shape`，圆角仅作用于两侧 Button 子组件的外侧边框。
 size: 按钮尺寸，将覆盖 Button 子组件的 `size`。
-disabled: 是否禁用，与 Button 子组件的 `disabled` 取或决定 Button 子组件是否禁用。
-variant: 按钮样式变体，将覆盖 Button 子组件的 `variant`。
+disabled: 是否禁用，Button 子组件的 `disabled` 和当前属性取或，决定该子组件是否禁用。
+loading: 是否加载状态，Button 子组件的 `loading` 和当前属性取或，决定该子组件是否加载状态。
+variant: 按钮样式变体，Button 子组件的 `variant` 和当前属性取或，决定该子组件的样式变体。
 slots.default: 子按钮。
 ]]]
 [[[api button-group en
 borderRadius: Corner radius, takes precedence over `shape`, overrides the borderRadius of Button child components; rounding only affects the outer borders on both sides of Button child components; behaves like CSS `border-radius`. A single value or an array of length 1 → applies to all four corners simultaneously; an array of length 2 → [top-left & bottom-right, top-right & bottom-left]; an array of length 3 → [top-left, top-right & bottom-left, bottom-right]; an array of length 4 → applies to the four corners in a clockwise order.
 shape: Button shape, overrides the `shape` of the Button child components, rounding only affects the outer borders on both sides of the Button child components.
 size: Button size, overrides the `size` of the Button child components.
-disabled: Whether to disable; the final disabled state of the Button child components is determined by OR-ing this prop with each child’s own `disabled`. 
-loading: Whether the button is in a loading state.
-variant: Button style variant, overrides the `variant` of the Button child components.
+disabled: Whether to disable. The Button sub-component's `disabled` and this prop are OR-ed to decide if the sub-component is disabled.
+loading: Whether to show loading state. The Button sub-component's `loading` and this prop are OR-ed to decide if the sub-component is in loading state.
+variant: Button style variant. The Button sub-component's `variant` and this prop are OR-ed to decide the style variant of the sub-component.
 slots.default: The sub-buttons.
 ]]]
 

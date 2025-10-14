@@ -1,0 +1,69 @@
+@import url(../share/style/index.css);
+
+.px-spin {
+	@prefix: px-spin;
+	position: relative;
+	display: inline-block;
+	min-height: var(--px-medium-base-size);
+	min-width: var(--px-medium-base-size);
+	&__small {
+		min-height: var(--px-small-base-size);
+		min-width: var(--px-small-base-size);
+	}
+	&__large {
+		min-height: var(--px-large-base-size);
+		min-width: var(--px-large-base-size);
+	}
+	&-cover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
+	&-content,
+	&-cover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
+	&-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		color: var(--px-primary-6);
+		font-size: var(--px-large-font-size);
+	}
+	&-icon-wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: var(--px-interval-2);
+		&__last {
+			margin-bottom: 0;
+		}
+		font-size: var(--px-medium-base-size);
+		& .@{prefix}-icon {
+			height: var(--px-medium-base-size);
+			width: var(--px-medium-base-size);
+			fill: var(--px-primary-6);
+		}
+		&__small {
+			font-size: var(--px-small-base-size);
+			& .@{prefix}-icon {
+				height: var(--px-small-base-size);
+				width: var(--px-small-base-size);
+			}
+		}
+		&__large {
+			font-size: var(--px-large-base-size);
+			& .@{prefix}-icon {
+				height: var(--px-large-base-size);
+				width: var(--px-large-base-size);
+			}
+		}
+	}
+}

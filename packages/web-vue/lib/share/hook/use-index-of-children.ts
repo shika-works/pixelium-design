@@ -1,18 +1,11 @@
-import { getCurrentInstance, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue'
+import { getCurrentInstance, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue'
 import { inBrowser } from '../util/env'
+import { EventBus } from '../util/event-bus'
 
-const observerMap = new WeakMap<Element, MutationObserver>()
-const observerCallbacksMap = new WeakMap<Element, Function[]>()
-
-const runCallbacks = (observed: Element) => {
-	return () => {
-		const list = observerCallbacksMap.get(observed)
-		list?.forEach((func) => func())
-	}
-}
-
-export const useIndexOfChildren = () => {
+export const useIndexOfChildren = (eventBusKey: string) => {
 	const index = ref(-1)
+	const last = ref(false)
+	const first = ref(false)
 	const instance = getCurrentInstance()
 	const callback = () => {
 		if (instance && instance.vnode.el instanceof HTMLElement) {
@@ -20,41 +13,39 @@ export const useIndexOfChildren = () => {
 			if (parent && parent.children.length) {
 				const arr = [...parent.children]
 				index.value = arr.indexOf(instance.vnode.el)
+				last.value = index.value === parent.children.length - 1
+				first.value = index.value === 0
+			} else {
+				index.value = -1
+				last.value = false
+				first.value = false
 			}
 		}
 	}
-	let parent: null | Element = null
 
 	if (inBrowser()) {
+		EventBus.on(eventBusKey, callback)
+
 		onMounted(() => {
-			setTimeout(() => {
-				parent = instance?.vnode?.el instanceof HTMLElement ? instance.vnode.el.parentElement : null
-				if (parent) {
-					const observer = observerMap.get(parent) || new MutationObserver(runCallbacks(parent))
-					observerMap.set(parent, observer)
-					observerCallbacksMap.set(parent, [...(observerCallbacksMap.get(parent) || []), callback])
-					observer.observe(parent, { childList: true })
-				}
+			nextTick(() => {
 				callback()
 			})
 		})
 
 		onUpdated(() => {
-			setTimeout(() => {
-				callback()
-			})
+			callback()
 		})
 
 		onBeforeUnmount(() => {
-			if (parent) {
-				observerMap.get(parent)?.disconnect()
-				observerCallbacksMap.set(
-					parent,
-					(observerCallbacksMap.get(parent) || []).filter((func) => func !== callback)
-				)
-			}
+			EventBus.off(eventBusKey, callback)
 		})
 	}
 
-	return index
+	return [index, first, last] as const
+}
+
+export const emitParentUpdate = (eventBusKey: string) => {
+	onUpdated(() => {
+		EventBus.emit(eventBusKey)
+	})
 }

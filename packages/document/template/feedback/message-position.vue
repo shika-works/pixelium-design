@@ -1,28 +1,30 @@
 <template>
-	<div style="margin-bottom: 8px">
-		<px-button style="margin-right: 8px" theme="info" @click="callMessage('topLeft')">Top Left</px-button>
-		<px-button style="margin-right: 8px" theme="info" @click="callMessage('top')">Top</px-button>
-		<px-button theme="info" @click="callMessage('topRight')">Top Right</px-button>
-	</div>
-	<div>
-		<px-button style="margin-right: 8px" theme="info" @click="callMessage('bottomLeft')">Bottom Left</px-button>
-		<px-button style="margin-right: 8px" theme="info" @click="callMessage('bottom')">Bottom</px-button>
-		<px-button theme="info" @click="callMessage('bottomRight')">Bottom Right</px-button>
-	</div>
+	<px-space direction="vertical">
+		<px-space>
+			<px-button theme="info" @click="callMessage('top-left')">Top Left</px-button>
+			<px-button theme="info" @click="callMessage('top')">Top</px-button>
+			<px-button theme="info" @click="callMessage('top-right')">Top Right</px-button>
+		</px-space>
+		<px-space>
+			<px-button theme="info" @click="callMessage('bottom-left')">Bottom Left</px-button>
+			<px-button theme="info" @click="callMessage('bottom')">Bottom</px-button>
+			<px-button theme="info" @click="callMessage('bottom-right')">Bottom Right</px-button>
+		</px-space>
+	</px-space>
 </template>
 <script lang="ts" setup>
 const textMap: Record<string, string> = {
-	topLeft: 'Top Left',
+	'top-eft': 'Top Left',
 	top: 'Top',
-	topRight: 'Top Right',
-	bottomLeft: 'Bottom Left',
+	'top-right': 'Top Right',
+	'bottom-left': 'Bottom Left',
 	bottom: 'Bottom',
-	bottomRight: 'Bottom Right'
+	'bottom-right': 'Bottom Right'
 }
-const callMessage = (position: string) => {
+const callMessage = (placement: string) => {
 	$message.info({
-		content: `${textMap[position]} Message`,
-		position
+		content: `${textMap[placement]} Message`,
+		placement
 	})
 }
 </script>

@@ -19,7 +19,7 @@ hero:
 features:
 - title: Pixel Aesthetics
   icon: 👾
-  details: 4×4 native resolution, hard-edge pixels, retro palette—recreates the look and feel of early games
+  details: Hard-edge pixels, retro palette—recreates the look and feel of early games
 
 - title: Custom Themes
   icon: 🎨

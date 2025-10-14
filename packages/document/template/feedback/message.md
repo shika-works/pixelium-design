@@ -41,8 +41,8 @@ Messages come in 7 types: `'normal'` (default), `'info'`, `'success'`, `'warning
 消息可以出现在左上、上方（默认）、右上、左下、右下、下方，6 个位置。
 ]]]
 [[[en
-## Message Positions
-Messages can appear in 6 positions: top-left, top (default), top-right, bottom-left, bottom-right, and bottom.
+## Message Placements
+Messages can appear in 6 placements: top-left, top (default), top-right, bottom-left, bottom-right, and bottom.
 ]]]
 <preview path="./message-position.vue"></preview>
 [[[zh
@@ -92,11 +92,11 @@ Customize the primary color. The internal system generates a complete color pale
 <preview path="./message-color.vue"></preview>
 [[[zh
 ## 消息容器
-MessageBox 组件是消息的容器，消息出现的位置由容器的 `position` 决定。在以函数式创建的消息中，出现位置相同的消息都是同一个 MessageBox 的子组件。我们也提供了 MessageBox 的导出。
+MessageBox 组件是消息的容器，消息出现的位置由容器的 `placement` 决定。在以函数式创建的消息中，出现位置相同的消息都是同一个 MessageBox 的子组件。我们也提供了 MessageBox 的导出。
 ]]]
 [[[en
 ## Message Container
-The MessageBox component is the container for messages. The position of the message is determined by the container's `position`. In functionally created messages, messages with the same position are sub-components of the same MessageBox. We also provide an export for MessageBox.
+The MessageBox component is the container for messages. The position of the message is determined by the container's `placement`. In functionally created messages, messages with the same position are sub-components of the same MessageBox. We also provide an export for MessageBox.
 ]]]
 <preview path="./message-box.vue"></preview>
 ## API
@@ -119,12 +119,14 @@ messageOptions.duration: Duration (ms).
 messageOptions.type: Message type.
 messageOptions.color: Custom primary color. The internal system generates a complete color palette based on this, which has a higher priority than the preset color palette provided by `info` property. It supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, and 8-digit hexadecimal numbers.
 messageOptions.closable: Whether the message can be closed.
-messageOptions.position: The position where the message appears.
+messageOptions.position: <Badge type="warning" text="Deprecated" /> The position where the message appears.
+messageOptions.placement: The position where the message appears.
 messageOptions.root: The element where the message is mounted.
 messageReturn.close: Close the current message.
 messageReturn.clear: Clear all messages in the current MessageBox.
 messageBoxProps.messages: All messages in the current MessageBox.
-messageBoxProps.position: The position where the message appears.
+messageBoxProps.position: <Badge type="warning" text="Deprecated" /> The position where the message appears.
+messageBoxProps.placement: The position where the message appears.
 messageBoxProps.zIndex: The `z-index` style of MessageBox.
 messageBoxProps.root: The element where the message is mounted.
 messageBoxExpose.close: Close the message.
@@ -138,12 +140,14 @@ messageOptions.duration: 持续时间（ms）。
 messageOptions.type: 消息类型。
 messageOptions.color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `info` 属性提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
 messageOptions.closable: 是否可以关闭消息。
-messageOptions.position: 消息出现位置。
+messageOptions.position: <Badge type="warning" text="Deprecated" /> 消息出现位置。
+messageOptions.placement: 消息出现位置。
 messageOptions.root: 消息挂载元素。
 messageReturn.close: 关闭当前消息。
 messageReturn.clear: 清空当前 MessageBox 的所有消息。
 messageBoxProps.messages: 当前 MessageBox 的所有消息。
-messageBoxProps.position: 消息出现位置。
+messageBoxProps.position: <Badge type="warning" text="Deprecated" /> 消息出现位置。
+messageBoxProps.placement: 消息出现位置。
 messageBoxProps.zIndex: MessageBox 的 `z-index` 样式。
 messageBoxProps.root: 消息挂载元素。
 messageBoxExpose.close: 关闭消息。

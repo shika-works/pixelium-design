@@ -61,9 +61,6 @@ img[alt='Static Badge'] {
 .vp-doc .px-link-icon {
 	fill: var(--text-color);
 }
-.vp-doc .px-link-icon__loading {
-	animation: px-icon-spin 1s linear infinite;
-}
 .vp-doc .px-link__loading {
 	cursor: auto !important;
 }
@@ -212,8 +209,8 @@ img[alt='Static Badge'] {
 	--text-color: var(--px-neutral-10);
 }
 .vp-doc .px-link.px-link__info:hover {
-	--text-color: var(--px-neutral-7);
+	--text-color: var(--px-neutral-8);
 }
 .vp-doc .px-link.px-link__info:active {
-	--text-color: var(--px-neutral-8);
+	--text-color: var(--px-neutral-9);
 }

@@ -10,7 +10,10 @@ export type GridProps = {
 	 * @property {number | { x?: number; y?: number } | Value4DeviceWidth<number | { x?: number; y?: number }>} [gutter=0]
 	 * @version 0.0.0-beta
 	 */
-	gutter?: number | { x?: number; y?: number } | ValueWithDeviceWidth<number | { x?: number; y?: number }>
+	gutter?:
+		| number
+		| { x?: number; y?: number }
+		| ValueWithDeviceWidth<number | { x?: number; y?: number }>
 }
 
 export type GridSlots = {

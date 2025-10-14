@@ -12,28 +12,31 @@ async function processMd(src: string, dst: string, lang: string): Promise<void> 
 	let newText = text.replace(BLOCK_RE, (_: any, l: string, c: any) => {
 		return l === 'api' ? _ : l === lang ? c || '' : ''
 	})
-	newText = newText.replace(API_BLOCK_RE, (_: any, compName: string, curLang: string, content: string) => {
-		if (curLang !== lang) {
-			return ''
+	newText = newText.replace(
+		API_BLOCK_RE,
+		(_: any, compName: string, curLang: string, content: string) => {
+			if (curLang !== lang) {
+				return ''
+			}
+
+			const docMap = pairsToObject(
+				content
+					.split('\n')
+					.map((line: string) => {
+						const arr = line.split(':')
+						if (arr.length < 2) {
+							return []
+						}
+						return [arr.slice(0, -1).join(':'), arr[arr.length - 1]]
+					})
+					.filter((parts: string[]) => parts.length === 2)
+					.map((parts: string[]) => parts.map((str) => str.trim()))
+			)
+
+			const fileName = kebabCase(compName || path.basename(src, '.md'))
+			return resolve(`../web-vue/lib/${fileName}/type.ts`, pascalCase(fileName), lang, docMap)
 		}
-
-		const docMap = pairsToObject(
-			content
-				.split('\n')
-				.map((line: string) => {
-					const arr = line.split(':')
-					if (arr.length < 2) {
-						return []
-					}
-					return [arr.slice(0, -1).join(':'), arr[arr.length - 1]]
-				})
-				.filter((parts: string[]) => parts.length === 2)
-				.map((parts: string[]) => parts.map((str) => str.trim()))
-		)
-
-		const fileName = kebabCase(compName || path.basename(src, '.md'))
-		return resolve(`../web-vue/lib/${fileName}/type.ts`, pascalCase(fileName), lang, docMap)
-	})
+	)
 	newText = collapseNewlines(newText)
 	await fs.mkdir(path.dirname(dst), { recursive: true })
 	if (lang === 'en' && path.basename(src) === 'index.md') {

@@ -16,12 +16,20 @@ Usually, we use it just like an `<a>` tag.
 [[[zh
 ## 基础使用
 通常，我们像 `<a>` 标签一样使用它。
+
+::: warning
+`href` 属性将直接传到 `<a>` 标签中，如果传递类似 `javascript:alert(1)` 这样的值或恶意 URL，可能会导致 XSS 或开放重定向漏洞。
+:::
 ]]]
 <preview path="./link-base.vue"></preview>
 
 [[[en
 ## Link Themes
 The link offers six themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, and `'sakura'`.
+
+::: warning
+The `href` attribute will be passed directly to the `<a>` tag. If a value like `javascript:alert(1)` or a malicious URL is passed, it may lead to XSS or open redirect vulnerabilities.
+:::
 ]]]
 [[[zh
 ## 链接主题
@@ -31,7 +39,7 @@ The link offers six themes: `'primary'` (default), `'success'`, `'warning'`, `'d
 
 [[[en
 ## Disabled Status
-`disabled` indicates that the link is disabled; the browser’s default click-to-navigate behavior will not be triggered.
+`disabled` indicates that the link is disabled; the browser's default click-to-navigate behavior will not be triggered.
 ]]]
 [[[zh
 ## 禁用状态
@@ -41,7 +49,7 @@ The link offers six themes: `'primary'` (default), `'success'`, `'warning'`, `'d
 
 [[[en
 ## Loading Status
-`loading` indicates whether the link is in a loading state; while loading, the browser’s default click-to-navigate behavior will not be triggered.
+`loading` indicates whether the link is in a loading state; while loading, the browser's default click-to-navigate behavior will not be triggered.
 ]]]
 [[[zh
 ## 加载状态

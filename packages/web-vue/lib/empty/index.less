@@ -1,0 +1,20 @@
+.px-empty {
+	@prefix: px-empty;
+	color: var(--px-neutral-8);
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	& .@{prefix}-icon {
+		width: var(--px-large-base-size);
+		height: var(--px-large-base-size);
+	}
+	&-icon-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: var(--px-large-base-size);
+	}
+	&-description {
+		margin-top: var(--px-interval-1);
+	}
+}

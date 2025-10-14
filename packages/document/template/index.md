@@ -20,7 +20,7 @@ hero:
 features:
   - title: 像素美学
     icon: 👾
-    details: 4×4 原始分辨率，硬边像素、复古调色板，还原早期游戏观感
+    details: 硬边像素、复古调色板，还原早期游戏观感
 
   - title: 自定义主题
     icon: 🎨
@@ -73,7 +73,7 @@ hero:
 features:
 - title: Pixel Aesthetics
   icon: 👾
-  details: 4×4 native resolution, hard-edge pixels, retro palette—recreates the look and feel of early games
+  details: Hard-edge pixels, retro palette—recreates the look and feel of early games
 
 - title: Custom Themes
   icon: 🎨

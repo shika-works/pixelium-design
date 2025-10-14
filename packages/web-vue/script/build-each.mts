@@ -5,6 +5,7 @@ import Vue from '@vitejs/plugin-vue'
 import VueMacros from 'vue-macros/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import { promises as fs } from 'node:fs'
+import { isArray } from 'parsnip-kit'
 
 const __dirname = process.cwd()
 
@@ -90,6 +91,31 @@ async function buildIcons() {
 			}
 		})
 	)
+	await build(
+		defineConfig({
+			plugins: basePlugins,
+			build: {
+				emptyOutDir: false,
+				target,
+				cssMinify: false,
+				lib: {
+					entry: resolve(__dirname, 'lib/icons/icon-pa.ts'),
+					name: 'icon-pa',
+					fileName: 'icon-pa',
+					formats: ['es']
+				},
+				outDir: 'es/icons',
+				minify: false,
+				rollupOptions: {
+					external: ['vue'],
+					output: {
+						globals: { vue: 'Vue' }
+					}
+				},
+				cssCodeSplit: true
+			}
+		})
+	)
 }
 
 async function* walk(dir: string): AsyncGenerator<string> {
@@ -134,39 +160,66 @@ async function prependImport(filePath: string, importPath: string) {
 	await fs.writeFile(filePath, `${importPath}\n${content}`)
 }
 
+async function handleJsCss(
+	sub: string,
+	jsFile: string,
+	cssContent: string,
+	cssFileName?: string
+) {
+	const jsPath = join(sub, jsFile)
+	const cssPath = join(sub, cssFileName || 'css.js')
+	const shouldHandle = await exists(jsPath)
+	if (!shouldHandle) return
+	await prependImport(jsPath, `import './${cssFileName || 'css.js'}'`)
+	await fs.writeFile(cssPath, cssContent)
+}
+
 async function handleCssImports() {
-	const configs: Record<string, { js: string; css: string }> = {
+	const configs: Record<
+		string,
+		| { js: string; css: string; cssFileName?: string }
+		| { js: string; css: string; cssFileName?: string }[]
+	> = {
 		'message-box': {
 			js: 'message-box.js',
-			css: `import './message-box.css'\nimport '../index.css'\n`
+			css: `import '../index.css'\nimport './message-box.css'\n`
 		},
-		icons: {
-			js: 'icon-hn.js',
-			css: `import './icon-hn.css'\nimport '../index.css'\n`
-		}
+		icons: [
+			{
+				js: 'icon-hn.js',
+				css: `import '../index.css'\nimport './icon-hn.css'\n`,
+				cssFileName: 'css-hn.js'
+			},
+			{
+				js: 'icon-pa.js',
+				css: `import '../index.css'\nimport './icon-pa.css'\n`,
+				cssFileName: 'css-pa.js'
+			}
+		]
 	}
 
 	for await (const dirent of await fs.opendir(esDir)) {
 		if (!dirent.isDirectory()) continue
 		const sub = join(esDir, dirent.name)
+		const config = configs[dirent.name]
 
-		let jsFile = 'index.js'
-		let cssContent = `import './index.css'\nimport '../index.css'\n`
-		let shouldHandle = false
-
-		if (configs[dirent.name]) {
-			jsFile = configs[dirent.name].js
-			cssContent = configs[dirent.name].css
-			shouldHandle = await exists(join(sub, jsFile))
+		if (config) {
+			if (isArray(config)) {
+				for (const item of config) {
+					await handleJsCss(sub, item.js, item.css, item.cssFileName)
+				}
+			} else {
+				await handleJsCss(sub, config.js, config.css, config.cssFileName)
+			}
 		} else {
-			shouldHandle = dirent.name !== 'share' && (await exists(join(sub, jsFile)))
-		}
-
-		if (shouldHandle) {
-			const jsPath = join(sub, jsFile)
-			const cssPath = join(sub, 'css.js')
-			await prependImport(jsPath, `import './css.js'`)
-			await fs.writeFile(cssPath, cssContent)
+			const jsFile = 'index.js'
+			let cssContent = `import '../index.css'\nimport './index.css'\n`
+			if (!(await exists(join(sub, 'index.css')))) {
+				cssContent = `import '../index.css'\n`
+			}
+			if (dirent.name !== 'share') {
+				await handleJsCss(sub, jsFile, cssContent)
+			}
 		}
 	}
 }

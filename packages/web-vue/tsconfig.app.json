@@ -24,7 +24,8 @@
 		"erasableSyntaxOnly": false,
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
-		"types": ["vite/client"]
+		"types": ["vite/client", "vue"]
 	},
-	"include": ["lib/**/*.d.ts", "lib/**/*.ts", "lib/**/*.tsx", "lib/**/*.vue"]
+	"include": ["lib/**/*.ts", "lib/**/*.tsx", "lib/**/*.vue"],
+	"exclude": ["script/**/*", "plugin/**/*"]
 }

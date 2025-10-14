@@ -1,0 +1,102 @@
+.px-popup-content {
+	@prefix: px-popup-content;
+	padding: var(--px-interval-1) var(--px-interval-2);
+	display: inline-block;
+	--text-color: var(--px-neutral-10);
+	--min-size: var(--px-interval-9);
+	color: var(--text-color);
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	background-color: transparent;
+	box-sizing: border-box;
+	position: absolute;
+	white-space: pre-line;
+	min-height: var(--min-size);
+	min-width: var(--min-size);
+	transition:
+		transform 0.25s,
+		opacity 0.25s;
+	&-fade__top-enter-to,
+	&-fade__top-leave-from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	&-fade__top-enter-from,
+	&-fade__top-leave-to {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	&-fade__bottom-enter-to,
+	&-fade__bottom-leave-from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	&-fade__bottom-enter-from,
+	&-fade__bottom-leave-to {
+		opacity: 0;
+		transform: translateY(+20px);
+	}
+	&-fade__left-enter-to,
+	&-fade__left-leave-from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	&-fade__left-enter-from,
+	&-fade__left-leave-to {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	&-fade__right-enter-to,
+	&-fade__right-leave-from {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	&-fade__right-enter-from,
+	&-fade__right-leave-to {
+		opacity: 0;
+		transform: translateX(20px);
+	}
+	&__dark {
+		--text-color: var(--px-neutral-1);
+	}
+	&__top.@{prefix}__arrow {
+		min-height: calc(var(--px-bit) * 3 + var(--min-size));
+		padding-bottom: calc(var(--px-interval-1) + var(--px-bit) * 3);
+		& .@{prefix}-arrow {
+			bottom: calc(-1 * var(--px-bit));
+		}
+	}
+	&__bottom.@{prefix}__arrow {
+		min-height: calc(var(--px-bit) * 12);
+		padding-top: calc(var(--px-interval-1) + var(--px-bit) * 3);
+		& .@{prefix}-arrow {
+			top: calc(-1 * var(--px-bit));
+		}
+	}
+	&__left.@{prefix}__arrow {
+		min-width: calc(var(--px-bit) * 12);
+		padding-right: calc(var(--px-interval-2) + var(--px-bit) * 3);
+		& .@{prefix}-arrow {
+			right: calc(-1 * var(--px-bit));
+		}
+	}
+	&__right.@{prefix}__arrow {
+		min-width: calc(var(--px-bit) * 12);
+		padding-left: calc(var(--px-interval-2) + var(--px-bit) * 3);
+		& .@{prefix}-arrow {
+			left: calc(-1 * var(--px-bit));
+		}
+	}
+	&-arrow {
+		position: absolute;
+	}
+	&-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: -1;
+		pointer-events: none;
+	}
+}

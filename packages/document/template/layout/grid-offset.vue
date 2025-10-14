@@ -4,7 +4,9 @@
 		<px-grid-item :span="8" :offset="4"><div class="item">Span 8 | Offset 4</div></px-grid-item>
 	</px-grid>
 	<px-grid>
-		<px-grid-item :span="6" :offset="offset"><div class="item">Span 6 | Offset Responsive</div></px-grid-item>
+		<px-grid-item :span="6" :offset="offset"
+			><div class="item">Span 6 | Offset Responsive</div></px-grid-item
+		>
 	</px-grid>
 </template>
 <script setup lang="ts">

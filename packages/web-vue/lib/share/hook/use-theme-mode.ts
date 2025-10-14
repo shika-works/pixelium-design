@@ -33,7 +33,14 @@ export function useThemeMode(defaultTheme?: Theme) {
 	}
 
 	const toggle = () => {
-		theme.value = theme.value === 'unset' ? (queryDarkMode.value ? 'light' : 'dark') : theme.value === 'light' ? 'dark' : 'light'
+		theme.value =
+			theme.value === 'unset'
+				? queryDarkMode.value
+					? 'light'
+					: 'dark'
+				: theme.value === 'light'
+					? 'dark'
+					: 'light'
 	}
 
 	const clear = () => {

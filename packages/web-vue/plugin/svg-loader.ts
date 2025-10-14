@@ -5,7 +5,13 @@ import { optimize as optimizeSvg } from 'svgo'
 import type { Config } from 'svgo'
 import ts from 'typescript'
 
-export default function svgLoader(options: { svgoConfig?: Config; svgo?: boolean; defaultImport?: 'url' | 'raw' | 'component' } = {}) {
+export default function svgLoader(
+	options: {
+		svgoConfig?: Config
+		svgo?: boolean
+		defaultImport?: 'url' | 'raw' | 'component'
+	} = {}
+) {
 	const { svgoConfig, svgo, defaultImport } = options
 	const svgRegex = /\.svg(\?(raw|component|skipsvgo))?$/
 
@@ -34,12 +40,19 @@ export default function svgLoader(options: { svgoConfig?: Config; svgo?: boolean
 				return `export default ${JSON.stringify(svg)}`
 			}
 
+			const className = id.includes('@hackernoon/pixel-icon-library/')
+				? 'px-icon-hn'
+				: 'px-icon-pa'
+
 			if (svgo !== false && query !== 'skipsvgo') {
 				svg = optimizeSvg(svg, { ...svgoConfig, path }).data
 			}
 
 			svg = svg.replace(/<style/g, '<component is="style"').replace(/<\/style/g, '</component')
-			svg = svg.replace(/<svg/g, '<svg class="px-icon-hn" :style="{ color: props.color, fontSize: props.size + \'px\' }"')
+			svg = svg.replace(
+				/<svg/g,
+				`<svg class="${className}" :style="{ color: props.color, fontSize: props.size + 'px' }"`
+			)
 
 			const vueSfc = `<template>\n${svg}\n</template>\n${await readFile('./lib/icons/icons.txt', 'utf-8')}`
 			const descriptor = parse(vueSfc).descriptor

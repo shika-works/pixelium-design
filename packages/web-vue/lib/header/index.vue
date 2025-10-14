@@ -27,7 +27,11 @@ const props = withDefaults(defineProps<HeaderProps>(), {
 const darkMode = useDarkMode()
 
 const minHeight = computed(() => {
-	return isNullish(props.minHeight) ? undefined : isNumber(props.minHeight) ? `${props.minHeight}px` : props.minHeight
+	return isNullish(props.minHeight)
+		? undefined
+		: isNumber(props.minHeight)
+			? `${props.minHeight}px`
+			: props.minHeight
 })
 </script>
 <style lang="less" src="./index.less" />

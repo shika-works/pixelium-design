@@ -48,6 +48,8 @@ const spanComputed = computed(() => {
 const instance = getCurrentInstance()
 const inner = ref(instance?.parent?.type === Row)
 
-const gutter = (inner.value && inject<Ref<{ x: number; y: number }>>('px-row-provide')) || ref({ x: 0, y: 0 })
+const gutter =
+	(inner.value && inject<Ref<{ x: number; y: number }>>('px-row-provide')) ||
+	ref({ x: 0, y: 0 })
 </script>
 <style lang="less" src="./index.less"></style>

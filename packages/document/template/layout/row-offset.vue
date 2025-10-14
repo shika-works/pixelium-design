@@ -4,7 +4,9 @@
 		<px-col :span="8" :offset="4"><div class="item">Span 8 | Offset 4</div></px-col>
 	</px-row>
 	<px-row>
-		<px-col :span="6" :offset="offset"><div class="item">Span 6 | Offset Responsive</div></px-col>
+		<px-col :span="6" :offset="offset"
+			><div class="item">Span 6 | Offset Responsive</div></px-col
+		>
 	</px-row>
 </template>
 <script setup lang="ts">
