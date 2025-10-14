@@ -14,6 +14,7 @@ import type { TooltipEvents, TooltipProps } from './type'
 import { isNullish } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
+import { inBrowser } from '../share/util/env'
 
 defineOptions({
 	name: 'Tooltip'
@@ -59,10 +60,16 @@ async function openHandler(node: VNode, e: MouseEvent) {
 	emits('open', e)
 }
 async function openHandlerImpl(node: VNode, controlled = false) {
-	if (node.el instanceof HTMLElement) {
-		currentTrigger.value = node
-	} else {
-		currentTrigger.value = null
+	if (inBrowser()) {
+		resizeObserver?.disconnect()
+		if (node.el instanceof HTMLElement) {
+			currentTrigger.value = node
+		} else {
+			currentTrigger.value = null
+		}
+		if (currentTrigger.value && currentTrigger.value.el instanceof HTMLElement) {
+			resizeObserver?.observe(currentTrigger.value.el)
+		}
 	}
 
 	if (controlledMode.value && !controlled) {
@@ -126,8 +133,15 @@ const contentMouseleaveHandler = (e: MouseEvent) => {
 }
 
 const preprocessCurrentTrigger = () => {
+	if (!inBrowser()) {
+		return
+	}
 	if (!currentTrigger.value && triggerRef.value && triggerRef.value.firstVNode) {
+		resizeObserver?.disconnect()
 		currentTrigger.value = triggerRef.value.firstVNode
+		if (currentTrigger.value.el instanceof HTMLElement) {
+			resizeObserver?.observe(currentTrigger.value.el)
+		}
 	}
 }
 
@@ -149,16 +163,35 @@ watch(
 	}
 )
 
+const resizeObserver = inBrowser()
+	? new ResizeObserver(() => {
+			updateRenderState()
+		})
+	: null
+
 onMounted(() => {
 	nextTick(() => {
 		if (display.value) {
-			preprocessCurrentTrigger()
-			contentRef.value?.updateRenderState()
+			updateRenderState()
 		}
 	})
 })
 
+const updateRenderState = () => {
+	preprocessCurrentTrigger()
+	if (inBrowser()) {
+		contentRef.value?.updateRenderState()
+	}
+}
+
 const slots = useSlots()
+
+const checkCurrentTrigger = (_: any): _ is HTMLElement => {
+	if (!inBrowser()) {
+		return false
+	}
+	return currentTrigger.value?.el instanceof HTMLElement
+}
 
 defineRender(() => {
 	return (
@@ -183,9 +216,7 @@ defineRender(() => {
 				offset={props.offset}
 				borderRadius={BORDER_RADIUS}
 				root={props.root}
-				target={
-					currentTrigger.value?.el instanceof HTMLElement ? currentTrigger.value.el : null
-				}
+				target={checkCurrentTrigger(currentTrigger.value?.el) ? currentTrigger.value.el : null}
 				onContentMouseenter={contentMouseenterHandler}
 				onContentMouseleave={contentMouseleaveHandler}
 				// @ts-ignore
