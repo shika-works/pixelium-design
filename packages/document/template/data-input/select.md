@@ -117,7 +117,7 @@ Set `creatable` to allow new options to be added (type `string`). `filterable` m
 选择器 Select 还拥有 Input、InputTag、AutoComplete 组件的部分功能。
 ]]]
 [[[en
-## More Configurations
+## More Options
 
 The Select component also inherits parts of Input, InputTag, and AutoComplete functionalities.
 ]]]

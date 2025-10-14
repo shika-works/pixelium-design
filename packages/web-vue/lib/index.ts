@@ -33,7 +33,7 @@ import Empty from './empty/index.vue'
 import AutoComplete from './auto-complete/index.vue'
 import Mask from './mask/index.vue'
 import Spin from './spin/index.vue'
-// import Select from './select/index.vue'
+import Select from './select/index.vue'
 
 const components = [
 	Button,
@@ -64,8 +64,8 @@ const components = [
 	Empty,
 	AutoComplete,
 	Mask,
-	Spin
-	// Select
+	Spin,
+	Select
 ]
 
 const defaultPrefix = 'Px'
@@ -126,8 +126,8 @@ export {
 	Empty,
 	AutoComplete,
 	Mask,
-	Spin
-	// Select
+	Spin,
+	Select
 }
 export default {
 	install
