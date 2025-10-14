@@ -52,6 +52,7 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { PopupContentEvents, PopupContentProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { useZIndex } from '../share/hook/use-z-index'
+import { inBrowser } from '../share/util/env'
 
 defineOptions({
 	name: 'PopupContent'
@@ -95,6 +96,9 @@ const popupSide = computed<'start' | 'end' | 'middle'>(() => {
 const contentWidth = ref<undefined | number>(undefined)
 
 async function updatePosition(element: HTMLElement) {
+	if (!inBrowser()) {
+		return
+	}
 	if (!contentRef.value || !arrowRef.value || !canvasRef.value) return
 
 	const contentComputedStyle = getComputedStyle(contentRef.value)
@@ -201,6 +205,9 @@ async function closeHandler() {
 }
 
 const processVisible = (value: boolean) => {
+	if (!inBrowser()) {
+		return
+	}
 	if (value) {
 		next()
 		if (props.target instanceof HTMLElement) {

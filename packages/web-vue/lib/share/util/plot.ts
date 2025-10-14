@@ -2,6 +2,7 @@ import { isArray, isNumber } from 'parsnip-kit'
 import type { NumberOrPercentage, RgbaColor } from '../type'
 import { clamp, fillArr } from './common'
 import type { ShallowRef } from 'vue'
+import { inBrowser } from './env'
 
 function shouldPlot(x: number, y: number, startRad: number, endRad: number) {
 	let currentAngle = Math.atan2(y, x)
@@ -236,6 +237,9 @@ export const getBorderRadius = (
 	first: boolean = false,
 	last: boolean = false
 ): number[] => {
+	if (!inBrowser()) {
+		return fillArr(pixelSize, 4)
+	}
 	if (!inner) {
 		if (borderRadius) {
 			return getRadiusFromValue(canvas, borderRadius, pixelSize)
@@ -280,6 +284,9 @@ export function calcWhenLeaveBaseline(pixelSize: number, borderRadius: number): 
 }
 
 export const calcPixelSize = () => {
+	if (!inBrowser()) {
+		return 4
+	}
 	const globalComputedStyle = getComputedStyle(document.documentElement)
 	const pixelSize = parseInt(globalComputedStyle.getPropertyValue('--px-bit'))
 	return pixelSize

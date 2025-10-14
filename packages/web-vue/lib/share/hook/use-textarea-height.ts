@@ -6,6 +6,7 @@ import { parseTemplate } from 'parsnip-kit'
 import { clamp } from '../util/common'
 import { onBeforeUnmount, ref, type Ref } from 'vue'
 import { useResizeObserver } from './use-resize-observer'
+import { inBrowser } from '../util/env'
 
 let hiddenTextarea: HTMLTextAreaElement | null = null
 
@@ -133,6 +134,9 @@ export const useTextareaHeight = (
 	const maxHeight = ref<undefined | number>(undefined)
 
 	const callback = () => {
+		if (!inBrowser()) {
+			return
+		}
 		if (textareaRef.value) {
 			const data = calcTextareaHeight(
 				textareaRef.value,
@@ -144,11 +148,13 @@ export const useTextareaHeight = (
 			minHeight.value = data.minHeight
 		}
 	}
-	recordTextareaMounted()
-	useResizeObserver(textareaRef, callback, true)
-	onBeforeUnmount(() => {
-		destroyHiddenTextarea()
-	})
+	if (inBrowser()) {
+		recordTextareaMounted()
+		useResizeObserver(textareaRef, callback, true)
+		onBeforeUnmount(() => {
+			destroyHiddenTextarea()
+		})
+	}
 
 	return [height, minHeight, maxHeight, callback] as const
 }

@@ -3,6 +3,7 @@ import { useSlots, Fragment, mergeProps, cloneVNode, type VNode, shallowRef } fr
 import { flattenVNodes, isTextVNode } from '../share/util/render'
 import type { PopupTriggerEmits, PopupTriggerProps } from './type'
 import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
+import { inBrowser } from '../share/util/env'
 
 defineOptions({
 	name: 'PopupTrigger'
@@ -17,10 +18,12 @@ const emits = defineEmits<PopupTriggerEmits>()
 const currentTrigger = shallowRef<null | VNode>(null)
 
 async function openHandler(node: VNode, e: MouseEvent) {
-	if (node.el instanceof HTMLElement) {
-		currentTrigger.value = node
-	} else {
-		currentTrigger.value = null
+	if (inBrowser()) {
+		if (node.el instanceof HTMLElement) {
+			currentTrigger.value = node
+		} else {
+			currentTrigger.value = null
+		}
 	}
 
 	if (props.disabled) {
