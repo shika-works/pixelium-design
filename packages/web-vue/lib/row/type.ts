@@ -5,7 +5,10 @@ export type RowProps = {
 	 * @property {number | { x?: number; y?: number } | Value4DeviceWidth<number | { x?: number; y?: number }>} [gutter=0]
 	 * @version 0.0.0-beta
 	 */
-	gutter?: number | { x?: number; y?: number } | ValueWithDeviceWidth<number | { x?: number; y?: number }>
+	gutter?:
+		| number
+		| { x?: number; y?: number }
+		| ValueWithDeviceWidth<number | { x?: number; y?: number }>
 	/**
 	 * @property {'start' | 'center' | 'end' | 'space-around' | 'space-between' | 'space-evenly'} [justify='start']
 	 * @version 0.0.0-beta

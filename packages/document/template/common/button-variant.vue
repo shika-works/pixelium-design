@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<div v-for="variant in variants" :key="variant" style="margin-bottom: 8px">
+	<px-space direction="vertical">
+		<px-space v-for="variant in variants" :key="variant" style="margin-bottom: 8px">
 			<px-button
 				v-for="theme in themes"
 				:key="theme"
@@ -10,8 +10,8 @@
 			>
 				{{ variantLabels[variant] }}
 			</px-button>
-		</div>
-	</div>
+		</px-space>
+	</px-space>
 </template>
 
 <script setup>

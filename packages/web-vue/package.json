@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.0.0-beta",
+	"version": "0.0.2",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
@@ -14,6 +14,11 @@
 			"require": "./dist/pixelium-vue-icon-hn.cjs",
 			"types": "./dist/icon-hn.d.ts"
 		},
+		"./icon-pa": {
+			"import": "./dist/pixelium-vue-icon-pa.js",
+			"require": "./dist/pixelium-vue-icon-pa.cjs",
+			"types": "./dist/icon-pa.d.ts"
+		},
 		"./es": {
 			"import": "./es/index.js",
 			"types": "./es/index.d.ts"
@@ -21,6 +26,10 @@
 		"./icon-hn/es": {
 			"import": "./es/icons/icon-hn.js",
 			"types": "./es/icons/icon-hn.d.ts"
+		},
+		"./icon-pa/es": {
+			"import": "./es/icons/icon-pa.js",
+			"types": "./es/icons/icon-pa.d.ts"
 		},
 		"./*": {
 			"import": "./*"
@@ -33,13 +42,15 @@
 		"lint": "oxlint lib",
 		"lint:fix": "oxlint ./ --fix && prettier ./ --write",
 		"preview": "vite preview",
-		"release": "npm run build && npm publish --access public"
+		"release": "npm run build && npm publish --access public",
+		"release:dry-run": "npm run build && npm publish --dry-run"
 	},
 	"peerDependencies": {
 		"vue": "^3.5.17"
 	},
 	"devDependencies": {
 		"@hackernoon/pixel-icon-library": "^1.0.6",
+		"@types/node": "^24.5.2",
 		"@vitejs/plugin-vue": "^6.0.0",
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
 		"dts-bundle-generator": "^9.5.1",
@@ -47,6 +58,7 @@
 		"execa": "^9.6.0",
 		"less": "^4.4.0",
 		"oxlint": "^1.12.0",
+		"pixelarticons": "^1.8.1",
 		"prettier": "^3.6.2",
 		"rimraf": "^6.0.1",
 		"svgo": "^4.0.0",
@@ -56,8 +68,10 @@
 		"vue-tsc": "3.0.6"
 	},
 	"dependencies": {
+		"@floating-ui/dom": "^1.7.4",
+		"mitt": "^3.0.1",
 		"nanoid": "^5.1.5",
-		"parsnip-kit": "^0.0.4"
+		"parsnip-kit": "^0.0.5"
 	},
 	"repository": {
 		"type": "git",

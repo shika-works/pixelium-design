@@ -8,7 +8,6 @@
 import MessageBox from './message-box.vue'
 import type { MessageProps } from '../message/type'
 import type { MessageBoxExpose, MessageBoxProps } from './type'
-import { MESSAGE_Z_INDEX } from '../share/const'
 import { ref, Teleport, useAttrs } from 'vue'
 
 defineOptions({
@@ -23,7 +22,6 @@ const props = withDefaults(
 		}
 	>(),
 	{
-		zIndex: MESSAGE_Z_INDEX,
 		root: 'body'
 	}
 )

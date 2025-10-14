@@ -50,7 +50,11 @@ const gutterComputed = computed(() => {
 			y: props.gutter.y || 0
 		}
 	}
-	const currentGutter = (props.gutter as ValueWithDeviceWidth<number | { x?: number | undefined; y?: number | undefined }>)[widthType.value]
+	const currentGutter = (
+		props.gutter as ValueWithDeviceWidth<
+			number | { x?: number | undefined; y?: number | undefined }
+		>
+	)[widthType.value]
 	if (isNumber(currentGutter)) {
 		return {
 			x: currentGutter,

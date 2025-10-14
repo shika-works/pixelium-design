@@ -20,7 +20,7 @@ Below are the preset styles provided by `.pixelium`.
 ]]]
 ```css
 .pixelium {
-	font-family: 'Fusion Pixel Zh_hans', sans-serif;
+	font-family: var(--px-font);
 	line-height: var(--px-line-height);
 	font-size: var(--px-medium-font-size);
 }

@@ -1,0 +1,117 @@
+@import url(../share/style/index.css);
+
+div.px-textarea {
+	font-size: var(--text-size);
+}
+.px-textarea {
+	@prefix: px-textarea;
+	--px-medium-padding-x: var(--px-interval-2);
+	--px-large-padding-x: var(--px-interval-3);
+	--px-small-padding-x: var(--px-interval-2);
+	--padding-x-size: var(--px-medium-padding-x);
+	--text-size: var(--px-medium-font-size);
+	--textarea-size: var(--px-medium-size);
+	z-index: 0;
+	position: relative;
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	color: var(--px-neutral-10);
+	display: flex;
+	box-sizing: border-box;
+	&-inner {
+		height: 100%;
+		border: 0;
+		background-color: transparent;
+		box-sizing: border-box;
+		width: 100%;
+		font-size: var(--text-size);
+		line-height: var(--px-line-height);
+		font-family: var(--px-font);
+		padding: 0 var(--padding-x-size);
+		min-height: calc(var(--textarea-size) - var(--px-bit) * 2);
+		resize: none;
+		&:focus-visible {
+			outline-color: var(--px-neutral-10);
+			outline-offset: var(--px-bit);
+		}
+		&:disabled {
+			color: var(--px-neutral-10);
+		}
+		&::placeholder {
+			color: var(--px-neutral-8);
+			opacity: 1;
+		}
+	}
+	&__resize {
+		.@{prefix}-inner {
+			resize: vertical;
+		}
+	}
+	&__large {
+		--padding-x-size: var(--px-large-padding-x);
+		--text-size: var(--px-large-font-size);
+		--input-size: var(--px-large-size);
+	}
+	&__small {
+		--padding-x-size: var(--px-small-padding-x);
+		--input-size: var(--px-small-size);
+		--text-size: var(--px-small-font-size);
+	}
+	&__disabled {
+		cursor: not-allowed;
+		.@{prefix}-inner:disabled {
+			cursor: not-allowed;
+			color: var(--px-neutral-8);
+		}
+	}
+	&-addition-wrapper {
+		position: absolute;
+		bottom: 0;
+		right: var(--padding-x-size);
+		display: flex;
+		align-items: center;
+	}
+	&-count-wrapper,
+	&-loading-wrapper,
+	&-close-wrapper {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		margin-left: var(--px-interval-2);
+	}
+	&-close-wrapper {
+		.@{prefix}-icon {
+			width: var(--text-size);
+			height: var(--text-size);
+			cursor: pointer;
+			fill: var(--px-neutral-8);
+			transition: 0.25s;
+			&:hover {
+				fill: var(--px-neutral-7);
+			}
+			&:active {
+				fill: var(--px-neutral-9);
+			}
+		}
+	}
+	&-loading-wrapper {
+		.@{prefix}-icon {
+			width: var(--text-size);
+			height: var(--text-size);
+			fill: var(--px-primary-6);
+		}
+	}
+	&-count-wrapper {
+		color: var(--px-neutral-8);
+	}
+	&-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: -1;
+		pointer-events: none;
+	}
+}

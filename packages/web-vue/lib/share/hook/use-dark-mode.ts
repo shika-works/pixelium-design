@@ -46,16 +46,26 @@ export const useDarkMode = () => {
 
 	if (inBrowser()) {
 		onMounted(() => {
-			const observer = observerMap.get(document.documentElement) || new MutationObserver(runCallbacks(document.documentElement))
+			const observer =
+				observerMap.get(document.documentElement) ||
+				new MutationObserver(runCallbacks(document.documentElement))
 			observerMap.set(document.documentElement, observer)
-			observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-			observerCallbacksMap.set(document.documentElement, [...(observerCallbacksMap.get(document.documentElement) || []), callback])
+			observer.observe(document.documentElement, {
+				attributes: true,
+				attributeFilter: ['class']
+			})
+			observerCallbacksMap.set(document.documentElement, [
+				...(observerCallbacksMap.get(document.documentElement) || []),
+				callback
+			])
 			callback()
 		})
 		onBeforeUnmount(() => {
 			observerCallbacksMap.set(
 				document.documentElement,
-				(observerCallbacksMap.get(document.documentElement) || []).filter((func) => func !== callback)
+				(observerCallbacksMap.get(document.documentElement) || []).filter(
+					(func) => func !== callback
+				)
 			)
 		})
 	}

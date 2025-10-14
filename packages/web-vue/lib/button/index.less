@@ -8,17 +8,25 @@
 	z-index: -1;
 	pointer-events: none;
 }
+button.px-button {
+	font-size: var(--text-size);
+}
 .px-button {
 	@prefix: px-button;
 	--button-size: var(--px-medium-size);
-	--padding-x-size: 16px;
+	--px-medium-padding-x: var(--px-interval-4);
+	--px-large-padding-x: var(--px-interval-5);
+	--px-small-padding-x: var(--px-interval-3);
+	--padding-x-size: var(--px-medium-padding-x);
 	--text-color: var(--px-neutral-1);
+	--text-size: var(--px-medium-font-size);
 	height: var(--button-size);
 	padding-left: var(--padding-x-size);
 	padding-right: var(--padding-x-size);
 	background-color: transparent;
 	border-color: transparent;
 	border-width: var(--px-bit);
+	border-style: solid;
 	display: inline-flex;
 	align-items: center;
 	position: relative;
@@ -27,15 +35,18 @@
 	user-select: none;
 	transition: 0.25s;
 	z-index: 0;
+	font-size: var(--text-size);
+	box-sizing: border-box;
 	&__inner {
+		transition: color 0.25s;
 		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
-		&:last-of-type {
+		&:last-child {
 			padding-right: var(--padding-x-size);
 		}
 		&.@{prefix}__text {
 			padding-right: var(--padding-x-size);
 			margin-right: calc(1px + 1 * var(--px-bit));
-			&:last-of-type {
+			&:last-child {
 				margin-right: 0;
 			}
 		}
@@ -47,12 +58,14 @@
 		justify-content: center;
 	}
 	&__large {
-		--padding-x-size: 24px;
+		--padding-x-size: var(--px-large-padding-x);
 		--button-size: var(--px-large-size);
+		--text-size: var(--px-large-font-size);
 	}
 	&__small {
-		--padding-x-size: 12px;
+		--padding-x-size: var(--px-small-padding-x);
 		--button-size: var(--px-small-size);
+		--text-size: var(--px-small-font-size);
 	}
 	&__loading {
 		cursor: auto;
@@ -66,7 +79,7 @@
 		cursor: not-allowed;
 	}
 	&-icon-wrapper {
-		margin-right: 8px;
+		margin-right: var(--px-interval-2);
 		display: flex;
 		align-items: center;
 		&__last {
@@ -74,12 +87,9 @@
 		}
 	}
 	&-icon {
-		height: 14px;
-		width: 14px;
+		height: var(--text-size);
+		width: var(--text-size);
 		fill: var(--text-color);
-		&__loading {
-			animation: px-icon-spin 1s linear infinite;
-		}
 	}
 	@theme: primary, sakura, success, warning, danger;
 	each(@theme, {
@@ -141,19 +151,19 @@
 			outline-offset: var(--px-bit);
 		}
 		&.@{prefix}__disabled {
-			--text-color: var(--px-neutral-6);
+			--text-color: var(--px-neutral-7);
 		}
 		&.@{prefix}__text,
 		&.@{prefix}__plain,
 		&.@{prefix}__outline {
 			--text-color: var(--px-neutral-10);
 			&.@{prefix}__disabled {
-				--text-color: var(--px-neutral-6);
+				--text-color: var(--px-neutral-7);
 			}
 			&:active,
 			&:hover {
 				&.@{prefix}__disabled {
-					--text-color: var(--px-neutral-6);
+					--text-color: var(--px-neutral-7);
 				}
 				&.@{prefix}__loading {
 					--text-color: var(--px-neutral-10);

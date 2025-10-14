@@ -1,7 +1,9 @@
 <template>
-	<px-button style="margin-right: 8px" @click="callByWindow">Window</px-button>
-	<px-button style="margin-right: 8px" @click="callByCurrentInstance">Current Instance</px-button>
-	<px-button @click="callByOnDemandImport">On-demand Import</px-button>
+	<px-space>
+		<px-button @click="callByWindow">Window</px-button>
+		<px-button @click="callByCurrentInstance">Current Instance</px-button>
+		<px-button @click="callByOnDemandImport">On-demand Import</px-button>
+	</px-space>
 </template>
 <script lang="ts" setup>
 import { getCurrentInstance } from 'vue'

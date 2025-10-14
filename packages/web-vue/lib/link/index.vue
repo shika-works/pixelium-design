@@ -27,10 +27,7 @@
 		>
 			<SpinnerThirdSolid
 				v-if="props.loading"
-				class="px-link-icon"
-				:class="{
-					'px-link-icon__loading': props.loading
-				}"
+				class="px-link-icon px-animation__loading"
 				:style="{
 					fill: textColor
 				}"
@@ -75,7 +72,13 @@ const toggleActive = (value: boolean) => {
 	activeFlag.value = value
 }
 
-const getTextColorWithPalette = (palette: RgbaColor[] | null, disabled: boolean, loading: boolean, hoverFlag: boolean, activeFlag: boolean) => {
+const getTextColorWithPalette = (
+	palette: RgbaColor[] | null,
+	disabled: boolean,
+	loading: boolean,
+	hoverFlag: boolean,
+	activeFlag: boolean
+) => {
 	if (!palette) return undefined
 
 	if (disabled) {
@@ -89,7 +92,13 @@ const getTextColorWithPalette = (palette: RgbaColor[] | null, disabled: boolean,
 }
 
 const textColor = computed(() => {
-	return getTextColorWithPalette(palette.value, props.disabled, props.loading, hoverFlag.value, activeFlag.value)
+	return getTextColorWithPalette(
+		palette.value,
+		props.disabled,
+		props.loading,
+		hoverFlag.value,
+		activeFlag.value
+	)
 })
 
 const clickHandler = (e: MouseEvent) => {

@@ -9,7 +9,8 @@ import '@vitepress-demo-preview/component/dist/style.css'
 import './custom.css'
 
 import { AntDesignContainer } from '@vitepress-demo-preview/component'
-import IconExample from '../../template/common/icon-example.vue'
+import IconExampleHn from '../../template/common/icon-example-hn.vue'
+import IconExamplePa from '../../template/common/icon-example-pa.vue'
 
 export default {
 	extends: DefaultTheme,
@@ -17,6 +18,7 @@ export default {
 	enhanceApp({ app }) {
 		app.use(PixeliumVue)
 		app.component('demo-preview', AntDesignContainer)
-		app.component('IconExample', IconExample)
+		app.component('IconExamplePa', IconExamplePa)
+		app.component('IconExampleHn', IconExampleHn)
 	}
 }

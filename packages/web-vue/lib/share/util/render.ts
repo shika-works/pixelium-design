@@ -1,7 +1,9 @@
 // This file references vue-utils.ts from the arco-design-vue project.
+// Licensed under the MIT License.
 // https://github.com/arco-design/arco-design-vue/blob/main/packages/web-vue/components/_utils/vue-utils.ts
 import { isArray } from 'parsnip-kit'
 import type { Component, Slots, VNode, VNodeTypes } from 'vue'
+import { Text } from 'vue'
 
 export enum ShapeFlags {
 	ELEMENT = 1,
@@ -26,7 +28,7 @@ export const isComponentVNode = (vn: VNode, _?: VNodeTypes): _ is Component => {
 }
 
 export const hasTextChildren = (child: VNode, _?: VNode['children']): _ is string => {
-	return Boolean(child && child.shapeFlag & 8)
+	return Boolean(child && child.shapeFlag & ShapeFlags.TEXT_CHILDREN)
 }
 
 export const hasArrayChildren = (vn: VNode, _?: VNode['children']): _ is VNode[] => {
@@ -35,6 +37,10 @@ export const hasArrayChildren = (vn: VNode, _?: VNode['children']): _ is VNode[]
 
 export const hasSlotsChildren = (vn: VNode, _: VNode['children']): _ is Slots => {
 	return Boolean(vn && vn.shapeFlag & ShapeFlags.SLOTS_CHILDREN)
+}
+
+export const isTextVNode = (vn: VNode) => {
+	return Boolean(vn.type === Text)
 }
 
 export const flattenVNodes = (children: VNode[] | undefined) => {

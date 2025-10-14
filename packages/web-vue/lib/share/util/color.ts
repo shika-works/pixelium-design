@@ -49,7 +49,9 @@ export const getGlobalThemeColor = (theme: string, level: number) => {
 	if (!inBrowser()) {
 		return TRANSPARENT_RGBA_COLOR_OBJECT
 	}
-	return parseColor(getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`))
+	return parseColor(
+		getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
+	)
 }
 
 function toLinear(c: number) {
@@ -161,7 +163,13 @@ function maxChromaForOklch(l: number, h: number) {
 }
 
 const paletteCache = createLRU<string, RgbaColor[]>(60)
-export function generatePalette(r: number, g: number, b: number, a: number = 255, darkMode: boolean = false): RgbaColor[] {
+export function generatePalette(
+	r: number,
+	g: number,
+	b: number,
+	a: number = 255,
+	darkMode: boolean = false
+): RgbaColor[] {
 	const key = `${r},${g},${b},${a},${darkMode}`
 
 	const cached = paletteCache.get(key)
@@ -172,7 +180,9 @@ export function generatePalette(r: number, g: number, b: number, a: number = 255
 	let palette = []
 
 	const minC = oklch.c < 0.049 ? 0 : 0.049
-	const startL = darkMode ? Math.min(Math.max(oklch.l, 0.05), 0.85) : Math.min(Math.max(oklch.l, 0.15), 0.95)
+	const startL = darkMode
+		? Math.min(Math.max(oklch.l, 0.05), 0.85)
+		: Math.min(Math.max(oklch.l, 0.15), 0.95)
 	const startC = Math.min(Math.max(oklch.c, minC), maxChromaForOklch(startL, oklch.h))
 
 	const maxL = Math.min(startL + 0.35, darkMode ? 0.85 : 0.9)
@@ -203,5 +213,5 @@ export function generatePalette(r: number, g: number, b: number, a: number = 255
 }
 
 export const rgbaColor2string = (color: RgbaColor) => {
-	return `rgba(${color.r}, ${color.g}, ${color.b}, ${+(color.a / 255)})`
+	return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 255})`
 }

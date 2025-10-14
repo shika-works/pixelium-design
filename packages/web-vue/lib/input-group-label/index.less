@@ -1,0 +1,53 @@
+@import url(../share/style/index.css);
+
+.px-input-group-label-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+	pointer-events: none;
+}
+div.px-input-group-label {
+	font-size: var(--text-size);
+}
+.px-input-group-label {
+	@prefix: px-input-group-label;
+	--input-group-label-size: var(--px-medium-size);
+	--px-medium-padding-x: var(--px-interval-3);
+	--px-large-padding-x: var(--px-interval-4);
+	--px-small-padding-x: var(--px-interval-2);
+	--padding-x-size: var(--px-medium-padding-x);
+	--text-color: var(--px-neutral-10);
+	--text-size: var(--px-medium-font-size);
+	height: var(--input-group-label-size);
+	padding-left: var(--padding-x-size);
+	padding-right: var(--padding-x-size);
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	color: var(--text-color);
+	transition: 0.25s;
+	z-index: 0;
+	font-size: var(--text-size);
+	&__inner {
+		transition: none;
+		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
+		&:last-child {
+			padding-right: var(--padding-x-size);
+		}
+	}
+	&__large {
+		--padding-x-size: var(--px-large-padding-x);
+		--input-group-label-size: var(--px-large-size);
+		--text-size: var(--px-large-font-size);
+	}
+	&__small {
+		--padding-x-size: var(--px-small-padding-x);
+		--input-group-label-size: var(--px-small-size);
+		--text-size: var(--px-small-font-size);
+	}
+}

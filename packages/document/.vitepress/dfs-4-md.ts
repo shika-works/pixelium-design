@@ -2,7 +2,13 @@ import fs from 'fs'
 
 const capitalize = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
 
-const dfs = (files, prefix: string[], container: any[], titleMap: Record<string, string>, additionMap?: Record<string, string>) => {
+const dfs = (
+	files,
+	prefix: string[],
+	container: any[],
+	titleMap: Record<string, string>,
+	additionMap?: Record<string, string>
+) => {
 	files.forEach((file) => {
 		if (['.vitepress', 'index.md', 'template', 'script'].includes(file)) {
 			return
@@ -16,7 +22,7 @@ const dfs = (files, prefix: string[], container: any[], titleMap: Record<string,
 
 			container.push({
 				key: file,
-				text: titleMap[file.toLowerCase()] || capitalize(file) + (add ? `  ${add}` : ''),
+				text: (titleMap[file.toLowerCase()] || capitalize(file)) + (add ? `  ${add}` : ''),
 				items: curContainer,
 				collapsible: true,
 				collapsed: false
@@ -31,7 +37,8 @@ const dfs = (files, prefix: string[], container: any[], titleMap: Record<string,
 			const add = additionMap?.[fileName.toLowerCase()]
 
 			container.push({
-				text: titleMap[fileName.toLowerCase()] || capitalize(fileName) + (add ? `  ${add}` : ''),
+				text:
+					(titleMap[fileName.toLowerCase()] || capitalize(fileName)) + (add ? `  ${add}` : ''),
 				link: '/' + prefix.slice(0).join('/') + `/${fileName}`,
 				key: fileName
 			})
@@ -39,11 +46,15 @@ const dfs = (files, prefix: string[], container: any[], titleMap: Record<string,
 	})
 }
 
-const order = ['guide', 'config', 'common', 'layout', 'feedback']
+const order = ['guide', 'config', 'common', 'layout', 'data-input', 'feedback']
 
 const guideOrder = ['intro', 'starting']
 
-export const dfs4Md = (lang: string, titleMap: Record<string, string>, additionMap?: Record<string, string>) => {
+export const dfs4Md = (
+	lang: string,
+	titleMap: Record<string, string>,
+	additionMap?: Record<string, string>
+) => {
 	const ans: any[] = []
 	const files = fs.readdirSync(lang)
 	dfs(files, [lang], ans, titleMap, additionMap)

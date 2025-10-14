@@ -1,13 +1,15 @@
 [[[zh
 # 图标 Icon
 
-Pixelium Design 组件库使用了来自 [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/minus-solid) 的像素风图标。该图标库提供了 400+ 矢量图标，包含了 SVG、字体图标、PNG 多种导出格式。许可证基于 [CC BY 4.0 International](https://pixeliconlibrary.com/license/) 协议。
+Pixelium Design 组件库使用了来自以下图标库的像素风图标：
+- [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/minus-solid)：该图标库提供了 400+ 矢量像素风格图标，包含了 SVG、字体图标、PNG 多种导出格式。许可证基于 [CC BY 4.0 International](https://pixeliconlibrary.com/license/) 协议。
+- [pixelarticons](https://pixelarticons.com/) 的开源版本：它是一款采用单色调线条设计、兼具复古像素美学的极简图标库。该图标库，包含了 SVG、字体图标 的导出格式。开源版本许可证采用了 [MIT](https://github.com/halfmage/pixelarticons/blob/master/LICENSE) 协议。
 
 ## 导入
 
 组件库已经将其预处理为基于 SVG 的 Vue 组件，并且支持基于 ESModule 的 Tree Shaking 优化，只有用到的图标才会被打包，这也是优于导入所有资源的字体图标的使用方式。
 
-你可以通过从组件库的 `@pixelium/web-vue/icon-hn/es` 中导入它们。
+你可以通过从组件库的 `@pixelium/web-vue/icon-hn/es` 和 `@pixelium/web-vue/icon-pa/es` 中导入它们。
 
 > 和组件库导入类似：
 > 
@@ -24,13 +26,15 @@ Pixelium Design 组件库使用了来自 [@hackernoon/pixel-icon-library](https:
 [[[en
 # Icon
 
-Pixelium Design uses pixel-style icons from [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/minus-solid). This icon library provides 400+ vector icons and supports multiple export formats including SVG, icon fonts, and PNG. It is licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/).
+Pixelium Design uses pixel-style icons from the following icon libraries:
+- [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/minus-solid): This library offers 400+ vector pixel-style icons, available in SVG, icon font, and PNG formats. It is licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/).
+- The open-source version of [pixelarticons](https://pixelarticons.com/): This is a minimalist icon library featuring monochrome line designs with a retro pixel aesthetic. It provides SVG and icon font export formats. The open-source version is licensed under [MIT](https://github.com/halfmage/pixelarticons/blob/master/LICENSE).
 
 ## Import
 
-The component library has pre-processed them into SVG-based Vue components, supporting ESModule-based tree-shaking—only the icons you actually use will be bundled. This is superior to the font-icon approach that imports everything.
+The component library has pre-processed these icons into SVG-based Vue components, supporting ESModule-based tree-shaking—only the icons you actually use will be bundled. This is superior to importing all resources as icon fonts.
 
-Import them from `@pixelium/web-vue/icon-hn/es` in the component library.
+You can import them from `@pixelium/web-vue/icon-hn/es` and `@pixelium/web-vue/icon-pa/es` in the component library.
 
 > Similar to importing the component library itself:
 > 
@@ -48,22 +52,30 @@ For example:
 ```ts
 import { IconUser, IconMessage } from '@pixelium/web-vue/icon-hn/es'
 ```
+```ts
+import { IconUser, IconMessage } from '@pixelium/web-vue/icon-pa/es'
+```
 
 [[[zh
-这里也提供了完整导入的注册方式，注册后，可以以 `<hn-icon-user>`、`<hn-icon-message>` 这样子的方式使用它们。举个例子：
+这里也提供了完整导入的注册方式，注册后，可以以 `<hn-icon-user>`、`<hn-icon-message>`、`<pa-icon-user>`、`<pa-icon-message>` 这样子的方式使用它们。举个例子：
 ]]]
 [[[en
-A full importation option is also provided. Once registered, the icons can be used as `<hn-icon-user>`, `<hn-icon-message>`, etc. For example:
+A full importation option is also provided. Once registered, the icons can be used as `<hn-icon-user>`, `<hn-icon-message>`,`<pa-icon-user>`,`<pa-icon-message>`, etc. For example:
 ]]]
 
 ```ts
 import { createApp } from 'vue'
 import App from './App.vue'
+
 import HnIcon from '@pixelium/web-vue/icon-hn'
 import '@pixelium/web-vue/dist/pixelium-vue-icon-hn.css'
 
+import PaIcon from '@pixelium/web-vue/icon-pa'
+import '@pixelium/web-vue/dist/pixelium-vue-icon-pa.css'
+
 createApp(App)
   .use(HnIcon)
+  .use(PaIcon)
   .mount('#app')
 ```
 
@@ -118,10 +130,19 @@ spin: Enable spinning animation.
 flip: Mirror flip.
 slots.default: The icon passed in.
 ]]]
+
 [[[zh
-## 图标预览
+## 图标预览 @hackernoon/pixel-icon-library
 ]]]
 [[[en
-## Icon Overview
+## Icon Overview @hackernoon/pixel-icon-library
 ]]]
-<IconExample />
+<IconExampleHn />
+
+[[[zh
+## 图标预览 pixelarticons
+]]]
+[[[en
+## Icon Overview pixelarticons
+]]]
+<IconExamplePa />
