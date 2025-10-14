@@ -12,7 +12,9 @@ const titleMap = {
 	'input-number': 'Input Number',
 	'input-group': 'Input Group',
 	'input-tag': 'Input Tag',
-	'auto-complete': 'Auto Complete'
+	'auto-complete': 'Auto Complete',
+	'update-plan': '更新计划',
+	changelog: '更新日志'
 }
 const additionMap = {
 	button: '按钮',

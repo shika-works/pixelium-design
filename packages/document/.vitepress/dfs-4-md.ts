@@ -48,7 +48,7 @@ const dfs = (
 
 const order = ['guide', 'config', 'common', 'layout', 'data-input', 'feedback']
 
-const guideOrder = ['intro', 'starting']
+const guideOrder = ['intro', 'starting', 'update-plan', 'changelog']
 
 export const dfs4Md = (
 	lang: string,

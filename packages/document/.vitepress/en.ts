@@ -10,7 +10,8 @@ const titleMap = {
 	theme: 'Custom Theme',
 	'input-group': 'Input Group',
 	'input-tag': 'Input Tag',
-	'auto-complete': 'Auto Complete'
+	'auto-complete': 'Auto Complete',
+	'update-plan': 'Update Plan'
 }
 const additionMap = {}
 const sidebar = dfs4Md('en', titleMap, additionMap)
