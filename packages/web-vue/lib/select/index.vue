@@ -304,6 +304,9 @@ const focusImpl = () => {
 	emits('focus')
 }
 const focusInputHandler = (e: MouseEvent) => {
+	if (disabledComputed.value || props.readonly) {
+		return
+	}
 	const target = e.target
 	if (target instanceof HTMLElement || target instanceof SVGElement) {
 		if (closeRef.value?.$el.contains(target)) {
