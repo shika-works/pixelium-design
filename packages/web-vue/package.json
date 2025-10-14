@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.0.2",
+	"version": "0.0.2-fix",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
