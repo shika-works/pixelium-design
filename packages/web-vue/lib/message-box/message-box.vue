@@ -2,13 +2,13 @@
 	<div
 		class="px-message-box"
 		:style="{
-			zIndex: props.zIndex
+			zIndex: props.zIndex ?? currentZIndex
 		}"
 	>
 		<div
 			class="px-message-box-container"
 			:class="{
-				[`px-message-box-container__${kebabCase(props.position || 'top')}`]: true
+				[`px-message-box-container__${props.placement || props.position || 'top'}`]: true
 			}"
 		>
 			<Message
@@ -29,21 +29,27 @@
 </template>
 
 <script setup lang="ts">
-import { isNullish, kebabCase } from 'parsnip-kit'
+import { isNullish } from 'parsnip-kit'
 import Message from '../message/index.vue'
 import type { MessageProps } from '../message/type'
 import type { MessageBoxEvents, MessageBoxExpose, MessageBoxProps } from './type'
-import { MESSAGE_Z_INDEX } from '../share/const'
-import { computed, ref, useModel } from 'vue'
+import { computed, shallowRef, useModel } from 'vue'
 import { nanoid } from 'nanoid'
+import { useZIndex } from '../share/hook/use-z-index'
 
 defineOptions({
 	name: 'MessageBoxInner'
 })
 
-const props = withDefaults(defineProps<MessageBoxProps & { 'onUpdate:messages': (value: MessageProps[]) => any }>(), {
-	zIndex: MESSAGE_Z_INDEX
-})
+const props = withDefaults(
+	defineProps<MessageBoxProps & { 'onUpdate:messages': (value: MessageProps[]) => any }>(),
+	{
+		position: 'top',
+		placement: 'top'
+	}
+)
+
+const [currentZIndex] = useZIndex('message')
 
 const messages = useModel(props, 'messages')
 
@@ -73,7 +79,7 @@ const closeHandler = (id?: number | string | symbol) => {
 	emits('close', id)
 }
 
-const messageRef = ref<InstanceType<typeof Message>[]>([])
+const messageRef = shallowRef<InstanceType<typeof Message>[]>([])
 
 defineExpose<MessageBoxExpose>({
 	close: (id: number | string | symbol) => {

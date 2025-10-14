@@ -9,13 +9,26 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, ref, useId, watch, type ComputedRef, type Ref } from 'vue'
+import {
+	computed,
+	getCurrentInstance,
+	inject,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	useId,
+	watch,
+	type ComputedRef,
+	type Ref
+} from 'vue'
 
 import Grid from '../grid/index.vue'
 import type { GridItemProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { useScreenWidth } from '../share/hook/use-screen-width'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
+import { GRID_UPDATE } from '../share/const/event-bus-key'
+import { GRID_PROVIDE } from '../share/const/provide-key'
 
 defineOptions({
 	name: 'GridItem'
@@ -36,7 +49,7 @@ const provide = inner.value
 					span: number
 				}[]
 			>
-		}>('px-grid-provide')
+		}>(GRID_PROVIDE)
 	: undefined
 
 const props = withDefaults(defineProps<GridItemProps>(), {
@@ -45,7 +58,7 @@ const props = withDefaults(defineProps<GridItemProps>(), {
 
 const id = useId()
 
-const index = useIndexOfChildren()
+const [index] = useIndexOfChildren(GRID_UPDATE)
 
 const [widthType] = useScreenWidth()
 
@@ -104,7 +117,9 @@ const gridColumn = computed(() => {
 	if (offsetComputed.value + spanComputed.value > provide.column.value) {
 		return `${offsetComputed.value + 1} / span ${spanComputed.value}`
 	}
-	const preItems = provide.itemsStat.value.filter((item) => item.index !== -1 && item.index < index.value)
+	const preItems = provide.itemsStat.value.filter(
+		(item) => item.index !== -1 && item.index < index.value
+	)
 
 	if (preItems.length === 0) {
 		return `${offsetComputed.value + 1} / span ${spanComputed.value}`

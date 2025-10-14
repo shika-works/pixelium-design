@@ -1,0 +1,203 @@
+@import url(../share/style/index.css);
+
+.px-tag-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+	pointer-events: none;
+}
+span.px-tag {
+	font-size: var(--text-size);
+}
+.px-tag {
+	@prefix: px-tag;
+	--tag-size: calc(var(--px-medium-size) - var(--px-bit) * 2 - 2px);
+	--px-medium-padding-x: var(--px-interval-2);
+	--px-large-padding-x: var(--px-interval-3);
+	--px-small-padding-x: var(--px-interval-2);
+	--padding-x-size: var(--px-medium-padding-x);
+	--text-color: var(--px-neutral-1);
+	--text-size: var(--px-medium-font-size);
+	height: var(--tag-size);
+	padding-left: var(--padding-x-size);
+	padding-right: var(--padding-x-size);
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	color: var(--text-color);
+	transition: 0.25s;
+	z-index: 0;
+	font-size: var(--text-size);
+	&__large {
+		--padding-x-size: var(--px-large-padding-x);
+		--tag-size: calc(var(--px-medium-size));
+		--text-size: var(--px-medium-font-size);
+	}
+	&__small {
+		--padding-x-size: var(--px-small-padding-x);
+		--tag-size: calc(var(--px-small-size) - var(--px-bit) * 2);
+		--text-size: var(--px-small-font-size);
+	}
+	&.@{prefix}__disabled {
+		cursor: not-allowed;
+		& .@{prefix}-icon {
+			cursor: not-allowed;
+		}
+	}
+	&-icon-wrapper {
+		margin-left: var(--px-interval-1);
+		display: flex;
+		align-items: center;
+	}
+	&-icon-wrapper &-icon {
+		height: calc(var(--text-size) - 4px);
+		width: calc(var(--text-size) - 4px);
+		fill: var(--text-color);
+		cursor: pointer;
+	}
+	@theme: primary, sakura, success, warning, danger;
+	each(@theme, {
+    &.@{prefix}__@{value} {
+      &:focus-visible {
+        outline-color: var(~"--px-@{value}-6");
+        outline-offset: var(--px-bit);
+      }
+			& .@{prefix}-icon {
+				&:hover {
+					fill: var(~"--px-@{value}-2");
+				}
+				&:active {
+					fill: var(~"--px-@{value}-3");
+				}
+			}
+			&.@{prefix}__disabled {
+				& .@{prefix}-icon {
+					&:hover {
+						fill: var(~"--px-@{value}-1");
+					}
+					&:active {
+						fill: var(~"--px-@{value}-1");
+					}
+				}
+			}
+      &.@{prefix}__plain {
+        --text-color: var(~"--px-@{value}-6");
+				& .@{prefix}-icon {
+					&:hover {
+						fill: var(~"--px-@{value}-5");
+					}
+					&:active {
+						fill: var(~"--px-@{value}-7");
+					}
+				}
+        &.@{prefix}__disabled {
+          --text-color: var(~"--px-@{value}-3");
+					& .@{prefix}-icon {
+						&:hover {
+							fill: var(~"--px-@{value}-3");
+						}
+						&:active {
+							fill: var(~"--px-@{value}-3");
+						}
+					}
+        }
+      }
+      &.@{prefix}__outline {
+        --text-color: var(~"--px-@{value}-6");
+				
+				& .@{prefix}-icon {
+					&:hover {
+						fill: var(~"--px-@{value}-5");
+					}
+					&:active {
+						fill: var(~"--px-@{value}-7");
+					}
+				}
+        &.@{prefix}__disabled {
+          --text-color: var(~"--px-@{value}-2");
+					& .@{prefix}-icon {
+						&:hover {
+							fill: var(~"--px-@{value}-2");
+						}
+						&:active {
+							fill: var(~"--px-@{value}-2");
+						}
+					}
+        }
+      }
+    }
+  })
+		&.@{prefix}__info {
+		&:focus-visible {
+			outline-color: var(--px-neutral-10);
+			outline-offset: var(--px-bit);
+		}
+		& .@{prefix}-icon {
+			&:hover {
+				fill: var(--px-neutral-6);
+			}
+			&:active {
+				fill: var(--px-neutral-7);
+			}
+		}
+		&.@{prefix}__disabled {
+			& .@{prefix}-icon {
+				&:hover {
+					fill: var(--px-neutral-1);
+				}
+				&:active {
+					fill: var(--px-neutral-1);
+				}
+			}
+		}
+		&.@{prefix}__plain {
+			--text-color: var(--px-neutral-9);
+			& .@{prefix}-icon {
+				&:hover {
+					fill: var(--px-neutral-8);
+				}
+				&:active {
+					fill: var(--px-neutral-7);
+				}
+			}
+			&.@{prefix}__disabled {
+				--text-color: var(--px-neutral-7);
+				& .@{prefix}-icon {
+					&:hover {
+						fill: var(--px-neutral-7);
+					}
+					&:active {
+						fill: var(--px-neutral-7);
+					}
+				}
+			}
+		}
+		&.@{prefix}__outline {
+			--text-color: var(--px-neutral-10);
+			& .@{prefix}-icon {
+				&:hover {
+					fill: var(--px-neutral-9);
+				}
+				&:active {
+					fill: var(--px-neutral-8);
+				}
+			}
+			&.@{prefix}__disabled {
+				--text-color: var(--px-neutral-7);
+				& .@{prefix}-icon {
+					&:hover {
+						fill: var(--px-neutral-7);
+					}
+					&:active {
+						fill: var(--px-neutral-7);
+					}
+				}
+			}
+		}
+	}
+}

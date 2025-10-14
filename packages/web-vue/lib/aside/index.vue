@@ -14,7 +14,15 @@
 	</aside>
 </template>
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
+import {
+	computed,
+	getCurrentInstance,
+	inject,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	type Ref
+} from 'vue'
 import Container from '../container/index.vue'
 import type { AsideProps } from './type'
 import { useDarkMode } from '../share/hook/use-dark-mode'
@@ -47,7 +55,11 @@ const props = withDefaults(defineProps<AsideProps>(), {
 const darkMode = useDarkMode()
 
 const width = computed(() => {
-	return isNullish(props.width) ? undefined : isNumber(props.width) ? `${props.width}px` : props.width
+	return isNullish(props.width)
+		? undefined
+		: isNumber(props.width)
+			? `${props.width}px`
+			: props.width
 })
 </script>
 <style lang="less" src="./index.less" />

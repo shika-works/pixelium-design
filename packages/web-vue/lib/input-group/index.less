@@ -1,0 +1,21 @@
+@import url(../share/style/index.css);
+
+.px-input-group {
+	@prefix: px-input-group;
+	height: var(--button-size);
+	display: inline-flex;
+	align-items: start;
+	position: relative;
+	& > .px-button,
+	& > .px-input,
+	& > .px-input-number,
+	& > .px-auto-complete,
+	& > .px-input-tag,
+	& > .px-select,
+	& > .px-input-group-label {
+		margin-left: calc(-2 * var(--px-bit) - 1px);
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+}

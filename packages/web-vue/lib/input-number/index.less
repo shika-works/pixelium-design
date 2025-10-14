@@ -1,0 +1,163 @@
+@import url(../share/style/index.css);
+
+div.px-input-number {
+	font-size: var(--text-size);
+}
+.px-input-number {
+	@prefix: px-input-number;
+	--input-number-size: var(--px-medium-size);
+	--px-medium-padding-x: var(--px-interval-2);
+	--px-large-padding-x: var(--px-interval-3);
+	--px-small-padding-x: var(--px-interval-2);
+	--padding-x-size: var(--px-medium-padding-x);
+	--text-size: var(--px-medium-font-size);
+	z-index: 0;
+	position: relative;
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	color: var(--px-neutral-10);
+	display: flex;
+	padding: 0 var(--padding-x-size);
+	box-sizing: border-box;
+	height: var(--input-number-size);
+	&__inner {
+		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
+		&:last-child {
+			padding-right: var(--padding-x-size);
+		}
+	}
+	&-inner {
+		height: 100%;
+		border: 0;
+		background-color: transparent;
+		box-sizing: border-box;
+		width: 100%;
+		font-size: var(--text-size);
+		line-height: var(--px-line-height);
+		font-family: var(--px-font);
+		padding: 0;
+		&:focus-visible {
+			outline-color: var(--px-neutral-10);
+			outline-offset: var(--px-bit);
+		}
+		&:disabled {
+			color: var(--px-neutral-10);
+		}
+		&::placeholder {
+			color: var(--px-neutral-8);
+			opacity: 1;
+		}
+	}
+	&__large {
+		--padding-x-size: var(--px-large-padding-x);
+		--text-size: var(--px-large-font-size);
+		--input-number-size: var(--px-large-size);
+	}
+	&__small {
+		--padding-x-size: var(--px-small-padding-x);
+		--input-number-size: var(--px-small-size);
+		--text-size: var(--px-small-font-size);
+	}
+	&__disabled {
+		cursor: not-allowed;
+		.@{prefix}-inner:disabled {
+			cursor: not-allowed;
+			color: var(--px-neutral-8);
+		}
+	}
+	&-setting-prefix-wrapper,
+	&-setting-suffix-wrapper,
+	&-prefix-wrapper,
+	&-suffix-wrapper,
+	&-loading-wrapper,
+	&-close-wrapper {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+	}
+	&-setting-prefix-wrapper,
+	&-prefix-wrapper {
+		margin-right: var(--px-interval-2);
+	}
+	&-setting-suffix-wrapper,
+	&-suffix-wrapper,
+	&-loading-wrapper,
+	&-close-wrapper {
+		margin-left: var(--px-interval-2);
+	}
+	&-close-wrapper {
+		.@{prefix}-icon-placeholder {
+			width: var(--text-size);
+			height: var(--text-size);
+		}
+		.@{prefix}-icon {
+			width: var(--text-size);
+			height: var(--text-size);
+			cursor: pointer;
+			fill: var(--px-neutral-8);
+			transition: 0.25s;
+			&:hover {
+				fill: var(--px-neutral-7);
+			}
+			&:active {
+				fill: var(--px-neutral-9);
+			}
+		}
+	}
+	&-loading-wrapper {
+		.@{prefix}-icon {
+			width: var(--text-size);
+			height: var(--text-size);
+			fill: var(--px-primary-6);
+		}
+	}
+	&-prefix-wrapper,
+	&-suffix-wrapper {
+		color: var(--px-neutral-10);
+	}
+	&-setting-prefix-wrapper,
+	&-setting-suffix-wrapper {
+		.@{prefix}-icon {
+			cursor: pointer;
+			width: var(--text-size);
+			height: var(--text-size);
+			fill: var(--px-neutral-8);
+			transition: 0.25s;
+			margin-right: var(--px-interval-2);
+			&:hover {
+				fill: var(--px-primary-6);
+			}
+			&:active {
+				fill: var(--px-neutral-9);
+			}
+			&:last-of-type {
+				margin-right: 0;
+			}
+			&.@{prefix}-icon__disabled {
+				cursor: not-allowed;
+				fill: var(--px-neutral-7);
+			}
+		}
+		&__reverse {
+			flex-direction: row-reverse;
+			.@{prefix}-icon {
+				margin-right: 0;
+				margin-left: var(--px-interval-2);
+				&:last-of-type {
+					margin-right: 0;
+					margin-left: 0;
+				}
+			}
+		}
+	}
+	&-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: -1;
+		pointer-events: none;
+	}
+}

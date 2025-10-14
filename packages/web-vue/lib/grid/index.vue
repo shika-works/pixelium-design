@@ -16,6 +16,9 @@ import { useScreenWidth } from '../share/hook/use-screen-width'
 import type { GridProps } from './type'
 import { isNumber, mergeSkipNullish } from 'parsnip-kit'
 import type { ValueWithDeviceWidth } from '../share/type'
+import { emitParentUpdate } from '../share/hook/use-index-of-children'
+import { GRID_UPDATE } from '../share/const/event-bus-key'
+import { GRID_PROVIDE } from '../share/const/provide-key'
 
 defineOptions({
 	name: 'Grid'
@@ -40,7 +43,11 @@ const gutterComputed = computed(() => {
 			y: props.gutter.y || 0
 		}
 	}
-	const currentGutter = (props.gutter as ValueWithDeviceWidth<number | { x?: number | undefined; y?: number | undefined }>)[widthType.value]
+	const currentGutter = (
+		props.gutter as ValueWithDeviceWidth<
+			number | { x?: number | undefined; y?: number | undefined }
+		>
+	)[widthType.value]
 	if (isNumber(currentGutter)) {
 		return {
 			x: currentGutter,
@@ -70,11 +77,13 @@ const itemsStat = ref<
 	}[]
 >([])
 
-provide('px-grid-provide', {
+provide(GRID_PROVIDE, {
 	column: columnComputed,
 	gutter: gutterComputed,
 	itemsStat
 })
+
+emitParentUpdate(GRID_UPDATE)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -2,7 +2,7 @@
 	<div
 		:class="{
 			'pixelium px-icon': true,
-			'px-icon__spin': !!props.spin
+			'px-animation__loading': !!props.spin
 		}"
 		:style="{
 			height: size,

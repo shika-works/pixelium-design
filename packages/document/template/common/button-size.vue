@@ -1,7 +1,7 @@
 <template>
-	<div>
-		<px-button style="margin-right: 8px" size="small">Small</px-button>
-		<px-button style="margin-right: 8px">Default</px-button>
+	<px-space>
+		<px-button size="small">Small</px-button>
+		<px-button>Default</px-button>
 		<px-button size="large">Large</px-button>
-	</div>
+	</px-space>
 </template>

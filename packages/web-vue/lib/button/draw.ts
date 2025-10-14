@@ -1,8 +1,7 @@
-import { isArray, isNumber } from 'parsnip-kit'
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
-import type { RgbaColor, NumberOrPercentage } from '../share/type'
+import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { drawCircle } from '../share/util/plot'
+import { calcWhenLeaveBaseline, drawCircle } from '../share/util/plot'
 import type { ButtonProps } from './type'
 
 export function getBackgroundColor(
@@ -100,7 +99,7 @@ export function getBorderColor(
 				if (hoverFlag && !loading) return palette[2]
 				return palette[1]
 			case 'outline':
-				if (disabled) return palette[1]
+				if (disabled) return palette[0]
 				if (activeFlag) return palette[6]
 				if (hoverFlag && !loading) return palette[4]
 				return palette[5]
@@ -164,11 +163,19 @@ export const drawBorder = (
 	first: boolean,
 	last: boolean
 ) => {
-	ctx.fillStyle = `rgba(${borderColor.r}, ${borderColor.g}, ${borderColor.b}, ${borderColor.a / 255})`
+	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
 		if (borderRadius[i] > pixelSize) {
 			if (i === 1 || i === 2 ? (inner && (last || type === 'text')) || !inner : true) {
-				drawCircle(ctx, center[i][0], center[i][1], borderRadius[i], rad[i][0], rad[i][1], pixelSize)
+				drawCircle(
+					ctx,
+					center[i][0],
+					center[i][1],
+					borderRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize
+				)
 			}
 		}
 	}
@@ -177,12 +184,25 @@ export const drawBorder = (
 		ctx.fillRect(center[0][0], 0, center[1][0] - center[0][0] + pixelSize, pixelSize)
 	}
 
-	if (center[2][1] + pixelSize > center[1][1] && ((inner && (last || type === 'text')) || !inner)) {
-		ctx.fillRect(width - pixelSize, center[1][1], pixelSize, center[2][1] - center[1][1] + pixelSize)
+	if (
+		center[2][1] + pixelSize > center[1][1] &&
+		((inner && (last || type === 'text')) || !inner)
+	) {
+		ctx.fillRect(
+			width - pixelSize,
+			center[1][1],
+			pixelSize,
+			center[2][1] - center[1][1] + pixelSize
+		)
 	}
 
 	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(center[3][0], height - pixelSize, center[2][0] - center[3][0] + pixelSize, pixelSize)
+		ctx.fillRect(
+			center[3][0],
+			height - pixelSize,
+			center[2][0] - center[3][0] + pixelSize,
+			pixelSize
+		)
 	}
 
 	const flag = inner && !first && type !== 'text'
@@ -225,9 +245,6 @@ export function getGradientColor(
 	return getGlobalThemeColor('neutral', 3)
 }
 
-function calcDx(pixelSize: number, borderRadius: number): number {
-	return Math.ceil((-6 + Math.sqrt(36 - 48 * pixelSize + 32 * pixelSize * borderRadius)) / (8 * pixelSize)) * pixelSize
-}
 export const drawGradient = (
 	ctx: CanvasRenderingContext2D,
 	width: number,
@@ -238,7 +255,6 @@ export const drawGradient = (
 	pixelSize: number,
 	disabled: boolean,
 	loading: boolean,
-	type: ButtonProps['variant'],
 	theme: ButtonProps['theme'] = 'primary',
 	palette: RgbaColor[] | null,
 	inner: boolean,
@@ -247,138 +263,110 @@ export const drawGradient = (
 	hoverFlag: boolean,
 	activeFlag: boolean
 ) => {
-	const dxBottomRight = calcDx(pixelSize, borderRadius[2])
-	const dxBottomLeft = calcDx(pixelSize, borderRadius[3])
-	const dxTopRight = calcDx(pixelSize, borderRadius[1])
-	const dxTopLeft = calcDx(pixelSize, borderRadius[0])
-	const innerFlag = +!(inner && !first && type !== 'text')
+	const dxBottomRight = calcWhenLeaveBaseline(pixelSize, borderRadius[2])
+	const dxBottomLeft = calcWhenLeaveBaseline(pixelSize, borderRadius[3])
+	const dxTopRight = calcWhenLeaveBaseline(pixelSize, borderRadius[1])
+	const dxTopLeft = calcWhenLeaveBaseline(pixelSize, borderRadius[0])
+	const innerFlag = +!(inner && !first)
+	const innerAndLastOrNotInner = +!inner || (inner && last)
 	if (!activeFlag || disabled) {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
-		ctx.fillStyle = `rgba(${barColor.r}, ${barColor.g}, ${barColor.b}, ${barColor.a / 255})`
-		for (let i = 1; i < 3; i++) {
-			borderRadius[i] > pixelSize && drawCircle(ctx, center[i][0] - pixelSize, center[i][1], borderRadius[i], rad[i][0], rad[i][1], pixelSize)
+		ctx.fillStyle = rgbaColor2string(barColor)
+		if (borderRadius[1] > pixelSize) {
+			drawCircle(
+				ctx,
+				center[1][0] - pixelSize,
+				center[1][1],
+				borderRadius[1],
+				rad[1][0],
+				rad[1][1],
+				pixelSize
+			)
+			ctx.globalCompositeOperation = 'destination-out'
+			ctx.fillRect(center[1][0] - pixelSize, 0, dxTopLeft, pixelSize)
+			ctx.globalCompositeOperation = 'source-over'
 		}
-		const barLenX = center[2][0] + pixelSize - center[3][0] + dxBottomLeft * innerFlag + dxBottomRight
-		barLenX > 0 && ctx.fillRect(center[3][0] - dxBottomLeft * innerFlag, height - pixelSize * 2, barLenX, pixelSize)
+		if (borderRadius[2] > pixelSize) {
+			drawCircle(
+				ctx,
+				center[2][0] - pixelSize,
+				center[2][1],
+				borderRadius[2],
+				rad[2][0],
+				rad[2][1],
+				pixelSize
+			)
+			ctx.globalCompositeOperation = 'destination-out'
+			ctx.fillRect(center[2][0] - pixelSize, height - pixelSize, dxBottomLeft, pixelSize)
+			ctx.globalCompositeOperation = 'source-over'
+		}
+
+		const barLenX =
+			center[2][0] +
+			pixelSize -
+			center[3][0] +
+			dxBottomLeft * innerFlag +
+			dxBottomRight * +innerAndLastOrNotInner -
+			1 * +!innerAndLastOrNotInner
+		barLenX > 0 &&
+			ctx.fillRect(
+				center[3][0] - dxBottomLeft * innerFlag,
+				height - pixelSize * 2,
+				barLenX,
+				pixelSize
+			)
 		const barLenY = center[2][1] + pixelSize - center[1][1] + dxTopRight + dxBottomRight
-		barLenY > 0 && ctx.fillRect(width - pixelSize * 2 - (!last ? +inner * pixelSize * 1 : 0), center[1][1] - dxTopRight, pixelSize, barLenY)
+		barLenY > 0 &&
+			ctx.fillRect(
+				width - pixelSize * 2 - (!last ? +inner * pixelSize * 1 : 0),
+				center[1][1] - dxTopRight,
+				pixelSize,
+				barLenY
+			)
 	} else {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
-		ctx.fillStyle = `rgba(${barColor.r}, ${barColor.g}, ${barColor.b}, ${barColor.a / 255})`
+		ctx.fillStyle = rgbaColor2string(barColor)
 
-		borderRadius[0] > pixelSize && drawCircle(ctx, center[0][0] + pixelSize, center[0][1], borderRadius[0], rad[0][0], rad[0][1], pixelSize)
-		borderRadius[3] > pixelSize && drawCircle(ctx, center[3][0] + pixelSize, center[3][1], borderRadius[3], rad[3][0], rad[3][1], pixelSize)
+		if (borderRadius[0] > pixelSize) {
+			drawCircle(
+				ctx,
+				center[0][0] + pixelSize,
+				center[0][1],
+				borderRadius[0],
+				rad[0][0],
+				rad[0][1],
+				pixelSize
+			)
+			ctx.globalCompositeOperation = 'destination-out'
+			ctx.fillRect(center[0][0] + pixelSize, 0, dxTopRight, pixelSize)
+			ctx.globalCompositeOperation = 'source-over'
+		}
+		if (borderRadius[3] > pixelSize) {
+			drawCircle(
+				ctx,
+				center[3][0] + pixelSize,
+				center[3][1],
+				borderRadius[3],
+				rad[3][0],
+				rad[3][1],
+				pixelSize
+			)
+			ctx.globalCompositeOperation = 'destination-out'
+			ctx.fillRect(center[3][0] + pixelSize, height - pixelSize, dxBottomRight, pixelSize)
+			ctx.globalCompositeOperation = 'source-over'
+		}
 
-		const barLenX = center[1][0] + pixelSize - center[0][0] + dxTopRight + dxTopLeft * innerFlag
-		barLenX > 0 && ctx.fillRect(center[0][0] - dxTopLeft * innerFlag, pixelSize, barLenX, pixelSize)
+		const barLenX =
+			center[1][0] +
+			pixelSize -
+			center[0][0] +
+			dxTopRight * +innerAndLastOrNotInner +
+			dxTopLeft * innerFlag -
+			1 * +!innerAndLastOrNotInner
+		barLenX > 0 &&
+			ctx.fillRect(center[0][0] - dxTopLeft * innerFlag, pixelSize, barLenX, pixelSize)
 		const barLenY = pixelSize + center[3][1] - center[0][1] + dxBottomLeft + dxTopLeft
 		barLenY > 0 && ctx.fillRect(pixelSize, center[0][1] - dxTopLeft, pixelSize, barLenY)
-	}
-}
-
-const transformSizeValue = (canvas: HTMLCanvasElement, value: NumberOrPercentage, pixelSize: number) => {
-	if (isNumber(value)) {
-		return Math.max(value, pixelSize)
-	} else {
-		return Math.max((canvas.height * parseFloat(value)) / 100, pixelSize)
-	}
-}
-
-const fillArr = (val: number) => Array(4).fill(val)
-
-const getRadiusFromValue = (canvas: HTMLCanvasElement, value: ButtonProps['borderRadius'], pixelSize: number) => {
-	if (!value) return fillArr(pixelSize)
-	if (!isArray(value)) {
-		return fillArr(transformSizeValue(canvas, value, pixelSize))
-	}
-	switch (value.length) {
-		case 1:
-			return fillArr(transformSizeValue(canvas, value[0], pixelSize))
-		case 2: {
-			const tl = transformSizeValue(canvas, value[0], pixelSize)
-			const tr = transformSizeValue(canvas, value[1], pixelSize)
-			return [tl, tr, tl, tr]
-		}
-		case 3: {
-			const tl = transformSizeValue(canvas, value[0], pixelSize)
-			const br = transformSizeValue(canvas, value[2], pixelSize)
-			const rest = transformSizeValue(canvas, value[1], pixelSize)
-			return [tl, rest, br, rest]
-		}
-		default:
-			return value.map((e: any) => transformSizeValue(canvas, e, pixelSize))
-	}
-}
-
-const getInnerRadius = (canvas: HTMLCanvasElement, value: ButtonProps['borderRadius'], pixelSize: number, first: boolean, last: boolean) => {
-	if (!value) return fillArr(pixelSize)
-	if (!isArray(value)) {
-		const v = transformSizeValue(canvas, value, pixelSize)
-		if (last) return [pixelSize, v, v, pixelSize]
-		if (first) return [v, pixelSize, pixelSize, v]
-		return fillArr(pixelSize)
-	}
-	switch (value.length) {
-		case 1:
-			const v = transformSizeValue(canvas, value[0], pixelSize)
-			if (last) return [pixelSize, v, v, pixelSize]
-			if (first) return [v, pixelSize, pixelSize, v]
-			return fillArr(pixelSize)
-		case 2: {
-			const tl = transformSizeValue(canvas, value[0], pixelSize)
-			const tr = transformSizeValue(canvas, value[1], pixelSize)
-			if (last) return [pixelSize, tr, tr, pixelSize]
-			if (first) return [tl, pixelSize, pixelSize, tl]
-			return fillArr(pixelSize)
-		}
-		case 3: {
-			const tl = transformSizeValue(canvas, value[0], pixelSize)
-			const br = transformSizeValue(canvas, value[2], pixelSize)
-			const rest = transformSizeValue(canvas, value[1], pixelSize)
-			if (last) return [pixelSize, rest, br, pixelSize]
-			if (first) return [tl, pixelSize, pixelSize, rest]
-			return fillArr(pixelSize)
-		}
-		default:
-			if (last) return [pixelSize, transformSizeValue(canvas, value[1], pixelSize), transformSizeValue(canvas, value[2], pixelSize), pixelSize]
-			if (first) return [transformSizeValue(canvas, value[0], pixelSize), pixelSize, pixelSize, transformSizeValue(canvas, value[3], pixelSize)]
-			return fillArr(pixelSize)
-	}
-}
-
-export const getBorderRadius = (
-	canvas: HTMLCanvasElement,
-	pixelSize: number,
-	borderRadius: ButtonProps['borderRadius'],
-	shape: ButtonProps['shape'],
-	inner: boolean,
-	first: boolean,
-	last: boolean
-): number[] => {
-	if (!inner) {
-		if (borderRadius) {
-			return getRadiusFromValue(canvas, borderRadius, pixelSize)
-		}
-		switch (shape) {
-			case 'round':
-			case 'circle':
-				return fillArr(transformSizeValue(canvas, '50%', pixelSize))
-			default:
-				return fillArr(pixelSize)
-		}
-	} else {
-		if (borderRadius) {
-			return getInnerRadius(canvas, borderRadius, pixelSize, first, last)
-		}
-		switch (shape) {
-			case 'round':
-				const roundArr = fillArr(transformSizeValue(canvas, '50%', pixelSize))
-				if (last) return roundArr.map((e, i) => (i < 1 || i > 2 ? pixelSize : e))
-				if (first) return roundArr.map((e, i) => (i > 0 && i < 3 ? pixelSize : e))
-				return fillArr(pixelSize)
-			default:
-				return fillArr(pixelSize)
-		}
 	}
 }
 

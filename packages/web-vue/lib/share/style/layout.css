@@ -1,17 +1,30 @@
 :root {
-	--px-large-size: 40px;
-	--px-medium-size: 32px;
-	--px-small-size: 24px;
-
 	--px-bit: 4px;
+
+	--px-large-base-size: 36px;
+	--px-medium-base-size: 28px;
+	--px-small-base-size: 20px;
+
+	--px-large-size: calc(var(--px-large-base-size) + var(--px-bit) * 2);
+	--px-medium-size: calc(var(--px-medium-base-size) + var(--px-bit) * 2);
+	--px-small-size: calc(var(--px-small-base-size) + var(--px-bit) * 2);
 
 	--px-line-height: 1.5;
 
 	--px-medium-font-size: 14px;
-	--px-large-font-size: 16px;
+	--px-large-font-size: 15px;
 	--px-small-font-size: 12px;
 
-	--px-medium-interval: 8px;
-	--px-large-interval: 12px;
-	--px-small-interval: 4px;
+	--px-interval-1: 4px;
+	--px-interval-2: 8px;
+	--px-interval-3: 12px;
+	--px-interval-4: 16px;
+	--px-interval-5: 20px;
+	--px-interval-6: 24px;
+	--px-interval-7: 28px;
+	--px-interval-8: 32px;
+	--px-interval-9: 36px;
+	--px-interval-10: 40px;
+
+	--px-font: 'Fusion Pixel Zh_hans', sans-serif;
 }

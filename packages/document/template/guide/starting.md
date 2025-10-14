@@ -5,7 +5,9 @@
 ]]]
 [[[en
 # Quick Start
+
 ## Installation
+
 Pick your favorite package manager.
 ]]]
 

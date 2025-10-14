@@ -1,6 +1,5 @@
-import { createVNode, ref, render, type Ref, type VNode } from 'vue'
+import { createVNode, nextTick, ref, render, type Ref, type VNode } from 'vue'
 import type { MessageProps } from '../message/type'
-import { MESSAGE_Z_INDEX } from '../share/const'
 import type { MessageBoxProps, MessageOptions, MessageReturn } from './type'
 import MessageBox from './message-box.vue'
 import { nanoid } from 'nanoid'
@@ -10,12 +9,16 @@ import type { ValidContent } from '../share/type'
 class MessageManager {
 	messages: Ref<MessageProps[]>
 	messageBox: VNode
-	constructor(options: Required<Omit<MessageBoxProps, 'messages'>> & { root: string | HTMLElement }) {
+	container: HTMLElement | null = null
+	constructor(
+		options: Required<Omit<MessageBoxProps, 'messages' | 'position' | 'zIndex'>> & {
+			root: string | HTMLElement
+		}
+	) {
 		this.messages = ref<MessageProps[]>([])
 		this.messageBox = createVNode(MessageBox, {
 			messages: this.messages.value,
-			zIndex: options.zIndex,
-			position: options.position,
+			placement: options.placement,
 			onClose: (id: number | string | symbol) => {
 				const idx = this.messages.value.findIndex((e) => e.id === id)
 				if (idx >= 0) {
@@ -23,13 +26,15 @@ class MessageManager {
 				}
 			}
 		})
-		const root = (isString(options.root) ? document.querySelector(options.root) : options.root) || document.body
+		const root =
+			(isString(options.root) ? document.querySelector(options.root) : options.root) ||
+			document.body
 		const id = nanoid()
-		const container = document.createElement('div')
-		container.id = id
-		container.className = `px-message-box-wrapper`
-		root.appendChild(container)
-		render(this.messageBox, container)
+		this.container = document.createElement('div')
+		this.container.id = id
+		this.container.className = `px-message-box-wrapper`
+		root.appendChild(this.container)
+		render(this.messageBox, this.container)
 	}
 	push(options: MessageProps) {
 		const id = options.id ?? nanoid()
@@ -45,18 +50,33 @@ class MessageManager {
 	clear() {
 		this.messages.value.length = 0
 	}
+	unmount() {
+		if (this.container) {
+			const container = this.container
+			render(this.messageBox, container)
+			nextTick(() => {
+				container.remove()
+				this.container = null
+			})
+		}
+	}
 }
-const messageManagers: Record<MessageBoxProps['position'] & string, MessageManager | undefined> = {
+const messageManagers: Record<
+	MessageBoxProps['placement'] & string,
+	MessageManager | undefined
+> = {
 	top: undefined,
 	bottom: undefined,
-	topLeft: undefined,
-	topRight: undefined,
-	bottomLeft: undefined,
-	bottomRight: undefined
+	'top-left': undefined,
+	'top-right': undefined,
+	'bottom-left': undefined,
+	'bottom-right': undefined
 }
 
 export type MessageFunction = (options: ValidContent | MessageOptions) => MessageReturn & {
-	[key in MessageOptions['type'] & string]: (options: Omit<MessageOptions, 'type'> | string) => MessageReturn
+	[key in MessageOptions['type'] & string]: (
+		options: Omit<MessageOptions, 'type'> | string
+	) => MessageReturn
 }
 
 const messageCall = (options: ValidContent | MessageOptions): MessageReturn => {
@@ -65,12 +85,11 @@ const messageCall = (options: ValidContent | MessageOptions): MessageReturn => {
 			content: options
 		}
 	}
-	const position = options.position || 'top'
-	const currentManager = messageManagers[position]
-		? messageManagers[position]
-		: (messageManagers[position] = new MessageManager({
-				position,
-				zIndex: MESSAGE_Z_INDEX,
+	const placement = options.placement || options.position || 'top'
+	const currentManager = messageManagers[placement]
+		? messageManagers[placement]
+		: (messageManagers[placement] = new MessageManager({
+				placement,
 				root: options.root || 'body'
 			}))
 
@@ -90,18 +109,20 @@ const messageCall = (options: ValidContent | MessageOptions): MessageReturn => {
 
 const message = messageCall as MessageFunction
 
-;(['info', 'success', 'warning', 'error', 'loading', 'sakura', 'normal'] as const).forEach((key) => {
-	;(message as any)[key] = (options: ValidContent | Omit<MessageOptions, 'type'>) => {
-		if (isString(options) || isFunction(options)) {
-			options = {
-				content: options
+;(['info', 'success', 'warning', 'error', 'loading', 'sakura', 'normal'] as const).forEach(
+	(key) => {
+		;(message as any)[key] = (options: ValidContent | Omit<MessageOptions, 'type'>) => {
+			if (isString(options) || isFunction(options)) {
+				options = {
+					content: options
+				}
 			}
+			return message({
+				...options,
+				type: key
+			})
 		}
-		return message({
-			...options,
-			type: key
-		})
 	}
-})
+)
 
 export default message

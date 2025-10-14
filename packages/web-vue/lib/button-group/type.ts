@@ -27,7 +27,7 @@ export type ButtonGroupProps = {
 	 */
 	loading?: boolean
 	/**
-	 * @property {'primary' | 'plain' | 'text' | 'outline'} [variant='primary']
+	 * @property {'primary' | 'plain' | 'text' | 'outline'} [variant]
 	 * @version 0.0.0-beta
 	 */
 	variant?: 'primary' | 'plain' | 'text' | 'outline'

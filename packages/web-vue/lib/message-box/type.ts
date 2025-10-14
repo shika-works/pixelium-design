@@ -33,7 +33,12 @@ export type MessageOptions = {
 	 */
 	closable?: boolean
 	/**
-	 * @property {'top' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'} [position='top']
+	 * @property {'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'} [placement='top']
+	 * @version 0.0.2
+	 */
+	placement?: MessageBoxProps['placement']
+	/**
+	 * @property {'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'} [position='top']
 	 * @version 0.0.0-beta
 	 */
 	position?: MessageBoxProps['position']
@@ -64,12 +69,17 @@ export type MessageBoxProps = {
 	 */
 	messages: MessageProps[]
 	/**
-	 * @property {'top' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'} [position='top']
+	 * @property {'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'} [placement='top']
+	 * @version 0.0.2
+	 */
+	placement?: 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+	/**
+	 * @property {'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'} [position='top']
 	 * @version 0.0.0-beta
 	 */
-	position?: 'top' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
+	position?: 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 	/**
-	 * @property {number} [zIndex=3000]
+	 * @property {number} [zIndex]
 	 * @version 0.0.0-beta
 	 */
 	zIndex?: number

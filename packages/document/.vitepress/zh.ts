@@ -6,8 +6,15 @@ const titleMap = {
 	guide: '开始',
 	intro: '简介',
 	font: '字体',
-	theme: '主题',
-	'dark-mode': '暗黑模式'
+	theme: '自定义主题',
+	'dark-mode': '暗黑模式',
+	'data-input': 'Data Input',
+	'input-number': 'Input Number',
+	'input-group': 'Input Group',
+	'input-tag': 'Input Tag',
+	'auto-complete': 'Auto Complete',
+	'update-plan': '更新计划',
+	changelog: '更新日志'
 }
 const additionMap = {
 	button: '按钮',
@@ -22,7 +29,21 @@ const additionMap = {
 	grid: 'Grid 栅格',
 	divider: '分隔线',
 	space: '间隔',
-	container: '布局容器'
+	container: '布局容器',
+	'data-input': '数据输入组件',
+	input: '文本输入',
+	textarea: '多行文本',
+	'input-number': '数字输入',
+	'input-group': '复合输入控件',
+	tag: '标签',
+	'input-tag': '标签输入',
+	popover: '弹出框',
+	tooltip: '文本提示',
+	empty: '空状态',
+	'auto-complete': '自动填充',
+	mask: '遮罩层',
+	spin: '加载',
+	select: '选择器'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)

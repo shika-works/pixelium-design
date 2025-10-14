@@ -9,6 +9,10 @@ export const TRANSPARENT_RGBA_COLOR_OBJECT: RgbaColor = {
 
 export const MESSAGE_Z_INDEX = 3000
 
+export const Z_INDEX = 1000
+
+export const COVER_Z_INDEX = 20
+
 export enum SCREEN_SIZE_TYPE {
 	XS = 'xs',
 	SM = 'sm',
@@ -17,3 +21,12 @@ export enum SCREEN_SIZE_TYPE {
 	XL = 'xl',
 	XXL = 'xxl'
 }
+
+export const GROUP_OPTION_TYPE = 'group'
+
+export const BORDER_CORNER_RAD_RANGE: [number, number][] = [
+	[Math.PI, (Math.PI * 3) / 2],
+	[(Math.PI * 3) / 2, Math.PI * 2],
+	[0, Math.PI / 2],
+	[Math.PI / 2, Math.PI]
+]

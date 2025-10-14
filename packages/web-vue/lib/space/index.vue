@@ -25,10 +25,13 @@ const alignComputed = computed(() => {
 
 const slots = useSlots()
 
-const children = flattenVNodes(slots.default?.() || [])
-
 const marginComputed = computed(() => {
-	if (!props.margin || props.margin === 'small' || props.margin === 'medium' || props.margin === 'large') {
+	if (
+		!props.margin ||
+		props.margin === 'small' ||
+		props.margin === 'medium' ||
+		props.margin === 'large'
+	) {
 		return
 	}
 	if (isNumber(props.margin)) {
@@ -45,6 +48,7 @@ const marginComputed = computed(() => {
 })
 
 defineRender(() => {
+	const children = flattenVNodes(slots.default?.() || [])
 	return (
 		<div
 			class={{
@@ -76,9 +80,15 @@ defineRender(() => {
 							class="px-space-item"
 							style={{
 								marginTop: marginComputed.value ? marginComputed.value.y / 2 + 'px' : undefined,
-								marginBottom: marginComputed.value ? marginComputed.value.y / 2 + 'px' : undefined,
-								marginLeft: marginComputed.value ? marginComputed.value.x / 2 + 'px' : undefined,
-								marginRight: marginComputed.value ? marginComputed.value.x / 2 + 'px' : undefined
+								marginBottom: marginComputed.value
+									? marginComputed.value.y / 2 + 'px'
+									: undefined,
+								marginLeft: marginComputed.value
+									? marginComputed.value.x / 2 + 'px'
+									: undefined,
+								marginRight: marginComputed.value
+									? marginComputed.value.x / 2 + 'px'
+									: undefined
 							}}
 						>
 							{child}
