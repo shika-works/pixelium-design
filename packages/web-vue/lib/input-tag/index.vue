@@ -335,7 +335,7 @@ const tagsShowed = computed(() => {
 	return modelValue.value
 		? shouldCollapseTags.value
 			? modelValue.value.slice(0, props.maxDisplayTags)
-			: []
+			: modelValue.value
 		: []
 })
 const tagsCollapsed = computed(() => {
