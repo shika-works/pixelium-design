@@ -12,13 +12,14 @@
 - 图片展示组件和图片像素化功能。
 - 虚拟列表组件。
 - 完善测试用例。
-- 
+
 ]]]
 
 [[[en
 ## v0.0.3
-- Support switching pixel width: 2px and 4px.  
-- Enhance form components: radio, checkbox, range, switch, form.  
-- Image display component.  
+- Support switching pixel width, supporting 2px and 4px.
+- Improve form components: radio, checkbox, range, switch, form.
+- Image display component and image pixelation functionality.
 - Virtual list component.
+- Improve test cases.
 ]]]
