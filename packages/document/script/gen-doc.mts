@@ -46,7 +46,7 @@ async function processMd(src: string, dst: string, lang: string): Promise<void> 
 		const idx = newText.indexOf('\n')
 		newText =
 			newText.slice(0, idx) +
-			'\n<div style="font-size: 0.8em; color: #777; text-align: right;">🌏 Translated with the assistance of DeepSeek and ChatGPT</div>' +
+			'\n<div style="font-size: 0.8em; color: #777; text-align: right;">🌏 Translated with the assistance of DeepSeek and ChatGPT</div>\n' +
 			newText.slice(idx)
 	}
 	await fs.writeFile(dst, newText, 'utf8')
