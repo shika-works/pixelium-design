@@ -1,5 +1,5 @@
 :root {
-	--px-bit: 4px;
+	--px-bit: var(--px-bit-custom, 4px);
 
 	--px-large-base-size: 36px;
 	--px-medium-base-size: 28px;

@@ -58,8 +58,6 @@ defineOptions({
 
 const attrs = useAttrs()
 
-const pixelSize = calcPixelSize()
-
 const props = withDefaults(defineProps<SelectProps>(), {
 	size: 'medium',
 	shape: 'default',
@@ -790,6 +788,7 @@ defineRender(() => {
 	if (parentScopeId) {
 		scopeObj[parentScopeId] = ''
 	}
+	const pixelSize = calcPixelSize()
 	const Render = (
 		<Popover
 			placement="bottom"

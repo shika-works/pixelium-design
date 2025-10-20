@@ -1,6 +1,5 @@
 import fs from 'fs'
-
-const capitalize = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
+import { titleCase } from 'parsnip-kit'
 
 const dfs = (
 	files,
@@ -22,7 +21,7 @@ const dfs = (
 
 			container.push({
 				key: file,
-				text: (titleMap[file.toLowerCase()] || capitalize(file)) + (add ? `  ${add}` : ''),
+				text: (titleMap[file.toLowerCase()] || titleCase(file)) + (add ? `  ${add}` : ''),
 				items: curContainer,
 				collapsible: true,
 				collapsed: false
@@ -38,7 +37,7 @@ const dfs = (
 
 			container.push({
 				text:
-					(titleMap[fileName.toLowerCase()] || capitalize(fileName)) + (add ? `  ${add}` : ''),
+					(titleMap[fileName.toLowerCase()] || titleCase(fileName)) + (add ? `  ${add}` : ''),
 				link: '/' + prefix.slice(0).join('/') + `/${fileName}`,
 				key: fileName
 			})

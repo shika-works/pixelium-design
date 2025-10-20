@@ -5,12 +5,12 @@
 	</px-space>
 </template>
 <script setup lang="ts">
-import { setThemeColor } from '@pixelium/web-vue'
+import { setThemeColor, resetThemeColor } from '@pixelium/web-vue'
 
 const set = () => {
 	setThemeColor('primary', '#409EFF')
 }
 const reset = () => {
-	setThemeColor('primary', '#00A891')
+	resetThemeColor('primary')
 }
 </script>

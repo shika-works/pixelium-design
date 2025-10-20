@@ -8,11 +8,7 @@ const titleMap = {
 	font: '字体',
 	theme: '自定义主题',
 	'dark-mode': '暗黑模式',
-	'data-input': 'Data Input',
-	'input-number': 'Input Number',
-	'input-group': 'Input Group',
-	'input-tag': 'Input Tag',
-	'auto-complete': 'Auto Complete',
+	'pixel-size': '像素尺寸',
 	'update-plan': '更新计划',
 	changelog: '更新日志'
 }
