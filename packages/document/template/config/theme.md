@@ -3,7 +3,7 @@
 可能不难发现，组件库的主题颜色来源于全局的 CSS 变量。修改这些变量就可以完成主题色的定制。
 
 ## setThemeColor
-如下所示，你可以通过导出的 `setThemeColor` 函数来修改主题色。
+如下所示，你可以在任何地方，不管是入口文件还是业务代码中，通过导出的 `setThemeColor` 函数来修改主题色。
 ]]]
 
 [[[en
@@ -11,7 +11,7 @@
 As you may notice, the theme color of the component library originates from global CSS variables. Customizing the theme color can be achieved by modifying these variables.
 
 ## setThemeColor
-As shown below, at project initialization, you can call the exported `setThemeColor` function to customize the theme color.
+As shown below, you can modify the theme color through the exported `setThemeColor` function anywhere, whether in the entry file or business code.
 ]]]
 
 ```ts
