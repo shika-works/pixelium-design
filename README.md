@@ -21,6 +21,7 @@ Pixelium Design – A pixel-art UI component library for Vue, built with TypeScr
 ## Documentation & Support
 - **Documentation**: [View the documentation](https://shika-works.github.io/pixelium-design/) to learn more about features and usage.
 - **Support**: Encounter any issues? Feel free to submit an [Issue](https://github.com/shika-works/pixelium-design/issues) or [Pull Request](https://github.com/shika-works/pixelium-design/pulls).
+- Please read the [Conventional Commits](./conventional-commits.md) specification before committing.
 
 ## License
 Pixelium Design is released under the [MIT License](./LICENSE).  
