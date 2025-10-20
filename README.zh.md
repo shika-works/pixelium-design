@@ -21,6 +21,7 @@ Pixelium Design – 基于 Vue 的像素风 UI 组件库，使用 TypeScript 与
 ## 文档与支持
 - **文档**：[查看文档](https://shika-works.github.io/pixelium-design/)以了解更多功能和使用方法。
 - **支持**：在使用过程中遇到问题？欢迎提交 [Issue](https://github.com/shika-works/pixelium-design/issues) 或 [Pull Request](https://github.com/shika-works/pixelium-design/pulls)。
+- 提交前请阅读 [Conventional Commits](./conventional-commits.zh.md) 规范。
 
 ## 许可证
 Pixelium Design 使用[ MIT 许可证](./LICENSE)发布。  
