@@ -58,3 +58,32 @@ export const setThemeColor = (
 	})
 	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
 }
+
+export const resetThemeColor = (
+	theme: 'primary' | 'success' | 'warning' | 'danger' | 'sakura' | 'neutral'
+): void => {
+	if (!inBrowser()) {
+		return
+	}
+	for (let i = 0; i < 10; i++) {
+		document.documentElement.style.setProperty(`--px-${theme}-light-custom-${i + 1}`, null)
+		document.documentElement.style.setProperty(`--px-${theme}-dark-custom-${i + 1}`, null)
+	}
+	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
+}
+
+export const setPixelSize = (size: number): void => {
+	if (!inBrowser()) {
+		return
+	}
+	document.documentElement.style.setProperty(`--px-bit-custom`, size + 'px')
+	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
+}
+
+export const resetPixelSize = (): void => {
+	if (!inBrowser()) {
+		return
+	}
+	document.documentElement.style.setProperty(`--px-bit-custom`, null)
+	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
+}

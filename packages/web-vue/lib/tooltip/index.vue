@@ -15,6 +15,7 @@ import { isNullish } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
 import { inBrowser } from '../share/util/env'
+import { calcPixelSize } from '../share/util/plot'
 
 defineOptions({
 	name: 'Tooltip'
@@ -31,7 +32,6 @@ const props = withDefaults(defineProps<TooltipProps>(), {
 	defaultVisible: undefined
 })
 
-const BORDER_RADIUS = 16
 const HOVER_CLOSE_DELAY = 300
 
 const controlledMode = computed(() => {
@@ -194,6 +194,7 @@ const checkCurrentTrigger = (_: any): _ is HTMLElement => {
 }
 
 defineRender(() => {
+	const pixelSize = calcPixelSize()
 	return (
 		<Fragment>
 			<PopupTrigger
@@ -214,7 +215,7 @@ defineRender(() => {
 				placement={props.placement}
 				arrow={props.arrow}
 				offset={props.offset}
-				borderRadius={BORDER_RADIUS}
+				borderRadius={pixelSize * 4}
 				root={props.root}
 				target={checkCurrentTrigger(currentTrigger.value?.el) ? currentTrigger.value.el : null}
 				onContentMouseenter={contentMouseenterHandler}
