@@ -1,5 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { inBrowser } from '../util/env'
+import { inBrowser, inVitest } from '../util/env'
 
 const observerMap = new WeakMap<Element, MutationObserver>()
 const observerCallbacksMap = new WeakMap<Element, Function[]>()
@@ -19,7 +19,7 @@ export const useDarkMode = () => {
 		darkMode.value = e.matches
 	}
 
-	if (inBrowser()) {
+	if (inBrowser() && !inVitest()) {
 		const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)')
 		handleDarkModeChange(darkModeQuery)
 		darkModeQuery.addEventListener('change', handleDarkModeChange)
@@ -29,7 +29,7 @@ export const useDarkMode = () => {
 	}
 
 	const callback = () => {
-		if (inBrowser()) {
+		if (inBrowser() && !inVitest()) {
 			let hasDark = false,
 				hasLight = false
 			document.documentElement.className.split(' ').forEach((cls) => {
@@ -44,7 +44,7 @@ export const useDarkMode = () => {
 		}
 	}
 
-	if (inBrowser()) {
+	if (inBrowser() && !inVitest()) {
 		onMounted(() => {
 			const observer =
 				observerMap.get(document.documentElement) ||
