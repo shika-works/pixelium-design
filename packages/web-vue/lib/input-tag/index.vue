@@ -25,7 +25,7 @@
 				:closable="tagCanClose"
 				:disabled="disabledComputed"
 				:color="props.tagColor"
-				@close="(e) => tagCloseHandler(index, e)"
+				@close="(e: MouseEvent) => tagCloseHandler(index, e)"
 			>
 				<slot name="tag" :tag="tag" :index="index">{{ tag }}</slot>
 			</Tag>
@@ -65,7 +65,10 @@
 								:closable="tagCanClose"
 								:disabled="disabledComputed"
 								:color="props.tagColor"
-								@close="(e) => tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)"
+								@close="
+									(e: MouseEvent) =>
+										tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)
+								"
 							>
 								<slot
 									name="tag"
@@ -140,7 +143,6 @@ import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/tim
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { InputGroupProps } from '../input-group/type'
-import InputGroup from '../input-group/index.vue'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
@@ -179,7 +181,7 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
