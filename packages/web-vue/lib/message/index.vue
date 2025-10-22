@@ -37,7 +37,7 @@ const toggleHover = (status: boolean) => {
 }
 
 const visible = ref(false)
-let timer: number | undefined = undefined
+let timer: any = undefined
 
 onMounted(() => {
 	visible.value = true

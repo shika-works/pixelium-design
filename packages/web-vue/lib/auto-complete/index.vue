@@ -35,7 +35,6 @@ import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/tim
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { InputGroupProps } from '../input-group/type'
-import InputGroup from '../input-group/index.vue'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
@@ -78,7 +77,7 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
@@ -166,11 +165,15 @@ const changeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
+	e.stopPropagation()
+	emits('blur', e)
 	focusMode.value = false
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
+	e.stopPropagation()
+	emits('focus', e)
 	focusMode.value = true
 }
 

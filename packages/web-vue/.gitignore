@@ -30,3 +30,5 @@ lib/**/*.d.ts
 !lib/share/type/shim.d.ts
 
 es
+
+coverage
