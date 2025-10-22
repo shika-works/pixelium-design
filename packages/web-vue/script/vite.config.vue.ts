@@ -32,9 +32,6 @@ export default defineConfig({
 	// @ts-ignore
 	test: {
 		environment: 'jsdom',
-		transformMode: {
-			web: [/\.[jt]sx$/]
-		},
 		coverage: {
 			provider: 'v8',
 			include: ['lib/**/*.{ts,tsx,js,jsx,vue}'],
