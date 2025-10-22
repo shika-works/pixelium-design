@@ -2,9 +2,17 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { h, nextTick } from 'vue'
 import Aside from '../index.vue'
 import Container from '../../container/index.vue'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { createMocks } from '../../share/util/test.ts'
 
 describe('Aside Component', () => {
+	const { pre, post } = createMocks()
+	beforeEach(() => {
+		pre()
+	})
+	afterEach(() => {
+		post()
+	})
 	it('should render basic structure with default classes', () => {
 		const wrapper = mount(Aside)
 		const asideEl = wrapper.find('aside')
