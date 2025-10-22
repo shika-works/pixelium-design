@@ -153,6 +153,8 @@ async function copyDtsFiles() {
 	for await (let src of walk(srcRoot)) {
 		src = src.replaceAll('\\', '/')
 		if (src.includes('lib/icons')) continue
+		if (src.includes('/test/')) continue
+		if (src.includes('/share/util/test')) continue
 		let code = await fs.readFile(src, 'utf-8')
 		code = code.replace(/\.vue(?=['"]|$)/g, '.ts')
 		const rel = relative(srcRoot, src)
