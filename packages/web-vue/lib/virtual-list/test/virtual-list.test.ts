@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import VirtualList from '../index.vue'
 import { nextTick } from 'vue'
+import { createMocks } from '../../share/util/test'
+import { afterEach } from 'node:test'
 
 const makeItems = (count: number) => {
 	return Array.from({ length: count }).map((_, i) => ({
@@ -11,6 +13,14 @@ const makeItems = (count: number) => {
 }
 
 describe('VirtualList', () => {
+	const { pre, post } = createMocks()
+	beforeEach(() => {
+		pre()
+	})
+	afterEach(() => {
+		post()
+	})
+
 	it('renders visible items and scroll area height for fixedHeight', async () => {
 		const items = makeItems(30)
 
