@@ -239,6 +239,19 @@ const calcVisibleRange = () => {
 }
 const visibleRange = ref(calcVisibleRange())
 
+watch(
+	[
+		scrollTop,
+		() => props.buffer,
+		() => props.list.length,
+		() => props.fixedHeight,
+		blockPrefixHeights
+	],
+	() => {
+		visibleRange.value = calcVisibleRange()
+	}
+)
+
 const contentOffset = computed(() => {
 	const { start } = visibleRange.value
 	return getAccumulatedHeight(start - 1)
@@ -285,8 +298,8 @@ const updateItemSizes = () => {
 			}
 			chunk.totalHeight = sum
 		}
-
 		updateBlockPrefixHeights()
+		visibleRange.value = calcVisibleRange()
 	}
 }
 
@@ -340,9 +353,9 @@ defineRender(() => {
 		<div ref={containerRef} class={'px-virtual-list'}>
 			<div ref={scrollAreaRef} class={'px-virtual-list-scroll-area'} onScroll={handleScroll}>
 				<div
-					class={'px-virtual-list-content'}
+					class={props.fixedHeight && 'px-virtual-list-content'}
 					style={{
-						maxHeight: `${placeholderHeight}px`
+						maxHeight: props.fixedHeight ? `${placeholderHeight}px` : undefined
 					}}
 				>
 					<div
