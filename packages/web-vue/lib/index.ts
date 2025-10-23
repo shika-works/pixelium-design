@@ -39,6 +39,7 @@ import AutoComplete from './auto-complete/index.vue'
 import Mask from './mask/index.vue'
 import Spin from './spin/index.vue'
 import Select from './select/index.vue'
+import VirtualList from './virtual-list/index.vue'
 
 const components = [
 	Button,
@@ -70,7 +71,8 @@ const components = [
 	AutoComplete,
 	Mask,
 	Spin,
-	Select
+	Select,
+	VirtualList
 ]
 
 const defaultPrefix = 'Px'
@@ -135,7 +137,8 @@ export {
 	Select,
 	resetThemeColor,
 	setPixelSize,
-	resetPixelSize
+	resetPixelSize,
+	VirtualList
 }
 export default {
 	install

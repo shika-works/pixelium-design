@@ -1,0 +1,25 @@
+.px-virtual-list {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	&-scroll-area {
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		position: relative;
+	}
+	&-content {
+		overflow: hidden;
+		position: relative;
+	}
+	&-placeholder {
+		width: 1px;
+		opacity: 0;
+	}
+	&-item {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+	}
+}

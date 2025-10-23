@@ -39,7 +39,9 @@ const additionMap = {
 	'auto-complete': '自动填充',
 	mask: '遮罩层',
 	spin: '加载',
-	select: '选择器'
+	select: '选择器',
+	base: '基础组件',
+	'virtual-list': '虚拟列表'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
