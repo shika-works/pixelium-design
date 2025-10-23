@@ -1,70 +1,4 @@
-<template>
-	<ul class="px-option-list">
-		<template v-for="item in props.options" :key="getKey(item)">
-			<li
-				v-if="isString(item)"
-				class="px-option-list-item"
-				@click="(e: MouseEvent) => selectHandler(item, e)"
-				:class="{
-					'px-option-list-item__active': checkActive(item)
-				}"
-			>
-				<slot name="option" :option="item">
-					{{ item }}
-				</slot>
-			</li>
-			<li
-				v-else-if="isObject(item) && !('type' in item && item.type === GROUP_OPTION_TYPE)"
-				class="px-option-list-item"
-				:class="{
-					'px-option-list-item__disabled': (item as OptionListOption).disabled,
-					'px-option-list-item__active': checkActive(item as OptionListOption)
-				}"
-				@click="(e: MouseEvent) => selectObjectHandler(item as OptionListOption, e)"
-			>
-				<slot name="option" :option="item">
-					{{ item.label }}
-				</slot>
-			</li>
-			<li v-else class="px-option-list-item-group">
-				<div class="px-option-list-item-group-label">
-					<slot name="group-label" :option="item">{{ item.label }}</slot>
-				</div>
-				<template
-					v-for="child in (item as OptionListGroupOption).children"
-					:key="getKey(child)"
-				>
-					<li
-						v-if="isString(child)"
-						class="px-option-list-item"
-						@click="(e: MouseEvent) => selectHandler(child, e)"
-						:class="{
-							'px-option-list-item__active': checkActive(child)
-						}"
-					>
-						<slot name="option" :option="child">
-							{{ child }}
-						</slot>
-					</li>
-					<li
-						v-else
-						class="px-option-list-item"
-						:class="{
-							'px-option-list-item__disabled': (child as OptionListOption).disabled,
-							'px-option-list-item__active': checkActive(child)
-						}"
-						@click="(e: MouseEvent) => selectObjectHandler(child as OptionListOption, e)"
-					>
-						<slot name="option" :option="child">
-							{{ child.label }}
-						</slot>
-					</li>
-				</template>
-			</li>
-		</template>
-	</ul>
-</template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { isString, isObject } from 'parsnip-kit'
 import type {
 	OptionListGroupOption,
@@ -73,6 +7,8 @@ import type {
 	OptionListProps
 } from './type'
 import { GROUP_OPTION_TYPE } from '../share/const'
+import { getCurrentInstance, useSlots, withScopeId } from 'vue'
+import { VirtualList } from '..'
 
 defineOptions({
 	name: 'OptionList'
@@ -80,7 +16,8 @@ defineOptions({
 
 const props = withDefaults(defineProps<OptionListProps>(), {
 	options: () => [],
-	activeValues: () => []
+	activeValues: () => [],
+	virtualScroll: false
 })
 
 const emits = defineEmits<OptionListEvent>()
@@ -115,5 +52,76 @@ const checkActive = (option: string | OptionListOption) => {
 	}
 	return props.activeValues.includes(option.value)
 }
+
+const slots = useSlots()
+
+const isOptionListOption = (item: any): item is OptionListOption => {
+	return isObject(item) && !('type' in item && item.type === GROUP_OPTION_TYPE)
+}
+
+const renderItem = (item: string | OptionListOption | OptionListGroupOption) => {
+	if (isString(item)) {
+		return (
+			<li
+				key={getKey(item)}
+				class={{
+					'px-option-list-item': true,
+					'px-option-list-item__active': checkActive(item)
+				}}
+				onClick={(e: MouseEvent) => selectHandler(item, e)}
+			>
+				{slots.option ? slots.option({ option: item }) : item}
+			</li>
+		)
+	} else if (isOptionListOption(item)) {
+		return (
+			<li
+				key={getKey(item)}
+				class={{
+					'px-option-list-item': true,
+					'px-option-list-item__disabled': item.disabled,
+					'px-option-list-item__active': checkActive(item)
+				}}
+				onClick={(e: MouseEvent) => selectObjectHandler(item, e)}
+			>
+				{slots.option ? slots.option({ option: item }) : item.label}
+			</li>
+		)
+	} else {
+		return (
+			<li class="px-option-list-item-group" key={getKey(item)}>
+				<div class="px-option-list-item-group-label">
+					{slots['group-label'] ? slots['group-label']({ option: item }) : item.label}
+				</div>
+				{item.children.map((child) => renderItem(child))}
+			</li>
+		)
+	}
+}
+
+const renderList = () => {
+	return (
+		<ul class="px-option-list">
+			{props.virtualScroll ? (
+				props.options.map((item) => renderItem(item))
+			) : (
+				<VirtualList
+					list={props.options.map((item) => ({
+						render: () => renderItem(item),
+						key: getKey(item)
+					}))}
+					{...props.virtualListProps}
+				></VirtualList>
+			)}
+		</ul>
+	)
+}
+
+const instance = getCurrentInstance()
+
+defineRender(() => {
+	const scopeId = instance?.vnode.scopeId
+	return scopeId ? withScopeId(scopeId)(renderList)() : renderList()
+})
 </script>
 <style lang="less" src="./index.less"></style>

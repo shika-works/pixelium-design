@@ -620,6 +620,7 @@ defineRender(() => {
 								closable={tagCanClose.value}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								{...props.tagProps}
 								onClose={(event) => tagCloseHandler(e, event)}
 							>
 								{{
@@ -644,6 +645,7 @@ defineRender(() => {
 								theme={props.tagTheme}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								{...props.tagProps}
 							>
 								{{
 									default: () =>
@@ -666,6 +668,7 @@ defineRender(() => {
 											theme={props.tagTheme}
 											disabled={disabledComputed.value}
 											color={props.tagColor}
+											{...props.tagProps}
 										>
 											{{
 												default: () =>
@@ -691,6 +694,7 @@ defineRender(() => {
 														disabled={disabledComputed.value}
 														color={props.tagColor}
 														closable={tagCanClose.value}
+														{...props.tagProps}
 														onClose={(event) => tagCloseHandler(e, event)}
 													>
 														{{
@@ -827,6 +831,8 @@ defineRender(() => {
 							options={optionsFiltered.value}
 							onSelect={selectHandler}
 							activeValues={props.multiple ? modelValue.value : [modelValue.value]}
+							virtualScroll={props.virtualScroll}
+							virtualListProps={props.virtualListProps}
 						>
 							{{
 								'group-label': ({ option }: any) =>

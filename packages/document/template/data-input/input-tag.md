@@ -91,9 +91,10 @@ InputTag also has some features of the Input component.
 ## API
 
 [[[api zh
-tagTheme: 标签的 `theme` 属性，设置标签主题颜色。
-tagVariant: 标签的 `variant` 属性，设置标签样式变体。
-tagColor: 标签的 `color` 属性，自定义标签颜色。
+tagTheme: <Badge type="warning" text="Deprecated" /> 标签的 `theme` 属性，设置标签主题颜色。
+tagVariant: <Badge type="warning" text="Deprecated" /> 标签的 `variant` 属性，设置标签样式变体。
+tagColor: <Badge type="warning" text="Deprecated" /> 标签的 `color` 属性，自定义标签颜色。
+tagProps: 标签的属性。
 modelValue: 标签输入框的值（受控模式），支持 `v-model`。
 defaultValue: 标签输入框的默认值（非受控模式）。
 inputValue: 内部文本输入框的值（受控模式），支持 `v-model`。
@@ -132,6 +133,10 @@ inputTagExpose.clear: 清空当前输入框。
 ]]]
 
 [[[api en
+tagTheme: <Badge type="warning" text="Deprecated" /> `theme` properties for tags (color theme).
+tagVariant: <Badge type="warning" text="Deprecated" /> `variant` properties for tags (style variant).
+tagColor: <Badge type="warning" text="Deprecated" /> `color` properties for tags (custom color).
+tagProps: Properties of tags.
 modelValue: The value of the tag input box (controlled mode), supports `v-model`.
 defaultValue: The default value of the tag input box (uncontrolled mode).
 inputValue: The value of the internal text input box (controlled mode), supports `v-model`.

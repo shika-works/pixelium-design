@@ -25,6 +25,7 @@
 				:closable="tagCanClose"
 				:disabled="disabledComputed"
 				:color="props.tagColor"
+				v-bind="props.tagProps"
 				@close="(e: MouseEvent) => tagCloseHandler(index, e)"
 			>
 				<slot name="tag" :tag="tag" :index="index">{{ tag }}</slot>
@@ -37,6 +38,7 @@
 					:theme="props.tagTheme"
 					:disabled="disabledComputed"
 					:color="props.tagColor"
+					v-bind="props.tagProps"
 				>
 					<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
 						>+{{ tagsCollapsed.length }}</slot
@@ -49,6 +51,7 @@
 						:theme="props.tagTheme"
 						:disabled="disabledComputed"
 						:color="props.tagColor"
+						v-bind="props.tagProps"
 					>
 						<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
 							>+{{ tagsCollapsed.length }}</slot
@@ -65,6 +68,7 @@
 								:closable="tagCanClose"
 								:disabled="disabledComputed"
 								:color="props.tagColor"
+								v-bind="props.tagProps"
 								@close="
 									(e: MouseEvent) =>
 										tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)

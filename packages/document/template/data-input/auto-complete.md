@@ -68,6 +68,7 @@ Set the `loading` and `showPopoverEmpty` props and listen to the `input` event t
 选中选项后添加到输入框而不是覆盖原内容，需要设置 `append` 属性开启，配合传入 `filter`、`shouldShowPopover` 函数控制弹出框的选项和展示。
 
 ]]]
+
 [[[en
 ## Append Mode
 
@@ -75,6 +76,20 @@ After selecting an option, append it to the existing input instead of replacing 
 Use the `filter` and `shouldShowPopover` functions to control which options appear and when the popover is shown.
 ]]]
 <preview path="./auto-complete-append.vue"></preview>
+
+
+[[[zh
+## 虚拟列表
+
+`virtualScroll` 属性开启虚拟列表，选项数据量大时可以开启提高性能。
+
+]]]
+[[[en
+## Virtual List
+
+Enabling the `virtualScroll` property activates the virtual list, which can be turned on to improve performance when there is a large amount of option data.
+]]]
+<preview path="./auto-complete-virtual.vue"></preview>
 
 [[[zh
 ## 自定义渲染
@@ -118,6 +133,8 @@ shape: 自动填充输入框形状。
 borderRadius: 圆角半径，优先级高于 `shape`，与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 status: 表单验证状态。
 autofocus: 原生 `<input>` 的 `autofocus` 属性。
+virtualScroll: 是否开启虚拟滚动。
+virtualListProps: 虚拟列表属性。
 events.input: 自动填充输入框输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 输入内容变化时的回调。
@@ -152,6 +169,8 @@ size: Size of the auto complete input.
 shape: Shape of the auto complete input.
 borderRadius: Border-radius, takes precedence over `shape`. Follows CSS `border-radius` rules: single value or array of length 1 → all corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → clockwise starting from top-left.
 status: Form validation status.
+virtualScroll: Whether render options with virtual list.
+virtualListProps: Properties of virtual list.
 autofocus: Native `<input>` `autofocus` attribute.
 events.input: Callback fired when the input value changes.
 events.update:modelValue: Callback fired when `modelValue` is updated.

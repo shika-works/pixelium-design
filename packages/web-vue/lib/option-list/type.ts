@@ -1,4 +1,5 @@
 import type { GroupOption, Option } from '../share/type'
+import type { VirtualListProps } from '../virtual-list/type'
 
 export interface OptionListOption extends Option<any> {
 	disabled?: boolean
@@ -13,6 +14,8 @@ export interface OptionListGroupOption extends GroupOption {
 export type OptionListProps = {
 	options?: (string | OptionListOption | OptionListGroupOption)[]
 	activeValues?: any[]
+	virtualScroll?: boolean
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
 }
 
 export type OptionListEvent = {

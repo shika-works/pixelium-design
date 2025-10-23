@@ -113,6 +113,19 @@ Set `creatable` to allow new options to be added (type `string`). `filterable` m
 <preview path="./select-creatable.vue"></preview>
 
 [[[zh
+## 虚拟列表
+
+`virtualScroll` 属性开启虚拟列表，选项数据量大时可以开启提高性能。
+
+]]]
+[[[en
+## Virtual List
+
+Enabling the `virtualScroll` property activates the virtual list, which can be turned on to improve performance when there is a large amount of option data.
+]]]
+<preview path="./select-virtual.vue"></preview>
+
+[[[zh
 ## 更多配置
 选择器 Select 还拥有 Input、InputTag、AutoComplete 组件的部分功能。
 ]]]
@@ -143,9 +156,12 @@ creatable: 可否创建选项，需要开启 `filterable`。
 collapseTags: 是否开启折叠标签。
 maxDisplayTags: 展示标签的最大数量，开启 `collapseTags` 后生效。
 collapseTagsPopover: 是否在弹出框中展示被折叠的标签，开启 `collapseTags` 后生效。
-tagTheme: 标签的 `theme` 属性，设置标签主题颜色。
-tagVariant: 标签的 `variant` 属性，设置标签样式变体。
-tagColor: 标签的 `color` 属性，自定义标签颜色。
+tagTheme: <Badge type="warning" text="Deprecated" /> 标签的 `theme` 属性，设置标签主题颜色。
+tagVariant: <Badge type="warning" text="Deprecated" /> 标签的 `variant` 属性，设置标签样式变体。
+tagColor: <Badge type="warning" text="Deprecated" /> 标签的 `color` 属性，自定义标签颜色。
+tagProps: 标签的属性。
+virtualScroll: 是否开启虚拟滚动。
+virtualListProps: 虚拟列表属性。
 size: 选择器尺寸。
 shape: 选择器形状。
 borderRadius: 圆角半径，优先级高于 `shape`，与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
@@ -188,9 +204,12 @@ creatable: Allow creating new options; requires `filterable`.
 collapseTags: Collapse selected tags in multi-select mode.
 maxDisplayTags: Max number of visible tags when `collapseTags` is on.
 collapseTagsPopover: Show collapsed tags in a popover when `collapseTags` is on.
-tagTheme: `theme` prop for tags (color theme).
-tagVariant: `variant` prop for tags (style variant).
-tagColor: `color` prop for tags (custom color).
+tagTheme: <Badge type="warning" text="Deprecated" /> `theme` properties for tags (color theme).
+tagVariant: <Badge type="warning" text="Deprecated" /> `variant` properties for tags (style variant).
+tagColor: <Badge type="warning" text="Deprecated" /> `color` properties for tags (custom color).
+tagProps: Properties of tags.
+virtualScroll: Whether render options with virtual list.
+virtualListProps: Properties of virtual list.
 size: Size of the selector.
 shape: Shape of the selector.
 borderRadius: Border-radius value; higher priority than `shape`. Single value or 1-item array → all corners; 2-item array → [top-left & bottom-right, top-right & bottom-left]; 3-item array → [top-left, top-right & bottom-left, bottom-right]; 4-item array → clockwise order for all four corners.

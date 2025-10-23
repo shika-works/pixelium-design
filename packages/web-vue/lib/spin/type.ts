@@ -1,3 +1,5 @@
+import type { MaskProps } from '../mask/type'
+
 export type SpinProps = {
 	/**
 	 * @property {boolean} [loading]
@@ -9,6 +11,16 @@ export type SpinProps = {
 	 * @version 0.0.2
 	 */
 	size?: 'medium' | 'large' | 'small' | number
+	/**
+	 * @property {Omit<MaskProps, 'zIndex'>} [maskProps]
+	 * @version 0.0.3
+	 */
+	maskProps?: Omit<MaskProps, 'zIndex'>
+	/**
+	 * @property {number} [zIndex=20]
+	 * @version 0.0.2
+	 */
+	zIndex?: number
 	/**
 	 * @property {string} [maskColor]
 	 * @version 0.0.2
@@ -29,11 +41,6 @@ export type SpinProps = {
 	 * @version 0.0.2
 	 */
 	maskGrid?: boolean
-	/**
-	 * @property {number} [zIndex=20]
-	 * @version 0.0.2
-	 */
-	zIndex?: number
 }
 
 export type SpinSlots = {
