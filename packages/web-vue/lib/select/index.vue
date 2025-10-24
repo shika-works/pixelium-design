@@ -72,7 +72,8 @@ const props = withDefaults(defineProps<SelectProps>(), {
 	tagVariant: 'plain',
 	multiple: false,
 	collapseTagsPopover: true,
-	collapseTags: false
+	collapseTags: false,
+	virtualScroll: false
 })
 
 const ANIMATION_DURATION = 250
@@ -262,11 +263,7 @@ const inputHandler = async (e: Event) => {
 }
 
 const clearHandler = async () => {
-	await new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		})
-	})
+	await new Promise(res => setTimeout(res))
 	const nextModelValue = props.multiple ? [] : null
 	await updateInputValue('')
 	await updateModelValue(nextModelValue)
@@ -367,11 +364,7 @@ const getNextModelValue = (value: any) => {
 }
 
 const selectHandler = async (value: any, option: string | SelectOption, e: MouseEvent) => {
-	await new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		})
-	})
+	await new Promise((res) => setTimeout(res))
 	const nextValue = getNextModelValue(value)
 	const nextInputValue = ''
 	await updateModelValue(nextValue)

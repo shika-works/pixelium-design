@@ -8,7 +8,8 @@ import type {
 } from './type'
 import { GROUP_OPTION_TYPE } from '../share/const'
 import { getCurrentInstance, useSlots, withScopeId } from 'vue'
-import { VirtualList } from '..'
+import VirtualList from '../virtual-list/index.vue'
+import type { JSX } from 'vue/jsx-runtime'
 
 defineOptions({
 	name: 'OptionList'
@@ -33,13 +34,17 @@ const selectObjectHandler = (option: OptionListOption, e: MouseEvent) => {
 	emits('select', option.value, option, e)
 }
 
+const isOptionListOption = (item: any): item is OptionListOption => {
+	return isObject(item) && !('type' in item && item.type === GROUP_OPTION_TYPE)
+}
+
 const getKey = (option: string | OptionListOption | OptionListGroupOption) => {
 	if (isString(option)) {
 		return option
-	} else if ('type' in option && option.type === GROUP_OPTION_TYPE) {
-		return option.key
+	} else if (isOptionListOption(option)) {
+		return option.key ?? option.value
 	} else {
-		return option.label
+		return option.key
 	}
 }
 
@@ -55,61 +60,83 @@ const checkActive = (option: string | OptionListOption) => {
 
 const slots = useSlots()
 
-const isOptionListOption = (item: any): item is OptionListOption => {
-	return isObject(item) && !('type' in item && item.type === GROUP_OPTION_TYPE)
-}
-
 const renderItem = (item: string | OptionListOption | OptionListGroupOption) => {
+	const key = getKey(item)
 	if (isString(item)) {
-		return (
-			<li
-				key={getKey(item)}
-				class={{
-					'px-option-list-item': true,
-					'px-option-list-item__active': checkActive(item)
-				}}
-				onClick={(e: MouseEvent) => selectHandler(item, e)}
-			>
-				{slots.option ? slots.option({ option: item }) : item}
-			</li>
-		)
+		return {
+			el: (
+				<li
+					key={key}
+					class={{
+						'px-option-list-item': true,
+						'px-option-list-item__active': checkActive(item)
+					}}
+					onClick={(e: MouseEvent) => selectHandler(item, e)}
+				>
+					{slots.option ? slots.option({ option: item }) : item}
+				</li>
+			),
+			key
+		}
 	} else if (isOptionListOption(item)) {
-		return (
-			<li
-				key={getKey(item)}
-				class={{
-					'px-option-list-item': true,
-					'px-option-list-item__disabled': item.disabled,
-					'px-option-list-item__active': checkActive(item)
-				}}
-				onClick={(e: MouseEvent) => selectObjectHandler(item, e)}
-			>
-				{slots.option ? slots.option({ option: item }) : item.label}
-			</li>
-		)
+		return {
+			el: (
+				<li
+					key={key}
+					class={{
+						'px-option-list-item': true,
+						'px-option-list-item__disabled': item.disabled,
+						'px-option-list-item__active': checkActive(item)
+					}}
+					onClick={(e: MouseEvent) => selectObjectHandler(item, e)}
+				>
+					{slots.option ? slots.option({ option: item }) : item.label}
+				</li>
+			),
+			key
+		}
 	} else {
-		return (
-			<li class="px-option-list-item-group" key={getKey(item)}>
-				<div class="px-option-list-item-group-label">
-					{slots['group-label'] ? slots['group-label']({ option: item }) : item.label}
-				</div>
-				{item.children.map((child) => renderItem(child))}
-			</li>
-		)
+		return [
+			{
+				el: (
+					<li class="px-option-list-item-group" key={key}>
+						<div class="px-option-list-item-group-label">
+							{slots['group-label'] ? slots['group-label']({ option: item }) : item.label}
+						</div>
+					</li>
+				),
+				key
+			},
+			...item.children.map(
+				(child): { el: JSX.Element; key: number | symbol | string } =>
+					renderItem(child) as { el: JSX.Element; key: number | symbol | string }
+			)
+		]
 	}
 }
 
 const renderList = () => {
+	const list: {
+		el: JSX.Element
+		key: any
+	}[] = []
+	props.options
+		.map((item) => renderItem(item))
+		.forEach((rendered) => {
+			if (Array.isArray(rendered)) {
+				rendered.forEach((r) => list.push(r))
+			} else {
+				list.push(rendered)
+			}
+		})
 	return (
 		<ul class="px-option-list">
-			{props.virtualScroll ? (
-				props.options.map((item) => renderItem(item))
+			{!props.virtualScroll ? (
+				list.map((item) => item.el)
 			) : (
 				<VirtualList
-					list={props.options.map((item) => ({
-						render: () => renderItem(item),
-						key: getKey(item)
-					}))}
+					class={'px-option-list-virtual-list'}
+					list={list.map((item) => ({ render: () => item.el, key: item.key }))}
 					{...props.virtualListProps}
 				></VirtualList>
 			)}

@@ -30,7 +30,7 @@ interface Chunk {
 const props = withDefaults(defineProps<VirtualListProps>(), {
 	list: () => [],
 	fixedHeight: false,
-	estimatedHeight: 20,
+	estimatedHeight: 28,
 	buffer: 10
 })
 
@@ -259,6 +259,7 @@ const contentOffset = computed(() => {
 
 const updateItemSizes = () => {
 	if (!contentRef.value) return
+	if (contentRef.value.offsetHeight === 0) return
 	if (props.fixedHeight) {
 		return
 	}
@@ -353,7 +354,9 @@ defineRender(() => {
 		<div ref={containerRef} class={'px-virtual-list'}>
 			<div ref={scrollAreaRef} class={'px-virtual-list-scroll-area'} onScroll={handleScroll}>
 				<div
-					class={props.fixedHeight && 'px-virtual-list-content'}
+					class={{
+						'px-virtual-list-content': props.fixedHeight
+					}}
 					style={{
 						maxHeight: props.fixedHeight ? `${placeholderHeight}px` : undefined
 					}}
