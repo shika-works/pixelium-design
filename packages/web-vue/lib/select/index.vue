@@ -263,7 +263,7 @@ const inputHandler = async (e: Event) => {
 }
 
 const clearHandler = async () => {
-	await new Promise(res => setTimeout(res))
+	await new Promise((res) => setTimeout(res))
 	const nextModelValue = props.multiple ? [] : null
 	await updateInputValue('')
 	await updateModelValue(nextModelValue)
