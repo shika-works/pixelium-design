@@ -1,8 +1,9 @@
 import type { GroupOption, Option } from '../share/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
-export interface OptionListOption extends Option<any> {
+export interface OptionListOption<T = any> extends Option<T> {
 	disabled?: boolean
+	key?: string | number | symbol
 }
 
 export interface OptionListGroupOption extends GroupOption {

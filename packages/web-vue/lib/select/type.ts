@@ -1,16 +1,11 @@
+import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
 import type { NumberOrPercentage } from '../share/type'
-import type { GroupOption, Option } from '../share/type'
 import type { TagProps } from '../tag/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
-export interface SelectOption extends Option<string> {
-	value: any
-	disabled?: boolean
-}
+export interface SelectOption extends OptionListOption<any> {}
 
-export interface SelectGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
+export interface SelectGroupOption extends OptionListGroupOption {
 	children: (SelectOption | string)[]
 }
 

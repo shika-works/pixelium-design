@@ -1,15 +1,10 @@
+import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
 import type { NumberOrPercentage } from '../share/type'
-import type { GroupOption, Option } from '../share/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
-export interface AutoCompleteOption extends Option<string> {
-	value: string
-	disabled?: boolean
-}
+export interface AutoCompleteOption extends OptionListOption<string> {}
 
-export interface AutoCompleteGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
+export interface AutoCompleteGroupOption extends OptionListGroupOption {
 	children: (AutoCompleteOption | string)[]
 }
 
