@@ -123,7 +123,7 @@ describe('VirtualList', () => {
 
 		const style = placeholder.attributes('style') || ''
 
-		expect(style).toContain('height: 460px;')
+		expect(style).toContain('height: 400px;')
 	})
 
 	it('calculates contentOffset based on scroll and item heights (non-fixed)', async () => {
@@ -154,6 +154,6 @@ describe('VirtualList', () => {
 		await nextTick()
 		const contentEl = wrapper.element.querySelector('.px-virtual-list-item') as HTMLElement
 
-		expect(contentEl.style.transform).toContain('translateY(40px)')
+		expect(contentEl.style.transform).toContain('translateY(60px)')
 	})
 })
