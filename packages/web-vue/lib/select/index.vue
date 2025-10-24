@@ -30,7 +30,6 @@ import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/tim
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { InputGroupProps } from '../input-group/type'
-import InputGroup from '../input-group/index.vue'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
@@ -73,7 +72,8 @@ const props = withDefaults(defineProps<SelectProps>(), {
 	tagVariant: 'plain',
 	multiple: false,
 	collapseTagsPopover: true,
-	collapseTags: false
+	collapseTags: false,
+	virtualScroll: false
 })
 
 const ANIMATION_DURATION = 250
@@ -89,7 +89,7 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
@@ -263,11 +263,7 @@ const inputHandler = async (e: Event) => {
 }
 
 const clearHandler = async () => {
-	await new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		})
-	})
+	await new Promise((res) => setTimeout(res))
 	const nextModelValue = props.multiple ? [] : null
 	await updateInputValue('')
 	await updateModelValue(nextModelValue)
@@ -368,11 +364,7 @@ const getNextModelValue = (value: any) => {
 }
 
 const selectHandler = async (value: any, option: string | SelectOption, e: MouseEvent) => {
-	await new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		})
-	})
+	await new Promise((res) => setTimeout(res))
 	const nextValue = getNextModelValue(value)
 	const nextInputValue = ''
 	await updateModelValue(nextValue)
@@ -621,6 +613,7 @@ defineRender(() => {
 								closable={tagCanClose.value}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								{...props.tagProps}
 								onClose={(event) => tagCloseHandler(e, event)}
 							>
 								{{
@@ -645,6 +638,7 @@ defineRender(() => {
 								theme={props.tagTheme}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								{...props.tagProps}
 							>
 								{{
 									default: () =>
@@ -667,6 +661,7 @@ defineRender(() => {
 											theme={props.tagTheme}
 											disabled={disabledComputed.value}
 											color={props.tagColor}
+											{...props.tagProps}
 										>
 											{{
 												default: () =>
@@ -692,6 +687,7 @@ defineRender(() => {
 														disabled={disabledComputed.value}
 														color={props.tagColor}
 														closable={tagCanClose.value}
+														{...props.tagProps}
 														onClose={(event) => tagCloseHandler(e, event)}
 													>
 														{{
@@ -828,6 +824,8 @@ defineRender(() => {
 							options={optionsFiltered.value}
 							onSelect={selectHandler}
 							activeValues={props.multiple ? modelValue.value : [modelValue.value]}
+							virtualScroll={props.virtualScroll}
+							virtualListProps={props.virtualListProps}
 						>
 							{{
 								'group-label': ({ option }: any) =>

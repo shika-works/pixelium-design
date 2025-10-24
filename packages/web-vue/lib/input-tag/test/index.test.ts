@@ -262,24 +262,30 @@ describe('InputTag Component', () => {
 	})
 
 	describe('Tag Styles', () => {
-		it('should apply the specified tagTheme', async () => {
+		it('should apply the specified tag props', async () => {
 			const wrapper = mount(InputTag, {
 				props: {
 					modelValue: ['Test Tag'],
-					tagTheme: 'success'
+					tagVariant: 'primary',
+					tagTheme: 'primary',
+					tagColor: 'rgb(64, 158, 255)'
 				}
 			})
 
 			const tag = wrapper.findComponent(Tag)
-			expect(tag.props().theme).toBe('success')
+			expect(tag.props().variant).toBe('primary')
+			expect(tag.props().theme).toBe('primary')
+			expect(tag.props().color).toBe('rgb(64, 158, 255)')
 		})
 
-		it('should apply the specified tagVariant', async () => {
+		it('should apply the specified tag props 2', async () => {
 			const wrapper = mountComponent({
 				modelValue: ['Test Tag'],
-				tagVariant: 'primary',
-				tagTheme: 'primary',
-				tagColor: 'rgb(64, 158, 255)'
+				tagProps: {
+					variant: 'primary',
+					theme: 'primary',
+					color: 'rgb(64, 158, 255)'
+				}
 			})
 
 			const tag = wrapper.findComponent(Tag)

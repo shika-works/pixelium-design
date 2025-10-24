@@ -405,7 +405,12 @@ defineRender(() => {
 					),
 				content: () =>
 					optionsFiltered.value.length ? (
-						<OptionList options={optionsFiltered.value} onSelect={selectHandler}>
+						<OptionList
+							options={optionsFiltered.value}
+							onSelect={selectHandler}
+							virtualScroll={props.virtualScroll}
+							virtualListProps={props.virtualListProps}
+						>
 							{{
 								'group-label': ({ option }: any) =>
 									slots['group-label']

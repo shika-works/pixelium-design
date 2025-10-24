@@ -1,14 +1,10 @@
+import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
 import type { NumberOrPercentage } from '../share/type'
-import type { GroupOption, Option } from '../share/type'
+import type { VirtualListProps } from '../virtual-list/type'
 
-export interface AutoCompleteOption extends Option<string> {
-	value: string
-	disabled?: boolean
-}
+export interface AutoCompleteOption extends OptionListOption<string> {}
 
-export interface AutoCompleteGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
+export interface AutoCompleteGroupOption extends OptionListGroupOption {
 	children: (AutoCompleteOption | string)[]
 }
 
@@ -79,6 +75,16 @@ export type AutoCompleteProps = {
 	 * @version 0.0.2
 	 */
 	append?: boolean
+	/**
+	 * @property {boolean} [virtualScroll=false]
+	 * @version 0.0.3
+	 */
+	virtualScroll?: boolean
+	/**
+	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'>} [virtualListProps]
+	 * @version 0.0.3
+	 */
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.2

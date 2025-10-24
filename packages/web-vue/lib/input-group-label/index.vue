@@ -32,7 +32,6 @@ import {
 	getBorderRadius
 } from '../share/util/plot'
 import { getGlobalThemeColor, parseColor } from '../share/util/color'
-import InputGroup from '../input-group/index.vue'
 import { drawBorder } from './draw'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
@@ -60,7 +59,7 @@ const props = withDefaults(defineProps<InputGroupLabelProps>(), {
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]

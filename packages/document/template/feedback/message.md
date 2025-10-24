@@ -109,8 +109,8 @@ declare const message: MessageFunction
 ```
 ### ValidContent, ValidVNodeContent
 ```ts
-type ValidContent = string | (() => VNode | string | JSX.Element)
-type ValidVNodeContent = () => VNode | JSX.Element
+export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element)
+export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
 ```
 [[[api message-box en
 messageOptions.content: Message content.

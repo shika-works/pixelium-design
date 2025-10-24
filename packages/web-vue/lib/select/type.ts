@@ -1,15 +1,11 @@
+import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
 import type { NumberOrPercentage } from '../share/type'
-import type { GroupOption, Option } from '../share/type'
 import type { TagProps } from '../tag/type'
+import type { VirtualListProps } from '../virtual-list/type'
 
-export interface SelectOption extends Option<string> {
-	value: any
-	disabled?: boolean
-}
+export interface SelectOption extends OptionListOption<any> {}
 
-export interface SelectGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
+export interface SelectGroupOption extends OptionListGroupOption {
 	children: (SelectOption | string)[]
 }
 
@@ -101,7 +97,7 @@ export type SelectProps = {
 	 */
 	collapseTags?: boolean
 	/**
-	 * @property {number} [collapseTags]
+	 * @property {number} [maxDisplayTags]
 	 * @version 0.0.2
 	 */
 	maxDisplayTags?: number
@@ -111,20 +107,20 @@ export type SelectProps = {
 	 */
 	collapseTagsPopover?: boolean
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [tagTheme='info']
-	 * @version 0.0.2
+	 * @property {boolean} [virtualScroll=false]
+	 * @version 0.0.3
 	 */
-	tagTheme?: TagProps['theme']
+	virtualScroll?: boolean
 	/**
-	 * @property {'primary' | 'plain' | 'outline'} [tagVariant='plain']
-	 * @version 0.0.2
+	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'>} [virtualListProps]
+	 * @version 0.0.3
 	 */
-	tagVariant?: TagProps['variant']
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
 	/**
-	 * @property {string} [tagColor]
-	 * @version 0.0.2
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'>} [tagProps]
+	 * @version 0.0.3
 	 */
-	tagColor?: TagProps['color']
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'>
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.2
@@ -145,6 +141,21 @@ export type SelectProps = {
 	 * @version 0.0.2
 	 */
 	status?: 'success' | 'warning' | 'error' | 'normal'
+	/**
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [tagTheme='info']
+	 * @version 0.0.2
+	 */
+	tagTheme?: TagProps['theme']
+	/**
+	 * @property {'primary' | 'plain' | 'outline'} [tagVariant='plain']
+	 * @version 0.0.2
+	 */
+	tagVariant?: TagProps['variant']
+	/**
+	 * @property {string} [tagColor]
+	 * @version 0.0.2
+	 */
+	tagColor?: TagProps['color']
 }
 
 export type SelectEvents = {

@@ -71,8 +71,6 @@ import {
 } from '../share/util/plot'
 import { generatePalette, parseColor } from '../share/util/color'
 import type { RgbaColor } from '../share/type'
-import ButtonGroup from '../button-group/index.vue'
-import InputGroup from '../input-group/index.vue'
 import type { ButtonGroupProps } from '../button-group/type'
 import {
 	drawBorder,
@@ -107,8 +105,8 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 })
 
 const instance = getCurrentInstance()
-const innerButtonGroup = ref(instance?.parent?.type === ButtonGroup)
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
+const innerButtonGroup = ref(instance?.parent?.type.name === 'ButtonGroup')
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerButtonGroup.value
 	? useIndexOfChildren(BUTTON_GROUP_UPDATE)
 	: innerInputGroup.value

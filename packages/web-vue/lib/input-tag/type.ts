@@ -83,6 +83,21 @@ export type InputTagProps = {
 	 */
 	collapseTagsPopover?: boolean
 	/**
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'>} [tagProps]
+	 * @version 0.0.3
+	 */
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'>
+	/**
+	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
+	 * @version 0.0.2
+	 */
+	status?: 'success' | 'warning' | 'error' | 'normal'
+	/**
+	 * @property {boolean} [autofocus=false]
+	 * @version 0.0.2
+	 */
+	autofocus?: boolean
+	/**
 	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [tagTheme='info']
 	 * @version 0.0.2
 	 */
@@ -97,16 +112,6 @@ export type InputTagProps = {
 	 * @version 0.0.2
 	 */
 	tagColor?: TagProps['color']
-	/**
-	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
-	 * @version 0.0.2
-	 */
-	status?: 'success' | 'warning' | 'error' | 'normal'
-	/**
-	 * @property {boolean} [autofocus=false]
-	 * @version 0.0.2
-	 */
-	autofocus?: boolean
 }
 
 export type InputTagEvents = {
