@@ -44,6 +44,9 @@ importers:
       markdown-it-katex:
         specifier: ^2.0.3
         version: 2.0.3
+      vue:
+        specifier: ^3.5.22
+        version: 3.5.22(typescript@5.8.3)
     devDependencies:
       comment-parser:
         specifier: ^1.4.1
