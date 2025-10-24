@@ -192,24 +192,21 @@ autoCompleteExpose.select: Select all text in the input.
 ### AutoCompleteOption, AutoCompleteGroupOption
 
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
-export interface GroupOption<T = any> {
-	children: (Option<T> | string)[]
-	type: typeof GROUP_OPTION_TYPE
-}
-
-export interface AutoCompleteOption extends Option<string> {
-	value: string
+export interface OptionListOption<T = any> extends Option<T> {
 	disabled?: boolean
+	key?: string | number | symbol
 }
 
-export interface AutoCompleteGroupOption extends GroupOption {
+export interface OptionListGroupOption extends GroupOption {
 	label: string
 	key: string | number | symbol
+	children: (OptionListOption | string)[]
+}
+
+export interface AutoCompleteOption extends OptionListOption<string> {
+}
+
+export interface AutoCompleteGroupOption extends OptionListGroupOption {
 	children: (AutoCompleteOption | string)[]
 }
 ```

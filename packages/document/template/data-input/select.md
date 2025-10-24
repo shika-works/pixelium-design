@@ -233,3 +233,25 @@ selectExpose.focus: Focus the selector.
 selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
 ]]]
+
+### SelectOption, SelectGroupOption
+
+```ts
+export interface OptionListOption<T = any> extends Option<T> {
+	disabled?: boolean
+	key?: string | number | symbol
+}
+
+export interface OptionListGroupOption extends GroupOption {
+	label: string
+	key: string | number | symbol
+	children: (OptionListOption | string)[]
+}
+
+export interface SelectOption extends OptionListOption<any> {
+}
+
+export interface SelectGroupOption extends OptionListGroupOption {
+	children: (SelectOption | string)[]
+}
+```
