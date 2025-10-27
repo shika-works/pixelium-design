@@ -76,4 +76,36 @@ describe('Image', () => {
 		const previewEl2 = wrapper.findComponent(Transition).find('.px-image-preview')
 		expect(previewEl2.exists()).toBe(false)
 	})
+
+	it('updates src when prop changes', async () => {
+		const wrapper = mount(Image, {
+			props: { src: 'https://example.com/image1.png' }
+		})
+		const img = wrapper.find('img')
+		expect(img.attributes('src')).toBe('https://example.com/image1.png')
+
+		await wrapper.setProps({ src: 'https://example.com/image2.png' })
+		await nextTick()
+
+		expect(img.attributes('src')).toBe('https://example.com/image2.png')
+	})
+
+	it('updates srcset when prop changes', async () => {
+		const wrapper = mount(Image, {
+			props: { srcset: 'https://example.com/image1.png 1x, https://example.com/image2.png 2x' }
+		})
+		const img = wrapper.find('img')
+		expect(img.attributes('srcset')).toBe(
+			'https://example.com/image1.png 1x, https://example.com/image2.png 2x'
+		)
+
+		await wrapper.setProps({
+			srcset: 'https://example.com/image3.png 1x, https://example.com/image4.png 2x'
+		})
+		await nextTick()
+
+		expect(img.attributes('srcset')).toBe(
+			'https://example.com/image3.png 1x, https://example.com/image4.png 2x'
+		)
+	})
 })

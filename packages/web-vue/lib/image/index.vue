@@ -160,6 +160,8 @@ watch(
 	(val) => {
 		if (loaded.value) {
 			curSrc.value = val
+		} else if (!props.lazy) {
+			curSrc.value = val
 		}
 	}
 )
@@ -167,6 +169,8 @@ watch(
 	() => props.srcset,
 	(val) => {
 		if (loaded.value) {
+			curSrcset.value = val
+		} else if (!props.lazy) {
 			curSrcset.value = val
 		}
 	}
