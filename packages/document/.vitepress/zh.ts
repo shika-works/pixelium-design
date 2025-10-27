@@ -44,7 +44,9 @@ const additionMap = {
 	'virtual-list': '虚拟列表',
 	'data-display': '数据展示组件',
 	image: '图片',
-	avatar: '头像'
+	avatar: '头像',
+	'fabulous-idea': '奇思妙想',
+	pixelate: '图片像素化'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)

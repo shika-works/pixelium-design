@@ -53,7 +53,8 @@ const order = [
 	'data-input',
 	'data-display',
 	'feedback',
-	'base'
+	'base',
+	'fabulous-idea'
 ]
 
 const guideOrder = ['intro', 'starting', 'update-plan', 'changelog']
