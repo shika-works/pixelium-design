@@ -215,3 +215,27 @@ export function generatePalette(
 export const rgbaColor2string = (color: RgbaColor) => {
 	return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 255})`
 }
+
+export function rgbaEuclideanDistance(
+	color1: RgbaColor,
+	color2: RgbaColor,
+	background: { r: number; g: number; b: number } = { r: 255, g: 255, b: 255 }
+): number {
+	const blendWithBackground = (rgba: RgbaColor, bg: typeof background) => {
+		const alpha = rgba.a / 255
+		return {
+			r: (rgba.r * alpha + bg.r * (1 - alpha)) / 255,
+			g: (rgba.g * alpha + bg.g * (1 - alpha)) / 255,
+			b: (rgba.b * alpha + bg.b * (1 - alpha)) / 255
+		}
+	}
+
+	const blended1 = blendWithBackground(color1, background)
+	const blended2 = blendWithBackground(color2, background)
+
+	const deltaR = blended1.r - blended2.r
+	const deltaG = blended1.g - blended2.g
+	const deltaB = blended1.b - blended2.b
+
+	return Math.sqrt(deltaR ** 2 + deltaG ** 2 + deltaB ** 2)
+}

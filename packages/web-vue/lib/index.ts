@@ -42,6 +42,7 @@ import Select from './select/index.vue'
 import VirtualList from './virtual-list/index.vue'
 import Image from './image/index.vue'
 import Avatar from './avatar/index.vue'
+import { pixelateImage } from './share/util/pixel.ts'
 
 const components = [
 	Button,
@@ -144,7 +145,8 @@ export {
 	resetPixelSize,
 	VirtualList,
 	Image,
-	Avatar
+	Avatar,
+	pixelateImage
 }
 export default {
 	install
