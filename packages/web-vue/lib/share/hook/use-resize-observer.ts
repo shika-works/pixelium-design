@@ -1,5 +1,5 @@
 import type { Nullish } from 'parsnip-kit'
-import { onBeforeUnmount, onMounted, type Ref } from 'vue'
+import { onBeforeUnmount, onMounted, type Ref, nextTick } from 'vue'
 import { inBrowser } from '../util/env'
 
 export const useResizeObserver = (
@@ -12,7 +12,7 @@ export const useResizeObserver = (
 	}
 	const resizeObserver = new ResizeObserver(callback)
 	onMounted(() => {
-		setTimeout(() => {
+		nextTick(() => {
 			leading && callback()
 			ref.value && resizeObserver.observe(ref.value)
 		})

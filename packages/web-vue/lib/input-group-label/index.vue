@@ -94,9 +94,19 @@ onMounted(() => {
 	})
 })
 
-watch([borderRadiusComputed, shapeComputed, hoverFlag, activeFlag, darkMode], () => {
-	drawPixel()
-})
+watch(
+	[
+		borderRadiusComputed,
+		shapeComputed,
+		hoverFlag,
+		activeFlag,
+		darkMode,
+		() => props.backgroundColor
+	],
+	() => {
+		drawPixel()
+	}
+)
 watch([first, last], () => {
 	drawPixel()
 })

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { h, nextTick, ref } from 'vue'
-import Select from '../index.vue' // 组件路径需根据实际项目调整
+import Select from '../index.vue'
 import type { SelectOption } from '../type'
 import InputGroup from '../../input-group/index.vue'
 import Tag from '../../tag/index.vue'

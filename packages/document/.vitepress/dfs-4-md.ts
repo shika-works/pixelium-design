@@ -45,7 +45,17 @@ const dfs = (
 	})
 }
 
-const order = ['guide', 'config', 'common', 'layout', 'data-input', 'feedback', 'base']
+const order = [
+	'guide',
+	'config',
+	'common',
+	'layout',
+	'data-input',
+	'data-display',
+	'feedback',
+	'base',
+	'fabulous-idea'
+]
 
 const guideOrder = ['intro', 'starting', 'update-plan', 'changelog']
 

@@ -1,5 +1,10 @@
 <template>
-	<Teleport :to="props.root || 'body'">
+	<PopupWrapper
+		:root="props.root"
+		:zIndex="props.zIndex"
+		:visible="props.visible"
+		:close-delay="ANIMATION_DURATION"
+	>
 		<Transition :name="'px-popup-content-fade__' + popupRoughPlacement">
 			<div
 				ref="contentRef"
@@ -15,7 +20,6 @@
 					...floatingStyles,
 					visibility: show ? 'visible' : 'hidden',
 					pointerEvents: show ? 'auto' : 'none',
-					zIndex: props.zIndex ?? currentZIndex,
 					width: isNumber(contentWidth) ? `${contentWidth}px` : undefined,
 					...props.contentStyle
 				}"
@@ -30,7 +34,7 @@
 				<canvas class="px-popup-content-canvas" ref="canvasRef" />
 			</div>
 		</Transition>
-	</Teleport>
+	</PopupWrapper>
 </template>
 
 <script setup lang="ts">
@@ -51,8 +55,8 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { PopupContentEvents, PopupContentProps } from './type'
 import { isNumber } from 'parsnip-kit'
-import { useZIndex } from '../share/hook/use-z-index'
 import { inBrowser } from '../share/util/env'
+import PopupWrapper from '../popup-wrapper/index.vue'
 
 defineOptions({
 	name: 'PopupContent'
@@ -67,7 +71,6 @@ const props = withDefaults(defineProps<PopupContentProps>(), {
 	visible: undefined,
 	widthEqual: false
 })
-const [currentZIndex, next] = useZIndex('popup')
 
 const ANIMATION_DURATION = 250
 
@@ -209,7 +212,6 @@ const processVisible = (value: boolean) => {
 		return
 	}
 	if (value) {
-		next()
 		if (props.target instanceof HTMLElement) {
 			openHandler(props.target)
 		} else if (props.target && props.target.el instanceof HTMLElement) {

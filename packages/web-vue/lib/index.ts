@@ -40,6 +40,9 @@ import Mask from './mask/index.vue'
 import Spin from './spin/index.vue'
 import Select from './select/index.vue'
 import VirtualList from './virtual-list/index.vue'
+import Image from './image/index.vue'
+import Avatar from './avatar/index.vue'
+import { pixelateImage } from './share/util/pixel.ts'
 
 const components = [
 	Button,
@@ -72,7 +75,9 @@ const components = [
 	Mask,
 	Spin,
 	Select,
-	VirtualList
+	VirtualList,
+	Image,
+	Avatar
 ]
 
 const defaultPrefix = 'Px'
@@ -138,7 +143,10 @@ export {
 	resetThemeColor,
 	setPixelSize,
 	resetPixelSize,
-	VirtualList
+	VirtualList,
+	Image,
+	Avatar,
+	pixelateImage
 }
 export default {
 	install

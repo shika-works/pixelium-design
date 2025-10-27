@@ -44,7 +44,7 @@ async function buildLib() {
 					output: {
 						exports: 'named',
 						globals: { vue: 'Vue' },
-						entryFileNames: 'entry.js',
+						entryFileNames: 'index.js',
 						chunkFileNames: '[name].js',
 						inlineDynamicImports: false,
 						assetFileNames: (assetInfo) => {
@@ -69,6 +69,9 @@ async function buildLib() {
 											const rel = relative(resolve(process.cwd(), 'lib'), id)
 											const base = rel.split('?')[0]
 											const name = base.split('.')[0]
+											if (name === 'index') {
+												return 'entry'
+											}
 											return name
 										}
 									}

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { h, nextTick, ref } from 'vue'
-import AutoComplete from '../index.vue' // 组件路径需根据实际项目调整
+import AutoComplete from '../index.vue'
 import type { AutoCompleteOption } from '../type'
 import InputGroup from '../../input-group/index.vue'
 import OptionList from '../../option-list/index.vue'
