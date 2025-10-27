@@ -4,13 +4,31 @@ import { clamp, fillArr } from './common'
 import type { ShallowRef } from 'vue'
 import { inBrowser } from './env'
 
+export const roundToPixel = (coord: number, pixelSize: number) =>
+	Math.floor(coord / pixelSize) * pixelSize
+
 function shouldPlot(x: number, y: number, startRad: number, endRad: number) {
 	let currentAngle = Math.atan2(y, x)
 	if (currentAngle < 0) {
 		currentAngle += Math.PI * 2
 	}
-	return currentAngle >= startRad && currentAngle <= endRad
+	if (!(currentAngle >= startRad && currentAngle <= endRad)) {
+		return false
+	}
+	return true
 }
+
+const QUADRANT_TEMPLATES: [number, number][] = [
+	[1, 1],
+	[-1, 1],
+	[1, -1],
+	[-1, -1],
+	[1, 1],
+	[-1, 1],
+	[1, -1],
+	[-1, -1]
+]
+
 function plot(
 	ctx: CanvasRenderingContext2D,
 	x: number,
@@ -21,18 +39,19 @@ function plot(
 	endRad: number,
 	pixelSize: number
 ) {
-	const quadrants = [
-		[x, y],
-		[-x, y],
-		[x, -y],
-		[-x, -y],
-		[y, x],
-		[-y, x],
-		[y, -x],
-		[-y, -x]
-	]
+	const xRound = x
+	const yRound = y
 
-	for (const [px, py] of quadrants) {
+	for (let i = 0; i < QUADRANT_TEMPLATES.length; i++) {
+		const [sign1, sign2] = QUADRANT_TEMPLATES[i]
+		let px: number, py: number
+		if (i < 4) {
+			px = sign1 * xRound
+			py = sign2 * yRound
+		} else {
+			px = sign1 * yRound
+			py = sign2 * xRound
+		}
 		if (shouldPlot(px, py, startRad, endRad)) {
 			ctx.fillRect(centerX + px, centerY + py, pixelSize, pixelSize)
 		}
@@ -248,7 +267,7 @@ export const getBorderRadius = (
 			case 'round':
 			case 'circle':
 				let radius = transformBorderRadiusSizeValue(canvas, '50%', pixelSize)
-				radius = Math.max(Math.round(radius / pixelSize) * pixelSize, pixelSize)
+				radius = Math.max(roundToPixel(radius, pixelSize), pixelSize)
 				return fillArr(radius, 4)
 			default:
 				return fillArr(pixelSize, 4)
@@ -264,7 +283,7 @@ export const getBorderRadius = (
 			case 'round':
 				let radius = transformBorderRadiusSizeValue(canvas, '50%', pixelSize)
 				radius = clamp(radius, pixelSize, height / 2)
-				radius = Math.max(Math.round(radius / pixelSize) * pixelSize, pixelSize)
+				radius = Math.max(roundToPixel(radius, pixelSize), pixelSize)
 				const roundArr = fillArr(radius, 4)
 				if (last) return roundArr.map((e, i) => (i < 1 || i > 2 ? pixelSize : e))
 				if (first) return roundArr.map((e, i) => (i > 0 && i < 3 ? pixelSize : e))
@@ -335,4 +354,246 @@ export const canvasPreprocess = (
 		rect,
 		canvas: canvasRef.value
 	}
+}
+
+const filterLine = (points: [number, number][]) => {
+	if (points.length <= 2) return points
+	const result: [number, number][] = [points[0]]
+	for (let i = 1; i < points.length; i++) {
+		const current = points[i]
+		while (result.length >= 2) {
+			const prevPrev = result[result.length - 2]
+			const prev = result[result.length - 1]
+			const isHorizontal = prevPrev[1] === prev[1] && prev[1] === current[1]
+			const isVertical = prevPrev[0] === prev[0] && prev[0] === current[0]
+			if (!isHorizontal && !isVertical) {
+				break
+			}
+			result.pop()
+		}
+		result.push(current)
+	}
+
+	while (result.length >= 3) {
+		const p1 = result[result.length - 3]
+		const p2 = result[result.length - 2]
+		const p3 = result[result.length - 1]
+		const isHorizontal = p1[1] === p2[1] && p2[1] === p3[1]
+		const isVertical = p1[0] === p2[0] && p2[0] === p3[0]
+		if (!isHorizontal && !isVertical) {
+			break
+		}
+		result.pop()
+	}
+
+	if (
+		result.length > 1 &&
+		result[result.length - 1][0] === result[0][0] &&
+		result[result.length - 1][1] === result[0][1]
+	) {
+		result.pop()
+	}
+
+	return result
+}
+
+const clockOrderSort = (points: [number, number][]) => {
+	const centroid = points.reduce(
+		(acc, [x, y]) => {
+			acc[0] += x
+			acc[1] += y
+			return acc
+		},
+		[0, 0] as [number, number]
+	)
+	centroid[0] /= points.length
+	centroid[1] /= points.length
+
+	return points.sort((a, b) => {
+		const angleA = Math.atan2(a[1] - centroid[1], a[0] - centroid[0])
+		const angleB = Math.atan2(b[1] - centroid[1], b[0] - centroid[0])
+		return angleB - angleA
+	})
+}
+
+export function floodFillEdge(
+	ctx: CanvasRenderingContext2D,
+	startX: number,
+	startY: number,
+	fillColor: RgbaColor
+): [number, number][] {
+	const w = ctx.canvas.width
+	const h = ctx.canvas.height
+	if (w <= 0 || h <= 0) return []
+
+	const img = ctx.getImageData(0, 0, w, h)
+	const data32 = new Uint32Array(img.data.buffer)
+	const uint32Color =
+		(fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r
+
+	const startPos = startY * w + startX
+	const targetColor = data32[startPos]
+	if (targetColor === uint32Color) return []
+
+	const filled = new Uint8Array(w * h)
+	type Span = { y: number; left: number; right: number; dy: number }
+	const stack: Span[] = []
+
+	function fillLine(x: number, y: number, dy: number): Span | null {
+		if (y < 0 || y >= h) return null
+
+		let left = x
+		while (
+			left > 0 &&
+			data32[y * w + (left - 1)] === targetColor &&
+			filled[y * w + (left - 1)] === 0
+		) {
+			left--
+		}
+
+		let right = x
+		while (
+			right < w - 1 &&
+			data32[y * w + (right + 1)] === targetColor &&
+			filled[y * w + (right + 1)] === 0
+		) {
+			right++
+		}
+
+		for (let i = left; i <= right; i++) {
+			const pos = y * w + i
+			if (filled[pos] === 0) {
+				filled[pos] = 1
+				data32[pos] = uint32Color
+			}
+		}
+
+		return { y, left, right, dy }
+	}
+
+	const firstSpan = fillLine(startX, startY, 1)
+	if (firstSpan) stack.push({ ...firstSpan, dy: 1 })
+	const secondSpan = fillLine(startX, startY - 1, -1)
+	if (secondSpan) stack.push({ ...secondSpan, dy: -1 })
+
+	while (stack.length) {
+		const { y, left, right, dy } = stack.pop()!
+		const ny = y + dy
+		if (ny < 0 || ny >= h) continue
+
+		let x = left
+		while (x <= right) {
+			const pos = ny * w + x
+			if (data32[pos] !== targetColor || filled[pos] === 1) {
+				x++
+				continue
+			}
+
+			const newSpan = fillLine(x, ny, dy)
+			if (newSpan) stack.push(newSpan)
+			x = newSpan ? newSpan.right + 1 : x + 1
+		}
+	}
+
+	const edgePoints = new Set<number>()
+	for (let y = 0; y < h; y++) {
+		for (let x = 0; x < w; x++) {
+			const pos = y * w + x
+			if (filled[pos] === 1) {
+				let isEdge = false
+				if (x === 0 || filled[y * w + (x - 1)] === 0) {
+					isEdge = true
+				} else if (x === w - 1 || filled[y * w + (x + 1)] === 0) {
+					isEdge = true
+				} else if (y === 0 || filled[(y - 1) * w + x] === 0) {
+					isEdge = true
+				} else if (y === h - 1 || filled[(y + 1) * w + x] === 0) {
+					isEdge = true
+				}
+
+				if (isEdge) {
+					edgePoints.add(x * h + y)
+				}
+			}
+		}
+	}
+
+	const points: [number, number][] = Array.from(edgePoints).map((enc) => {
+		const x = Math.floor(enc / h)
+		const y = enc % h
+		return [x, y]
+	})
+
+	if (points.length === 0) return []
+
+	clockOrderSort(points)
+
+	return filterLine(points)
+}
+
+export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number][] {
+	const canvas = ctx.canvas
+	const width = canvas.width
+	const height = canvas.height
+	const imageData = ctx.getImageData(0, 0, width, height)
+	const data = imageData.data
+	const visited: boolean[][] = Array.from({ length: height }, () => Array(width).fill(false))
+	const queue: [number, number][] = []
+	const edgePoints = new Set<number>()
+	const dirs = [
+		[0, 1],
+		[0, -1],
+		[1, 0],
+		[-1, 0]
+	]
+
+	for (let y = 0; y < height; y++) {
+		for (const x of [0, width - 1]) {
+			const index = (y * width + x) * 4 + 3
+			if (data[index] === 0 && !visited[y][x]) {
+				visited[y][x] = true
+				queue.push([x, y])
+			}
+		}
+	}
+	for (let x = 0; x < width; x++) {
+		for (const y of [0, height - 1]) {
+			const index = (y * width + x) * 4 + 3
+			if (data[index] === 0 && !visited[y][x]) {
+				visited[y][x] = true
+				queue.push([x, y])
+			}
+		}
+	}
+
+	while (queue.length > 0) {
+		const [cx, cy] = queue.shift()!
+		for (const [dx, dy] of dirs) {
+			const nx = cx + dx
+			const ny = cy + dy
+			if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue
+
+			const index = (ny * width + nx) * 4 + 3
+			const alpha = data[index]
+			if (alpha > 0) {
+				const key = nx * height + ny
+				edgePoints.add(key)
+			} else if (!visited[ny][nx]) {
+				visited[ny][nx] = true
+				queue.push([nx, ny])
+			}
+		}
+	}
+
+	const points = Array.from(edgePoints).map((key) => {
+		const x = Math.floor(key / height)
+		const y = key % height
+		return [x, y] as [number, number]
+	})
+
+	if (points.length === 0) return []
+
+	clockOrderSort(points)
+
+	return filterLine(points)
 }

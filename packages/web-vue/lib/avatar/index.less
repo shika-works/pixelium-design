@@ -1,0 +1,59 @@
+@import url(../share/style/index.css);
+
+div.px-avatar {
+	font-size: var(--text-size);
+}
+.px-avatar {
+	@prefix: px-avatar;
+	--avatar-size: var(--px-medium-size);
+	--px-medium-padding-x: var(--px-interval-4);
+	--px-large-padding-x: var(--px-interval-5);
+	--px-small-padding-x: var(--px-interval-3);
+	--text-color: var(--px-neutral-1);
+	--text-size: var(--px-medium-font-size);
+
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	display: inline-block;
+	position: relative;
+	color: var(--text-color);
+	user-select: none;
+	transition: 0.25s;
+	z-index: 0;
+	font-size: var(--text-size);
+	box-sizing: border-box;
+
+	width: var(--avatar-size);
+	height: var(--avatar-size);
+	&__large {
+		--avatar-size: var(--px-large-size);
+		--text-size: var(--px-large-font-size);
+	}
+	&__small {
+		--avatar-size: var(--px-small-size);
+		--text-size: var(--px-small-font-size);
+	}
+	&-canvas,
+	&-inner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+	}
+	&-canvas {
+		z-index: -1;
+	}
+	&-inner {
+		z-index: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: var(--avatar-size);
+		height: var(--avatar-size);
+		border-width: 0;
+		overflow: hidden;
+	}
+}

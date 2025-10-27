@@ -41,6 +41,7 @@ import Spin from './spin/index.vue'
 import Select from './select/index.vue'
 import VirtualList from './virtual-list/index.vue'
 import Image from './image/index.vue'
+import Avatar from './avatar/index.vue'
 
 const components = [
 	Button,
@@ -74,7 +75,8 @@ const components = [
 	Spin,
 	Select,
 	VirtualList,
-	Image
+	Image,
+	Avatar
 ]
 
 const defaultPrefix = 'Px'
@@ -141,7 +143,8 @@ export {
 	setPixelSize,
 	resetPixelSize,
 	VirtualList,
-	Image
+	Image,
+	Avatar
 }
 export default {
 	install

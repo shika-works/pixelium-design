@@ -80,3 +80,21 @@ export const findSameOption = <T extends string | Option | GroupOption>(
 	}
 	return ans
 }
+
+export function offsetOutward(
+	center: [number, number],
+	points: [number, number][],
+	offset: number
+): [number, number][] {
+	const [cx, cy] = center
+
+	return points.map(([x, y]) => {
+		const dx = x - cx
+		const dy = y - cy
+
+		const xOffset = dx > 0 ? offset : dx < 0 ? -offset : 0
+		const yOffset = dy > 0 ? offset : dy < 0 ? -offset : 0
+
+		return [x + xOffset, y + yOffset]
+	})
+}

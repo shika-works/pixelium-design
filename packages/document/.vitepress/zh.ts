@@ -43,7 +43,8 @@ const additionMap = {
 	base: '基础组件',
 	'virtual-list': '虚拟列表',
 	'data-display': '数据展示组件',
-	image: '图片'
+	image: '图片',
+	avatar: '头像'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
