@@ -12,9 +12,9 @@ export function pixelateImage(
 		background?: string
 	}
 ): Promise<string> {
-  if (!inBrowser()) {
-    return Promise.resolve('')
-  }
+	if (!inBrowser()) {
+		return Promise.resolve('')
+	}
 	const paletteResolved = options?.palette
 		? options.palette.map((color) => parseColor(color))
 		: []
