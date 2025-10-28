@@ -67,19 +67,30 @@ export function drawCircle(
 	endRad = Math.PI * 2,
 	pixelSize: number
 ) {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return
+
 	let x = 0
 	let y = radius
-	let d = 3 - 2 * radius
-	while (x <= y + pixelSize) {
-		plot(ctx, x, y, centerX, centerY, startRad, endRad, pixelSize)
-		x += pixelSize
-		if (d > 0) {
-			y -= pixelSize
-			d += 4 * (x - y) + 10
+	let step = radius / s < 4 ? Math.round(s / 2) : radius / s < 7 ? Math.round((s / 4) * 3) : s
+	step = Math.max(step, 1)
+
+	const end = Math.round((radius / 2) * Math.SQRT2)
+
+	while (x <= end) {
+		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
+		x += s
+		const yP = radius * radius - x * x
+		const lastStepFlag = x > end
+		if (!lastStepFlag) {
+			while (Math.abs(y * y - yP) > Math.abs((y - step) * (y - step) - yP)) {
+				y -= step
+			}
 		} else {
-			d += 4 * x + 6
+			y -= step
 		}
 	}
+	plot(ctx, end, end, centerX, centerY, startRad, endRad, s)
 }
 
 export type floodFillArgs = {
