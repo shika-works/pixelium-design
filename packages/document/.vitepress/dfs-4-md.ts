@@ -57,7 +57,13 @@ const order = [
 	'fabulous-idea'
 ]
 
-const guideOrder = ['intro', 'starting', 'update-plan', 'changelog']
+const guideOrder = [
+	'intro',
+	'starting',
+	'controlled-and-uncontrolled',
+	'update-plan',
+	'changelog'
+]
 
 export const dfs4Md = (
 	lang: string,
