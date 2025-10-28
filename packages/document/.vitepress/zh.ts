@@ -10,7 +10,8 @@ const titleMap = {
 	'dark-mode': '暗黑模式',
 	'pixel-size': '像素尺寸',
 	'update-plan': '更新计划',
-	changelog: '更新日志'
+	changelog: '更新日志',
+	'controlled-and-uncontrolled': '受控 & 非受控模式'
 }
 const additionMap = {
 	button: '按钮',
