@@ -72,11 +72,12 @@ export function drawCircle(
 
 	let x = 0
 	let y = radius
-	let step = radius / s < 4 ? Math.round(s / 2) : radius / s < 7 ? Math.round((s / 4) * 3) : s
+	const rate = radius / s
+	let step = rate < 4 ? Math.round(s / 2) : rate < 7 ? Math.round((s / 4) * 3) : s
 	step = Math.max(step, 1)
 
 	const tmp = (radius / 2) * Math.SQRT2
-	const end = radius / s > 4 ? Math.ceil(tmp) : Math.floor(tmp)
+	const end = rate > 4 ? Math.ceil(tmp) : Math.floor(tmp)
 
 	while (x <= end) {
 		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
@@ -91,7 +92,7 @@ export function drawCircle(
 			y -= step
 		}
 	}
-	if (radius / s > 2 && radius / s < 6) {
+	if (rate > 2 && rate < 6) {
 		const fix = Math.round(tmp)
 		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
 	}
