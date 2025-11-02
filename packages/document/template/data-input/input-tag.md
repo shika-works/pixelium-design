@@ -1,10 +1,10 @@
 [[[zh
-# 标签输入 Input Number
+# 标签输入 Input Tag
 
 专门输入标签的输入框，如果需要输入一系列的文本，这可能有用。
 ]]]
 [[[en
-# Tag Input Input Number
+# Input Tag
 
 An input box specifically for entering tags. If you need to input a series of texts, this might be useful.
 ]]]
