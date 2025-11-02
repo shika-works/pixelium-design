@@ -20,3 +20,7 @@ export interface GroupOption<T = any> {
 	children: (Option<T> | string)[]
 	type: typeof GROUP_OPTION_TYPE
 }
+
+export type LooseRequired<T> = {
+	[P in keyof (T & Required<T>)]: T[P]
+}
