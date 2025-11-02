@@ -14,14 +14,14 @@
 </template>
 <script lang="ts" setup>
 import {
-	computed,
 	getCurrentInstance,
 	inject,
 	nextTick,
 	onMounted,
 	ref,
 	shallowRef,
-	watch
+	watch,
+	type ToRefs
 } from 'vue'
 import type { InputGroupLabelProps } from './type'
 import {
@@ -41,6 +41,8 @@ import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import type { InputGroupProps } from '../input-group/type'
 import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { LooseRequired } from '../share/type'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -64,21 +66,22 @@ const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
 
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProps = inject<undefined | ToRefs<LooseRequired<InputGroupProps>>>(
+	INPUT_GROUP_PROVIDE
+)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
+const sizeComputed = createProvideComputed('size', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
+const shapeComputed = createProvideComputed('shape', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
 
 const hoverFlag = ref(false)
 const activeFlag = ref(false)

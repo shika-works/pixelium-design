@@ -43,7 +43,7 @@
 			:value="inputValue"
 			ref="inputRef"
 			:placeholder="props.placeholder"
-			:disabled="disabledComputed || props.readonly"
+			:disabled="disabledComputed || readonlyComputed"
 			:autofocus="autofocus"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
@@ -102,7 +102,8 @@ import {
 	ref,
 	shallowRef,
 	useSlots,
-	watch
+	watch,
+	type ToRefs
 } from 'vue'
 import type { InputNumberEvents, InputNumberProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
@@ -116,9 +117,13 @@ import {
 	getBorderRadius
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import Minus from '@hackernoon/pixel-icon-library/icons/SVG/regular/minus.svg'
+// @ts-ignore
 import Plus from '@hackernoon/pixel-icon-library/icons/SVG/regular/plus.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { isInfinity, isNanValue, isNullish, isNumber, type Nullish } from 'parsnip-kit'
 import { useComposition } from '../share/hook/use-composition'
@@ -127,9 +132,12 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import type { InputGroupProps } from '../input-group/type'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import type { LooseRequired } from '../share/type'
+import type { FormItemProvide } from '../form-item/type'
+import { createProvideComputed } from '../share/util/reactivity'
 
 defineOptions({
 	name: 'InputNumber'
@@ -157,24 +165,35 @@ const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProps = inject<undefined | ToRefs<LooseRequired<InputGroupProps>>>(
+	INPUT_GROUP_PROVIDE
+)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
-})
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
+const sizeComputed = createProvideComputed('size', [
+	innerInputGroup.value && inputGroupProps,
+	formItemProvide,
+	props
+])
+const shapeComputed = createProvideComputed('shape', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProps, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProps, formItemProvide, props],
+	'or'
+)
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const reg4Number = /^[+-]?\d+(?:\.\d*)?$/
 
@@ -301,6 +320,7 @@ const clearHandler = async () => {
 	setInputValue(formatNumberValue(modelValue.value))
 	emits('change', defaultValue)
 	emits('clear', defaultValue)
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
@@ -309,6 +329,7 @@ const changeHandler = (e: Event) => {
 
 	setInputValue(formatNumberValue(modelValue.value))
 	emits('change', numberValue, e)
+	formItemProvide?.changeHandler()
 }
 
 const focusMode = ref(false)
@@ -316,6 +337,7 @@ const focusMode = ref(false)
 const blurHandler = () => {
 	setInputValue(formatNumberValue(modelValue.value))
 	focusMode.value = false
+	formItemProvide?.blurHandler()
 }
 
 const focusHandler = () => {
@@ -323,7 +345,7 @@ const focusHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const slots = useSlots()
@@ -343,14 +365,14 @@ defineExpose({
 
 const increaseDisabled = computed(() => {
 	return (
-		props.readonly ||
+		readonlyComputed.value ||
 		disabledComputed.value ||
 		(modelValue.value && modelValue.value >= props.max)
 	)
 })
 const decreaseDisabled = computed(() => {
 	return (
-		props.readonly ||
+		readonlyComputed.value ||
 		disabledComputed.value ||
 		(modelValue.value && modelValue.value <= props.min)
 	)
@@ -367,7 +389,9 @@ const increaseHandler = async () => {
 	const nextValue = adjustValue(currentValue + props.step)
 
 	await updateModelValue(nextValue)
+	emits('change', nextValue)
 	setInputValue(formatNumberValue(modelValue.value))
+	formItemProvide?.changeHandler()
 }
 
 const decreaseHandler = async () => {
@@ -382,7 +406,9 @@ const decreaseHandler = async () => {
 	const nextValue = adjustValue(currentValue - props.step)
 
 	await updateModelValue(nextValue)
+	emits('change', nextValue)
 	setInputValue(formatNumberValue(modelValue.value))
+	formItemProvide?.changeHandler()
 }
 
 const showSettingSuffix = computed(() => {
@@ -451,10 +477,11 @@ const darkMode = useDarkMode()
 
 watch(
 	[
-		() => props.status,
+		statusComputed,
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		first,
@@ -491,9 +518,14 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)

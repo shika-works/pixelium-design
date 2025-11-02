@@ -21,6 +21,11 @@ export type InputGroupProps = {
 	 * @version 0.0.2
 	 */
 	disabled?: boolean
+	/**
+	 * @property {boolean} [readonly=false]
+	 * @version 0.0.3
+	 */
+	readonly?: boolean
 }
 
 export type InputGroupSlots = {

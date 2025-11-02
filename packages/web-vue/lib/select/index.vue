@@ -11,7 +11,8 @@ import {
 	watch,
 	useAttrs,
 	Fragment,
-	h
+	h,
+	type ToRefs
 } from 'vue'
 import type { SelectEvents, SelectGroupOption, SelectOption, SelectProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
@@ -26,13 +27,15 @@ import {
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { InputGroupProps } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Popover from '../popover/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
@@ -50,6 +53,9 @@ import { BORDER_CORNER_RAD_RANGE, GROUP_OPTION_TYPE } from '../share/const'
 import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
 import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import type { LooseRequired } from '../share/type'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
 
 defineOptions({
 	name: 'Select'
@@ -93,24 +99,36 @@ const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
 const [_, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProps = inject<undefined | ToRefs<LooseRequired<InputGroupProps>>>(
+	INPUT_GROUP_PROVIDE
+)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
-})
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
+const sizeComputed = createProvideComputed('size', [
+	innerInputGroup.value && inputGroupProps,
+	formItemProvide,
+	props
+])
+const shapeComputed = createProvideComputed('shape', [
+	innerInputGroup.value && inputGroupProps,
+	props
+])
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProps, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProps, formItemProvide, props],
+	'or'
+)
+
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const modelValueIsFalse = (modelValue: any) => {
 	return (
@@ -270,6 +288,7 @@ const clearHandler = async () => {
 	emits('change', nextModelValue)
 	emits('clear', nextModelValue)
 	emits('inputChange', '')
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
@@ -298,7 +317,7 @@ const focusImpl = () => {
 	emits('focus')
 }
 const focusInputHandler = (e: MouseEvent) => {
-	if (disabledComputed.value || props.readonly) {
+	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
 	const target = e.target
@@ -319,6 +338,7 @@ const blurSelect = async () => {
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
 	emits('blur')
+	formItemProvide?.blurHandler()
 }
 
 useClickOutsideListener(
@@ -340,7 +360,7 @@ const mouseleaveHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const getNextModelValue = (value: any) => {
@@ -466,7 +486,7 @@ const tagSize = computed(() => {
 })
 
 const tagCanClose = computed(() => {
-	return !disabledComputed.value && !props.readonly
+	return !disabledComputed.value && !readonlyComputed.value
 })
 
 const tagCloseHandler = async (value: any, e: MouseEvent) => {
@@ -480,6 +500,7 @@ const tagCloseHandler = async (value: any, e: MouseEvent) => {
 	await updateModelValue(nextValue)
 	emits('tagClose', value, e)
 	emits('change', nextValue)
+	formItemProvide?.changeHandler()
 }
 
 const shouldCollapseTags = computed(() => {
@@ -521,11 +542,13 @@ watch(
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		darkMode,
 		focusMode,
-		hoverFlag
+		hoverFlag,
+		statusComputed
 	],
 	() => {
 		setTimeout(() => {
@@ -555,9 +578,14 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
@@ -716,7 +744,7 @@ defineRender(() => {
 					ref={inputRef}
 					class="px-select-inner"
 					value={inputValue.value}
-					disabled={disabledComputed.value || props.readonly}
+					disabled={disabledComputed.value || readonlyComputed.value}
 					onInput={inputHandler}
 					onChange={changeHandler}
 					onFocus={stopHandler}
