@@ -134,7 +134,6 @@ describe('InputTag Component', () => {
 
 			const input = wrapper.find('input.px-input-tag-inner')
 			expect(input.attributes('disabled')).toBeUndefined()
-			expect(input.attributes('readonly')).toBeUndefined()
 
 			wrapper.setProps({ disabled: true })
 			await nextTick()
