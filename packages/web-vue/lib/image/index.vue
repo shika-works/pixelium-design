@@ -68,6 +68,7 @@ import { calculateZoomedSize } from '../share/util/dom'
 import PopupWrapper from '../popup-wrapper/index.vue'
 import Mask from '../mask/index.vue'
 import { useWindowResizeListener } from '../share/hook/use-window-resize-listener'
+// @ts-ignore
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 
 defineOptions({
