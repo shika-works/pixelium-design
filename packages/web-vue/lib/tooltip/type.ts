@@ -57,7 +57,7 @@ export type TooltipProps = {
 	 */
 	disabled?: boolean
 	/**
-	 * @property {number} [disabled]
+	 * @property {number} [zIndex]
 	 * @version 0.0.2
 	 */
 	zIndex?: number
