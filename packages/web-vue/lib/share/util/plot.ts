@@ -1,6 +1,6 @@
-import { isArray, isNumber } from 'parsnip-kit'
+import { clamp, isArray, isNumber } from 'parsnip-kit'
 import type { NumberOrPercentage, RgbaColor } from '../type'
-import { clamp, fillArr } from './common'
+import { fillArr } from './common'
 import type { ShallowRef } from 'vue'
 import { inBrowser } from './env'
 

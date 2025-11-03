@@ -109,9 +109,12 @@ import {
 	mergeSkipNullish,
 	omit,
 	pick,
-	setByPath
+	setByPath,
+	mapFields,
+	isEmpty,
+	isEmail
 } from 'parsnip-kit'
-import { isEmail, isEmpty, isUrl, mapFields } from '../share/util/common'
+import { isUrl } from '../share/util/common'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import type { LooseRequired } from '../share/type'
 

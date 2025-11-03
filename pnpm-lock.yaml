@@ -76,8 +76,8 @@ importers:
         specifier: ^5.1.5
         version: 5.1.6
       parsnip-kit:
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.0.6
+        version: 0.0.6
       vue:
         specifier: ^3.5.17
         version: 3.5.22(typescript@5.8.3)
@@ -3758,6 +3758,9 @@ packages:
 
   parsnip-kit@0.0.5:
     resolution: {integrity: sha512-yGfS9Prv8RF7TK08JmhfWmONRbPo8bF160US00I130RMB38LWL5CfOPqtiBEjmn0WDJpiNyXwVRbvlIlEi9Oaw==}
+
+  parsnip-kit@0.0.6:
+    resolution: {integrity: sha512-gs2RFFfma/WeHQO+4sYpIePQVBs44/u3UEcBxNYx/APgqqaeJYbgjyyimEzkPRQWs2l2VW/Slw5Q5ol1jBkfgw==}
 
   path-browserify@1.0.1:
     resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
@@ -9023,6 +9026,8 @@ snapshots:
   parseurl@1.3.3: {}
 
   parsnip-kit@0.0.5: {}
+
+  parsnip-kit@0.0.6: {}
 
   path-browserify@1.0.1: {}
 
