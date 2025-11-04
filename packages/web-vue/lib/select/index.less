@@ -34,11 +34,13 @@ div.px-select {
 		border: 0;
 		background-color: transparent;
 		box-sizing: border-box;
-		flex: 1;
 		font-size: var(--text-size);
 		line-height: var(--px-line-height);
 		font-family: var(--px-font);
 		padding: 0;
+		flex-grow: 1;
+		flex-basis: var(--px-input-area-width);
+		flex-shrink: 0;
 		&:focus-visible {
 			outline-color: var(--px-neutral-10);
 			outline-offset: var(--px-bit);
@@ -69,6 +71,9 @@ div.px-select {
 	&-content {
 		min-height: calc(var(--select-size) - var(--px-bit) * 2);
 		flex-wrap: wrap;
+		flex-grow: 1;
+		flex-basis: var(--px-input-area-width);
+		flex-shrink: 0;
 		.px-tag {
 			margin-right: var(--px-interval-2);
 			margin-top: 1px;

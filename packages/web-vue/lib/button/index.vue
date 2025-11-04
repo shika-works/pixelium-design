@@ -54,13 +54,16 @@ import {
 	getCurrentInstance,
 	inject,
 	nextTick,
+	onBeforeUnmount,
 	onMounted,
 	ref,
 	shallowRef,
+	useId,
 	useSlots,
 	watch
 } from 'vue'
 import type { ButtonProps } from './type'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import {
 	calcBorderCornerCenter,
@@ -71,7 +74,7 @@ import {
 } from '../share/util/plot'
 import { generatePalette, parseColor } from '../share/util/color'
 import type { RgbaColor } from '../share/type'
-import type { ButtonGroupProps } from '../button-group/type'
+import type { ButtonGroupProvide } from '../button-group/type'
 import {
 	drawBorder,
 	drawGradient,
@@ -84,9 +87,15 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { BUTTON_GROUP_UPDATE, INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
-import type { InputGroupProps } from '../input-group/type'
-import { BUTTON_GROUP_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import type { InputGroupProvide } from '../input-group/type'
+import {
+	BUTTON_GROUP_PROVIDE,
+	FORM_PROVIDE,
+	INPUT_GROUP_PROVIDE
+} from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import type { FormProvide } from '../form/type'
+import { createProvideComputed } from '../share/util/reactivity'
 
 defineOptions({
 	name: 'Button'
@@ -107,53 +116,53 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 const instance = getCurrentInstance()
 const innerButtonGroup = ref(instance?.parent?.type.name === 'ButtonGroup')
 const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [_, first, last] = innerButtonGroup.value
+const [index, first, last] = innerButtonGroup.value
 	? useIndexOfChildren(BUTTON_GROUP_UPDATE)
 	: innerInputGroup.value
 		? useIndexOfChildren(INPUT_GROUP_UPDATE)
 		: [ref(0), ref(false), ref(false)]
 
-const buttonGroupProps = inject<undefined | ButtonGroupProps>(BUTTON_GROUP_PROVIDE)
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const buttonGroupProvide = inject<undefined | ButtonGroupProvide>(BUTTON_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
+const formProps = inject<undefined | FormProvide>(FORM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerButtonGroup.value && buttonGroupProps
-		? buttonGroupProps.borderRadius
-		: innerInputGroup.value && inputGroupProps
-			? inputGroupProps.borderRadius
-			: props.borderRadius
-})
-const typeComputed = computed(() => {
-	return innerButtonGroup.value && buttonGroupProps
-		? buttonGroupProps.variant || props.variant
-		: props.variant
-})
-const sizeComputed = computed(() => {
-	return innerButtonGroup.value && buttonGroupProps
-		? buttonGroupProps.size
-		: innerInputGroup.value && inputGroupProps
-			? inputGroupProps.size
-			: props.size
-})
-const shapeComputed = computed(() => {
-	return innerButtonGroup.value && buttonGroupProps
-		? buttonGroupProps.shape
-		: innerInputGroup.value && inputGroupProps
-			? inputGroupProps.shape
-			: props.shape
-})
-const disabledComputed = computed(() => {
-	return innerButtonGroup.value && buttonGroupProps
-		? buttonGroupProps.disabled || props.disabled
-		: innerInputGroup.value && inputGroupProps
-			? inputGroupProps.disabled || props.disabled
-			: props.disabled
-})
-const loadingComputed = computed(() => {
-	return innerButtonGroup.value && buttonGroupProps
-		? buttonGroupProps.loading || props.loading
-		: props.loading
-})
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerButtonGroup.value && buttonGroupProvide,
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const typeComputed = createProvideComputed('variant', [
+	innerButtonGroup.value && buttonGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed('size', [
+	innerButtonGroup.value && buttonGroupProvide,
+	innerInputGroup.value && inputGroupProvide,
+	formProps,
+	props
+])
+const shapeComputed = createProvideComputed('shape', [
+	innerButtonGroup.value && buttonGroupProvide,
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[
+		innerButtonGroup.value && buttonGroupProvide,
+		innerInputGroup.value && inputGroupProvide,
+		formProps,
+		props
+	],
+	(pre, value, cur) => {
+		return pre || value || ('readonly' in cur && cur['readonly'].value)
+	}
+)
+const loadingComputed = createProvideComputed(
+	'loading',
+	[innerButtonGroup.value && buttonGroupProvide, props],
+	'or'
+)
 
 const slots = useSlots()
 
@@ -173,10 +182,69 @@ const darkMode = useDarkMode()
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const buttonRef = shallowRef<HTMLButtonElement | null>(null)
 
+const id = useId()
+
 onMounted(() => {
 	nextTick(() => {
 		drawPixel()
+		if (innerButtonGroup.value) {
+			buttonGroupProvide?.collectChildrenInfo({
+				id,
+				variant: typeComputed.value,
+				index: index.value
+			})
+		}
+		if (innerInputGroup.value) {
+			inputGroupProvide?.collectChildrenInfo({
+				id,
+				variant: typeComputed.value,
+				index: index.value
+			})
+		}
 	})
+})
+
+onBeforeUnmount(() => {
+	if (innerButtonGroup.value) {
+		buttonGroupProvide?.removeChildrenInfo(id)
+	}
+	if (innerInputGroup.value) {
+		inputGroupProvide?.removeChildrenInfo(id)
+	}
+})
+
+watch([typeComputed, index], () => {
+	if (innerButtonGroup.value) {
+		buttonGroupProvide?.collectChildrenInfo({
+			id,
+			variant: typeComputed.value,
+			index: index.value
+		})
+	}
+	if (innerInputGroup.value) {
+		inputGroupProvide?.collectChildrenInfo({
+			id,
+			variant: typeComputed.value,
+			index: index.value
+		})
+	}
+})
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerButtonGroup.value
+			? !!(
+					buttonGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: innerInputGroup.value
+				? !!(
+						inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+							?.variant === 'text'
+					)
+				: false
+	} else {
+		return false
+	}
 })
 
 const palette = computed<null | RgbaColor[]>(() => {
@@ -190,8 +258,8 @@ const textColor = computed(() => {
 	return getTextColorWithPalette(
 		palette.value,
 		typeComputed.value,
-		disabledComputed.value,
-		loadingComputed.value,
+		!!disabledComputed.value,
+		!!loadingComputed.value,
 		hoverFlag.value,
 		activeFlag.value
 	)
@@ -208,7 +276,8 @@ watch(
 		palette,
 		hoverFlag,
 		activeFlag,
-		darkMode
+		darkMode,
+		nextIsTextButton
 	],
 	() => {
 		drawPixel()
@@ -239,8 +308,8 @@ const drawPixel = () => {
 	)
 
 	const borderColor = getBorderColor(
-		disabledComputed.value,
-		loadingComputed.value,
+		!!disabledComputed.value,
+		!!loadingComputed.value,
 		typeComputed.value,
 		props.theme,
 		palette.value,
@@ -259,8 +328,8 @@ const drawPixel = () => {
 			borderRadius,
 			rad,
 			pixelSize,
-			disabledComputed.value,
-			loadingComputed.value,
+			!!disabledComputed.value,
+			!!loadingComputed.value,
 			props.theme,
 			palette.value,
 			innerButtonGroup.value || innerInputGroup.value,
@@ -282,11 +351,12 @@ const drawPixel = () => {
 		typeComputed.value,
 		innerButtonGroup.value || innerInputGroup.value,
 		first.value,
-		last.value
+		last.value,
+		nextIsTextButton.value
 	)
 	const backgroundColor = getBackgroundColor(
-		disabledComputed.value,
-		loadingComputed.value,
+		!!disabledComputed.value,
+		!!loadingComputed.value,
 		typeComputed.value,
 		props.theme,
 		palette.value,

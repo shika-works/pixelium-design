@@ -13,7 +13,8 @@ export const drawBorder = (
 	pixelSize: number,
 	inner: boolean,
 	first: boolean,
-	last: boolean
+	last: boolean,
+	nextIsTextButton: boolean
 ) => {
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
@@ -33,7 +34,11 @@ export const drawBorder = (
 	}
 
 	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(center[0][0], 0, center[1][0] - center[0][0] + pixelSize, pixelSize)
+		let length = center[1][0] - center[0][0] + pixelSize
+		if (inner && !last) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[0][0], 0, length, pixelSize)
 	}
 
 	if (center[2][1] + pixelSize > center[1][1] && ((inner && last) || !inner)) {
@@ -46,17 +51,14 @@ export const drawBorder = (
 	}
 
 	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0],
-			height - pixelSize,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
+		let length = center[2][0] - center[3][0] + pixelSize
+		if (inner && !last) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[3][0], height - pixelSize, length, pixelSize)
 	}
 
-	const flag = inner && !first
-
-	if (!flag && center[3][1] + pixelSize > center[0][1]) {
+	if ((!inner || first) && center[3][1] + pixelSize > center[0][1]) {
 		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
 	}
 
@@ -64,6 +66,10 @@ export const drawBorder = (
 		ctx.fillRect(pixelSize / 2, 0, pixelSize / 2, height)
 	}
 	if (inner && !last) {
-		ctx.fillRect(width - 2 * pixelSize - 1, 0, pixelSize, height)
+		let length = pixelSize
+		if (nextIsTextButton) {
+			length /= 2
+		}
+		ctx.fillRect(width - 2 * pixelSize - 1, 0, length, height)
 	}
 }

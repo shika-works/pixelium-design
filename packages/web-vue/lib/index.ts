@@ -42,6 +42,8 @@ import Select from './select/index.vue'
 import VirtualList from './virtual-list/index.vue'
 import Image from './image/index.vue'
 import Avatar from './avatar/index.vue'
+import Form from './form/index.vue'
+import FormItem from './form-item/index.vue'
 import { pixelateImage } from './share/util/pixel.ts'
 
 const components = [
@@ -77,7 +79,9 @@ const components = [
 	Select,
 	VirtualList,
 	Image,
-	Avatar
+	Avatar,
+	Form,
+	FormItem
 ]
 
 const defaultPrefix = 'Px'
@@ -146,7 +150,9 @@ export {
 	VirtualList,
 	Image,
 	Avatar,
-	pixelateImage
+	pixelateImage,
+	Form,
+	FormItem
 }
 export default {
 	install

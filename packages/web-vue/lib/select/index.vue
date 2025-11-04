@@ -26,13 +26,15 @@ import {
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import type { InputGroupProps } from '../input-group/type'
+import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Popover from '../popover/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
@@ -47,9 +49,11 @@ import {
 	isUndefined
 } from 'parsnip-kit'
 import { BORDER_CORNER_RAD_RANGE, GROUP_OPTION_TYPE } from '../share/const'
-import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
 import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Select'
@@ -90,26 +94,51 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 
 const instance = getCurrentInstance()
 const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [_, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
+const [index, first, last] = innerInputGroup.value
+	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
+			return instance?.vnode.el?.nextElementSibling
+		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed('size', [
+	innerInputGroup.value && inputGroupProvide,
+	formItemProvide,
+	props
+])
+const shapeComputed = createProvideComputed('shape', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
 
 const modelValueIsFalse = (modelValue: any) => {
@@ -212,6 +241,7 @@ const currentLabelSelected = computed(() => {
 })
 
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
+const contentRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 const popoverRef = shallowRef<InstanceType<typeof Popover> | null>(null)
@@ -270,6 +300,7 @@ const clearHandler = async () => {
 	emits('change', nextModelValue)
 	emits('clear', nextModelValue)
 	emits('inputChange', '')
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
@@ -278,9 +309,16 @@ const changeHandler = (e: Event) => {
 	emits('inputChange', target.value, e)
 }
 
+const [wait, cancel] = useCancelableDelay()
+
 const focusMode = ref(false)
 
-const focusImpl = () => {
+const focusImpl = async (e: FocusEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
+		return
+	}
+	cancel()
+
 	focusMode.value = true
 	nextTick(() => {
 		if (inputRef.value && props.filterable) {
@@ -295,10 +333,10 @@ const focusImpl = () => {
 		}
 	})
 	triggerPopover()
-	emits('focus')
+	emits('focus', e)
 }
-const focusInputHandler = (e: MouseEvent) => {
-	if (disabledComputed.value || props.readonly) {
+const focusInputHandler = async (e: MouseEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
 	const target = e.target
@@ -307,29 +345,37 @@ const focusInputHandler = (e: MouseEvent) => {
 			return
 		}
 	}
-	focusImpl()
+	contentRef.value?.focus()
 }
 
-const blurSelect = async () => {
+const blurSelect = async (e: FocusEvent) => {
+	const next = await wait()
+
+	if (!next) {
+		return
+	}
+
 	focusMode.value = false
-	popoverVisible.value = false
-	inputRef.value?.blur()
+	closePopover()
+	contentRef.value?.blur()
 	setTimeout(async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
-	emits('blur')
+	emits('blur', e)
+	formItemProvide?.blurHandler()
 }
 
-useClickOutsideListener(
-	[
-		wrapperRef,
-		() => {
-			return popoverRef.value?.triggerContent?.content
-		}
-	],
-	blurSelect
-)
+const focusoutHandler = (e: FocusEvent) => {
+	const relatedTarget = e.relatedTarget as Node
+	if (relatedTarget && popoverRef.value?.triggerContent?.content?.contains(relatedTarget)) {
+		return
+	}
+	if (relatedTarget && wrapperRef.value?.contains(relatedTarget)) {
+		return
+	}
+	blurSelect(e)
+}
 
 const hoverFlag = ref(false)
 const mouseenterHandler = () => {
@@ -340,7 +386,7 @@ const mouseleaveHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const getNextModelValue = (value: any) => {
@@ -466,7 +512,7 @@ const tagSize = computed(() => {
 })
 
 const tagCanClose = computed(() => {
-	return !disabledComputed.value && !props.readonly
+	return !disabledComputed.value && !readonlyComputed.value
 })
 
 const tagCloseHandler = async (value: any, e: MouseEvent) => {
@@ -480,6 +526,7 @@ const tagCloseHandler = async (value: any, e: MouseEvent) => {
 	await updateModelValue(nextValue)
 	emits('tagClose', value, e)
 	emits('change', nextValue)
+	formItemProvide?.changeHandler()
 }
 
 const shouldCollapseTags = computed(() => {
@@ -521,16 +568,17 @@ watch(
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		darkMode,
 		focusMode,
-		hoverFlag
+		hoverFlag,
+		statusComputed,
+		nextIsTextButton
 	],
 	() => {
-		setTimeout(() => {
-			drawPixel()
-		})
+		drawPixel()
 	}
 )
 
@@ -555,9 +603,14 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
@@ -574,7 +627,8 @@ const drawPixel = () => {
 		pixelSize,
 		innerInputGroup.value,
 		first.value,
-		last.value
+		last.value,
+		nextIsTextButton.value
 	)
 
 	const backgroundColor = disabledComputed.value
@@ -593,15 +647,15 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 
-const stopHandler = (e: Event) => {
-	e.stopPropagation()
-}
-
 defineRender(() => {
 	const Inner = (
 		<Fragment>
 			{slots.prefix && <div class="px-select-prefix-wrapper">{slots.prefix()}</div>}
-			<div class="px-select-content">
+			<div
+				class="px-select-content"
+				ref={contentRef}
+				tabindex={disabledComputed.value || readonlyComputed.value ? -1 : 0}
+			>
 				{props.multiple &&
 					tagsShowed.value.map((e: any, index: number) => {
 						return (
@@ -713,14 +767,13 @@ defineRender(() => {
 					</Fragment>
 				)}
 				<input
+					tabindex={-1}
 					ref={inputRef}
 					class="px-select-inner"
 					value={inputValue.value}
-					disabled={disabledComputed.value || props.readonly}
+					disabled={disabledComputed.value || readonlyComputed.value}
 					onInput={inputHandler}
 					onChange={changeHandler}
-					onFocus={stopHandler}
-					onBlur={stopHandler}
 					onCompositionstart={compositionStartHandler}
 					onCompositionend={compositionUpdateHandler}
 					v-show={props.filterable && focusMode.value}
@@ -810,6 +863,8 @@ defineRender(() => {
 								{ 'px-select__inner': innerInputGroup.value },
 								{ 'px-select__disabled': disabledComputed.value }
 							],
+							onFocusin: focusImpl,
+							onFocusout: focusoutHandler,
 							onClick: focusInputHandler,
 							onMouseenter: mouseenterHandler,
 							onMouseleave: mouseleaveHandler,

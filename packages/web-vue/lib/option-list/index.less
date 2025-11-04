@@ -2,7 +2,7 @@
 	@prefix: px-option-list;
 	--item-size: var(--px-medium-base-size);
 	--px-padding-x: var(--px-interval-1);
-	--px-padding-group-x: var(--px-interval-2);
+	--px-padding-group-x: var(--px-interval-4);
 	overflow: auto;
 	max-height: calc(var(--item-size) * 6);
 	background-color: var(--px-neutral-1);
@@ -26,6 +26,9 @@
 		padding-left: var(--px-padding-x);
 		padding-right: var(--px-padding-x);
 		background-color: var(--px-neutral-1);
+		&__child {
+			padding-left: var(--px-padding-group-x);
+		}
 		&:hover {
 			background-color: var(--px-primary-1);
 		}
@@ -42,11 +45,6 @@
 		}
 		&__active {
 			color: var(--px-primary-6);
-		}
-		&-group {
-			& .@{prefix}-item {
-				padding-left: var(--px-padding-group-x);
-			}
 		}
 		&-group-label {
 			overflow: hidden;

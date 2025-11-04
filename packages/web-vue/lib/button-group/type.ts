@@ -1,4 +1,6 @@
-import type { NumberOrPercentage } from '../share/type'
+import type { Ref, ToRefs } from 'vue'
+import type { LooseRequired, NumberOrPercentage } from '../share/type'
+import type { ButtonProps } from '../button/type'
 
 export type ButtonGroupProps = {
 	/**
@@ -39,4 +41,16 @@ export type ButtonGroupSlots = {
 	 * @version 0.0.0-beta
 	 */
 	default: {}
+}
+
+export type ChildrenInfo = {
+	id: string
+	variant?: ButtonProps['variant']
+	index: number
+}
+
+export type ButtonGroupProvide = ToRefs<LooseRequired<ButtonGroupProps>> & {
+	childrenInfo: Ref<ChildrenInfo[]>
+	collectChildrenInfo: (info: ChildrenInfo) => void
+	removeChildrenInfo: (id: string) => void
 }

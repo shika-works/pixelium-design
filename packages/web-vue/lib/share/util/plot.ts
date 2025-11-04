@@ -1,6 +1,6 @@
-import { isArray, isNumber } from 'parsnip-kit'
+import { clamp, isArray, isNumber } from 'parsnip-kit'
 import type { NumberOrPercentage, RgbaColor } from '../type'
-import { clamp, fillArr } from './common'
+import { fillArr } from './common'
 import type { ShallowRef } from 'vue'
 import { inBrowser } from './env'
 
@@ -72,16 +72,18 @@ export function drawCircle(
 
 	let x = 0
 	let y = radius
-	let step = radius / s < 4 ? Math.round(s / 2) : radius / s < 7 ? Math.round((s / 4) * 3) : s
+	const rate = radius / s
+	let step = rate < 4 ? Math.round(s / 2) : rate < 7 ? Math.round((s / 8) * 5) : s
 	step = Math.max(step, 1)
 
-	const end = Math.round((radius / 2) * Math.SQRT2)
+	const tmp = (radius / 2) * Math.SQRT2
+	const end = rate > 4 ? Math.ceil(tmp) : Math.floor(tmp)
 
 	while (x <= end) {
 		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
 		x += s
 		const yP = radius * radius - x * x
-		const lastStepFlag = x > end
+		const lastStepFlag = x >= end
 		if (!lastStepFlag) {
 			while (Math.abs(y * y - yP) > Math.abs((y - step) * (y - step) - yP)) {
 				y -= step
@@ -90,7 +92,10 @@ export function drawCircle(
 			y -= step
 		}
 	}
-	plot(ctx, end, end, centerX, centerY, startRad, endRad, s)
+	if (rate > 3 && rate < 6) {
+		const fix = Math.round(tmp)
+		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
+	}
 }
 
 export type floodFillArgs = {
@@ -306,10 +311,14 @@ export const getBorderRadius = (
 }
 
 export function calcWhenLeaveBaseline(pixelSize: number, borderRadius: number): number {
+	const step =
+		pixelSize * 4 < borderRadius
+			? Math.round(pixelSize / 2)
+			: pixelSize * 7 < borderRadius
+				? Math.round((pixelSize / 4) * 3)
+				: pixelSize
 	return (
-		Math.ceil(
-			(-6 + Math.sqrt(36 - 48 * pixelSize + 32 * pixelSize * borderRadius)) / (8 * pixelSize)
-		) * pixelSize
+		Math.ceil((-6 + Math.sqrt(36 - 48 * step + 32 * step * borderRadius)) / (8 * step)) * step
 	)
 }
 

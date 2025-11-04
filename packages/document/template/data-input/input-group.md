@@ -86,7 +86,8 @@ The `disabled` attribute applies a disabled state to all child controls.
 ## API
 
 [[[api zh
-disabled: 是否禁用，子组件的 `disabled` 和当前属性取或，决定该子组件是否禁用。
+readonly: 是否只读。
+disabled: 是否禁用。
 size: 组件尺寸，将覆盖子组件的 `size`。
 shape: 组件形状，将覆盖子组件的 `shape`，圆角仅作用于两侧子组件的外侧边框。
 borderRadius: 圆角半径，优先级高于 `shape`，将覆盖子组件的 `borderRadius`，圆角仅作用于两侧子组件的外侧边框。与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
@@ -94,7 +95,8 @@ slots.default: 需要组合的组件。
 ]]]
 
 [[[api en
-disabled: Whether to disable. The `disabled` prop of the child component and this prop are OR-ed to determine if the child component is disabled.
+disabled: Whether to disable.
+readonly: Whether the input-group is readonly.
 size: Component size, overrides the `size` of child components.
 shape: Component shape, overrides the `shape` of child components; rounding only affects the outer borders on both sides of the child components.
 borderRadius: Corner radius, takes precedence over `shape`, overrides the `borderRadius` of child components; rounding only affects the outer borders on both sides of the child components. Behaves like CSS `border-radius`: a single value or array of length 1 → applies to all four corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → applies to the four corners in a clockwise order.

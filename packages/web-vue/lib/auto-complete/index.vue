@@ -31,13 +31,15 @@ import {
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import type { InputGroupProps } from '../input-group/type'
+import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Popover from '../popover/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
@@ -45,6 +47,8 @@ import { defaultFilter } from '../share/util/common'
 import { isString, type Nullish } from 'parsnip-kit'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
 
 defineOptions({
 	name: 'AutoComplete'
@@ -78,26 +82,50 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 
 const instance = getCurrentInstance()
 const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [_, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
+const [index, first, last] = innerInputGroup.value
+	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
+			return instance?.vnode.el?.nextElementSibling
+		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed('size', [
+	innerInputGroup.value && inputGroupProvide,
+	formItemProvide,
+	props
+])
+const shapeComputed = createProvideComputed('shape', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
 
 const [modelValue, updateModelValue] = useControlledMode<string>('modelValue', props, emits, {
@@ -190,7 +218,7 @@ const mouseleaveHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const selectHandler = async (
@@ -249,7 +277,10 @@ watch(
 		() => slots,
 		darkMode,
 		focusMode,
-		hoverFlag
+		hoverFlag,
+		readonlyComputed,
+		statusComputed,
+		nextIsTextButton
 	],
 	() => {
 		setTimeout(() => {
@@ -279,9 +310,14 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
@@ -298,7 +334,8 @@ const drawPixel = () => {
 		pixelSize,
 		innerInputGroup.value,
 		first.value,
-		last.value
+		last.value,
+		nextIsTextButton.value
 	)
 
 	const backgroundColor = disabledComputed.value
@@ -326,7 +363,7 @@ defineRender(() => {
 				class="px-auto-complete-inner"
 				value={modelValue.value}
 				placeholder={props.placeholder}
-				disabled={disabledComputed.value || props.readonly}
+				disabled={disabledComputed.value || readonlyComputed.value}
 				autofocus={props.autofocus}
 				onInput={inputHandler}
 				onChange={changeHandler}

@@ -201,12 +201,13 @@ export type SelectEvents = {
 	 * @event blur
 	 * @version 0.0.2
 	 */
-	blur: []
+	blur: [event: FocusEvent]
 	/**
 	 * @event focus
+	 * @param {FocusEvent} event
 	 * @version 0.0.2
 	 */
-	focus: []
+	focus: [event: FocusEvent]
 	/**
 	 * @event select
 	 * @param {any} value
