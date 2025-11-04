@@ -60,7 +60,7 @@ const checkActive = (option: string | OptionListOption) => {
 
 const slots = useSlots()
 
-const renderItem = (item: string | OptionListOption | OptionListGroupOption) => {
+const renderItem = (item: string | OptionListOption | OptionListGroupOption, child = false) => {
 	const key = getKey(item)
 	if (isString(item)) {
 		return {
@@ -70,7 +70,8 @@ const renderItem = (item: string | OptionListOption | OptionListGroupOption) => 
 					key={key}
 					class={{
 						'px-option-list-item': true,
-						'px-option-list-item__active': checkActive(item)
+						'px-option-list-item__active': checkActive(item),
+						'px-option-list-item__child': child
 					}}
 					onClick={(e: MouseEvent) => selectHandler(item, e)}
 				>
@@ -88,7 +89,8 @@ const renderItem = (item: string | OptionListOption | OptionListGroupOption) => 
 					class={{
 						'px-option-list-item': true,
 						'px-option-list-item__disabled': item.disabled,
-						'px-option-list-item__active': checkActive(item)
+						'px-option-list-item__active': checkActive(item),
+						'px-option-list-item__child': child
 					}}
 					onClick={(e: MouseEvent) => selectObjectHandler(item, e)}
 				>
@@ -111,7 +113,7 @@ const renderItem = (item: string | OptionListOption | OptionListGroupOption) => 
 			},
 			...item.children.map(
 				(child): { el: JSX.Element; key: number | symbol | string } =>
-					renderItem(child) as { el: JSX.Element; key: number | symbol | string }
+					renderItem(child, true) as { el: JSX.Element; key: number | symbol | string }
 			)
 		]
 	}
