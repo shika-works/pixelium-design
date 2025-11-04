@@ -1,4 +1,6 @@
-import type { NumberOrPercentage } from '../share/type'
+import type { Ref, ToRefs } from 'vue'
+import type { LooseRequired, NumberOrPercentage } from '../share/type'
+import type { ChildrenInfo } from '../button-group/type'
 
 export type InputGroupProps = {
 	/**
@@ -34,4 +36,10 @@ export type InputGroupSlots = {
 	 * @version 0.0.2
 	 */
 	default: {}
+}
+
+export type InputGroupProvide = ToRefs<LooseRequired<InputGroupProps>> & {
+	childrenInfo: Ref<ChildrenInfo[]>
+	collectChildrenInfo: (info: ChildrenInfo) => void
+	removeChildrenInfo: (id: string) => void
 }

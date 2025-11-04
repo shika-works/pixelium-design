@@ -4,8 +4,8 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { inject, provide, toRefs } from 'vue'
-import type { InputGroupProps } from './type'
+import { inject, provide, ref, toRefs } from 'vue'
+import type { InputGroupProps, InputGroupProvide } from './type'
 import { emitParentUpdate } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import {
@@ -16,6 +16,7 @@ import {
 import type { FormProvide } from '../form/type'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
+import type { ChildrenInfo } from '../button-group/type'
 
 defineOptions({
 	name: 'InputGroup'
@@ -43,11 +44,25 @@ const readonlyComputed = createProvideComputed(
 )
 const sizeComputed = createProvideComputed('size', [formItemProvide, formProvide, props])
 
-provide(INPUT_GROUP_PROVIDE, {
+const childrenInfo = ref<ChildrenInfo[]>([])
+
+provide<InputGroupProvide>(INPUT_GROUP_PROVIDE, {
 	...toRefs(props),
 	disabled: disabledComputed,
 	size: sizeComputed,
-	readonly: readonlyComputed
+	readonly: readonlyComputed,
+	collectChildrenInfo: (info: ChildrenInfo) => {
+		const idx = childrenInfo.value.findIndex((e) => e.id === info.id)
+		if (idx >= 0) {
+			childrenInfo.value[idx] = info
+		} else {
+			childrenInfo.value.push(info)
+		}
+	},
+	removeChildrenInfo: (id: string) => {
+		childrenInfo.value = childrenInfo.value.filter((e) => e.id != id)
+	},
+	childrenInfo
 })
 
 emitParentUpdate(INPUT_GROUP_UPDATE)

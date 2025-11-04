@@ -14,14 +14,14 @@
 </template>
 <script lang="ts" setup>
 import {
+	computed,
 	getCurrentInstance,
 	inject,
 	nextTick,
 	onMounted,
 	ref,
 	shallowRef,
-	watch,
-	type ToRefs
+	watch
 } from 'vue'
 import type { InputGroupLabelProps } from './type'
 import {
@@ -38,11 +38,10 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
-import type { InputGroupProps } from '../input-group/type'
+import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
-import type { LooseRequired } from '../share/type'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -62,26 +61,37 @@ const props = withDefaults(defineProps<InputGroupLabelProps>(), {
 
 const instance = getCurrentInstance()
 const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [_, first, last] = innerInputGroup.value
+const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
 
-const inputGroupProps = inject<undefined | ToRefs<LooseRequired<InputGroupProps>>>(
-	INPUT_GROUP_PROVIDE
-)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
 
 const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProps,
+	innerInputGroup.value && inputGroupProvide,
 	props
 ])
 const sizeComputed = createProvideComputed('size', [
-	innerInputGroup.value && inputGroupProps,
+	innerInputGroup.value && inputGroupProvide,
 	props
 ])
 const shapeComputed = createProvideComputed('shape', [
-	innerInputGroup.value && inputGroupProps,
+	innerInputGroup.value && inputGroupProvide,
 	props
 ])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
+})
 
 const hoverFlag = ref(false)
 const activeFlag = ref(false)
@@ -104,7 +114,8 @@ watch(
 		hoverFlag,
 		activeFlag,
 		darkMode,
-		() => props.backgroundColor
+		() => props.backgroundColor,
+		nextIsTextButton
 	],
 	() => {
 		drawPixel()
@@ -148,7 +159,8 @@ const drawPixel = () => {
 		pixelSize,
 		innerInputGroup.value,
 		first.value,
-		last.value
+		last.value,
+		nextIsTextButton.value
 	)
 	const backgroundColor = props.backgroundColor
 		? parseColor(props.backgroundColor)
