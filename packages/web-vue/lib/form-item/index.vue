@@ -337,8 +337,6 @@ const doValidate = async (trigger?: RuleTrigger) => {
 			})
 			return tipMessage.value
 		}
-		console.log(rule)
-
 		if (rule.type) {
 			const types = Array.isArray(rule.type) ? rule.type : [rule.type]
 			const ok = types.some((t) => {
@@ -361,8 +359,6 @@ const doValidate = async (trigger?: RuleTrigger) => {
 						return true
 				}
 			})
-			console.log(types, ok)
-
 			if (!ok) {
 				tipMessage.value = formatTipMessage({
 					message: rule.message ?? `${props.field} type mismatch`,
