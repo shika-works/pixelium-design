@@ -16,6 +16,7 @@ import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
 import { inBrowser } from '../share/util/env'
 import { calcPixelSize } from '../share/util/plot'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Tooltip'
@@ -32,8 +33,6 @@ const props = withDefaults(defineProps<TooltipProps>(), {
 	defaultVisible: undefined
 })
 
-const HOVER_CLOSE_DELAY = 300
-
 const controlledMode = computed(() => {
 	return props.visible !== undefined
 })
@@ -49,13 +48,10 @@ const emits = defineEmits<TooltipEvents>()
 
 const currentTrigger = shallowRef<null | VNode>(null)
 
-let closeDelayPromiseReject: (() => void) | undefined
+const [wait, cancel] = useCancelableDelay()
 
 async function openHandler(node: VNode, e: MouseEvent) {
-	if (closeDelayPromiseReject) {
-		closeDelayPromiseReject()
-		closeDelayPromiseReject = undefined
-	}
+	cancel()
 	await openHandlerImpl(node)
 	emits('open', e)
 }
@@ -90,18 +86,8 @@ async function closeHandler(e: MouseEvent) {
 			return
 		}
 	} else {
-		if (closeDelayPromiseReject) {
-			closeDelayPromiseReject()
-			closeDelayPromiseReject = undefined
-		}
-		const { resolve, reject, promise } = Promise.withResolvers<void>()
-		closeDelayPromiseReject = reject
-		setTimeout(() => {
-			resolve()
-		}, HOVER_CLOSE_DELAY)
-		try {
-			await promise
-		} catch {
+		const next = await wait()
+		if (!next) {
 			return
 		}
 	}
@@ -120,10 +106,7 @@ const contentMouseenterHandler = () => {
 	if (props.trigger === 'click') {
 		return
 	}
-	if (closeDelayPromiseReject) {
-		closeDelayPromiseReject()
-		closeDelayPromiseReject = undefined
-	}
+	cancel()
 }
 const contentMouseleaveHandler = (e: MouseEvent) => {
 	if (props.trigger === 'click') {

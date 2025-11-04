@@ -224,8 +224,8 @@ const processVisible = (value: boolean) => {
 
 watch(
 	() => props.visible,
-	(val) => {
-		processVisible(!!val)
+	() => {
+		updateRenderState()
 	}
 )
 
@@ -238,12 +238,12 @@ const contentMouseleaveHandler = (e: MouseEvent) => {
 	emits('contentMouseleave', e)
 }
 
+const updateRenderState = () => {
+	processVisible(!!props.visible)
+}
+
 defineExpose({
-	updateRenderState: () => {
-		nextTick(() => {
-			processVisible(!!props.visible)
-		})
-	},
+	updateRenderState,
 	content: contentRef
 })
 
