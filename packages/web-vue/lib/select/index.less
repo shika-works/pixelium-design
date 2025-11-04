@@ -69,6 +69,9 @@ div.px-select {
 	&-content {
 		min-height: calc(var(--select-size) - var(--px-bit) * 2);
 		flex-wrap: wrap;
+		flex-grow: 1;
+		flex-basis: var(--px-input-area-width);
+		flex-shrink: 0;
 		.px-tag {
 			margin-right: var(--px-interval-2);
 			margin-top: 1px;
