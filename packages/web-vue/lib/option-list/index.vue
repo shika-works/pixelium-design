@@ -66,6 +66,7 @@ const renderItem = (item: string | OptionListOption | OptionListGroupOption) => 
 		return {
 			el: (
 				<li
+					tabindex={0}
 					key={key}
 					class={{
 						'px-option-list-item': true,
@@ -82,6 +83,7 @@ const renderItem = (item: string | OptionListOption | OptionListGroupOption) => 
 		return {
 			el: (
 				<li
+					tabindex={item.disabled ? -1 : 0}
 					key={key}
 					class={{
 						'px-option-list-item': true,
