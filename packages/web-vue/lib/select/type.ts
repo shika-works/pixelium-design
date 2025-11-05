@@ -252,9 +252,20 @@ export type SelectSlots = {
 	 * @param {any} value
 	 * @param {string} label
 	 * @param {number} index
-	 * @version 0.0.2
+	 * @param {boolean} disabled
+	 * @param {boolean} readonly
+	 * @version 0.0.3
 	 */
 	tag: {}
+	/**
+	 * @slot label
+	 * @param {any} value
+	 * @param {string} label
+	 * @param {boolean} disabled
+	 * @param {boolean} readonly
+	 * @version 0.0.3
+	 */
+	label: {}
 }
 
 export type SelectExpose = {

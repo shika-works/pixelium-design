@@ -126,6 +126,16 @@ Enabling the `virtualScroll` property activates the virtual list, which can be t
 <preview path="./select-virtual.vue"></preview>
 
 [[[zh
+## 选项自定义渲染
+通过插槽自定义渲染选项。
+]]]
+[[[en
+## Custom Rendering of Options
+Render options in a custom way via slots.
+]]]
+<preview path="./select-option.vue"></preview>
+
+[[[zh
 ## 更多配置
 选择器 Select 还拥有 Input、InputTag、AutoComplete 组件的部分功能。
 ]]]
@@ -181,6 +191,7 @@ slots.suffix: 后缀内容。
 slots.option: 选项内容。
 slots.group-label: 选项组的标签名。
 slots.tag: 标签内容。
+slots.label: 已选择的内容。
 selectExpose.focus: 聚焦当前控件。
 selectExpose.blur: 取消聚焦当前控件。
 selectExpose.clear: 清空当前输入内容。
@@ -229,6 +240,7 @@ slots.suffix :Suffix content.
 slots.option: Custom option content.
 slots.group-label: Custom group-label content.
 slots.tag: Custom tag content.
+slots.label: Selected content.
 selectExpose.focus: Focus the selector.
 selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
