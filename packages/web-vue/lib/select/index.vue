@@ -13,7 +13,13 @@ import {
 	Fragment,
 	h
 } from 'vue'
-import type { SelectEvents, SelectGroupOption, SelectOption, SelectProps } from './type'
+import type {
+	SelectEvents,
+	SelectExpose,
+	SelectGroupOption,
+	SelectOption,
+	SelectProps
+} from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -348,20 +354,28 @@ const focusInputHandler = async (e: MouseEvent) => {
 	contentRef.value?.focus()
 }
 
-const blurSelect = async (e: FocusEvent) => {
+const blurSelectImpl = async () => {
 	const next = await wait()
-
 	if (!next) {
-		return
+		return next
 	}
 
 	focusMode.value = false
 	closePopover()
+	inputRef.value?.blur()
 	contentRef.value?.blur()
 	setTimeout(async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
+	return next
+}
+
+const blurSelect = async (e: FocusEvent) => {
+	const next = await blurSelectImpl()
+	if (!next) {
+		return
+	}
 	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
@@ -487,9 +501,16 @@ const optionsFiltered = computed(() => {
 	return ans
 })
 
-defineExpose({
-	focus: focusImpl,
-	blur: blurSelect,
+defineExpose<SelectExpose>({
+	focus: () => {
+		if (disabledComputed.value || readonlyComputed.value) {
+			return
+		}
+		contentRef.value?.focus()
+	},
+	blur: () => {
+		blurSelectImpl()
+	},
 	clear: () => clearHandler()
 })
 
@@ -676,7 +697,9 @@ defineRender(() => {
 											? slots.tag({
 													value: e,
 													label: currentLabelSelectedMultiple.value[index],
-													index
+													index,
+													disabled: disabledComputed.value,
+													readonly: readonlyComputed.value
 												})
 											: currentLabelSelectedMultiple.value[index]
 								}}
@@ -700,7 +723,9 @@ defineRender(() => {
 											? slots.tag({
 													value: null,
 													label: `+${tagsCollapsed.value.length}`,
-													index: -1
+													index: -1,
+													disabled: disabledComputed.value,
+													readonly: readonlyComputed.value
 												})
 											: `+${tagsCollapsed.value.length}`
 								}}
@@ -723,7 +748,9 @@ defineRender(() => {
 														? slots.tag({
 																value: null,
 																label: `+${tagsCollapsed.value.length}`,
-																index: -1
+																index: -1,
+																disabled: disabledComputed.value,
+																readonly: readonlyComputed.value
 															})
 														: `+${tagsCollapsed.value.length}`
 											}}
@@ -751,7 +778,9 @@ defineRender(() => {
 																	? slots.tag({
 																			value: e,
 																			label: currentLabelSelectedMultiple.value[currentIndex],
-																			index: currentIndex
+																			index: currentIndex,
+																			disabled: disabledComputed.value,
+																			readonly: readonlyComputed.value
 																		})
 																	: currentLabelSelectedMultiple.value[currentIndex]
 															}
@@ -795,7 +824,14 @@ defineRender(() => {
 							'px-select-label__disabled': disabledComputed.value
 						}}
 					>
-						{currentLabelSelected.value}
+						{slots.label
+							? slots.label({
+									label: currentLabelSelected.value,
+									value: modelValue.value,
+									disabled: disabledComputed.value,
+									readonly: readonlyComputed.value
+								})
+							: currentLabelSelected.value}
 					</div>
 				)}
 			</div>
