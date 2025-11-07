@@ -47,7 +47,12 @@
 			}"
 			v-bind="mergedProps.contentProps"
 		>
-			<div class="px-form-item-content">
+			<div
+				class="px-form-item-content"
+				:class="{
+					[`px-form-item-content__${mergedProps.size}`]: mergedProps.size
+				}"
+			>
 				<slot></slot>
 				<span
 					v-if="shouldShowAsterisk && mergedProps.asteriskPlacement === 'end'"

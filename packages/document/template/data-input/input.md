@@ -13,7 +13,6 @@ Enter text.
 ## 基础使用
 
 你可以在这里输入文本。传入 `modelValue` 进入受控模式。不传或者为 `undefined` 则为非受控模式，此时可以传入 `defaultValue` 属性作为默认值。
-x> 建议使用 `null` 或者数据类型的空值作为空值。
 ]]]
 [[[en
 ## Basic Usage

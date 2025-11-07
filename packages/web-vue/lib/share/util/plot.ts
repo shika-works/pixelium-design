@@ -67,32 +67,39 @@ export function drawCircle(
 	endRad = Math.PI * 2,
 	pixelSize: number
 ) {
-	const s = pixelSize
+	let s = pixelSize
 	if (s <= 0 || radius <= 0) return
 
+	const rate = radius / s
 	let x = 0
 	let y = radius
-	const rate = radius / s
-	let step = rate < 4 ? Math.round(s / 2) : rate < 7 ? Math.round((s / 8) * 5) : s
-	step = Math.max(step, 1)
+	let dy =
+		rate < 4
+			? Math.round(s / 2)
+			: rate < 6
+				? Math.round((s / 8) * 3)
+				: rate < 8
+					? Math.round((s / 8) * 5)
+					: s
+	dy = Math.max(dy, 1)
 
 	const tmp = (radius / 2) * Math.SQRT2
 	const end = rate > 4 ? Math.ceil(tmp) : Math.floor(tmp)
 
-	while (x <= end) {
+	const dx = rate < 4 ? (s / 4) * 3 : s
+	while (x <= end + (rate <= 2 ? dx : 0)) {
 		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
-		x += s
+		x += dx
 		const yP = radius * radius - x * x
-		const lastStepFlag = x >= end
-		if (!lastStepFlag) {
-			while (Math.abs(y * y - yP) > Math.abs((y - step) * (y - step) - yP)) {
-				y -= step
-			}
-		} else {
-			y -= step
+		const originalY = y
+		while (Math.abs(y * y - yP) >= Math.abs((y - dy) * (y - dy) - yP)) {
+			y -= dy
+		}
+		if (x >= end && originalY === y) {
+			break
 		}
 	}
-	if (rate > 3 && rate < 6) {
+	if (rate < 6) {
 		const fix = Math.round(tmp)
 		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
 	}
@@ -266,7 +273,7 @@ export const getBorderRadius = (
 	canvas: HTMLCanvasElement,
 	pixelSize: number,
 	borderRadius: NumberOrPercentage | NumberOrPercentage[] | undefined,
-	shape: 'default' | 'round' | 'circle' | 'square' | undefined,
+	shape: 'default' | 'round' | 'circle' | 'square' | 'normal' | undefined,
 	size: 'medium' | 'small' | 'large' = 'medium',
 	inner: boolean = false,
 	first: boolean = false,
@@ -372,7 +379,8 @@ export const canvasPreprocess = (
 		width: canvasRef.value.width,
 		height: canvasRef.value.height,
 		rect,
-		canvas: canvasRef.value
+		canvas: canvasRef.value,
+		wrapper: wrapperRef.value
 	}
 }
 
