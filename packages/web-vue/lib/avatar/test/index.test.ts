@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import Avatar from '../index.vue'
 import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { createMocks } from '../../share/util/test'
+import { h } from 'vue'
 
 describe('Avatar', () => {
 	const { pre, post } = createMocks()
@@ -14,13 +15,12 @@ describe('Avatar', () => {
 	})
 
 	it('renders slot content when provided', () => {
-		const slotContent = '<span class="custom">A</span>'
 		const wrapper = mount(Avatar, {
 			slots: {
-				default: slotContent
+				default: () => h('span', { class: 'custom' }, ['A'])
 			}
 		})
-		expect(wrapper.html()).toContain(slotContent)
+		expect(wrapper.html()).toContain('<span class="custom">A</span>')
 	})
 
 	it('applies size prop correctly', () => {
