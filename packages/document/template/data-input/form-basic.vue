@@ -18,6 +18,9 @@
 		<px-form-item label="Text" field="text">
 			<px-textarea v-model="form.text" placeholder="Please input text..."></px-textarea>
 		</px-form-item>
+		<px-form-item label="Switch" field="switch">
+			<px-switch v-model="form.switch"></px-switch>
+		</px-form-item>
 		<px-form-item label="Select" field="select">
 			<px-select
 				:options="options"
@@ -62,11 +65,14 @@ const form = ref({
 	select: null,
 	email: '',
 	url: '',
-	numberString: ''
+	numberString: '',
+	switch: false
 })
 
 const rules = {
 	input: { required: true, message: 'Please input' },
+	select: { required: true, message: 'Please select' },
+	switch: { required: true, message: 'Please select' },
 	number: { min: 10, message: 'Min is 10' },
 	tags: [
 		{ required: true, message: 'Please input tags' },

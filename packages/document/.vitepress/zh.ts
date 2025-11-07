@@ -48,7 +48,8 @@ const additionMap = {
 	avatar: '头像',
 	'fabulous-idea': '奇思妙想',
 	pixelate: '图片像素化',
-	form: '表单'
+	form: '表单',
+	switch: '开关'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
