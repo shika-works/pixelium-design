@@ -11,6 +11,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-input-number-prefix-wrapper" v-if="slots.prefix">
 			<slot name="prefix"></slot>
@@ -28,14 +30,18 @@
 				@click="increaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showPlusPrefix"
+				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
+				ref="plusRef"
 			></Plus>
 			<Minus
 				class="px-input-number-icon"
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusPrefix"
+				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
+				ref="minusRef"
 			></Minus>
 		</div>
 		<input
@@ -47,8 +53,6 @@
 			:autofocus="autofocus"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
-			@blur="blurHandler"
-			@focus="focusHandler"
 			@compositionstart="compositionStartHandler"
 			@compositionend="compositionUpdateHandler"
 		/>
@@ -73,14 +77,18 @@
 				@click="increaseHandler"
 				v-if="showPlusSuffix"
 				@mousedown="subButtonMousedownHandler"
+				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
+				ref="plusRef"
 			></Plus>
 			<Minus
 				class="px-input-number-icon"
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusSuffix"
+				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
+				ref="minusRef"
 			></Minus>
 		</div>
 		<div class="px-input-number-loading-wrapper" v-if="props.loading">
@@ -135,6 +143,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
+import type { VueComponent } from '../share/type'
 
 defineOptions({
 	name: 'InputNumber'
@@ -264,7 +273,7 @@ const formatEmitModelValue = (value: string) => {
 	return parseFloat(value)
 }
 
-const [modelValue, updateModelValue] = useControlledMode<number>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (value: number | Nullish) => {
 		if (!isNullish(value)) {
@@ -290,6 +299,8 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
+const plusRef = shallowRef<InstanceType<VueComponent> | null>(null)
+const minusRef = shallowRef<InstanceType<VueComponent> | null>(null)
 
 const setInputValue = (value: string) => {
 	inputValue.value = value
@@ -342,14 +353,16 @@ const changeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
 	setInputValue(formatNumberValue(modelValue.value))
 	focusMode.value = false
+	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const showClose = computed(() => {
@@ -469,7 +482,18 @@ const subButtonMousedownHandler = (e: MouseEvent) => {
 		e.preventDefault()
 	}
 }
-const focusInputHandler = () => {
+const focusInputHandler = (e: MouseEvent) => {
+	const target = e.target as Element
+	const plusIcon = plusRef.value.$el as Nullish | SVGElement
+	const minusIcon = minusRef.value.$el as Nullish | SVGElement
+
+	if (
+		inputRef.value?.contains(target) ||
+		minusIcon?.contains(target) ||
+		plusIcon?.contains(target)
+	) {
+		return
+	}
 	inputRef.value?.focus()
 }
 

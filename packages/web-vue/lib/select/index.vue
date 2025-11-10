@@ -154,7 +154,7 @@ const modelValueIsFalse = (modelValue: any) => {
 		(props.multiple && isArray(modelValue) && modelValue.length === 0)
 	)
 }
-const [modelValue, updateModelValue] = useControlledMode<any>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (nextValue: any) => {
 		if (!props.multiple) {
@@ -171,7 +171,7 @@ const [modelValue, updateModelValue] = useControlledMode<any>('modelValue', prop
 	}
 })
 
-const [inputValue, updateInputValue] = useControlledMode<string>('inputValue', props, emits, {
+const [inputValue, updateInputValue] = useControlledMode('inputValue', props, emits, {
 	defaultField: 'defaultInputValue',
 	transform: (nextValue: string | undefined | null) => {
 		return nextValue || ''
@@ -432,6 +432,8 @@ const selectHandler = async (value: any, option: string | SelectOption, e: Mouse
 		focusMode.value = false
 		closePopover()
 		emits('select', nextValue, option, e)
+		emits('change', nextValue)
+		formItemProvide?.changeHandler()
 		setTimeout(async () => {
 			await updateInputValue(nextInputValue)
 		}, ANIMATION_DURATION)
