@@ -85,7 +85,6 @@ describe('Switch Component', () => {
 			const wrapper = mount(Switch, {
 				props: { loading: true }
 			})
-			expect(wrapper.find('.px-switch__loading').exists()).toBe(true)
 			expect(wrapper.find('.px-animation__loading').exists()).toBe(true)
 		})
 

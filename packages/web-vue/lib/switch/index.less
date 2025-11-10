@@ -40,13 +40,13 @@ span.px-switch {
 	&__active {
 		.@{prefix}-canvas-wrapper {
 			padding-left: var(--px-interval-1);
-			padding-right: calc(var(--switch-height) - var(--px-bit) - 1px);
+			padding-right: calc(var(--switch-height) - var(--px-bit) + 2px);
 		}
 	}
 	&__inactive {
 		.@{prefix}-canvas-wrapper {
 			padding-right: var(--px-interval-1);
-			padding-left: calc(var(--switch-height) - var(--px-bit) - 1px);
+			padding-left: calc(var(--switch-height) - var(--px-bit) + 2px);
 		}
 	}
 	&-canvas-wrapper {
@@ -84,8 +84,7 @@ span.px-switch {
 		opacity: 0;
 		margin: 0;
 	}
-	&__readonly,
-	&__loading {
+	&__readonly {
 		cursor: auto;
 	}
 	&__disabled {
