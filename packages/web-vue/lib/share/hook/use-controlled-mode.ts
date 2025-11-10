@@ -1,13 +1,21 @@
 import type { Nullish } from 'parsnip-kit'
 import { computed, nextTick, ref, watch, type Ref } from 'vue'
 
-export const useControlledMode = <T>(
-	field: string,
-	props: Record<string, any>,
+export const useControlledMode = <
+	T extends any,
+	K extends string = string,
+	D extends string | undefined = undefined,
+	const P extends { [key in (K | D) & string]: T | Nullish } = {
+		[key in (K | D) & string]: T | Nullish
+	},
+	const V extends P[K] = P[K]
+>(
+	field: K,
+	props: P,
 	emits: Function,
 	options?: {
 		transform?: (nextValue: T | Nullish) => T | Nullish
-		defaultField?: string
+		defaultField?: D
 	}
 ) => {
 	const controlledMode = computed(() => props[field] !== undefined)
@@ -18,18 +26,22 @@ export const useControlledMode = <T>(
 			: options?.defaultField
 				? props[options.defaultField]
 				: null
-	) as T | Nullish
+	) as V | Nullish
 
 	const innerState = ref(options?.transform ? options?.transform(preValue) : preValue) as Ref<
-		T | Nullish
+		V | Nullish
 	>
-	const updateState = async (nextValue: T) => {
+	const updateState = async (nextValue: V) => {
 		if (controlledMode.value) {
 			emits(`update:${field}`, nextValue)
 			await nextTick()
-			innerState.value = options?.transform ? options?.transform(props[field]) : props[field]
+			innerState.value = options?.transform
+				? (options?.transform(props[field]) as V | Nullish)
+				: (props[field] as V | Nullish)
 		} else {
-			innerState.value = options?.transform ? options?.transform(nextValue) : nextValue
+			innerState.value = options?.transform
+				? (options?.transform(nextValue) as V | Nullish)
+				: (nextValue as V | Nullish)
 		}
 	}
 	watch(
