@@ -104,3 +104,24 @@ export function calculateZoomedSize(originalImg: HTMLImageElement, options?: Zoo
 
 	return { width: finalWidth, height: finalHeight, left, top }
 }
+
+export const checkMouseInsideElementFromEvent = (
+	el: HTMLElement | SVGElement,
+	e: MouseEvent | TouchEvent
+) => {
+	const rect = el.getBoundingClientRect()
+	let clientX: number, clientY: number
+	if (e instanceof MouseEvent) {
+		clientX = (e as MouseEvent).clientX
+		clientY = (e as MouseEvent).clientY
+	} else {
+		clientX = (e as TouchEvent).touches[0].clientX
+		clientY = (e as TouchEvent).touches[0].clientY
+	}
+	return (
+		clientX >= rect.left &&
+		clientX <= rect.right &&
+		clientY >= rect.top &&
+		clientY <= rect.bottom
+	)
+}

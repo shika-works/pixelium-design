@@ -1,4 +1,4 @@
-import { isObject } from 'parsnip-kit'
+import { clamp, isObject } from 'parsnip-kit'
 import type { GroupOption, Option } from '../type'
 import { GROUP_OPTION_TYPE } from '../const'
 
@@ -213,4 +213,8 @@ function isValidDomain(domain: string): boolean {
 function isValidPort(port: string): boolean {
 	const portNum = Number(port)
 	return !isNaN(portNum) && portNum >= 1 && portNum <= 65535
+}
+
+export const fixedNumber = (value: number, precision: number) => {
+	return parseFloat(value.toFixed(clamp(Math.round(precision), 0, 100)))
 }

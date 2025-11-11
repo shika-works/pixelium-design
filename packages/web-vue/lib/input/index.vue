@@ -11,6 +11,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-input-prefix-wrapper" v-if="slots.prefix">
 			<slot name="prefix"></slot>
@@ -25,8 +27,6 @@
 			:type="typeComputed"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
-			@blur="blurHandler"
-			@focus="focusHandler"
 			@compositionstart="compositionStartHandler"
 			@compositionend="compositionUpdateHandler"
 		/>
@@ -179,7 +179,7 @@ const nextIsTextButton = computed(() => {
 	}
 })
 
-const [inputValue, updateInputValue] = useControlledMode<any>('modelValue', props, emits, {
+const [inputValue, updateInputValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (nextValue: any) => {
 		return nextValue || ''
@@ -191,7 +191,9 @@ const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 
 const currentLength = computed(() => {
-	return props.countGraphemes ? props.countGraphemes(inputValue.value) : inputValue.value.length
+	return props.countGraphemes
+		? props.countGraphemes(inputValue.value!)
+		: inputValue.value!.length
 })
 
 const inputHandler = async (e: Event) => {
@@ -233,13 +235,15 @@ const changeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
 	focusMode.value = false
+	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const focusInputHandler = () => {

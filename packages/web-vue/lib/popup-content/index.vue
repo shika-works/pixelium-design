@@ -98,7 +98,7 @@ const popupSide = computed<'start' | 'end' | 'middle'>(() => {
 
 const contentWidth = ref<undefined | number>(undefined)
 
-async function updatePosition(element: HTMLElement) {
+async function updatePosition(element: HTMLElement | SVGElement) {
 	if (!inBrowser()) {
 		return
 	}

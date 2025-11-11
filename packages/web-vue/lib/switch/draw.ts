@@ -1,4 +1,4 @@
-import { drawCircle } from '../share/util/plot'
+import { drawCircle, drawSmoothCircle } from '../share/util/plot'
 import type { RgbaColor } from '../share/type'
 import { rgbaColor2string } from '../share/util/color'
 
@@ -13,20 +13,33 @@ export const drawBorder = (
 	pixelSize: number,
 	paddingX: number = 0,
 	paddingY: number = 0,
-	small: boolean = false
+	small: boolean = false,
+	smooth: boolean = false
 ) => {
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
 		if (borderRadius[i] > pixelSize || (small && borderRadius[i] === pixelSize)) {
-			drawCircle(
-				ctx,
-				center[i][0] + paddingX,
-				center[i][1] + paddingY,
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize
-			)
+			if (!smooth) {
+				drawCircle(
+					ctx,
+					center[i][0] + paddingX,
+					center[i][1] + paddingY,
+					borderRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize
+				)
+			} else {
+				drawSmoothCircle(
+					ctx,
+					center[i][0] + paddingX,
+					center[i][1] + paddingY,
+					borderRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize
+				)
+			}
 		}
 	}
 

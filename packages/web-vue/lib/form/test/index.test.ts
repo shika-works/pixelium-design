@@ -14,6 +14,8 @@ import Select from '../../select/index.vue'
 import InputGroup from '../../input-group/index.vue'
 import { h, nextTick, ref } from 'vue'
 import type { FieldType } from '../type'
+import Switch from '../../switch/index.vue'
+import Slider from '../../slider/index.vue'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -452,6 +454,89 @@ describe('Form Component', () => {
 			await nextTick()
 			const input3 = wrapper.find('.px-input')
 			expect(input3.attributes('class')).include('px-input__large')
+		})
+		it('Switch', async () => {
+			const form = ref({
+				input: false
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(Switch, {
+										modelValue: form.value.input,
+										'onUpdate:modelValue': (e) => (form.value.input = e)
+									})
+							}
+						)
+					]
+				}
+			})
+
+			wrapper.setProps({ readonly: true })
+			await nextTick()
+			const input1 = wrapper.find('input')
+			expect(input1.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ readonly: false, disabled: true })
+			await nextTick()
+			const input2 = wrapper.find('input')
+			expect(input2.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ size: 'large' })
+			await nextTick()
+			const input3 = wrapper.find('.px-switch')
+			expect(input3.attributes('class')).include('px-switch__large')
+		})
+		it('Slider', async () => {
+			const form = ref({
+				input: 0
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(Slider, {
+										modelValue: form.value.input,
+										'onUpdate:modelValue': (e) => (form.value.input = e as number)
+									})
+							}
+						)
+					]
+				}
+			})
+
+			wrapper.setProps({ readonly: true })
+			await nextTick()
+			const input1 = wrapper.find('.px-slider')
+			expect(input1.attributes('tabindex')).toBe('-1')
+
+			wrapper.setProps({ readonly: false, disabled: true })
+			await nextTick()
+			const input2 = wrapper.find('.px-slider')
+			expect(input2.attributes('tabindex')).toBe('-1')
 		})
 	})
 	describe('Validate', () => {

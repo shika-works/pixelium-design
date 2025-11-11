@@ -10,6 +10,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<textarea
 			class="px-textarea-inner"
@@ -25,8 +27,6 @@
 			}"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
-			@blur="blurHandler"
-			@focus="focusHandler"
 			@compositionstart="compositionStartHandler"
 			@compositionend="compositionUpdateHandler"
 		/>
@@ -105,7 +105,7 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 	}
 })
 
-const [modelValue, updateModelValue] = useControlledMode<string>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (e: string | Nullish) => {
 		return e || ''
@@ -183,15 +183,17 @@ watch(height, () => {
 	setHeight()
 })
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
 	setHeight()
 	focusMode.value = false
+	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	setHeight()
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const showClose = computed(() => {

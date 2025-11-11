@@ -70,6 +70,46 @@ export function drawCircle(
 	let s = pixelSize
 	if (s <= 0 || radius <= 0) return
 
+	let rate = radius / s
+	let x = 0
+	let y = radius
+	const dy = s
+
+	const tmp = (radius / 2) * Math.SQRT2
+	const end = rate > 4 ? Math.ceil(tmp) : Math.floor(tmp)
+
+	const dx = s
+
+	while (x <= end + (rate <= 2 ? dx : 0)) {
+		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
+		x += dx
+		const yP = radius * radius - x * x
+		const originalY = y
+		while (Math.abs(y * y - yP) >= Math.abs((y - dy) * (y - dy) - yP)) {
+			y -= dy
+		}
+		if (x >= end && originalY === y) {
+			break
+		}
+	}
+	if (rate > 6 && rate < 7) {
+		const fix = Math.round(tmp)
+		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
+	}
+}
+
+export function drawSmoothCircle(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startRad = 0,
+	endRad = Math.PI * 2,
+	pixelSize: number
+) {
+	let s = pixelSize
+	if (s <= 0 || radius <= 0) return
+
 	const rate = radius / s
 	let x = 0
 	let y = radius
@@ -178,40 +218,47 @@ export function floodFill(
 export const transformBorderRadiusSizeValue = (
 	canvas: HTMLCanvasElement,
 	value: NumberOrPercentage,
-	pixelSize: number
+	pixelSize: number,
+	direction: 'horizontal' | 'vertical' = 'horizontal'
 ) => {
 	if (isNumber(value)) {
 		return Math.max(value, pixelSize)
 	} else {
-		return Math.max((canvas.height * parseFloat(value)) / 100, pixelSize)
+		return Math.max(
+			((direction === 'horizontal' ? canvas.height : canvas.width) * parseFloat(value)) / 100,
+			pixelSize
+		)
 	}
 }
 
 const getRadiusFromValue = (
 	canvas: HTMLCanvasElement,
 	value: NumberOrPercentage | NumberOrPercentage[] | undefined,
-	pixelSize: number
+	pixelSize: number,
+	direction: 'horizontal' | 'vertical' = 'horizontal'
 ) => {
 	if (!value) return fillArr(pixelSize, 4)
 	if (!isArray(value)) {
-		return fillArr(transformBorderRadiusSizeValue(canvas, value, pixelSize), 4)
+		return fillArr(transformBorderRadiusSizeValue(canvas, value, pixelSize, direction), 4)
 	}
 	switch (value.length) {
 		case 1:
-			return fillArr(transformBorderRadiusSizeValue(canvas, value[0], pixelSize), 4)
+			return fillArr(transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction), 4)
 		case 2: {
-			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize)
-			const tr = transformBorderRadiusSizeValue(canvas, value[1], pixelSize)
+			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction)
+			const tr = transformBorderRadiusSizeValue(canvas, value[1], pixelSize, direction)
 			return [tl, tr, tl, tr]
 		}
 		case 3: {
-			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize)
-			const br = transformBorderRadiusSizeValue(canvas, value[2], pixelSize)
-			const rest = transformBorderRadiusSizeValue(canvas, value[1], pixelSize)
+			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction)
+			const br = transformBorderRadiusSizeValue(canvas, value[2], pixelSize, direction)
+			const rest = transformBorderRadiusSizeValue(canvas, value[1], pixelSize, direction)
 			return [tl, rest, br, rest]
 		}
 		default:
-			return value.map((e: any) => transformBorderRadiusSizeValue(canvas, e, pixelSize))
+			return value.map((e: any) =>
+				transformBorderRadiusSizeValue(canvas, e, pixelSize, direction)
+			)
 	}
 }
 
@@ -220,32 +267,33 @@ const getInnerRadius = (
 	value: NumberOrPercentage | NumberOrPercentage[] | undefined,
 	pixelSize: number,
 	first: boolean,
-	last: boolean
+	last: boolean,
+	direction: 'horizontal' | 'vertical' = 'horizontal'
 ) => {
 	if (!value) return fillArr(pixelSize, 4)
 	if (!isArray(value)) {
-		const v = transformBorderRadiusSizeValue(canvas, value, pixelSize)
+		const v = transformBorderRadiusSizeValue(canvas, value, pixelSize, direction)
 		if (last) return [pixelSize, v, v, pixelSize]
 		if (first) return [v, pixelSize, pixelSize, v]
 		return fillArr(pixelSize, 4)
 	}
 	switch (value.length) {
 		case 1:
-			const v = transformBorderRadiusSizeValue(canvas, value[0], pixelSize)
+			const v = transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction)
 			if (last) return [pixelSize, v, v, pixelSize]
 			if (first) return [v, pixelSize, pixelSize, v]
 			return fillArr(pixelSize, 4)
 		case 2: {
-			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize)
-			const tr = transformBorderRadiusSizeValue(canvas, value[1], pixelSize)
+			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction)
+			const tr = transformBorderRadiusSizeValue(canvas, value[1], pixelSize, direction)
 			if (last) return [pixelSize, tr, tr, pixelSize]
 			if (first) return [tl, pixelSize, pixelSize, tl]
 			return fillArr(pixelSize, 4)
 		}
 		case 3: {
-			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize)
-			const br = transformBorderRadiusSizeValue(canvas, value[2], pixelSize)
-			const rest = transformBorderRadiusSizeValue(canvas, value[1], pixelSize)
+			const tl = transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction)
+			const br = transformBorderRadiusSizeValue(canvas, value[2], pixelSize, direction)
+			const rest = transformBorderRadiusSizeValue(canvas, value[1], pixelSize, direction)
 			if (last) return [pixelSize, rest, br, pixelSize]
 			if (first) return [tl, pixelSize, pixelSize, rest]
 			return fillArr(pixelSize, 4)
@@ -254,19 +302,33 @@ const getInnerRadius = (
 			if (last)
 				return [
 					pixelSize,
-					transformBorderRadiusSizeValue(canvas, value[1], pixelSize),
-					transformBorderRadiusSizeValue(canvas, value[2], pixelSize),
+					transformBorderRadiusSizeValue(canvas, value[1], pixelSize, direction),
+					transformBorderRadiusSizeValue(canvas, value[2], pixelSize, direction),
 					pixelSize
 				]
 			if (first)
 				return [
-					transformBorderRadiusSizeValue(canvas, value[0], pixelSize),
+					transformBorderRadiusSizeValue(canvas, value[0], pixelSize, direction),
 					pixelSize,
 					pixelSize,
-					transformBorderRadiusSizeValue(canvas, value[3], pixelSize)
+					transformBorderRadiusSizeValue(canvas, value[3], pixelSize, direction)
 				]
 			return fillArr(pixelSize, 4)
 	}
+}
+
+const getRadius = (
+	canvas: HTMLCanvasElement,
+	pixelSize: number,
+	size?: number,
+	direction: 'horizontal' | 'vertical' = 'horizontal'
+) => {
+	let originalRadius = transformBorderRadiusSizeValue(canvas, '50%', pixelSize, direction)
+	if (isNumber(size)) {
+		originalRadius = clamp(originalRadius, pixelSize, size / 2)
+	}
+	let radius = roundToPixel(originalRadius, pixelSize)
+	return radius
 }
 
 export const getBorderRadius = (
@@ -277,37 +339,33 @@ export const getBorderRadius = (
 	size: 'medium' | 'small' | 'large' = 'medium',
 	inner: boolean = false,
 	first: boolean = false,
-	last: boolean = false
+	last: boolean = false,
+	direction: 'horizontal' | 'vertical' = 'horizontal'
 ): number[] => {
 	if (!inBrowser()) {
 		return fillArr(pixelSize, 4)
 	}
 	if (!inner) {
 		if (borderRadius) {
-			return getRadiusFromValue(canvas, borderRadius, pixelSize)
+			return getRadiusFromValue(canvas, borderRadius, pixelSize, direction)
 		}
 		switch (shape) {
 			case 'round':
 			case 'circle':
-				let radius = transformBorderRadiusSizeValue(canvas, '50%', pixelSize)
-				radius = Math.max(roundToPixel(radius, pixelSize), pixelSize)
-				return fillArr(radius, 4)
+				return fillArr(getRadius(canvas, pixelSize, undefined, direction), 4)
 			default:
 				return fillArr(pixelSize, 4)
 		}
 	} else {
 		if (borderRadius) {
-			return getInnerRadius(canvas, borderRadius, pixelSize, first, last)
+			return getInnerRadius(canvas, borderRadius, pixelSize, first, last, direction)
 		}
 		const globalComputedStyle = getComputedStyle(document.documentElement)
 		const height =
 			parseInt(globalComputedStyle.getPropertyValue(`--px-${size}-base-size`)) + 2 * pixelSize
 		switch (shape) {
 			case 'round':
-				let radius = transformBorderRadiusSizeValue(canvas, '50%', pixelSize)
-				radius = clamp(radius, pixelSize, height / 2)
-				radius = Math.max(roundToPixel(radius, pixelSize), pixelSize)
-				const roundArr = fillArr(radius, 4)
+				const roundArr = fillArr(getRadius(canvas, pixelSize, height, direction), 4)
 				if (last) return roundArr.map((e, i) => (i < 1 || i > 2 ? pixelSize : e))
 				if (first) return roundArr.map((e, i) => (i > 0 && i < 3 ? pixelSize : e))
 				return fillArr(pixelSize, 4)
@@ -359,7 +417,9 @@ export const calcBorderCornerCenter = (
 
 export const canvasPreprocess = (
 	wrapperRef: ShallowRef<HTMLElement | null>,
-	canvasRef: ShallowRef<HTMLCanvasElement | null>
+	canvasRef: ShallowRef<HTMLCanvasElement | null>,
+	paddingX: number = 0,
+	paddingY: number = 0
 ) => {
 	if (!canvasRef.value || !wrapperRef.value) return
 
@@ -368,11 +428,13 @@ export const canvasPreprocess = (
 	ctx.imageSmoothingEnabled = false
 
 	const rect = wrapperRef.value.getBoundingClientRect()
-	if (rect.width <= 0 || rect.height <= 0) {
+	const width = rect.width - paddingX * 2
+	const height = rect.height - paddingY * 2
+	if (width <= 0 || height <= 0) {
 		return
 	}
-	canvasRef.value.width = rect.width
-	canvasRef.value.height = rect.height
+	canvasRef.value.width = width
+	canvasRef.value.height = height
 
 	return {
 		ctx,

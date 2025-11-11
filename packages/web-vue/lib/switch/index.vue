@@ -2,10 +2,9 @@
 	<label
 		class="pixelium px-switch"
 		:class="{
-			[`px-switch__${props.size}`]: props.size,
+			[`px-switch__${sizeComputed}`]: sizeComputed,
 			[`px-switch__readonly`]: readonlyComputed,
 			[`px-switch__disabled`]: disabledComputed,
-			[`px-switch__loading`]: props.loading,
 			[`px-switch__active`]: progress > MID_PROGRESS,
 			[`px-switch__inactive`]: progress <= MID_PROGRESS
 		}"
@@ -135,10 +134,13 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const disabledComputed = createProvideComputed('disabled', [formItemProvide, props])
-const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props])
+const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
+const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const sizeComputed = createProvideComputed('size', [formItemProvide, props])
 
-const [progress, play] = useSmoothTransition(250, modelValue.value ? 1 : 0)
+const ANIMATION_DURATION = 250
+
+const [progress, play] = useSmoothTransition(ANIMATION_DURATION, modelValue.value ? 1 : 0)
 
 const inputHandler = async (e: InputEvent) => {
 	const target = e.target as HTMLInputElement
@@ -178,7 +180,7 @@ watch(
 	[
 		darkMode,
 		progress,
-		() => props.size,
+		sizeComputed,
 		() => props.shape,
 		disabledComputed,
 		() => props.activeColor,
@@ -201,8 +203,8 @@ const updateIconLeft = () => {
 
 	const sliceHeight = size.value[1] - 2
 
-	const start = 1
-	const end = size.value[0] - 1 - sliceHeight
+	const start = 2
+	const end = size.value[0] - 2 - sliceHeight
 	iconLeft.value = Math.round(start + (end - start) * progress.value)
 }
 
@@ -274,7 +276,7 @@ const drawPixel = () => {
 		pixelSize,
 		0,
 		0,
-		props.size === 'small' && props.shape === 'round'
+		sizeComputed.value === 'small' && props.shape === 'round'
 	)
 
 	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
@@ -293,8 +295,8 @@ const drawPixel = () => {
 		pixelSize
 	)
 
-	const start = pixelSize + 1
-	const end = width - pixelSize - 1 - sliceHeight
+	const start = pixelSize + 2
+	const end = width - pixelSize - 2 - sliceHeight
 	const offsetX = Math.round(start + (end - start) * progress.value)
 
 	drawBorder(
@@ -308,7 +310,9 @@ const drawPixel = () => {
 		pixelSize,
 		offsetX,
 		pixelSize + 1,
-		true
+		true,
+		(sizeComputed.value === 'small' || sizeComputed.value === 'medium') &&
+			props.shape === 'round'
 	)
 	floodFill(
 		ctx,
@@ -317,7 +321,7 @@ const drawPixel = () => {
 		sliceColor
 	)
 
-	if (props.size === 'small') {
+	if (sizeComputed.value === 'small') {
 		ctx.fillStyle = rgbaColor2string(sliceColor)
 		ctx.fillRect(
 			Math.round((sliceCenter[0][0] + sliceCenter[1][0]) / 2 + offsetX) - 1,

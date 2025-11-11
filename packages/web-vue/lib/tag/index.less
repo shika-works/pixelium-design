@@ -13,7 +13,7 @@ span.px-tag {
 }
 .px-tag {
 	@prefix: px-tag;
-	--tag-size: calc(var(--px-medium-size) - var(--px-bit) * 2 - 2px);
+	--tag-size: calc(var(--px-medium-base-size) - 2px);
 	--px-medium-padding-x: var(--px-interval-2);
 	--px-large-padding-x: var(--px-interval-3);
 	--px-small-padding-x: var(--px-interval-2);
@@ -40,7 +40,7 @@ span.px-tag {
 	}
 	&__small {
 		--padding-x-size: var(--px-small-padding-x);
-		--tag-size: calc(var(--px-small-size) - var(--px-bit) * 2);
+		--tag-size: var(--px-small-base-size);
 		--text-size: var(--px-small-font-size);
 	}
 	&.@{prefix}__disabled {

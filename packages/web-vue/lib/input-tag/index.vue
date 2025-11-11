@@ -11,6 +11,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-input-tag-prefix-wrapper" v-if="slots.prefix">
 			<slot name="prefix"></slot>
@@ -94,8 +96,6 @@
 				:autofocus="autofocus"
 				@input.stop="inputHandler"
 				@change.stop="inputChangeHandler"
-				@blur="blurHandler"
-				@focus="focusHandler"
 				@compositionstart="compositionStartHandler"
 				@compositionend="compositionUpdateHandler"
 				@keydown.enter="enterDownHandler"
@@ -239,7 +239,7 @@ const tagSize = computed(() => {
 	return sizeComputed.value === 'small' ? 'small' : 'medium'
 })
 
-const [modelValue, updateModelValue] = useControlledMode<string[]>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (value: string[] | Nullish) => {
 		if (isArray(value)) {
@@ -249,7 +249,7 @@ const [modelValue, updateModelValue] = useControlledMode<string[]>('modelValue',
 	}
 })
 
-const [inputValue, updateInputValue] = useControlledMode<string>('inputValue', props, emits, {
+const [inputValue, updateInputValue] = useControlledMode('inputValue', props, emits, {
 	defaultField: 'defaultInputValue',
 	transform: (value: string | Nullish) => {
 		return value || ''
@@ -302,15 +302,17 @@ const inputChangeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = async () => {
+const blurHandler = async (e: FocusEvent) => {
 	focusMode.value = false
 	await updateInputValue('')
 	emits('inputChange', '')
+	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const enterDownHandler = async (e: KeyboardEvent) => {

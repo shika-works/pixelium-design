@@ -128,7 +128,7 @@ const nextIsTextButton = computed(() => {
 	}
 })
 
-const [modelValue, updateModelValue] = useControlledMode<string>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (e: string | Nullish) => {
 		return e || ''
@@ -174,6 +174,7 @@ const inputHandler = async (e: Event) => {
 	}
 
 	emits('input', newValue, e)
+	formItemProvide?.inputHandler()
 
 	await updateModelValue(newValue)
 	triggerPopover()
@@ -183,12 +184,14 @@ const clearHandler = async () => {
 	await updateModelValue('')
 	emits('change', '')
 	emits('clear', '')
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
 	e.stopPropagation()
 	const target = e.target as HTMLInputElement
 	emits('change', target.value, e)
+	formItemProvide?.changeHandler()
 }
 
 const focusMode = ref(false)
@@ -197,6 +200,7 @@ const blurHandler = (e: FocusEvent) => {
 	e.stopPropagation()
 	emits('blur', e)
 	focusMode.value = false
+	formItemProvide?.blurHandler()
 }
 
 const focusHandler = (e: FocusEvent) => {
@@ -230,6 +234,8 @@ const selectHandler = async (
 	await updateModelValue(nextValue)
 	closePopover()
 	emits('select', nextValue, option, e)
+	emits('change', nextValue, e)
+	formItemProvide?.changeHandler()
 }
 
 const slots = useSlots()
@@ -367,8 +373,6 @@ defineRender(() => {
 				autofocus={props.autofocus}
 				onInput={inputHandler}
 				onChange={changeHandler}
-				onBlur={blurHandler}
-				onFocus={focusHandler}
 				onCompositionstart={compositionStartHandler}
 				onCompositionend={compositionUpdateHandler}
 			/>
@@ -435,6 +439,8 @@ defineRender(() => {
 							onClick: focusInputHandler,
 							onMouseenter: mouseenterHandler,
 							onMouseleave: mouseleaveHandler,
+							onFocusout: blurHandler,
+							onFocusin: focusHandler,
 							...scopeObj,
 							...attrs
 						},
