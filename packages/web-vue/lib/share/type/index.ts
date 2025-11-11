@@ -1,4 +1,4 @@
-import type { VNode } from 'vue'
+import type { DefineComponent, VNode } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'
 import type { GROUP_OPTION_TYPE, SCREEN_SIZE_TYPE } from '../const'
 
@@ -24,3 +24,9 @@ export interface GroupOption<T = any> {
 export type LooseRequired<T> = {
 	[P in keyof (T & Required<T>)]: T[P]
 }
+
+export type RemoveUndefinedFromFields<T, K extends keyof T> = {
+	[P in keyof T]: P extends K ? Exclude<T[P], undefined> : T[P]
+}
+
+export type VueComponent = DefineComponent<Record<string, never>, Record<string, never>, any>

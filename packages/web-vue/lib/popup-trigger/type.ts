@@ -9,4 +9,6 @@ export type PopupTriggerEmits = {
 	close: [e: TouchEvent | MouseEvent]
 	open: [node: VNode, e: MouseEvent]
 	drag: [event: TouchEvent | MouseEvent]
+	dragStart: [event: TouchEvent | MouseEvent]
+	dragEnd: [event: TouchEvent | MouseEvent]
 }

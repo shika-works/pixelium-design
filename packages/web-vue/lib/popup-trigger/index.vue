@@ -82,16 +82,16 @@ function stopDrag(e: TouchEvent | MouseEvent) {
 	document.removeEventListener('mouseup', stopDrag)
 	document.removeEventListener('touchmove', handleDrag)
 	document.removeEventListener('touchend', stopDrag)
+	emits('dragEnd', e)
 }
 
-const startDrag = (e: Event) => {
-	e.stopPropagation()
-	e.preventDefault()
+const startDrag = (e: TouchEvent | MouseEvent) => {
 	dragging.value = true
 	document.addEventListener('mousemove', handleDrag)
 	document.addEventListener('mouseup', stopDrag)
 	document.addEventListener('touchmove', handleDrag)
 	document.addEventListener('touchend', stopDrag)
+	emits('dragStart', e)
 }
 
 defineRender(() => {

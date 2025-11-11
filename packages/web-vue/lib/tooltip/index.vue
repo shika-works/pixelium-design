@@ -116,8 +116,14 @@ const contentMouseenterHandler = () => {
 	}
 	cancel()
 }
+
+const dragging = ref(false)
+
 const contentMouseleaveHandler = (e: MouseEvent) => {
 	if (props.trigger === 'click') {
+		return
+	}
+	if (dragging.value) {
 		return
 	}
 	closeHandler(e)
@@ -188,6 +194,13 @@ const checkCurrentTrigger = (_: any): _ is HTMLElement => {
 	return currentTrigger.value?.el instanceof HTMLElement
 }
 
+const dragStartHandler = () => {
+	dragging.value = true
+}
+const dragEndHandler = () => {
+	dragging.value = false
+}
+
 defineRender(() => {
 	const pixelSize = calcPixelSize()
 	return (
@@ -198,6 +211,8 @@ defineRender(() => {
 				onClose={closeHandler}
 				onOpen={openHandler}
 				onDrag={dragHandler}
+				onDragStart={dragStartHandler}
+				onDragEnd={dragEndHandler}
 				// @ts-ignore
 				ref={(node: InstanceType<typeof PopupTrigger>) => (triggerRef.value = node)}
 			>

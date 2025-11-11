@@ -46,6 +46,7 @@ import Form from './form/index.vue'
 import FormItem from './form-item/index.vue'
 import { pixelateImage } from './share/util/pixel.ts'
 import Switch from './switch/index.vue'
+import Slider from './slider/index.vue'
 
 const components = [
 	Button,
@@ -83,7 +84,8 @@ const components = [
 	Avatar,
 	Form,
 	FormItem,
-	Switch
+	Switch,
+	Slider
 ]
 
 const defaultPrefix = 'Px'
@@ -155,7 +157,8 @@ export {
 	pixelateImage,
 	Form,
 	FormItem,
-	Switch
+	Switch,
+	Slider
 }
 export default {
 	install

@@ -1,9 +1,12 @@
+@import url(../share/style/index.css);
+
 .px-popup-content {
 	@prefix: px-popup-content;
 	padding: var(--px-interval-1) var(--px-interval-2);
 	display: inline-block;
 	--text-color: var(--px-neutral-10);
-	--min-size: var(--px-interval-9);
+	--min-size-x: var(--px-interval-9);
+	--min-size-y: calc(var(--px-interval-7) + 2 * var(--px-bit));
 	color: var(--text-color);
 	border-color: transparent;
 	border-width: var(--px-bit);
@@ -12,8 +15,8 @@
 	box-sizing: border-box;
 	position: absolute;
 	white-space: pre-line;
-	min-height: var(--min-size);
-	min-width: var(--min-size);
+	min-height: var(--min-size-y);
+	min-width: var(--min-size-x);
 	transition:
 		transform 0.25s,
 		opacity 0.25s;
@@ -61,7 +64,7 @@
 		--text-color: var(--px-neutral-1);
 	}
 	&__top.@{prefix}__arrow {
-		min-height: calc(var(--px-bit) * 3 + var(--min-size));
+		min-height: calc(var(--px-bit) * 12);
 		padding-bottom: calc(var(--px-interval-1) + var(--px-bit) * 3);
 		& .@{prefix}-arrow {
 			bottom: calc(-1 * var(--px-bit));
