@@ -11,12 +11,13 @@ import {
 	onMounted
 } from 'vue'
 import type { TooltipEvents, TooltipProps } from './type'
-import { isNullish } from 'parsnip-kit'
+import { isNullish, throttle } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
 import { inBrowser } from '../share/util/env'
 import { calcPixelSize } from '../share/util/plot'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { checkMouseInsideElementFromEvent } from '../share/util/dom'
 
 defineOptions({
 	name: 'Tooltip'
@@ -76,7 +77,14 @@ async function openHandlerImpl(node: VNode, controlled = false) {
 		display.value = true
 	}
 }
-async function closeHandler(e: MouseEvent) {
+async function closeHandler(e: MouseEvent | TouchEvent) {
+	if (e.type === 'mouseup' || e.type === 'touchend') {
+		const contentEl = contentRef.value && contentRef.value.content
+		if (contentEl && checkMouseInsideElementFromEvent(contentEl, e)) {
+			return
+		}
+	}
+
 	if (props.trigger === 'click') {
 		const clickContent =
 			contentRef.value &&
@@ -167,6 +175,10 @@ const updateRenderState = () => {
 	}
 }
 
+const dragHandler = throttle(() => {
+	updateRenderState()
+}, 20)
+
 const slots = useSlots()
 
 const checkCurrentTrigger = (_: any): _ is HTMLElement => {
@@ -185,6 +197,7 @@ defineRender(() => {
 				disabled={props.disabled}
 				onClose={closeHandler}
 				onOpen={openHandler}
+				onDrag={dragHandler}
 				// @ts-ignore
 				ref={(node: InstanceType<typeof PopupTrigger>) => (triggerRef.value = node)}
 			>

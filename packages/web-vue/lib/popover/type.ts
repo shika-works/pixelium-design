@@ -92,7 +92,7 @@ export type PopoverEvents = {
 	 * @param {MouseEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e: MouseEvent]
+	close: [e: MouseEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e
