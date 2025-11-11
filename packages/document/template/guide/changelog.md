@@ -9,25 +9,26 @@
 ## v0.0.3
 - 新增：
   - 支持切换像素宽度，支持 2px 和 4px。
-  - 完善表单组件：Form、FormItem。
+  - 完善表单组件：Form、FormItem、Switch、Slider。
   - 新增图片展示组件 Image 和头像组件 Avatar。
   - 新增虚拟列表组件 VirtualList。
 - 优化：
   - Select 组件增加 `label` 插槽。
   - InputGroup 增加 `readonly` 属性。
   - 优化弧线绘制算法。
-  - 选项组的子选项能增加缩进。
+  - 选项组的子选项增加缩进。
   - 优化 Select 组件的 `focus` 和 `blur` 事件触发。
   - 优化代码 & 完善测试用例。
 - 修复：
   - 修复 `variant="text"` 的 Button 组件在 ButtonGroup 和 InputGroup 下的渲染。
+  - 修复表单控件 `focus` 和 `blur` 事件没有 emit 的问题。
   - 下拉选项设置 `tabindex`。
 ]]]
 [[[en
 ## v0.0.3
 - New features:
   - Support switching pixel widths, supporting 2px and 4px.
-  - Improve form components: Form, FormItem.
+  - Improve form components: Form, FormItem, Switch, Slider.
   - Add image display component Image and avatar component Avatar.
   - Add virtual list component VirtualList.
 - Optimizations:
@@ -39,6 +40,7 @@
   - Optimize code & improve test cases.
 - Fixes:
   - Fix the rendering of Button components with `variant="text"` in ButtonGroup and InputGroup.
+  - Fix the bug where the `focus` and `blur` events of form controls are not being emitted.
   - Set `tabindex` for dropdown options.
 ]]]
 
