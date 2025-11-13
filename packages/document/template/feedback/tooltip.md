@@ -5,7 +5,7 @@ Tooltip 用于弹出隐藏的文本提示。
 
 >目前 Popover 和 Tooltip 组件除了样式外几乎是一样的，保留两个组件是出于 UI 设计和代码后续开发的可维护性考虑。
 >
->从 UI 角度来说，Tooltip 用于只读短文本提示，Tooltip 承载更丰富的内容（标题、按钮、表单等）可以让用户完成轻量操作。
+>从 UI 角度来说，Tooltip 用于只读短文本提示，Popover 承载更丰富的内容（标题、按钮、表单等）可以让用户完成轻量操作。
 ]]]
 
 [[[en
@@ -13,9 +13,9 @@ Tooltip 用于弹出隐藏的文本提示。
 
 The Tooltip is used to display hidden content in a popup.
 
-> Currently, the Tooltip and Tooltip components are almost identical except for their styles. Both are retained for UI design and future code maintainability.
+> Currently, the Popover and Tooltip components are almost identical except for their styles. Both are retained for UI design and future code maintainability.
 >
-> From a UI perspective, Tooltip is used for read-only short text hints, while Tooltip is designed to hold richer content (titles, buttons, forms, etc.) and allows users to perform lightweight actions.
+> From a UI perspective, Tooltip is used for read-only short text hints, while Popover is designed to hold richer content (titles, buttons, forms, etc.) and allows users to perform lightweight actions.
 ]]]
 
 [[[zh
