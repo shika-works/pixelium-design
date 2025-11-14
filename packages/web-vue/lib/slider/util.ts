@@ -1,4 +1,12 @@
-import { type Nullish, clamp, isArray, isNullish, isNumber, isUndefined } from 'parsnip-kit'
+import {
+	type Nullish,
+	clamp,
+	isArray,
+	isInfinity,
+	isNullish,
+	isNumber,
+	isUndefined
+} from 'parsnip-kit'
 import type { LooseRequired, RemoveUndefinedFromFields } from '../share/type'
 import type { SliderProps } from './type'
 import { type ShallowRef } from 'vue'
@@ -10,7 +18,7 @@ export function clampValue(
 	props: RemoveUndefinedFromFields<LooseRequired<SliderProps>, 'min' | 'max'>
 ): number {
 	const step = props.step
-	if (!step) {
+	if (!step || isInfinity(step)) {
 		const nextValue = isNumber(props.precision) ? fixedNumber(value, props.precision) : value
 		return clamp(nextValue, props.min, props.max)
 	}

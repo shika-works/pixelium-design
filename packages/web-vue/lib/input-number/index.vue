@@ -30,7 +30,7 @@
 				@click="increaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showPlusPrefix"
-				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
 				ref="plusRef"
 			></Plus>
@@ -39,7 +39,7 @@
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusPrefix"
-				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
 				ref="minusRef"
 			></Minus>
@@ -77,7 +77,7 @@
 				@click="increaseHandler"
 				v-if="showPlusSuffix"
 				@mousedown="subButtonMousedownHandler"
-				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
 				ref="plusRef"
 			></Plus>
@@ -86,7 +86,7 @@
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusSuffix"
-				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
 				ref="minusRef"
 			></Minus>
@@ -144,6 +144,7 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { VueComponent } from '../share/type'
+import { fixedNumber } from '../share/util/common'
 
 defineOptions({
 	name: 'InputNumber'
@@ -219,7 +220,7 @@ const adjustValue = (value: number) => {
 		value = 0
 	}
 	if (isNumber(props.precision)) {
-		value = parseFloat(value.toFixed(clamp(Math.round(props.precision), 0, 100)))
+		value = fixedNumber(value, props.precision)
 	}
 	const min = props.min ?? Number.MIN_SAFE_INTEGER
 	const max = props.max ?? Number.MAX_SAFE_INTEGER
@@ -388,14 +389,14 @@ const increaseDisabled = computed(() => {
 	return (
 		readonlyComputed.value ||
 		disabledComputed.value ||
-		(modelValue.value && modelValue.value >= props.max)
+		(!isNullish(modelValue.value) && modelValue.value >= props.max)
 	)
 })
 const decreaseDisabled = computed(() => {
 	return (
 		readonlyComputed.value ||
 		disabledComputed.value ||
-		(modelValue.value && modelValue.value <= props.min)
+		(!isNullish(modelValue.value) && modelValue.value <= props.min)
 	)
 })
 const increaseHandler = async () => {
