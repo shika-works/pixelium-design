@@ -18,7 +18,7 @@ export function clampValue(
 	props: RemoveUndefinedFromFields<LooseRequired<SliderProps>, 'min' | 'max'>
 ): number {
 	const step = props.step
-	if (!step || !isInfinity(step)) {
+	if (!step || isInfinity(step)) {
 		const nextValue = isNumber(props.precision) ? fixedNumber(value, props.precision) : value
 		return clamp(nextValue, props.min, props.max)
 	}
