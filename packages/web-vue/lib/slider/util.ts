@@ -1,4 +1,12 @@
-import { type Nullish, clamp, isArray, isInfinity, isNullish, isNumber, isUndefined } from 'parsnip-kit'
+import {
+	type Nullish,
+	clamp,
+	isArray,
+	isInfinity,
+	isNullish,
+	isNumber,
+	isUndefined
+} from 'parsnip-kit'
 import type { LooseRequired, RemoveUndefinedFromFields } from '../share/type'
 import type { SliderProps } from './type'
 import { type ShallowRef } from 'vue'
