@@ -19,7 +19,7 @@
 		<slot></slot>
 		<div v-if="props.closable" class="px-tag-icon-wrapper">
 			<Times
-				@mousedown="toggleActive(true)"
+				@mousedown.prevent="toggleActive(true)"
 				@mouseup="toggleActive(false)"
 				@mouseenter="toggleHover(true)"
 				@mouseleave="toggleHover(false)"

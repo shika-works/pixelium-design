@@ -1,4 +1,5 @@
-import type { TooltipProps } from '../tooltip/type'
+import type { EmitEvent } from '../share/type'
+import type { TooltipEvents, TooltipProps } from '../tooltip/type'
 
 export type SliderProps = {
 	/**
@@ -67,20 +68,20 @@ export type SliderProps = {
 	 */
 	tooltip?: boolean
 	/**
-	 * @property {Omit<TooltipProps, 'visible' | 'content'>} [tooltipProps]
+	 * @property {Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>} [tooltipProps]
 	 * @version 0.0.3
 	 */
-	tooltipProps?: Omit<TooltipProps, 'visible' | 'content'>
+	tooltipProps?: Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>
 	/**
-	 * @property {Omit<TooltipProps, 'visible' | 'content'>} [tooltipStartProps]
+	 * @property {Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>} [tooltipStartProps]
 	 * @version 0.0.3
 	 */
-	tooltipStartProps?: Omit<TooltipProps, 'visible' | 'content'>
+	tooltipStartProps?: Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>
 	/**
-	 * @property {Omit<TooltipProps, 'visible' | 'content'>} [tooltipEndProps]
+	 * @property {Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>} [tooltipEndProps]
 	 * @version 0.0.3
 	 */
-	tooltipEndProps?: Omit<TooltipProps, 'visible' | 'content'>
+	tooltipEndProps?: Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>
 }
 
 export type SliderEvent = {

@@ -54,7 +54,11 @@ import {
 	isString,
 	isUndefined
 } from 'parsnip-kit'
-import { BORDER_CORNER_RAD_RANGE, GROUP_OPTION_TYPE } from '../share/const'
+import {
+	BORDER_CORNER_RAD_RANGE,
+	GROUP_OPTION_TYPE,
+	POPUP_CONTENT_DEFAULT_MAX_WIDTH
+} from '../share/const'
 import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
@@ -670,6 +674,16 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 
+const popoverProps = computed(() => {
+	return {
+		...props.popoverProps,
+		contentStyle: {
+			maxWidth: `${POPUP_CONTENT_DEFAULT_MAX_WIDTH}px`,
+			...props.popoverProps?.contentStyle
+		}
+	}
+})
+
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -733,7 +747,7 @@ defineRender(() => {
 								}}
 							</Tag>
 						) : (
-							<Popover>
+							<Popover {...popoverProps.value}>
 								{{
 									default: () => (
 										<Tag

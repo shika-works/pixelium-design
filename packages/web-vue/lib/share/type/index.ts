@@ -30,3 +30,7 @@ export type RemoveUndefinedFromFields<T, K extends keyof T> = {
 }
 
 export type VueComponent = DefineComponent<Record<string, never>, Record<string, never>, any>
+
+export type EmitEvent<T extends Record<string, any>> = {
+	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}

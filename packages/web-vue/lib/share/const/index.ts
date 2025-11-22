@@ -30,3 +30,5 @@ export const BORDER_CORNER_RAD_RANGE: [number, number][] = [
 	[0, Math.PI / 2],
 	[Math.PI / 2, Math.PI]
 ]
+
+export const POPUP_CONTENT_DEFAULT_MAX_WIDTH = 400

@@ -4,22 +4,30 @@
 	@prefix: px-popup-content;
 	padding: var(--px-interval-1) var(--px-interval-2);
 	display: inline-block;
+
 	--text-color: var(--px-neutral-10);
 	--min-size-x: var(--px-interval-9);
 	--min-size-y: calc(var(--px-interval-7) + 2 * var(--px-bit));
-	color: var(--text-color);
+
 	border-color: transparent;
 	border-width: var(--px-bit);
 	border-style: solid;
 	background-color: transparent;
+
 	box-sizing: border-box;
 	position: absolute;
+
+	color: var(--text-color);
 	white-space: pre-line;
+
 	min-height: var(--min-size-y);
 	min-width: var(--min-size-x);
+	width: max-content;
+
 	transition:
 		transform 0.25s,
 		opacity 0.25s;
+
 	&-fade__top-enter-to,
 	&-fade__top-leave-from {
 		opacity: 1;

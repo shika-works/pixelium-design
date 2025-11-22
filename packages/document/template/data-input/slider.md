@@ -108,6 +108,8 @@ You can use the `thumb`, `thumb-start`, and `thumb-end` slots to customize the c
 ]]]
 <preview path="./slider-thumb.vue"></preview>
 
+## API
+
 [[[api zh
 modelValue: 滑动选择器的值（受控模式），支持 `v-model`。
 defaultValue: 滑动选择器的默认值（非受控模式）。
@@ -172,3 +174,10 @@ slots.thumb-start: Content of the first thumb in range selection mode.
 slots.thumb-end: Content of the second thumb in range selection mode.
 slots.tooltip-content: Content of the text tooltip.
 ]]]
+
+### EmitEvent
+```ts
+export type EmitEvent<T extends Record<string, any>> = {
+	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}
+```
