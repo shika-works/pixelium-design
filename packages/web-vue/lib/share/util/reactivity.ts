@@ -1,5 +1,5 @@
-import type { Nullish } from 'parsnip-kit'
-import { computed, isRef, type Ref, type UnwrapRef } from 'vue'
+import { isArray, isObjectLike, type Nullish } from 'parsnip-kit'
+import { computed, isRef, type Ref, type UnwrapRef, type EmitsOptions } from 'vue'
 
 type Provides<T extends string, K extends any> = (
 	| { [key in T]: K | Ref<K> }
@@ -31,4 +31,20 @@ export const createProvideComputed = <
 			}
 		}, undefined as V)
 	})
+}
+
+export function forwardEmits<E = EmitsOptions>(
+	emit: (event: any, ...args: any[]) => void,
+	events: E
+) {
+	const eventKeys = isArray(events) ? events : isObjectLike(events) ? Object.keys(events) : []
+	return eventKeys.reduce(
+		(acc, key) => {
+			acc[`on${key.charAt(0).toUpperCase() + key.slice(1)}`] = (...args: any[]) => {
+				emit(key, ...args)
+			}
+			return acc
+		},
+		{} as Record<string, (...args: any[]) => void>
+	)
 }
