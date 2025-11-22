@@ -12,7 +12,7 @@ const __dirname = process.cwd()
 const onDemandImport: Plugin = {
 	name: 'on-demand-import',
 	enforce: 'pre',
-	transform(code, id) {
+	transform(code: string, id: string) {
 		if (id.endsWith('less') || id.endsWith('css')) {
 			return code.replace(
 				/@import\s+(?:\/\*[\s\S]*?\*\/\s*)*(?:url\(\s*(['"]?)([\s\S]*?)\1\s*\)|(['"])([\s\S]*?)\3)\s*(?:\/\*[\s\S]*?\*\/\s*)*((?:[\s\S](?!;))*?);/g,
@@ -47,7 +47,7 @@ async function buildLib() {
 						entryFileNames: 'index.js',
 						chunkFileNames: '[name].js',
 						inlineDynamicImports: false,
-						assetFileNames: (assetInfo) => {
+						assetFileNames: (assetInfo: { name?: string }) => {
 							if (assetInfo.name?.endsWith('.css')) {
 								return assetInfo.name
 							}
@@ -57,7 +57,7 @@ async function buildLib() {
 							includeDependenciesRecursively: false,
 							groups: [
 								{
-									name(id) {
+									name(id: string) {
 										if (id && id.includes('node_modules')) return 'vendor'
 										if (
 											id.endsWith('.ts') ||
