@@ -194,17 +194,31 @@ async function updatePosition(element: HTMLElement | SVGElement) {
 	})
 }
 
-async function openHandler(element: HTMLElement) {
-	setTimeout(() => {
-		updatePosition(element)
-	})
-}
-
 async function closeHandler() {
+	if (show.value === false) {
+		return
+	}
 	setTimeout(() => {
 		show.value = false
 		popupFinalPlacement.value = undefined
 	}, ANIMATION_DURATION)
+}
+
+const doOpen = () => {
+	let element: HTMLElement | SVGElement | null = null
+	if (props.target instanceof HTMLElement || props.target instanceof SVGElement) {
+		element = props.target
+	} else if (
+		props.target &&
+		(props.target.el instanceof HTMLElement || props.target.el instanceof SVGElement)
+	) {
+		element = props.target.el
+	}
+	if (element) {
+		setTimeout(() => {
+			updatePosition(element)
+		})
+	}
 }
 
 const processVisible = (value: boolean) => {
@@ -212,11 +226,7 @@ const processVisible = (value: boolean) => {
 		return
 	}
 	if (value) {
-		if (props.target instanceof HTMLElement) {
-			openHandler(props.target)
-		} else if (props.target && props.target.el instanceof HTMLElement) {
-			openHandler(props.target.el)
-		}
+		doOpen()
 	} else {
 		closeHandler()
 	}
@@ -261,6 +271,7 @@ watch(
 		arrowXOffset,
 		arrowYOffset,
 		show,
+		floatingStyles,
 		() => props.variant,
 		() => props.arrow
 	],
@@ -341,8 +352,8 @@ const drawPixel = () => {
 	}
 }
 
-useResizeObserver(contentRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
+useResizeObserver(contentRef, doOpen)
+useWatchGlobalCssVal(doOpen)
 </script>
 
 <style lang="less" src="./index.less" />
