@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { h, nextTick, ref } from 'vue'
+import { h, nextTick, ref, Transition } from 'vue'
 import Select from '../index.vue'
 import type { SelectOption } from '../type'
 import InputGroup from '../../input-group/index.vue'
@@ -7,6 +7,7 @@ import Tag from '../../tag/index.vue'
 import OptionList from '../../option-list/index.vue'
 import { vi, describe, afterEach, it, expect, beforeEach } from 'vitest'
 import { createMocks } from '../../share/util/test'
+import Popover from '../../popover/index.vue'
 
 describe('Select Component', () => {
 	const { pre, post } = createMocks()
@@ -308,30 +309,6 @@ describe('Select Component', () => {
 			const optionListComponent2 = wrapper.findComponent(OptionList)
 			expect(optionListComponent2.exists()).toBe(true)
 		})
-		it('Collapse tags renders collapsed area', async () => {
-			const modelValue = ref<string[]>(['vue', 'react', 'angular', 'svelte'])
-			const options = [
-				{ label: 'Vue', value: 'vue' },
-				{ label: 'React', value: 'react' },
-				{ label: 'Angular', value: 'angular' },
-				{ label: 'Svelte', value: 'svelte' }
-			]
-			const wrapper = mount(Select, {
-				props: {
-					multiple: true,
-					collapseTags: true,
-					maxDisplayTags: 2,
-					options,
-					modelValue: modelValue.value
-				}
-			})
-			await nextTick()
-			const tags = wrapper.findAllComponents(Tag)
-			expect(tags.length).toBe(5)
-			const collapseTag = tags.at(2)
-			expect(collapseTag).not.toBe(undefined)
-			expect(collapseTag!.text()).toBe('+2')
-		})
 		it('Filterable: input filters option list', async () => {
 			const wrapper = mount(Select, { props: { filterable: true, options: baseOptions } })
 			const input = wrapper.find('input.px-select-inner')
@@ -369,6 +346,71 @@ describe('Select Component', () => {
 			await nextTick()
 			await new Promise((res) => setTimeout(res))
 			expect(wrapper.find('.px-select-label').text()).toBe('Ban')
+		})
+	})
+	describe('Tag collapse', () => {
+		it('Collapse tags renders collapsed area', async () => {
+			const modelValue = ref<string[]>(['vue', 'react', 'angular', 'svelte'])
+			const options = [
+				{ label: 'Vue', value: 'vue' },
+				{ label: 'React', value: 'react' },
+				{ label: 'Angular', value: 'angular' },
+				{ label: 'Svelte', value: 'svelte' }
+			]
+			const wrapper = mount(Select, {
+				props: {
+					multiple: true,
+					collapseTags: true,
+					maxDisplayTags: 2,
+					options,
+					modelValue: modelValue.value
+				}
+			})
+			await nextTick()
+			const tags = wrapper.findAllComponents(Tag)
+			expect(tags.length).toBe(5)
+			const collapseTag = tags.at(2)
+			expect(collapseTag).not.toBe(undefined)
+			expect(collapseTag!.text()).toBe('+2')
+		})
+		it('Collapsed area size', async () => {
+			const modelValue = ref<string[]>(['vue', 'react', 'angular', 'svelte'])
+			const options = [
+				{ label: 'Vue', value: 'vue' },
+				{ label: 'React', value: 'react' },
+				{ label: 'Angular', value: 'angular' },
+				{ label: 'Svelte', value: 'svelte' }
+			]
+			const wrapper = mount(Select, {
+				props: {
+					multiple: true,
+					collapseTags: true,
+					maxDisplayTags: 2,
+					options,
+					modelValue: modelValue.value
+				}
+			})
+			await nextTick()
+			const tags = wrapper.findAllComponents(Tag)
+			expect(tags.length).toBe(5)
+			const collapseTag = tags.at(2)!
+
+			collapseTag.trigger('mouseenter')
+			const popupContent = wrapper
+				.findComponent(Popover)
+				.findComponent(Transition)
+				.find('.px-popup-content')
+
+			expect(popupContent.attributes('style')).toContain('max-width: 400px;')
+
+			wrapper.setProps({
+				popoverProps: {
+					contentStyle: { maxWidth: '200px' }
+				}
+			})
+			await nextTick()
+
+			expect(popupContent.attributes('style')).toContain('max-width: 200px;')
 		})
 	})
 })

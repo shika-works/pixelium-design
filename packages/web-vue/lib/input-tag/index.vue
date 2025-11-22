@@ -46,7 +46,7 @@
 						>+{{ tagsCollapsed.length }}</slot
 					>
 				</Tag>
-				<Popover v-else>
+				<Popover v-else v-bind="popoverProps">
 					<Tag
 						:size="tagSize"
 						:variant="props.tagVariant"
@@ -155,7 +155,7 @@ import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-k
 import Tag from '../tag/index.vue'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
 import Popover from '../popover/index.vue'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { BORDER_CORNER_RAD_RANGE, POPUP_CONTENT_DEFAULT_MAX_WIDTH } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
@@ -383,6 +383,16 @@ const tagsCollapsed = computed(() => {
 			? modelValue.value.slice(props.maxDisplayTags)
 			: []
 		: []
+})
+
+const popoverProps = computed(() => {
+	return {
+		...props.popoverProps,
+		contentStyle: {
+			maxWidth: `${POPUP_CONTENT_DEFAULT_MAX_WIDTH}px`,
+			...props.popoverProps?.contentStyle
+		}
+	}
 })
 
 const darkMode = useDarkMode()

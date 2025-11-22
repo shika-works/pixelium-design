@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { h, nextTick, ref } from 'vue'
+import { h, nextTick, ref, Transition } from 'vue'
 import InputTag from '../index.vue'
 import Tag from '../../tag/index.vue'
 import InputGroup from '../../input-group/index.vue'
@@ -241,6 +241,35 @@ describe('InputTag Component', () => {
 			await nextTick()
 			const tags2 = wrapper.findAllComponents(Tag)
 			expect(tags2.length).toBe(3)
+		})
+		it('Collapsed area size', async () => {
+			const wrapper = mountComponent({
+				modelValue: ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4'],
+				collapseTags: true,
+				collapseTagsPopover: true,
+				maxDisplayTags: 2
+			})
+
+			const tags1 = wrapper.findAllComponents(Tag)
+			expect(tags1.length).toBe(5)
+
+			const collapseTag = wrapper.findAllComponents(Tag).at(2)!
+
+			collapseTag.trigger('mouseenter')
+			const popupContent = wrapper
+				.findComponent(Popover)
+				.findComponent(Transition)
+				.find('.px-popup-content')
+			expect(popupContent.attributes('style')).toContain('max-width: 400px;')
+
+			wrapper.setProps({
+				popoverProps: {
+					contentStyle: { maxWidth: '200px' }
+				}
+			})
+			await nextTick()
+
+			expect(popupContent.attributes('style')).toContain('max-width: 200px;')
 		})
 	})
 

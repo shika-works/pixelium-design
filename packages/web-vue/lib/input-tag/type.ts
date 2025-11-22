@@ -1,3 +1,4 @@
+import type { PopoverProps, PopoverEvents } from '../popover/type'
 import type { EmitEvent, NumberOrPercentage } from '../share/type'
 import type { TagEvents, TagProps } from '../tag/type'
 
@@ -112,6 +113,11 @@ export type InputTagProps = {
 	 * @version 0.0.2
 	 */
 	tagColor?: TagProps['color']
+	/**
+	 * @property {Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>} [popoverProps]
+	 * @version 0.0.3
+	 */
+	popoverProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
 }
 
 export type InputTagEvents = {
