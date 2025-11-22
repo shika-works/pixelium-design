@@ -1,6 +1,6 @@
 import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
-import type { NumberOrPercentage } from '../share/type'
-import type { TagProps } from '../tag/type'
+import type { EmitEvent, NumberOrPercentage } from '../share/type'
+import type { TagEvents, TagProps } from '../tag/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
 export interface SelectOption extends OptionListOption<any> {}
@@ -117,10 +117,10 @@ export type SelectProps = {
 	 */
 	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
 	/**
-	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'>} [tagProps]
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>} [tagProps]
 	 * @version 0.0.3
 	 */
-	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'>
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.2
