@@ -13,8 +13,12 @@ span.px-switch {
 }
 .px-switch {
 	@prefix: px-switch;
-	--switch-height: calc(var(--px-medium-base-size) - 2px);
+	--switch-small-size: calc(var(--px-small-size) - var(--px-interval-1));
+	--switch-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) - 2px);
+	--switch-large-size: calc(var(--px-medium-size));
+	--switch-height: var(--switch-medium-size);
 	--switch-width: calc(var(--switch-height) * 2);
+
 	--px-medium-padding-x: var(--px-interval-2);
 	--px-large-padding-x: var(--px-interval-3);
 	--px-small-padding-x: var(--px-interval-2);
@@ -64,14 +68,14 @@ span.px-switch {
 	}
 
 	&__large {
-		--switch-height: calc(var(--px-medium-size));
+		--switch-height: var(--switch-large-size);
 		--text-size: var(--px-large-font-size);
 		.@{prefix}-icon-wrapper {
 			font-size: var(--px-large-font-size);
 		}
 	}
 	&__small {
-		--switch-height: calc(var(--px-small-base-size));
+		--switch-height: var(--switch-small-size);
 		--text-size: var(--px-small-font-size);
 		.@{prefix}-icon-wrapper {
 			font-size: calc(var(--px-small-font-size) - var(--px-interval-1));
