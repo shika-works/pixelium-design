@@ -178,3 +178,10 @@ inputNumberExpose.select: Select the content of the current input box.
 ```ts
 export type NumberOrPercentage = number | `${number}%`
 ```
+
+### EmitEvent
+```ts
+export type EmitEvent<T extends Record<string, any>> = {
+	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}
+```
