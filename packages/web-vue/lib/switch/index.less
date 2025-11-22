@@ -13,8 +13,8 @@ span.px-switch {
 }
 .px-switch {
 	@prefix: px-switch;
-	--switch-small-size: calc(var(--px-small-size) - var(--px-interval-1));
-	--switch-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) - 2px);
+	--switch-small-size: calc(var(--px-small-size) - var(--px-interval-1) * 2);
+	--switch-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
 	--switch-large-size: calc(var(--px-medium-size));
 	--switch-height: var(--switch-medium-size);
 	--switch-width: calc(var(--switch-height) * 2);

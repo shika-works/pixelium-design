@@ -10,11 +10,12 @@
 }
 span.px-tag {
 	font-size: var(--text-size);
+	line-height: calc(var(--tag-size) - 2 * var(--px-bit));
 }
 .px-tag {
 	@prefix: px-tag;
-	--tag-small-size: calc(var(--px-small-size) - var(--px-interval-1));
-	--tag-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) - 2px);
+	--tag-small-size: calc(var(--px-small-size) - var(--px-interval-1) * 2);
+	--tag-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
 	--tag-large-size: var(--px-medium-size);
 	--tag-size: var(--tag-medium-size);
 
@@ -24,12 +25,13 @@ span.px-tag {
 	--padding-x-size: var(--px-medium-padding-x);
 	--text-color: var(--px-neutral-1);
 	--text-size: var(--px-medium-font-size);
-	height: var(--tag-size);
+
+	min-height: var(--tag-size);
+	box-sizing: border-box;
+
 	padding-left: var(--padding-x-size);
 	padding-right: var(--padding-x-size);
 	background-color: transparent;
-	border-color: transparent;
-	border-width: var(--px-bit);
 	display: inline-flex;
 	align-items: center;
 	position: relative;
@@ -37,6 +39,12 @@ span.px-tag {
 	transition: 0.25s;
 	z-index: 0;
 	font-size: var(--text-size);
+	word-break: break-word;
+
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+
 	&__large {
 		--padding-x-size: var(--px-large-padding-x);
 		--tag-size: var(--tag-large-size);
