@@ -311,8 +311,7 @@ const drawPixel = () => {
 		offsetX,
 		pixelSize + 1,
 		true,
-		(sizeComputed.value === 'small' || sizeComputed.value === 'medium') &&
-			props.shape === 'round'
+		props.shape === 'round'
 	)
 	floodFill(
 		ctx,
