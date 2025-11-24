@@ -30,14 +30,13 @@ Pass [modelValue](file://c:\文档\开源\pixelium-design\packages\web-vue\lib\r
 [[[zh
 
 ## 禁用
-
-[disabled](file://c:\文档\开源\pixelium-design\packages\web-vue\lib\radio-group\typs.ts#L15-L15) 设置禁用，此时内部 `<input>` 都会被设置 [disabled](file://c:\文档\开源\pixelium-design\packages\web-vue\lib\radio-group\typs.ts#L15-L15)。。
+`disabled` 设置禁用，此时内部 `<input>` 都会被设置 [disabled]。
 ]]]
 [[[en
 
 ## Disabled
 
-[disabled](file://c:\文档\开源\pixelium-design\packages\web-vue\lib\radio-group\typs.ts#L15-L15) sets disabled status. The internal `<input>` will be set to [disabled](file://c:\文档\开源\pixelium-design\packages\web-vue\lib\radio-group\typs.ts#L15-L15) in both cases.
+`disabled` sets disabled status. The internal `<input>` will be set to [disabled] in both cases.
 ]]]
 <preview path="./radio-disabled.vue"></preview>
 
