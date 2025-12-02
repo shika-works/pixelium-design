@@ -47,6 +47,8 @@ import FormItem from './form-item/index.vue'
 import { pixelateImage } from './share/util/pixel.ts'
 import Switch from './switch/index.vue'
 import Slider from './slider/index.vue'
+import Radio from './radio/index.vue'
+import RadioGroup from './radio-group/index.vue'
 
 const components = [
 	Button,
@@ -85,7 +87,9 @@ const components = [
 	Form,
 	FormItem,
 	Switch,
-	Slider
+	Slider,
+	Radio,
+	RadioGroup
 ]
 
 const defaultPrefix = 'Px'
@@ -158,7 +162,9 @@ export {
 	Form,
 	FormItem,
 	Switch,
-	Slider
+	Slider,
+	Radio,
+	RadioGroup
 }
 export default {
 	install
