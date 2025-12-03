@@ -44,7 +44,8 @@ import Image from './image/index.vue'
 import Avatar from './avatar/index.vue'
 import Form from './form/index.vue'
 import FormItem from './form-item/index.vue'
-import { pixelateImage } from './share/util/pixel.ts'
+import { pixelateImage } from './pixelate/pixel.ts'
+import { imageDataToDataURL } from './share/util/dom.ts'
 import Switch from './switch/index.vue'
 import Slider from './slider/index.vue'
 import Radio from './radio/index.vue'
@@ -170,7 +171,8 @@ export {
 	Radio,
 	RadioGroup,
 	Checkbox,
-	CheckboxGroup
+	CheckboxGroup,
+	imageDataToDataURL
 }
 export default {
 	install

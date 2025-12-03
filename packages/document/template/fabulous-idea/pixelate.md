@@ -1,14 +1,14 @@
 [[[zh
 # 像素化 Pixelate
 
-我们组件库导出函数 `pixelateImage` 用于将图片像素化。传入 URL、base64 字符串或者 `<img>` 对象，返回像素化后的 base64 字符串。
+我们组件库导出函数 `pixelateImage` 用于将图片像素化。传入 URL、base64 字符串或者 `<img>` 对象，返回像素化后的 `ImageData` 对象。可以通过组件库提供的 `imageDataToDataURL` 函数可以转为 base64 格式的字符串，直接在 `<img>` 上使用。
 
 ## 基础使用
 ]]]
 [[[en
 # Pixelate
 
-Our component library exports the function `pixelateImage` to pixelate images. It accepts a URL, a base64 string, or an `<img>` object and returns a pixelated base64 string.
+The component library exports a `pixelateImage` function that pixelates images. Pass in a URL, base64 string, or `<img>` element, and it returns the pixelated `ImageData` object. You can use the component library's `imageDataToDataURL` function to convert it to a base64 format string for direct use in `<img>` tags.
 
 ## Basic Usage
 ]]]
@@ -21,7 +21,7 @@ Our component library exports the function `pixelateImage` to pixelate images. I
 function pixelateImage(imageSource: string | HTMLImageElement, pixelSize: number, options?: {
     palette?: string[];
     background?: string;
-}): Promise<string>
+}): Promise<ImageData | null>
 ```
 
 [[[zh

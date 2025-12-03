@@ -6,8 +6,11 @@
 </template>
 
 <script setup lang="ts">
-import { pixelateImage } from '@pixelium/web-vue/lib/share/util/pixel.js'
 import { ref } from 'vue'
+import { pixelateImage, imageDataToDataURL } from '@pixelium/web-vue'
+
+// When on-demand import
+// import { pixelateImage, imageDataToDataURL } from '@pixelium/web-vue/es'
 
 const pixel = ref('')
 
@@ -75,6 +78,9 @@ const data = [
 pixelateImage('/pixelium-design/majyou.jpg', 8, {
 	palette: data
 }).then((res) => {
-	pixel.value = res
+	if (!res) {
+		return
+	}
+	pixel.value = imageDataToDataURL(res)
 })
 </script>
