@@ -43,6 +43,8 @@ CheckboxGroup 的值为选中的 Checkbox 复选框组件的 `value` 组成的�
 同样地，CheckboxGroup 传入 `modelValue` 进入受控模式。不传或者为 `undefined` 则为非受控模式，此时可以传入 `defaultValue` 属性作为默认值。
 ]]]
 [[[en
+## Checkbox Group
+
 You can combine CheckboxGroup and Checkbox to form a checkbox group.
 
 The value of CheckboxGroup is an array composed of the `value` of selected Checkbox components.
