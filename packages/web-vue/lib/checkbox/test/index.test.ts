@@ -15,7 +15,7 @@ describe('Checkbox component', () => {
 	afterEach(() => {
 		post()
 	})
-	it('renders canvas and input and calls drawBorder on mount', async () => {
+	it('renders canvas and input', async () => {
 		const wrapper = mount(Checkbox, {
 			props: { modelValue: false, value: 'v' }
 		})
