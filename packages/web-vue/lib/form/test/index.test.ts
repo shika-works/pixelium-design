@@ -16,6 +16,8 @@ import { h, nextTick, ref } from 'vue'
 import type { FieldType } from '../type'
 import Switch from '../../switch/index.vue'
 import Slider from '../../slider/index.vue'
+import Checkbox from '../../checkbox/index.vue'
+import CheckboxGroup from '../../checkbox-group/index.vue'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -537,6 +539,90 @@ describe('Form Component', () => {
 			await nextTick()
 			const input2 = wrapper.find('.px-slider')
 			expect(input2.attributes('tabindex')).toBe('-1')
+		})
+		it('Checkbox', async () => {
+			const form = ref({
+				input: false
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(Checkbox, {
+										modelValue: form.value.input,
+										'onUpdate:modelValue': (e) => (form.value.input = e)
+									})
+							}
+						)
+					]
+				}
+			})
+
+			wrapper.setProps({ readonly: true })
+			await nextTick()
+			const input1 = wrapper.find('input')
+			expect(input1.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ readonly: false, disabled: true })
+			await nextTick()
+			const input2 = wrapper.find('input')
+			expect(input2.attributes('disabled')).toBe('')
+		})
+		it('CheckboxGroup', async () => {
+			const form = ref({
+				input: [] as any[]
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(
+										CheckboxGroup,
+										{
+											modelValue: form.value.input,
+											'onUpdate:modelValue': (e) => (form.value.input = e)
+										},
+										{
+											default: () => h(Checkbox, {})
+										}
+									)
+							}
+						)
+					]
+				}
+			})
+
+			wrapper.setProps({ readonly: true })
+			await nextTick()
+			const input1 = wrapper.find('input')
+			expect(input1.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ readonly: false, disabled: true })
+			await nextTick()
+			const input2 = wrapper.find('input')
+			expect(input2.attributes('disabled')).toBe('')
 		})
 	})
 	describe('Validate', () => {

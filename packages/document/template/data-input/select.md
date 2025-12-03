@@ -251,6 +251,16 @@ selectExpose.clear: Clear the current input.
 ### SelectOption, SelectGroupOption
 
 ```ts
+export interface Option<T = any> {
+	value: T
+	label: string
+}
+
+export interface GroupOption<T = any> {
+	children: (Option<T> | string)[]
+	type: typeof GROUP_OPTION_TYPE
+}
+
 export interface OptionListOption<T = any> extends Option<T> {
 	disabled?: boolean
 	key?: string | number | symbol
