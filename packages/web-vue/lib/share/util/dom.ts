@@ -1,4 +1,5 @@
 import { mergeSkipNullish } from 'parsnip-kit'
+import { createError } from './console'
 
 export function checkIntersection(target: HTMLElement, root?: HTMLElement) {
 	const targetComputedStyle = window.getComputedStyle(target)
@@ -124,4 +125,19 @@ export const checkMouseInsideElementFromEvent = (
 		clientY >= rect.top &&
 		clientY <= rect.bottom
 	)
+}
+
+export function imageDataToDataURL(imageData: ImageData): string {
+	const canvas = document.createElement('canvas')
+	const ctx = canvas.getContext('2d')
+
+	if (!ctx) {
+		throw createError('Cannot get Canvas context')
+	}
+
+	canvas.width = imageData.width
+	canvas.height = imageData.height
+	ctx.putImageData(imageData, 0, 0)
+
+	return canvas.toDataURL('image/png')
 }

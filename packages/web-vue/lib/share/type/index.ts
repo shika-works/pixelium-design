@@ -5,6 +5,7 @@ import type { GROUP_OPTION_TYPE, SCREEN_SIZE_TYPE } from '../const'
 export type NumberOrPercentage = number | `${number}%`
 
 export type RgbaColor = { r: number; g: number; b: number; a: number }
+export type RgbColor = { r: number; g: number; b: number }
 
 export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element)
 export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
