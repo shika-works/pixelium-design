@@ -49,6 +49,8 @@ import Switch from './switch/index.vue'
 import Slider from './slider/index.vue'
 import Radio from './radio/index.vue'
 import RadioGroup from './radio-group/index.vue'
+import Checkbox from './checkbox/index.vue'
+import CheckboxGroup from './checkbox-group/index.vue'
 
 const components = [
 	Button,
@@ -89,7 +91,9 @@ const components = [
 	Switch,
 	Slider,
 	Radio,
-	RadioGroup
+	RadioGroup,
+	Checkbox,
+	CheckboxGroup
 ]
 
 const defaultPrefix = 'Px'
@@ -164,7 +168,9 @@ export {
 	Switch,
 	Slider,
 	Radio,
-	RadioGroup
+	RadioGroup,
+	Checkbox,
+	CheckboxGroup
 }
 export default {
 	install

@@ -54,6 +54,13 @@ export const getGlobalThemeColor = (theme: string, level: number) => {
 	)
 }
 
+export const getGlobalThemeColorString = (theme: string, level: number) => {
+	if (!inBrowser()) {
+		return 'rgba(0,0,0,0)'
+	}
+	return getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
+}
+
 function toLinear(c: number) {
 	return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
 }
