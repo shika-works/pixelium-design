@@ -17,6 +17,9 @@ importers:
       '@prettier/plugin-oxc':
         specifier: ^0.0.4
         version: 0.0.4
+      '@types/node':
+        specifier: ^24.5.2
+        version: 24.5.2
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -26,6 +29,9 @@ importers:
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
 
   packages/document:
     dependencies:
@@ -85,9 +91,6 @@ importers:
       '@hackernoon/pixel-icon-library':
         specifier: ^1.0.6
         version: 1.0.6
-      '@types/node':
-        specifier: ^24.5.2
-        version: 24.5.2
       '@vitejs/plugin-vue':
         specifier: ^6.0.1
         version: 6.0.1(rolldown-vite@7.1.20(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1))(vue@3.5.22(typescript@5.8.3))
@@ -121,9 +124,6 @@ importers:
       svgo:
         specifier: ^4.0.0
         version: 4.0.0
-      typescript:
-        specifier: ~5.8.3
-        version: 5.8.3
       vite:
         specifier: npm:rolldown-vite@latest
         version: rolldown-vite@7.1.20(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1)
