@@ -1,52 +1,86 @@
 <script setup lang="ts">
-import { provide, inject, ref, watch } from 'vue'
-
-import PxSpace from '../space/index.vue'
-import type { RadioGroupProps, RadioGroupProvide, RadioGroupEvents } from './type'
+import { provide, inject, toRef } from 'vue'
+import type {
+	RadioGroupProps,
+	RadioGroupProvide,
+	RadioGroupEvents,
+	RadioGroupOption
+} from './type'
 import type { FormItemProvide } from '../form-item/type'
-import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, RADIO_GROUP_PROVIDE } from '../share/const/provide-key'
+import { useControlledMode } from '../share/hook/use-controlled-mode'
+import { createProvideComputed } from '../share/util/reactivity'
+import { isString } from 'parsnip-kit'
+import Radio from '../radio/index.vue'
+
 defineOptions({
 	name: 'RadioGroup'
 })
 const props = withDefaults(defineProps<RadioGroupProps>(), {
-	modelValue: '',
-	disabled: false
+	disabled: false,
+	readonly: false,
+	direction: 'horizontal'
 })
 
-const emit = defineEmits<RadioGroupEvents>()
+const emits = defineEmits<RadioGroupEvents>()
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-// 使用ref创建响应式的内部值
-const innerValue = ref(props.modelValue)
+const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
+const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
 
-// 监听props变化更新内部值
-watch(
-	() => props.modelValue,
-	(newVal) => {
-		innerValue.value = newVal
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
+	transform: (val) => {
+		return val
+	},
+	defaultField: 'defaultValue'
+})
+
+const getKey = (option: RadioGroupOption | string) => {
+	if (isString(option)) {
+		return option
+	} else {
+		return option.key ?? option.value
 	}
-)
-
-const updateValue = (value: string | number) => {
-	innerValue.value = value
-	emit('update:modelValue', value)
-	emit('input', value)
-	formItemProvide?.inputHandler()
 }
 
-// 提供响应式的值（注意这里传递的是ref）
-provide<RadioGroupProvide>('radio-group', {
-	modelValue: innerValue,
-	disabled: props.disabled,
+const updateValue = (value: any) => {
+	updateModelValue(value)
+	emits('change', value)
+	formItemProvide?.changeHandler()
+}
+
+provide<RadioGroupProvide>(RADIO_GROUP_PROVIDE, {
+	variant: toRef(props, 'variant'),
+	modelValue,
+	disabled: disabledComputed,
+	readonly: readonlyComputed,
 	updateValue
 })
 </script>
 
 <template>
-	<div v-bind="$attrs">
-		<px-space>
-			<slot></slot>
-		</px-space>
+	<div
+		class="pixelium px-radio-group"
+		:class="{
+			[`px-radio-group__${props.direction}`]: props.direction
+		}"
+	>
+		<div class="px-radio-group-inner">
+			<slot>
+				<template v-if="props.options">
+					<Radio
+						v-for="option in props.options"
+						:key="getKey(option)"
+						:value="isString(option) ? option : option.value"
+						:disabled="isString(option) ? false : option.disabled"
+					>
+						{{ isString(option) ? option : option.label }}
+					</Radio>
+				</template>
+			</slot>
+		</div>
 	</div>
 </template>
+
+<style lang="less" src="./index.less"></style>

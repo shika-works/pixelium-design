@@ -1,48 +1,72 @@
 export type RadioProps = {
 	/**
-	 * @property {string}
+	 * @property {boolean | null} [modelValue]
 	 * @version 0.0.3
 	 */
-	label: string
-
+	modelValue?: boolean | null
 	/**
-	 * @property {string | number}
+	 * @property {boolean | null} [defaultValue]
 	 * @version 0.0.3
 	 */
-	modelValue: string | number
-
+	defaultValue?: boolean | null
+	/**
+	 * @property {'normal' | 'retro'} [variant='normal']
+	 * @version 0.0.3
+	 */
+	variant?: 'normal' | 'retro'
 	/**
 	 * @property {boolean} [disabled=false]
 	 * @version 0.0.3
 	 */
-	disabled: boolean
-
+	disabled?: boolean
 	/**
-	 * @property {string} [activeColor=undefined]
+	 * @property {boolean} [readonly=false]
 	 * @version 0.0.3
 	 */
-	activeColor: string
+	readonly?: boolean
+	/**
+	 * @property {string} [label]
+	 * @version 0.0.3
+	 */
+	label?: string
+	/**
+	 * @property {any} [value]
+	 * @version 0.0.3
+	 */
+	value?: any
 }
 
 export type RadioEvents = {
 	/**
 	 * @event update:modelValue
 	 * @version 0.0.3
-	 * @param {string | number} value
+	 * @param {boolean} value
 	 */
-	'update:modelValue': [value: string | number]
-
+	'update:modelValue': [value: boolean]
 	/**
 	 * @event input
 	 * @version 0.0.3
-	 * @param {string | number} value
-
+	 * @param {boolean} value
+	 * @param {InputEvent} event
 	 */
-	input: [value: string | number]
+	input: [value: boolean, event: InputEvent]
 	/**
 	 * @event change
 	 * @version 0.0.3
-	 * @param {string | number} value
+	 * @param {boolean} value
+	 * @param {Event} event
 	 */
-	change: [value: string]
+	change: [value: boolean, event: Event]
+	/**
+	 * @event focus
+	 * @param {FocusEvent} event
+	 * @version 0.0.3
+	 */
+	focus: [event: FocusEvent]
+	/**
+	 * @event blur
+	 * @param {FocusEvent} event
+	 * @version 0.0.3
+	 */
+	blur: [event: FocusEvent]
 }
