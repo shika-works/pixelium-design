@@ -83,7 +83,7 @@ const readonlyComputed = createProvideComputed(
 )
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const boxRef = shallowRef<HTMLButtonElement | null>(null)
+const boxRef = shallowRef<HTMLDivElement | null>(null)
 
 const focusFlag = ref(false)
 const hoverFlag = ref(false)
