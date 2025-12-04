@@ -76,16 +76,16 @@ export function drawCircle(
 	const dy = s
 
 	const tmp = (radius / 2) * Math.SQRT2
-	const end = rate > 4 ? Math.ceil(tmp) : Math.floor(tmp)
+	const end = Math.ceil(tmp)
 
 	const dx = s
 
-	while (x <= end + (rate <= 2 ? dx : 0)) {
+	while (x <= end) {
 		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
-		while (Math.abs(y * y - yP) >= Math.abs((y - dy) * (y - dy) - yP)) {
+		if ((y - dy / 2) * (y - dy / 2) > yP) {
 			y -= dy
 		}
 		if (x >= end && originalY === y) {
@@ -124,10 +124,10 @@ export function drawSmoothCircle(
 	dy = Math.max(dy, 1)
 
 	const tmp = (radius / 2) * Math.SQRT2
-	const end = rate > 4 ? Math.ceil(tmp) : Math.floor(tmp)
+	const end = Math.ceil(tmp)
 
 	const dx = rate < 4 ? (s / 4) * 3 : s
-	while (x <= end + (rate <= 2 ? dx : 0)) {
+	while (x <= end) {
 		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
 		x += dx
 		const yP = radius * radius - x * x
@@ -136,12 +136,9 @@ export function drawSmoothCircle(
 			y -= dy
 		}
 		if (x >= end && originalY === y) {
+			y -= dy
 			break
 		}
-	}
-	if (rate < 6) {
-		const fix = Math.round(tmp)
-		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
 	}
 }
 
@@ -328,6 +325,16 @@ const getRadius = (
 		originalRadius = clamp(originalRadius, pixelSize, size / 2)
 	}
 	let radius = roundToPixel(originalRadius, pixelSize)
+	const rate = radius / pixelSize
+	if (rate === 4 && originalRadius < pixelSize * 4.5) {
+		return pixelSize * 3
+	}
+	if (rate === 6 && originalRadius < pixelSize * 6.25) {
+		return pixelSize * 5
+	}
+	if (rate === 6 && originalRadius > pixelSize * 6.375) {
+		return pixelSize * 7
+	}
 	return radius
 }
 

@@ -1,22 +1,54 @@
-import type { Ref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
+import type { Option } from '../share/type'
+export interface RadioGroupOption<T = any> extends Option<T> {
+	disabled?: boolean
+	key?: string | number | symbol
+}
+
 export type RadioGroupProps = {
 	/**
-	 * @property {string | number} modelValue
+	 * @property {any} [modelValue]
 	 * @version 0.0.3
 	 */
-	modelValue: string | number
-
+	modelValue?: any
+	/**
+	 * @property {any} [defaultValue]
+	 * @version 0.0.3
+	 */
+	defaultValue?: any
+	/**
+	 * @property {'normal' | 'retro'} [variant]
+	 * @version 0.0.3
+	 */
+	variant?: 'normal' | 'retro'
 	/**
 	 * @property {boolean} [disabled=false]
 	 * @version 0.0.3
 	 */
 	disabled?: boolean
+	/**
+	 * @property {boolean} [readonly=false]
+	 * @version 0.0.3
+	 */
+	readonly?: boolean
+	/**
+	 * @property {'horizontal' | 'vertical'} [direction='horizontal']
+	 * @version 0.0.3
+	 */
+	direction?: 'horizontal' | 'vertical'
+	/**
+	 * @property {(RadioGroupOption | string)[]} [options]
+	 * @version 0.0.3
+	 */
+	options?: (RadioGroupOption | string)[]
 }
 
 export interface RadioGroupProvide {
-	modelValue: Ref<string | number> | string | number
-	disabled?: boolean
-	updateValue: (value: string | number) => void
+	variant: Ref<'normal' | 'retro' | undefined>
+	modelValue: Ref<any>
+	disabled: ComputedRef<boolean | undefined>
+	readonly: ComputedRef<boolean | undefined>
+	updateValue: (value: any) => void
 }
 
 export type RadioGroupSlots = {
@@ -31,14 +63,13 @@ export type RadioGroupEvents = {
 	/**
 	 * @event update:modelValue
 	 * @version 0.0.3
-	 * @param {string | number} value
+	 * @param {any} value
 	 */
-	'update:modelValue': [value: string | number]
-
+	'update:modelValue': [value: any]
 	/**
-	 * @event input
+	 * @event change
 	 * @version 0.0.3
-	 * @param {string | number} value
+	 * @param {any} value
 	 */
-	input: [value: string | number]
+	change: [value: any]
 }

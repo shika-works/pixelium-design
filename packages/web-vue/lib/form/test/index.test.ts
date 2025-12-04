@@ -496,10 +496,10 @@ describe('Form Component', () => {
 			const input2 = wrapper.find('input')
 			expect(input2.attributes('disabled')).toBe('')
 
-			wrapper.setProps({ size: 'large' })
+			wrapper.setProps({ size: 'small' })
 			await nextTick()
 			const input3 = wrapper.find('.px-switch')
-			expect(input3.attributes('class')).include('px-switch__large')
+			expect(input3.attributes('class')).include('px-switch__small')
 		})
 		it('Slider', async () => {
 			const form = ref({

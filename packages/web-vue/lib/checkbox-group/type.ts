@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import type { Option } from '../share/type'
 import type { Nullish } from 'parsnip-kit'
 
@@ -64,8 +64,8 @@ export type CheckboxGroupSlots = {
 }
 
 export type CheckboxGroupProvide = {
-	disabled: Ref<boolean | undefined>
-	readonly: Ref<boolean | undefined>
+	disabled: ComputedRef<boolean | undefined>
+	readonly: ComputedRef<boolean | undefined>
 	modelValue: Ref<any[] | Nullish>
 	updateValue: (value: any, checked: boolean) => void
 }

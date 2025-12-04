@@ -4,7 +4,9 @@
 	@prefix: px-checkbox;
 
 	--checkbox-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
+	--text-color: var(--px-neutral-10);
 
+	color: var(--text-color);
 	display: inline-flex;
 	align-items: center;
 	cursor: pointer;
@@ -60,7 +62,7 @@
 	}
 
 	&__checked {
-		color: var(--px-primary-6);
+		--text-color: var(--px-primary-6);
 	}
 
 	&__readonly {
@@ -69,12 +71,12 @@
 
 	&__disabled {
 		cursor: not-allowed;
-		color: var(--px-neutral-8);
+		--text-color: var(--px-neutral-8);
 		& .@{prefix}-checked-mark {
 			fill: var(--px-neutral-8);
 		}
 		&.@{prefix}__checked {
-			color: var(--px-primary-2);
+			--text-color: var(--px-primary-2);
 			& .@{prefix}-checked-mark {
 				fill: var(--px-primary-2);
 			}

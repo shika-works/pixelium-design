@@ -1,8 +1,10 @@
 import fs from 'fs'
 import { titleCase } from 'parsnip-kit'
 
+const badge = `<span class="VPBadge tip" style="background-color: rgba(203, 231, 202, 1);color: rgba(0, 180, 42, 1)">NEW!</span>`
+
 const dfs = (
-	files,
+	files: string[],
 	prefix: string[],
 	container: any[],
 	titleMap: Record<string, string>,
@@ -16,7 +18,7 @@ const dfs = (
 		if (fs.statSync(fullPath).isDirectory()) {
 			const curFiles = fs.readdirSync(fullPath)
 			prefix.push(file)
-			const curContainer = []
+			const curContainer = [] as any[]
 			const add = additionMap?.[file.toLowerCase()]
 
 			container.push({
@@ -37,13 +39,27 @@ const dfs = (
 
 			container.push({
 				text:
-					(titleMap[fileName.toLowerCase()] || titleCase(fileName)) + (add ? `  ${add}` : ''),
+					(titleMap[fileName.toLowerCase()] || titleCase(fileName)) +
+					(add ? `  ${add}` : '') +
+					(newItems.includes(fileName) ? ` ${badge}` : ''),
 				link: '/' + prefix.slice(0).join('/') + `/${fileName}`,
 				key: fileName
 			})
 		}
 	})
 }
+
+const newItems: string[] = [
+	'form',
+	'switch',
+	'slider',
+	'checkbox',
+	'radio',
+	'image',
+	'avatar',
+	'virtual-list',
+	'pixelate'
+]
 
 const order = [
 	'guide',

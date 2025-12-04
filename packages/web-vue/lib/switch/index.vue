@@ -136,7 +136,11 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
-const sizeComputed = createProvideComputed('size', [formItemProvide, props])
+const sizeComputed = createProvideComputed('size', [formItemProvide, props], (pre, value) => {
+	let size = pre ?? value
+	size = size === 'large' ? 'medium' : size
+	return size
+})
 
 const ANIMATION_DURATION = 250
 

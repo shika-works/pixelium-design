@@ -65,8 +65,7 @@ describe('Checkbox component', () => {
 			global: {
 				provide: {
 					[CHECKBOX_GROUP_PROVIDE]: groupProvide
-				},
-				stubs: { CheckSolid: true }
+				}
 			},
 			attachTo: 'body'
 		})

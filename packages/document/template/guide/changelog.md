@@ -9,9 +9,10 @@
 ## v0.0.3
 - 新增：
   - 支持切换像素宽度，支持 2px 和 4px。
-  - 完善表单组件：Form、FormItem、Switch、Slider。
+  - 完善表单组件：Form、FormItem、Switch、Slider、Radio、RadioGroup、Checkbox、CheckboxGroup。
   - 新增图片展示组件 Image 和头像组件 Avatar。
   - 新增虚拟列表组件 VirtualList。
+  - 新增图片像素化工具函数 `pixelate`。
 - 优化：
   - Select 组件增加 `label` 插槽。
   - InputGroup 增加 `readonly` 属性。
@@ -28,9 +29,10 @@
 ## v0.0.3
 - New features:
   - Support switching pixel widths, supporting 2px and 4px.
-  - Improve form components: Form, FormItem, Switch, Slider.
+  - Improve form components: Form, FormItem, Switch, Slider, Radio, RadioGroup, Checkbox, CheckboxGroup.
   - Add image display component Image and avatar component Avatar.
   - Add virtual list component VirtualList.
+  - Add a utility function `pixelate` for image pixelation
 - Optimizations:
   - Add `label` slot to the Select component.
   - Add `readonly` property to InputGroup.

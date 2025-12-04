@@ -97,7 +97,7 @@ disabled: 禁用状态。
 readonly: 只读状态。
 indeterminate: 半选中状态。
 label: 复选框的文本。
-value: 复选框的值。
+value: 复选框的原生 `value` 属性。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 选中/取消选择复选框的回调。
 events.change: 复选框选中状态改变的回调。
@@ -112,7 +112,7 @@ disabled: Disabled state.
 readonly: Read-only state.
 indeterminate: Indeterminate state.
 label: The text of the checkbox.
-value: The value of the checkbox.
+value: the native `value` attribute of checkboxes.
 events.update:modelValue: Callback for updating `modelValue`.
 events.input: Callback for selecting/deselecting the checkbox.
 events.change: Callback for when the checkbox selection state changes.

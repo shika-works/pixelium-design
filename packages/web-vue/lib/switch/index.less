@@ -15,12 +15,10 @@ span.px-switch {
 	@prefix: px-switch;
 	--switch-small-size: calc(var(--px-small-size) - var(--px-interval-1) * 2);
 	--switch-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
-	--switch-large-size: calc(var(--px-medium-size));
 	--switch-height: var(--switch-medium-size);
 	--switch-width: calc(var(--switch-height) * 2);
 
 	--px-medium-padding-x: var(--px-interval-2);
-	--px-large-padding-x: var(--px-interval-3);
 	--px-small-padding-x: var(--px-interval-2);
 	--text-color: var(--px-neutral-10);
 	--text-size: var(--px-medium-font-size);
@@ -65,14 +63,6 @@ span.px-switch {
 
 		display: flex;
 		align-items: center;
-	}
-
-	&__large {
-		--switch-height: var(--switch-large-size);
-		--text-size: var(--px-large-font-size);
-		.@{prefix}-icon-wrapper {
-			font-size: var(--px-large-font-size);
-		}
 	}
 	&__small {
 		--switch-height: var(--switch-small-size);

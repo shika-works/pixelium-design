@@ -1,28 +1,79 @@
-import type { RgbaColor } from '../share/type'
-import { rgbaColor2string } from '../share/util/color'
+import { drawCircle, drawSmoothCircle, roundToPixel } from '../share/util/plot'
 
-// 新增绘制大颗粒像素风格三角形的函数
-export const drawLargePixelTriangle = (
+export const drawPixelTriangle = (
 	ctx: CanvasRenderingContext2D,
-	x: number,
-	y: number,
-	size: number,
-	color: RgbaColor,
-	pixelSize: number = 2
+	width: number,
+	height: number,
+	color: string,
+	pixelSize: number
 ) => {
-	ctx.fillStyle = rgbaColor2string(color)
+	ctx.fillStyle = color
 
-	// 计算三角形的大小和位置
-	const gridSize = Math.floor(size / pixelSize)
-	// console.log(gridSize,'gridSize',size , pixelSize);
+	const size = roundToPixel(Math.min(width, height), pixelSize)
+	const x = Math.round((width - (size * Math.sqrt(3)) / 2) / 2 + pixelSize / 2)
+	const y = Math.round((height - size) / 2)
 
-	// 绘制大颗粒像素风格的三角形
-	for (let row = 0; row < 5; row++) {
-		for (let col = 0; col < gridSize; col++) {
-			if (col >= row && col <= gridSize - 1 - row) {
-				// 绘制大的像素块
-				ctx.fillRect(x + row * pixelSize, y + col * pixelSize, pixelSize, pixelSize * 2)
-			}
-		}
+	let cur = size
+	let times = 0
+	const pointSize = pixelSize
+	const step = pointSize * Math.SQRT2
+	while (cur >= 0) {
+		const h = roundToPixel(cur, pointSize)
+		ctx.fillRect(x + times * pointSize, y + Math.round((size - h) / 2), pointSize, h)
+		cur -= step
+		times++
 	}
+}
+
+export const drawMaskedPixelTriangle = (
+	ctx: CanvasRenderingContext2D,
+	width: number,
+	height: number,
+	color: string,
+	pixelSize: number
+) => {
+	drawPixelTriangle(ctx, width, height, color, pixelSize)
+	for (let x = 0; x <= width; x += 2) {
+		ctx.clearRect(x, 0, 1, height)
+	}
+	for (let y = 0; y < height; y += 2) {
+		ctx.clearRect(0, y, width, 1)
+	}
+}
+
+export const drawRadioCircleMark = (
+	ctx: CanvasRenderingContext2D,
+	width: number,
+	height: number,
+	color: string,
+	pixelSize: number,
+	checked: boolean
+) => {
+	ctx.fillStyle = color
+	const size = Math.min(width, height)
+	drawCircle(
+		ctx,
+		size / 2 - pixelSize / 2,
+		size / 2 - pixelSize / 2,
+		Math.round((size - pixelSize / 2) / 2),
+		0,
+		Math.PI * 2,
+		pixelSize
+	)
+	if (!checked) {
+		return
+	}
+	const intervalSize = parseInt(
+		getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
+	)
+	drawSmoothCircle(
+		ctx,
+		size / 2 - pixelSize / 2,
+		size / 2 - pixelSize / 2,
+		Math.round((size - pixelSize / 2) / 2 - intervalSize * 2),
+		0,
+		Math.PI * 2,
+		pixelSize
+	)
+	ctx.fillRect(size / 2 - pixelSize / 2, size / 2 - pixelSize / 2, pixelSize, pixelSize)
 }
