@@ -1,18 +1,16 @@
 <template>
-	<px-space direction="vertical">
-		<px-radio v-model="value" label="1" disabled>备选项</px-radio>
-		<px-radio v-model="value" label="2">备选项</px-radio>
+	<px-space>
+		<px-space>
+			<px-radio disabled :default-value="true">Checked</px-radio>
+			<px-radio disabled>Unchecked</px-radio>
+			<px-radio readonly :default-value="true">Checked Readonly</px-radio>
+			<px-radio readonly>Unchecked Readonly</px-radio>
+		</px-space>
+		<px-space>
+			<px-radio variant="retro" disabled :default-value="true">Checked</px-radio>
+			<px-radio variant="retro" disabled>Unchecked</px-radio>
+			<px-radio variant="retro" readonly :default-value="true">Checked Readonly</px-radio>
+			<px-radio variant="retro" readonly>Unchecked Readonly</px-radio>
+		</px-space>
 	</px-space>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const value = ref('vue')
-</script>
-
-<style lang="css" scoped>
-.px-select {
-	width: 320px;
-}
-</style>

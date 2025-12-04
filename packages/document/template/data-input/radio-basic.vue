@@ -1,16 +1,14 @@
 <template>
-	<px-radio v-model="value" label="1">备选项</px-radio>
-	<px-radio v-model="value" label="2">备选项</px-radio>
+	<px-space>
+		<px-radio v-model="checked">Basic Checkbox</px-radio>
+		<px-radio :default-value="true">Uncontrolled</px-radio>
+		<px-radio label="Set Label By Prop"></px-radio>
+		<px-radio variant="retro">Retro Style</px-radio>
+		<px-radio variant="retro" :default-value="true">Retro Style Checked</px-radio>
+	</px-space>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-
-const value = ref('vue')
+const checked = ref(false)
 </script>
-
-<style lang="css" scoped>
-.px-select {
-	width: 320px;
-}
-</style>
