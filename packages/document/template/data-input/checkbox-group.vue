@@ -14,7 +14,7 @@
 		</px-checkbox-group>
 		<h4>Readonly</h4>
 		<px-checkbox-group :default-value="['Sam']" readonly>
-			<px-checkbox value="Sam">Elliott</px-checkbox>
+			<px-checkbox value="Sam">Sam</px-checkbox>
 			<px-checkbox value="Shane">Shane</px-checkbox>
 		</px-checkbox-group>
 		<h4>Disabled</h4>
