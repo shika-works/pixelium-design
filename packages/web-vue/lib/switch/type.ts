@@ -15,10 +15,10 @@ export type SwitchProps = {
 	 */
 	shape?: 'round' | 'normal'
 	/**
-	 * @property {'small' | 'medium' | 'large'} [size='medium']
+	 * @property {'small' | 'medium'} [size='medium']
 	 * @version 0.0.3
 	 */
-	size?: 'small' | 'medium' | 'large'
+	size?: 'small' | 'medium'
 	/**
 	 * @property {boolean} [readonly=false]
 	 * @version 0.0.3
