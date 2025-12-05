@@ -187,5 +187,18 @@ export type {
 	ValueWithDeviceWidth
 } from './share/type/index.ts'
 
+export type { MessageOptions, MessageReturn } from './message-box/type.ts'
+
 export type { AutoCompleteOption, AutoCompleteGroupOption } from './auto-complete/type.ts'
 export type { SelectOption, SelectGroupOption } from './select/type.ts'
+export type { OptionListOption, OptionListGroupOption } from './option-list/type.ts'
+export type { CheckboxGroupOption } from './checkbox-group/type.ts'
+export type { RadioGroupOption } from './radio-group/type.ts'
+
+export type {
+	RuleItem,
+	RuleTrigger,
+	FieldType,
+	RuleLevel,
+	FormValidateResult
+} from './form/type.ts'

@@ -9,6 +9,16 @@
 		<px-form-item label="Input" field="input">
 			<px-input v-model="form.input" placeholder="Please input..."></px-input>
 		</px-form-item>
+		<px-form-item label="Radio" field="radio">
+			<px-radio-group
+				v-model="form.radio"
+				:options="radioOptions"
+				variant="retro"
+			></px-radio-group>
+		</px-form-item>
+		<px-form-item label="Checkbox" field="checkbox">
+			<px-checkbox-group v-model="form.checkbox" :options="checkboxOptions"></px-checkbox-group>
+		</px-form-item>
 		<px-form-item label="Number" field="number">
 			<px-input-number v-model="form.number" placeholder="Please input..."></px-input-number>
 		</px-form-item>
@@ -29,7 +39,7 @@
 			></px-select>
 		</px-form-item>
 		<px-form-item label="Nest" field="nest.value">
-			<px-input v-model="form.nest.value"></px-input>
+			<px-input v-model="form.nest.value" placeholder="Please input..."></px-input>
 		</px-form-item>
 		<px-form-item label="Email" field="email">
 			<px-input v-model="form.email" placeholder="Please email..."></px-input>
@@ -62,11 +72,13 @@ const form = ref({
 	nest: {
 		value: ''
 	},
-	select: null,
+	select: null as null | string,
 	email: '',
 	url: '',
 	numberString: '',
-	switch: false
+	switch: false,
+	radio: null as null | string,
+	checkbox: [] as string[]
 })
 
 const rules = {
@@ -82,15 +94,27 @@ const rules = {
 	'nest.value': { required: true, message: 'Please input' },
 	email: { required: true, email: true, message: 'Please input email' },
 	url: { required: true, url: true, message: 'Please input a URL' },
-	numberString: { required: true, numberString: true, message: 'Please input number.' }
+	numberString: { required: true, numberString: true, message: 'Please input number' },
+	radio: {
+		required: true,
+		validator(value: string) {
+			return value !== 'Yes' ? 'Please select Yes' : undefined
+		}
+	},
+	checkbox: [
+		{ required: true, message: 'Please select' },
+		{ maxLength: 2, message: 'You can select up to 2 items' }
+	]
 }
 
 const options = ref(['vue', 'react', 'angular'])
+const radioOptions = ref(['Yes', 'No'])
+const checkboxOptions = ref(['A', 'B', 'C', 'D'])
 
 const formRef = shallowRef<null | InstanceType<typeof Form>>(null)
 const submitHandler = () => {
-	formRef.value?.validate().then((res: boolean) => {
-		if (res) {
+	formRef.value?.validate().then(({ isValid }) => {
+		if (isValid) {
 			console.log('submit')
 		}
 	})

@@ -3,6 +3,7 @@
 		class="px-form pixelium"
 		@submit.stop.prevent="formSubmitHandler"
 		@reset.stop="formResetHandler"
+		@keydown.enter.prevent
 	>
 		<slot></slot>
 	</form>
@@ -10,7 +11,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, provide, ref, toRefs } from 'vue'
-import type { FieldItem, FormEvents, FormProps, FormProvide } from './type'
+import type { FieldItem, FormEvents, FormProps, FormProvide, RuleLevel } from './type'
 import { FORM_PROVIDE } from '../share/const/provide-key'
 import { isNullish, isString, max } from 'parsnip-kit'
 
@@ -61,16 +62,41 @@ const filterFieldItem = (fieldItem: FieldItem, field?: string | string[]) =>
 			: field.includes(fieldItem.field)
 
 const validate = async (field?: string | string[]) => {
+	const validateObj: Record<
+		string,
+		PromiseSettledResult<{
+			message: string
+			level: RuleLevel
+		}>
+	> = {}
 	const validate = fields.value
 		.filter((fieldItem) => filterFieldItem(fieldItem, field))
-		.map((field) => field.validate())
+		.map((fieldItem) => {
+			const result = fieldItem.validate().then(
+				(res) => {
+					validateObj[fieldItem.field] = {
+						status: 'fulfilled',
+						value: res
+					}
+					return res
+				},
+				(err) => {
+					validateObj[fieldItem.field] = {
+						status: 'rejected',
+						reason: err
+					}
+					throw err
+				}
+			)
+			return result
+		})
 	const results = await Promise.allSettled(validate)
 	const isValid = results.every(
 		(result) =>
 			result.status === 'fulfilled' && (result.value.level !== 'error' || !result.value.level)
 	)
-	emits('validate', isValid, field, results)
-	return isValid
+
+	return { isValid, results: validateObj }
 }
 
 const formSubmitHandler = (e: Event) => {

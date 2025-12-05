@@ -627,7 +627,6 @@ describe('Form Component', () => {
 	})
 	describe('Validate', () => {
 		it('Required & Base validating', async () => {
-			const onValidate = vi.fn()
 			const form = ref({
 				input1: '',
 				input2: ''
@@ -639,8 +638,7 @@ describe('Form Component', () => {
 			const wrapper = mount(Form, {
 				props: {
 					model: form.value,
-					rules: rules,
-					onValidate
+					rules: rules
 				},
 				slots: {
 					default: () => [
@@ -674,16 +672,43 @@ describe('Form Component', () => {
 			expect(wrapper.vm.validate).toBeTypeOf('function')
 			const validateRes1 = await wrapper.vm.validate('input1')
 			await nextTick()
-			expect(onValidate).toBeCalledTimes(1)
-			expect(validateRes1).toBe(false)
+			expect(validateRes1).toEqual({
+				isValid: false,
+				results: {
+					input1: {
+						status: 'fulfilled',
+						value: {
+							level: 'error',
+							message: 'input1 is required'
+						}
+					}
+				}
+			})
 			const tip1 = wrapper.findAll('.px-form-item-tip')
 			expect(tip1.length).toBe(1)
 			expect(tip1[0].text()).toBe('input1 is required')
 
 			const validateRes2 = await wrapper.vm.validate()
 			await nextTick()
-			expect(onValidate).toBeCalledTimes(2)
-			expect(validateRes2).toBe(false)
+			expect(validateRes2).toEqual({
+				isValid: false,
+				results: {
+					input1: {
+						status: 'fulfilled',
+						value: {
+							level: 'error',
+							message: 'input1 is required'
+						}
+					},
+					input2: {
+						status: 'fulfilled',
+						value: {
+							level: 'error',
+							message: 'input2 is required'
+						}
+					}
+				}
+			})
 			const tip2 = wrapper.findAll('.px-form-item-tip')
 			expect(tip2.length).toBe(2)
 			expect(tip2[0].text()).toBe('input1 is required')
@@ -706,16 +731,50 @@ describe('Form Component', () => {
 			wrapper.setProps({ model: form.value })
 			await nextTick()
 			const validateRes3 = await wrapper.vm.validate()
-			expect(onValidate).toBeCalledTimes(3)
-			expect(validateRes3).toBe(true)
+			expect(validateRes3).toEqual({
+				isValid: true,
+				results: {
+					input1: {
+						status: 'fulfilled',
+						value: {
+							level: 'normal',
+							message: ''
+						}
+					},
+					input2: {
+						status: 'fulfilled',
+						value: {
+							level: 'normal',
+							message: ''
+						}
+					}
+				}
+			})
 
 			form.value.input2 = ''
 			form.value.input1 = ''
 			wrapper.setProps({ model: form.value })
 			await nextTick()
 			const validateRes4 = await wrapper.vm.validate()
-			expect(onValidate).toBeCalledTimes(4)
-			expect(validateRes4).toBe(false)
+			expect(validateRes4).toEqual({
+				isValid: false,
+				results: {
+					input1: {
+						status: 'fulfilled',
+						value: {
+							level: 'error',
+							message: 'input1 is required'
+						}
+					},
+					input2: {
+						status: 'fulfilled',
+						value: {
+							level: 'error',
+							message: 'input2 is required'
+						}
+					}
+				}
+			})
 			const tip5 = wrapper.findAll('.px-form-item-tip')
 			expect(tip5.length).toBe(2)
 
@@ -733,7 +792,6 @@ describe('Form Component', () => {
 			expect(tip7.length).toBe(0)
 		})
 		it('Type', async () => {
-			const onValidate = vi.fn()
 			const form = ref({
 				input: ''
 			})
@@ -743,8 +801,7 @@ describe('Form Component', () => {
 			const wrapper = mount(Form, {
 				props: {
 					model: form.value,
-					rules: rules.value,
-					onValidate
+					rules: rules.value
 				},
 				slots: {
 					default: () => [
@@ -767,7 +824,19 @@ describe('Form Component', () => {
 			expect(wrapper.vm.validate).toBeTypeOf('function')
 			const validateRes = await wrapper.vm.validate()
 			await nextTick()
-			expect(validateRes).toBe(true)
+
+			expect(validateRes).toEqual({
+				isValid: true,
+				results: {
+					input: {
+						status: 'fulfilled',
+						value: {
+							level: 'normal',
+							message: ''
+						}
+					}
+				}
+			})
 			const tip = wrapper.findAll('.px-form-item-tip')
 			expect(tip.length).toBe(0)
 
@@ -778,7 +847,18 @@ describe('Form Component', () => {
 				wrapper.setProps({ rules: rules.value })
 				const validateRes = await wrapper.vm.validate()
 				await nextTick()
-				expect(validateRes).toBe(false)
+				expect(validateRes).toEqual({
+					isValid: false,
+					results: {
+						input: {
+							status: 'fulfilled',
+							value: {
+								level: 'error',
+								message: 'input type mismatch'
+							}
+						}
+					}
+				})
 				const tip = wrapper.findAll('.px-form-item-tip')
 				expect(tip.length).toBe(1)
 				expect(tip[0].text()).toBe('input type mismatch')

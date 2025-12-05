@@ -96,21 +96,6 @@ export type FormEvents = {
 	 * @version 0.0.3
 	 */
 	reset: [form: Record<number | string, any>, event: Event]
-	/**
-	 * @event validate
-	 * @param {boolean} isValid
-	 * @param {undefined | string | string[]} field
-	 * @param {PromiseSettledResult<{ message: string, level: RuleLevel }>[]} result
-	 * @version 0.0.3
-	 */
-	validate: [
-		isValid: boolean,
-		field: undefined | string | string[],
-		result: PromiseSettledResult<{
-			message: string
-			level: RuleLevel
-		}>[]
-	]
 }
 
 export type FormSlots = {
@@ -121,12 +106,23 @@ export type FormSlots = {
 	default: {}
 }
 
+export type FormValidateResult = Promise<{
+	isValid: boolean
+	results: Record<
+		string,
+		PromiseSettledResult<{
+			message: string
+			level: RuleLevel
+		}>
+	>
+}>
+
 export type FormExpose = {
 	/**
-	 * @property {(field?: string | string[]) => Promise<boolean>} validate
+	 * @property {(field?: string | string[]) => FormValidateResult} validate
 	 * @version 0.0.3
 	 */
-	validate: (field?: string | string[]) => Promise<boolean>
+	validate: (field?: string | string[]) => FormValidateResult
 	/**
 	 * @property {(field?: string | string[]) => void} reset
 	 * @version 0.0.3
