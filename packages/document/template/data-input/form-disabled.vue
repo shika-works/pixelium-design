@@ -62,8 +62,8 @@ const rules = {
 
 const formRef = shallowRef<null | InstanceType<typeof Form>>(null)
 const submitHandler = () => {
-	formRef.value?.validate().then((res: boolean) => {
-		if (res) {
+	formRef.value?.validate().then(({ isValid }) => {
+		if (isValid) {
 			console.log('submit')
 		}
 	})

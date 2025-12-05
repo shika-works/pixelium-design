@@ -224,9 +224,20 @@ slots.label: Custom label slot.
 slots.default: Form item content slot.
 ]]]
 
-### RuleLevel, FieldType, RuleTrigger
+### RuleLevel, FieldType, RuleTrigger, FormValidateResult
 ```ts
 export type RuleLevel = 'error' | 'warning' | 'success' | 'normal'
 export type FieldType = 'number' | 'string' | 'boolean' | 'array' | 'dict' | 'function' | 'date'
 export type RuleTrigger = 'blur' | 'change' | 'input'
+
+export type FormValidateResult = Promise<{
+	isValid: boolean
+	results: Record<
+		string,
+		PromiseSettledResult<{
+			message: string
+			level: RuleLevel
+		}>
+	>
+}>
 ```
