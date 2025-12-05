@@ -3,7 +3,7 @@
 .px-form-item {
 	&-label {
 		display: flex;
-		height: var(--px-medium-size);
+		min-height: var(--px-medium-size);
 		line-height: var(--px-medium-size);
 		&__auto {
 			white-space: nowrap;
@@ -16,12 +16,12 @@
 			justify-content: flex-end;
 		}
 		&__large {
-			height: var(--px-large-size);
+			min-height: var(--px-large-size);
 			line-height: var(--px-large-size);
 			font-size: var(--px-large-font-size);
 		}
 		&__small {
-			height: var(--px-small-size);
+			min-height: var(--px-small-size);
 			line-height: var(--px-small-size);
 			font-size: var(--px-small-font-size);
 		}
@@ -62,7 +62,7 @@
 		align-items: center;
 		flex-wrap: wrap;
 
-		height: var(--px-medium-size);
+		min-height: var(--px-medium-size);
 		font-size: var(--px-medium-font-size);
 
 		& > *:first-child {
@@ -70,11 +70,11 @@
 		}
 
 		&__large {
-			height: var(--px-large-size);
+			min-height: var(--px-large-size);
 			font-size: var(--px-large-font-size);
 		}
 		&__small {
-			height: var(--px-small-size);
+			min-height: var(--px-small-size);
 			font-size: var(--px-small-font-size);
 		}
 	}
