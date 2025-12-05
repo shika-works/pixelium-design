@@ -1,8 +1,10 @@
 import { defineConfig } from 'vitepress'
 import { componentPreview, containerPreview } from '@vitepress-demo-preview/plugin'
+// @ts-ignore
 import markdownItKatex from 'markdown-it-katex'
 import zh from './zh'
 import en from './en'
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
 	title: 'Pixelium Design Doc',

@@ -23,5 +23,11 @@
 
 		"types": ["node"]
 	},
-	"include": ["vite.config.ts", "script/**/*.mts", "script/**/*.ts"]
+	"include": [
+		"vite.config.ts",
+		"script/**/*.mts",
+		"script/**/*.ts",
+		".vitepress/*.ts",
+		".vitepress/*.mts"
+	]
 }
