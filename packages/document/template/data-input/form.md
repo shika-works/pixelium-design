@@ -12,6 +12,8 @@
 > - Select
 > - Textarea
 > - InputGroup
+> - Slider
+> - Switch
 ]]]
 
 [[[en
@@ -28,6 +30,8 @@ Used to collect information.
 > - Select
 > - Textarea
 > - InputGroup
+> - Slider
+> - Switch
 ]]]
 
 [[[zh

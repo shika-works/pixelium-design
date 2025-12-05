@@ -1,33 +1,22 @@
 <template>
 	<px-space direction="vertical">
-		<px-form :model="form" size="small" style="width: 500px" @submit="submitHandler">
+		<px-radio-group v-model="formSize" :options="radioSizeOptions"></px-radio-group>
+		<px-form :model="form" :size="formSize" style="width: 500px" @submit="submitHandler">
 			<px-form-item label="Input" field="input">
 				<px-input v-model="form.input"></px-input>
 			</px-form-item>
 			<px-form-item label="Number" field="number">
 				<px-input-number v-model="form.number"></px-input-number>
 			</px-form-item>
-			<px-space justify="end">
-				<px-button native-type="submit">Submit</px-button>
-			</px-space>
-		</px-form>
-		<px-form :model="form" size="medium" style="width: 500px" @submit="submitHandler">
-			<px-form-item label="Input" field="input">
-				<px-input v-model="form.input"></px-input>
+			<px-form-item label="Radio" field="radio">
+				<px-radio-group
+					v-model="form.radio"
+					:options="radioOptions"
+					variant="retro"
+				></px-radio-group>
 			</px-form-item>
-			<px-form-item label="Number" field="number">
-				<px-input-number v-model="form.number"></px-input-number>
-			</px-form-item>
-			<px-space justify="end">
-				<px-button native-type="submit">Submit</px-button>
-			</px-space>
-		</px-form>
-		<px-form :model="form" size="large" style="width: 500px" @submit="submitHandler">
-			<px-form-item label="Input" field="input">
-				<px-input v-model="form.input"></px-input>
-			</px-form-item>
-			<px-form-item label="Number" field="number">
-				<px-input-number v-model="form.number"></px-input-number>
+			<px-form-item label="Switch" field="switch">
+				<px-switch v-model="form.switch"></px-switch>
 			</px-form-item>
 			<px-space justify="end">
 				<px-button native-type="submit">Submit</px-button>
@@ -40,10 +29,21 @@ import { ref } from 'vue'
 
 const form = ref({
 	input: 'text',
-	number: 114
+	number: 114,
+	radio: 'Yes',
+	switch: false
 })
 
 const submitHandler = () => {
 	console.log('submit')
 }
+
+const radioOptions = ref(['Yes', 'No'])
+const radioSizeOptions = ref([
+	{ label: 'Small', value: 'small' },
+	{ label: 'Medium', value: 'medium' },
+	{ label: 'Large', value: 'large' }
+])
+
+const formSize = ref('medium')
 </script>
