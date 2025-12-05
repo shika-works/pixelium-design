@@ -3,6 +3,7 @@
 		class="px-form pixelium"
 		@submit.stop.prevent="formSubmitHandler"
 		@reset.stop="formResetHandler"
+		@keydown.enter.prevent
 	>
 		<slot></slot>
 	</form>
