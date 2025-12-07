@@ -2,11 +2,15 @@
 # 图片 Image
 
 顾名思义，展示图片。
+
+> 该文档示例中的图片来自 Lorem Picsum。
 ]]]
 [[[en
 # Image
 
 As the name suggests, displays an image.
+
+> The example images in this document are from Lorem Picsum.
 ]]]
 
 [[[zh
