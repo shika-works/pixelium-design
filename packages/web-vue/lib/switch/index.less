@@ -8,20 +8,18 @@
 	z-index: -1;
 	pointer-events: none;
 }
-span.px-switch {
-	font-size: var(--text-size);
-}
 .px-switch {
 	@prefix: px-switch;
-	--switch-small-size: calc(var(--px-small-size) - var(--px-interval-1) * 2);
-	--switch-medium-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
-	--switch-height: var(--switch-medium-size);
+
+	--switch-height: var(--px-medium-compat-size);
 	--switch-width: calc(var(--switch-height) * 2);
 
-	--px-medium-padding-x: var(--px-interval-2);
-	--px-small-padding-x: var(--px-interval-2);
 	--text-color: var(--px-neutral-10);
 	--text-size: var(--px-medium-font-size);
+
+	--icon-size: calc(
+		var(--px-medium-compat-size) - var(--px-interval-1) - 2 * var(--px-bit) - 2px
+	);
 
 	min-height: var(--switch-height);
 	min-width: var(--switch-width);
@@ -35,7 +33,10 @@ span.px-switch {
 
 	transition: 0.25s;
 	z-index: 0;
-	font-size: var(--text-size);
+
+	&.px-switch {
+		font-size: var(--text-size);
+	}
 
 	cursor: pointer;
 
@@ -64,13 +65,26 @@ span.px-switch {
 		display: flex;
 		align-items: center;
 	}
+
 	&__small {
-		--switch-height: var(--switch-small-size);
+		--switch-height: var(--px-small-compat-size);
 		--text-size: var(--px-small-font-size);
 		.@{prefix}-icon-wrapper {
-			font-size: calc(var(--px-small-font-size) - var(--px-interval-1));
+			--icon-size: calc(
+				var(--px-small-compat-size) - var(--px-interval-1) - 2 * var(--px-bit) - 2px
+			);
 		}
 	}
+	&__large {
+		--switch-height: var(--px-large-compat-size);
+		--text-size: var(--px-large-font-size);
+		.@{prefix}-icon-wrapper {
+			--icon-size: calc(
+				var(--px-large-compat-size) - var(--px-interval-1) - 2 * var(--px-bit) - 2px
+			);
+		}
+	}
+
 	&-inner {
 		position: absolute;
 		width: 0;
@@ -96,6 +110,8 @@ span.px-switch {
 		top: 1px;
 
 		user-select: none;
+
+		font-size: var(--icon-size);
 
 		.@{prefix}-icon {
 			width: 1em;

@@ -136,11 +136,7 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
-const sizeComputed = createProvideComputed('size', [formItemProvide, props], (pre, value) => {
-	let size = pre ?? value
-	size = size === 'large' ? 'medium' : size
-	return size
-})
+const sizeComputed = createProvideComputed('size', [formItemProvide, props])
 
 const ANIMATION_DURATION = 250
 
@@ -195,21 +191,25 @@ watch(
 	}
 )
 
+const updateSize = () => {
+	if (!canvasWrapperRef.value) {
+		return
+	}
+	size.value = [canvasWrapperRef.value.clientWidth, canvasWrapperRef.value.clientHeight]
+}
 const size = ref([0, 0])
 
 const updateIconLeft = () => {
-	if (!inBrowser()) {
-		return 0
-	}
 	if (size.value[0] === 0 || size.value[1] === 0) {
 		return 0
 	}
 
-	const sliceHeight = size.value[1] - 2
+	let sliceHeight = size.value[1] - 2
 
 	const start = 2
 	const end = size.value[0] - 2 - sliceHeight
-	iconLeft.value = Math.round(start + (end - start) * progress.value)
+
+	iconLeft.value = Math.round(start + (end - start) * progress.value) + 0.5
 }
 
 const iconLeft = ref(0)
@@ -237,7 +237,7 @@ const iconColor = computed(() => {
 })
 
 watch(
-	[size, progress],
+	[size, progress, sizeComputed],
 	() => {
 		updateIconLeft()
 	},
@@ -285,7 +285,7 @@ const drawPixel = () => {
 
 	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
 
-	const sliceHeight = height - 2 * pixelSize - 2
+	let sliceHeight = height - pixelSize * 2 - 2
 	const sliceBorderRadius = fillArr(
 		props.shape === 'round' ? roundToPixel(sliceHeight / 2, pixelSize) : 0,
 		4
@@ -337,14 +337,11 @@ const drawPixel = () => {
 
 useResizeObserver(canvasWrapperRef, () => {
 	drawPixel()
-	if (!canvasWrapperRef.value) {
-		return
-	}
-	size.value = [canvasWrapperRef.value.clientWidth, canvasWrapperRef.value.clientHeight]
+	updateSize()
 })
 useWatchGlobalCssVal(() => {
 	drawPixel()
-	updateIconLeft()
+	updateSize()
 })
 </script>
 
