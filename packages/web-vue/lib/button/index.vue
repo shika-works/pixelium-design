@@ -99,6 +99,7 @@ import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Button'
@@ -377,6 +378,7 @@ const drawPixel = () => {
 
 useResizeObserver(buttonRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(buttonRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

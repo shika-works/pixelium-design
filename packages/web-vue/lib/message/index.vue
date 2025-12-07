@@ -19,6 +19,7 @@ import { isString } from 'parsnip-kit'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
 import { calcPixelSize, canvasPreprocess } from '../share/util/plot'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 const props = withDefaults(defineProps<MessageProps>(), {
 	duration: 3000,
@@ -149,6 +150,7 @@ const drawPixel = () => {
 
 useResizeObserver(messageRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(messageRef, drawPixel)
 
 watch([() => props.type, palette, darkMode], () => {
 	setTimeout(() => {

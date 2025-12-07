@@ -44,6 +44,7 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { isNumber, isString } from 'parsnip-kit'
 import { offsetOutward } from '../share/util/common'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Avatar'
@@ -154,6 +155,7 @@ const drawPixel = () => {
 
 useResizeObserver(avatarRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(avatarRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -50,6 +50,7 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'AutoComplete'
@@ -362,6 +363,7 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 
 defineRender(() => {
 	const Inner = (

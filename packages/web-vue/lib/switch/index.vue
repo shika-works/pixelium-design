@@ -98,6 +98,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { inBrowser } from '../share/util/env'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 const MID_PROGRESS = 0.5
 
@@ -340,14 +341,14 @@ const drawPixel = () => {
 	}
 }
 
-useResizeObserver(canvasWrapperRef, () => {
+const refresh = () => {
 	drawPixel()
 	updateSize()
-})
-useWatchGlobalCssVal(() => {
-	drawPixel()
-	updateSize()
-})
+}
+
+useResizeObserver(canvasWrapperRef, refresh)
+useWatchGlobalCssVal(refresh)
+useTransitionEnd(canvasWrapperRef, refresh)
 </script>
 
 <style lang="less" src="./index.less"></style>

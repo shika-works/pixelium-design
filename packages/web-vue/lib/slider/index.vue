@@ -199,6 +199,7 @@ import {
 	getSingleValue
 } from './util'
 import Tooltip from '../tooltip/index.vue'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Slider'
@@ -635,6 +636,7 @@ const refresh = () => {
 
 useResizeObserver(sliderRef, refresh)
 useWatchGlobalCssVal(refresh)
+useTransitionEnd(sliderRef, refresh)
 </script>
 
 <style lang="less" src="./index.less"></style>

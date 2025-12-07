@@ -65,6 +65,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Select'
@@ -676,6 +677,7 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 
 const popoverProps = computed(() => {
 	return {

@@ -75,6 +75,7 @@ import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Textarea'
@@ -298,6 +299,8 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixelDebounce)
 
 useWatchGlobalCssVal(drawPixelDebounce)
+
+useTransitionEnd(wrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>
