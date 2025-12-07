@@ -32,3 +32,6 @@ export const BORDER_CORNER_RAD_RANGE: [number, number][] = [
 ]
 
 export const POPUP_CONTENT_DEFAULT_MAX_WIDTH = 400
+
+export const SQRT3 = Math.sqrt(3)
+export const INV_SQRT3 = 1 / SQRT3

@@ -34,6 +34,11 @@ export type RadioProps = {
 	 * @version 0.0.3
 	 */
 	value?: any
+	/**
+	 * @property {'medium' | 'large' | 'small'} [size='medium']
+	 * @version 0.0.3
+	 */
+	size?: 'medium' | 'large' | 'small'
 }
 
 export type RadioEvents = {

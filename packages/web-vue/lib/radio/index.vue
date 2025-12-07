@@ -6,10 +6,11 @@
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		:class="{
-			[`px-radio__disabled`]: disabledComputed,
-			[`px-radio__readonly`]: readonlyComputed,
-			[`px-radio__checked`]: modelValue,
-			[`px-radio__${variantComputed}`]: variantComputed
+			'px-radio__disabled': disabledComputed,
+			'px-radio__readonly': readonlyComputed,
+			'px-radio__checked': modelValue,
+			[`px-radio__${variantComputed}`]: variantComputed,
+			[`px-radio__${sizeComputed}`]: sizeComputed
 		}"
 	>
 		<div
@@ -41,17 +42,28 @@
 import { onMounted, nextTick, watch, ref, inject } from 'vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { getGlobalThemeColorString } from '../share/util/color'
+import { getGlobalThemeColorString, parseColor } from '../share/util/color'
 import type { RadioProps, RadioEvents } from './type'
 import { FORM_ITEM_PROVIDE, RADIO_GROUP_PROVIDE } from '../share/const/provide-key'
-import { canvasPreprocess } from '../share/util/plot'
+import {
+	calcBorderCornerCenter,
+	canvasPreprocess,
+	floodFill,
+	getBorderRadius
+} from '../share/util/plot'
 import type { FormItemProvide } from '../form-item/type'
-import { drawMaskedPixelTriangle, drawPixelTriangle, drawRadioCircleMark } from './draw'
+import {
+	drawBorder,
+	drawMaskedPixelTriangle,
+	drawPixelTriangle,
+	drawRadioCircleMark
+} from './draw'
 import { createProvideComputed } from '../share/util/reactivity'
 import { calcPixelSize } from '../share/util/plot'
 import type { RadioGroupProvide } from '../radio-group/type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 
 defineOptions({
 	name: 'Radio'
@@ -65,7 +77,8 @@ const props = withDefaults(defineProps<RadioProps>(), {
 	defaultValue: undefined,
 	variant: 'normal',
 	disabled: false,
-	readonly: false
+	readonly: false,
+	size: 'medium'
 })
 
 const emits = defineEmits<RadioEvents>()
@@ -78,6 +91,8 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const radioGroupProvide = inject<RadioGroupProvide | undefined>(RADIO_GROUP_PROVIDE)
+
+const sizeComputed = createProvideComputed('size', [radioGroupProvide, formItemProvide, props])
 
 const disabledComputed = createProvideComputed(
 	'disabled',
@@ -152,10 +167,12 @@ const drawPixel = () => {
 	if (!preprocessData) {
 		return
 	}
-	const { ctx, width, height } = preprocessData
+	const { ctx, width, height, canvas } = preprocessData
 	ctx.clearRect(0, 0, width, height)
 
-	const backgroundColor = modelValue.value
+	const backgroundColor = getGlobalThemeColorString('neutral', 1)
+
+	const mainColor = modelValue.value
 		? disabledComputed.value
 			? getGlobalThemeColorString('primary', 2)
 			: hoverFlag.value && !readonlyComputed.value
@@ -169,12 +186,32 @@ const drawPixel = () => {
 
 	if (variantComputed.value === 'retro') {
 		if (modelValue.value) {
-			drawPixelTriangle(ctx, width, height, backgroundColor, pixelSize)
+			drawPixelTriangle(ctx, width, height, mainColor, pixelSize)
 		} else {
-			drawMaskedPixelTriangle(ctx, width, height, backgroundColor, pixelSize)
+			drawMaskedPixelTriangle(ctx, width, height, mainColor, pixelSize)
 		}
 	} else {
-		drawRadioCircleMark(ctx, width, height, backgroundColor, pixelSize, !!modelValue.value)
+		const borderRadius = getBorderRadius(
+			canvas,
+			pixelSize,
+			undefined,
+			'round',
+			undefined,
+			false,
+			false,
+			false
+		)
+		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
+		const rad = BORDER_CORNER_RAD_RANGE
+		drawBorder(ctx, width, height, center, borderRadius, rad, mainColor, pixelSize)
+
+		const size = Math.min(width, height)
+		const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
+		floodFill(ctx, fillStart, fillStart, parseColor(backgroundColor))
+
+		if (modelValue.value) {
+			drawRadioCircleMark(ctx, size, mainColor, pixelSize)
+		}
 	}
 }
 
@@ -185,7 +222,15 @@ onMounted(() => {
 })
 
 watch(
-	[disabledComputed, readonlyComputed, modelValue, darkMode, hoverFlag, variantComputed],
+	[
+		disabledComputed,
+		readonlyComputed,
+		modelValue,
+		darkMode,
+		hoverFlag,
+		variantComputed,
+		sizeComputed
+	],
 	() => {
 		drawPixel()
 	}
