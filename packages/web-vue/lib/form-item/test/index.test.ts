@@ -1,7 +1,7 @@
 // FormItem.test.vue
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { ref, reactive, provide, nextTick, isRef, type ComputedRef, h } from 'vue'
+import { ref, nextTick, type ComputedRef, h } from 'vue'
 import FormItem from '../index.vue'
 import { FORM_PROVIDE } from '../../share/const/provide-key'
 import type { FormProvide } from '../../form/type'
