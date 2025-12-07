@@ -193,10 +193,10 @@ import {
 	clampValue as clampValueImpl,
 	getTargetThumbEl,
 	calcValueFromEvent,
-	calcThumbLeft as calcThumbLeftImpl,
-	updateMarkPoints as updateMarkPointsImpl,
 	getRangeValue,
-	getSingleValue
+	getSingleValue,
+	calcThumbLeft,
+	updateMarkPoints
 } from './util'
 import Tooltip from '../tooltip/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
@@ -242,6 +242,34 @@ const dotCanvasRef = shallowRef<null | HTMLCanvasElement>(null)
 
 const valueRange = computed(() => Math.max(props.max - props.min, 0))
 
+const sliderRect = ref({
+	width: 0,
+	height: 0
+})
+const thumbRect = ref({
+	width: 0,
+	height: 0
+})
+
+const updateSliderRect = () => {
+	const sliderEl = sliderRef.value
+	if (!sliderEl) return
+	const rect = sliderEl.getBoundingClientRect()
+	sliderRect.value = {
+		width: rect.width,
+		height: rect.height
+	}
+}
+const updateThumbRect = () => {
+	const thumbEl = thumbRef.value || thumbStartRef.value
+	if (!thumbEl) return
+	const rect = thumbEl.getBoundingClientRect()
+	thumbRect.value = {
+		width: rect.width,
+		height: rect.height
+	}
+}
+
 const fillStart = computed(() => {
 	if (props.range) {
 		if (isNumber(modelValue.value)) {
@@ -271,15 +299,41 @@ const thumbLeftEnd = ref(0)
 const updateThumbLeft = async () => {
 	await nextTick()
 	if (!props.range) {
-		thumbLeft.value = calcThumbLeft(modelValue.value as number)
+		thumbLeft.value = calcThumbLeft(
+			modelValue.value as number,
+			sliderRect.value,
+			thumbRect.value,
+			valueRange.value,
+			props
+		)
 	} else {
 		const value = modelValue.value as [number, number]
-		thumbLeftStart.value = calcThumbLeft(value[0])
-		thumbLeftEnd.value = calcThumbLeft(value[1])
+		thumbLeftStart.value = calcThumbLeft(
+			value[0],
+			sliderRect.value,
+			thumbRect.value,
+			valueRange.value,
+			props
+		)
+		thumbLeftEnd.value = calcThumbLeft(
+			value[1],
+			sliderRect.value,
+			thumbRect.value,
+			valueRange.value,
+			props
+		)
 	}
 }
 watch(
-	[modelValue, () => props.direction, () => props.min, () => props.max, () => props.reverse],
+	[
+		modelValue,
+		() => props.direction,
+		() => props.min,
+		() => props.max,
+		() => props.reverse,
+		sliderRect,
+		thumbRect
+	],
 	() => {
 		updateThumbLeft()
 	},
@@ -331,10 +385,6 @@ function startDrag(e: MouseEvent | TouchEvent, target?: 'start' | 'end') {
 
 	doUpdate(e)
 	emits('dragStart', e)
-}
-
-const calcThumbLeft = (value: number) => {
-	return calcThumbLeftImpl(value, sliderRef, thumbRef, thumbStartRef, valueRange.value, props)
 }
 
 const handleDrag = (e: MouseEvent | TouchEvent) => {
@@ -410,7 +460,7 @@ const doUpdate = async (
 		await updateModelValue(value)
 	}
 
-	const left = calcThumbLeft(value)
+	const left = calcThumbLeft(value, sliderRect.value, thumbRect.value, valueRange.value, props)
 
 	if (!props.range) {
 		thumbLeft.value = left
@@ -448,10 +498,6 @@ onUnmounted(() => {
 	document.removeEventListener('touchend', stopDrag)
 })
 
-const updateMarkPoints = async () => {
-	await nextTick()
-	markPoints.value = updateMarkPointsImpl(sliderRef, valueRange.value, props)
-}
 const markPoints = ref<{ value: number; left: number; label?: string; markLeft: number }[]>([])
 
 watch(
@@ -460,10 +506,14 @@ watch(
 		() => props.max,
 		() => props.min,
 		() => props.direction,
-		() => props.reverse
+		() => props.reverse,
+		valueRange,
+		sliderRect
 	],
 	() => {
-		updateMarkPoints()
+		nextTick(() => {
+			markPoints.value = updateMarkPoints(sliderRect.value, valueRange.value, props)
+		})
 	},
 	{ deep: true }
 )
@@ -528,8 +578,10 @@ const sliderRef = shallowRef<HTMLDivElement | null>(null)
 onMounted(() => {
 	nextTick(() => {
 		drawPixel()
+		updateSliderRect()
+		updateThumbRect()
 		updateThumbLeft()
-		updateMarkPoints()
+		markPoints.value = updateMarkPoints(sliderRect.value, valueRange.value, props)
 	})
 })
 
@@ -630,8 +682,8 @@ const drawPixel = () => {
 
 const refresh = () => {
 	drawPixel()
-	updateThumbLeft()
-	updateMarkPoints()
+	updateSliderRect()
+	updateThumbRect()
 }
 
 useResizeObserver(sliderRef, refresh)
