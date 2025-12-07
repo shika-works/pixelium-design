@@ -127,4 +127,34 @@ describe('RadioGroup', () => {
 			.every((e) => e.includes('px-radio__retro'))
 		expect(flag).toBe(true)
 	})
+	it('passes size prop to option radios', async () => {
+		const options = ['a', 'b']
+		const wrapper = mount(RadioGroup, {
+			props: { options, size: 'small' }
+		})
+
+		const flag = wrapper
+			.findAll('.px-radio')
+			.map((e) => e.classes())
+			.every((cls) => cls.includes('px-radio__small'))
+		expect(flag).toBe(true)
+	})
+
+	it('passes size prop to slot radios', async () => {
+		const wrapper = mount(RadioGroup, {
+			props: { size: 'small' },
+			slots: {
+				default: '<Radio value="a">A</Radio><Radio value="b">B</Radio>'
+			},
+			global: {
+				components: { Radio }
+			}
+		})
+
+		const flag = wrapper
+			.findAll('.px-radio')
+			.map((e) => e.classes())
+			.every((cls) => cls.includes('px-radio__small'))
+		expect(flag).toBe(true)
+	})
 })
