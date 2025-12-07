@@ -16,20 +16,17 @@ export const useResizeObserver = (
 	leading?: boolean,
 	rendered?: ComputedRef<boolean> | Ref<boolean>
 ) => {
-	if (!inBrowser()) {
-		return null
-	}
 	let resizeObserver: ResizeObserver | null =
-		rendered && !rendered.value ? null : new ResizeObserver(callback)
+		(rendered && !rendered.value) || !inBrowser() ? null : new ResizeObserver(callback)
 	onMounted(() => {
 		nextTick(() => {
-			if ((rendered && !rendered.value) || !resizeObserver) {
+			if (rendered && !rendered.value) {
 				return
 			}
 			if (leading) {
 				callback()
 			}
-			if (ref.value) {
+			if (ref.value && resizeObserver) {
 				resizeObserver.observe(ref.value)
 			}
 		})
@@ -42,8 +39,8 @@ export const useResizeObserver = (
 				resizeObserver.disconnect()
 				resizeObserver = null
 			} else if (val && !resizeObserver) {
-				resizeObserver = new ResizeObserver(callback)
-				if (ref.value) {
+				resizeObserver = !inBrowser() ? null : new ResizeObserver(callback)
+				if (ref.value && resizeObserver) {
 					resizeObserver.observe(ref.value)
 				}
 			}
