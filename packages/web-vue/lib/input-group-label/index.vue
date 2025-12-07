@@ -39,9 +39,11 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import type { InputGroupProvide } from '../input-group/type'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
+import { usePropsDetect } from '../share/hook/use-props-detect'
+import type { FormItemProvide } from '../form-item/type'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -49,15 +51,9 @@ defineOptions({
 
 const props = withDefaults(defineProps<InputGroupLabelProps>(), {
 	shape: 'default',
-	size: 'medium',
-	disabled: false,
-	variant: 'primary',
-	theme: 'primary',
-	autofocus: false,
-	nativeType: 'button',
-	block: false,
-	loading: false
+	size: 'medium'
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const instance = getCurrentInstance()
 const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
@@ -67,12 +63,16 @@ const [index, first, last] = innerInputGroup.value
 
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
 
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+
 const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
+	formItemProvide,
 	props
 ])
 const shapeComputed = createProvideComputed('shape', [

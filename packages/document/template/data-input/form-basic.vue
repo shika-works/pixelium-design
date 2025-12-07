@@ -47,6 +47,9 @@
 		<px-form-item label="URL" field="url">
 			<px-input v-model="form.url" placeholder="Please URL..."></px-input>
 		</px-form-item>
+		<px-form-item label="Slider" field="slider">
+			<px-slider v-model="form.slider"></px-slider>
+		</px-form-item>
 		<px-form-item label="Number String" field="numberString">
 			<px-input v-model="form.numberString" placeholder="Please number..."></px-input>
 		</px-form-item>
@@ -78,7 +81,8 @@ const form = ref({
 	numberString: '',
 	switch: false,
 	radio: null as null | string,
-	checkbox: [] as string[]
+	checkbox: [] as string[],
+	slider: 10
 })
 
 const rules = {
@@ -104,7 +108,8 @@ const rules = {
 	checkbox: [
 		{ required: true, message: 'Please select' },
 		{ maxLength: 2, message: 'You can select up to 2 items' }
-	]
+	],
+	slider: { max: 90, message: 'Max is 90' }
 }
 
 const options = ref(['vue', 'react', 'angular'])

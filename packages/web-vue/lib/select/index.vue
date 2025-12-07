@@ -64,6 +64,7 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'Select'
@@ -89,6 +90,7 @@ const props = withDefaults(defineProps<SelectProps>(), {
 	collapseTags: false,
 	virtualScroll: false
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const ANIMATION_DURATION = 250
 
@@ -116,8 +118,9 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	props
 ])

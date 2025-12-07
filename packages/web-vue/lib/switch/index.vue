@@ -9,7 +9,6 @@
 			[`px-switch__inactive`]: progress <= MID_PROGRESS
 		}"
 		ref="switchRef"
-		@mousedown.prevent
 	>
 		<div
 			class="px-switch-prefix-wrapper"
@@ -98,6 +97,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { inBrowser } from '../share/util/env'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 const MID_PROGRESS = 0.5
 
@@ -114,6 +114,7 @@ const props = withDefaults(defineProps<SwitchProps>(), {
 	modelValue: undefined,
 	loading: false
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<SwitchEvents>()
 
@@ -136,7 +137,11 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
-const sizeComputed = createProvideComputed('size', [formItemProvide, props])
+const sizeComputed = createProvideComputed('size', () => [
+	propsDetect.value.size && props,
+	formItemProvide,
+	props
+])
 
 const ANIMATION_DURATION = 250
 

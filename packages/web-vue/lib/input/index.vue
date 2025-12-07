@@ -106,6 +106,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'Input'
@@ -122,6 +123,7 @@ const props = withDefaults(defineProps<InputProps>(), {
 	showCount: false,
 	status: 'normal'
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<InputEvents>()
 
@@ -141,30 +143,31 @@ const [index, first, last] = innerInputGroup.value
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
+const borderRadiusComputed = createProvideComputed('borderRadius', () => [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	props
 ])
-const shapeComputed = createProvideComputed('shape', [
+const shapeComputed = createProvideComputed('shape', () => [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],
 	'or'
 )
-const statusComputed = createProvideComputed('status', [formItemProvide, props])
+const statusComputed = createProvideComputed('status', () => [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
