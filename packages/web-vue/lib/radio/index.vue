@@ -2,7 +2,6 @@
 	<label
 		class="pixelium px-radio"
 		ref="radioRef"
-		@mousedown.prevent
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		:class="{
@@ -64,6 +63,7 @@ import type { RadioGroupProvide } from '../radio-group/type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'Radio'
@@ -80,6 +80,7 @@ const props = withDefaults(defineProps<RadioProps>(), {
 	readonly: false,
 	size: 'medium'
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<RadioEvents>()
 
@@ -92,7 +93,12 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, u
 
 const radioGroupProvide = inject<RadioGroupProvide | undefined>(RADIO_GROUP_PROVIDE)
 
-const sizeComputed = createProvideComputed('size', [radioGroupProvide, formItemProvide, props])
+const sizeComputed = createProvideComputed('size', () => [
+	radioGroupProvide,
+	propsDetect.value.size && props,
+	formItemProvide,
+	props
+])
 
 const disabledComputed = createProvideComputed(
 	'disabled',

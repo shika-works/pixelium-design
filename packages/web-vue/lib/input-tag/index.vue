@@ -159,6 +159,7 @@ import { BORDER_CORNER_RAD_RANGE, POPUP_CONTENT_DEFAULT_MAX_WIDTH } from '../sha
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'InputTag'
@@ -177,6 +178,7 @@ const props = withDefaults(defineProps<InputTagProps>(), {
 	collapseTags: false,
 	collapseTagsPopover: true
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<InputTagEvents>()
 
@@ -200,8 +202,9 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	props
 ])

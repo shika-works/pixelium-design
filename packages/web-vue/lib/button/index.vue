@@ -98,6 +98,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'Button'
@@ -114,6 +115,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 	block: false,
 	loading: false
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const instance = getCurrentInstance()
 const innerButtonGroup = ref(instance?.parent?.type.name === 'ButtonGroup')
@@ -138,9 +140,10 @@ const typeComputed = createProvideComputed('variant', [
 	innerButtonGroup.value && buttonGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerButtonGroup.value && buttonGroupProvide,
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	formProps,
 	props

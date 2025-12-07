@@ -145,6 +145,7 @@ import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { VueComponent } from '../share/type'
 import { fixedNumber } from '../share/util/common'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'InputNumber'
@@ -164,6 +165,7 @@ const props = withDefaults(defineProps<InputNumberProps>(), {
 	buttonPlacement: 'end',
 	status: 'normal'
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<InputNumberEvents>()
 
@@ -179,8 +181,9 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	props
 ])

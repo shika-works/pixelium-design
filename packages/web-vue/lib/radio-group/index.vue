@@ -12,6 +12,7 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import { isString } from 'parsnip-kit'
 import Radio from '../radio/index.vue'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'RadioGroup'
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<RadioGroupProps>(), {
 	readonly: false,
 	direction: 'horizontal'
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<RadioGroupEvents>()
 
@@ -36,7 +38,11 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 	defaultField: 'defaultValue'
 })
 
-const sizeComputed = createProvideComputed('size', [formItemProvide, props])
+const sizeComputed = createProvideComputed('size', () => [
+	propsDetect.value.size && props,
+	formItemProvide,
+	props
+])
 
 const getKey = (option: RadioGroupOption | string) => {
 	if (isString(option)) {

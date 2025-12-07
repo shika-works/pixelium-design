@@ -49,6 +49,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'AutoComplete'
@@ -69,6 +70,7 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
 	showPopoverEmpty: false,
 	append: false
 })
+const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<AutoCompleteEvents>()
 
@@ -94,8 +96,9 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	innerInputGroup.value && inputGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	props
 ])
@@ -105,12 +108,12 @@ const shapeComputed = createProvideComputed('shape', [
 ])
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])

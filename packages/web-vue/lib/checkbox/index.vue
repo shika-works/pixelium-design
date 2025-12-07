@@ -10,7 +10,6 @@
 		}"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
-		@mousedown.prevent
 	>
 		<div class="px-checkbox-box" ref="boxRef">
 			<canvas class="px-checkbox-canvas" ref="canvasRef"></canvas>
@@ -51,6 +50,7 @@ import { CHECKBOX_GROUP_PROVIDE, FORM_ITEM_PROVIDE } from '../share/const/provid
 import CheckSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-solid.svg'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
+import { usePropsDetect } from '../share/hook/use-props-detect'
 defineOptions({
 	name: 'Checkbox'
 })
@@ -65,6 +65,8 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
 	variant: 'normal'
 })
 
+const propsDetect = usePropsDetect(props, 'size')
+
 const emits = defineEmits<CheckboxEvents>()
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
@@ -75,8 +77,9 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 const checkboxGroupProvide = inject<undefined | CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE)
 
-const sizeComputed = createProvideComputed('size', [
+const sizeComputed = createProvideComputed('size', () => [
 	checkboxGroupProvide,
+	propsDetect.value.size && props,
 	formItemProvide,
 	props
 ])
