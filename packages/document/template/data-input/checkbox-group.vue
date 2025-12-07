@@ -12,6 +12,11 @@
 			<px-checkbox value="Penny">Penny</px-checkbox>
 			<px-checkbox value="Sebastian">Sebastian</px-checkbox>
 		</px-checkbox-group>
+		<h4>Retro Style</h4>
+		<px-checkbox-group :default-value="['Dwarf']" variant="retro">
+			<px-checkbox value="Dwarf">Dwarf</px-checkbox>
+			<px-checkbox value="Krobus">Krobus</px-checkbox>
+		</px-checkbox-group>
 		<h4>Readonly</h4>
 		<px-checkbox-group :default-value="['Sam']" readonly>
 			<px-checkbox value="Sam">Sam</px-checkbox>

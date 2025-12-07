@@ -13,11 +13,15 @@ This is for multiple choices.
 ## 基础使用
 
 复选框 Checkbox，传入 `modelValue` 进入受控模式。不传或者为 `undefined` 则为非受控模式，此时可以传入 `defaultValue` 属性作为默认值。
+
+复选框 Checkbox 有两种样式变体，普通模式（`normal`，默认）和经典模式（`retro`）。经典模式的样式为致敬早期的游戏 UI 而设置。
 ]]]
 [[[en
 ## Basic Usage
 
 For the Checkbox component, passing `modelValue` puts it in controlled mode. Not passing it or passing `undefined` puts it in uncontrolled mode, where you can pass the `defaultValue` property as the default value.
+
+Checkbox has two style variants: normal mode (`normal`, default) and retro mode (`retro`). The retro mode style is a tribute to early game UI.
 ]]]
 <preview path="./checkbox-basic.vue"></preview>
 
@@ -78,6 +82,18 @@ The `direction` property of CheckboxGroup is used to set the arrangement directi
 <preview path="./checkbox-direction.vue"></preview>
 
 [[[zh
+## 复选框尺寸
+
+Checkbox 和 CheckboxGroup 的 `size` 属性都可以用于设置复选框的尺寸。
+]]]
+[[[en
+## Checkbox Sizes
+
+Both Checkbox and CheckboxGroup have a `size` property that can be used to set the size of checkbox.
+]]]
+<preview path="./checkbox-size.vue"></preview>
+
+[[[zh
 ## 选项属性
 
 CheckboxGroup 的 `options` 属性用于直接传入选项，可以用于简单复选组的快速创建。
@@ -98,6 +114,9 @@ readonly: 只读状态。
 indeterminate: 半选中状态。
 label: 复选框的文本。
 value: 复选框的原生 `value` 属性。
+variant: 复选框的样式变体。
+size: 复选框的大小。
+
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 选中/取消选择复选框的回调。
 events.change: 复选框选中状态改变的回调。
@@ -113,6 +132,9 @@ readonly: Read-only state.
 indeterminate: Indeterminate state.
 label: The text of the checkbox.
 value: the native `value` attribute of checkboxes.
+size: Size of the checkbox.
+variant: The style variant of the checkbox.
+
 events.update:modelValue: Callback for updating `modelValue`.
 events.input: Callback for selecting/deselecting the checkbox.
 events.change: Callback for when the checkbox selection state changes.
@@ -128,6 +150,9 @@ disabled: 禁用状态。
 readonly: 只读状态。
 direction: 复选框子组件排列方向。
 options: 复选组选项。
+variant: 后代的单选框组件的样式变体，如果设置，优先于后代的单选框组件自身的 `variant`。
+size: 后代的复选框组件的尺寸大小，如果设置，优先于后代的复选框组件自身的 `size`。
+
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 复选组选中内容改变的回调。
 slots.default: 复选框子组件。
@@ -139,6 +164,9 @@ disabled: Disabled state.
 readonly: Read-only state.
 direction: The arrangement direction of child checkbox components.
 options: Options for the checkbox group.
+size: Size for descendant checkbox components. When set, it overrides the `size` prop on those components.
+variant: The style variant for descendant Radio components, which takes precedence over the `variant` of individual Radio components if set.
+
 events.update:modelValue: Callback for updating `modelValue`.
 events.change: Callback for when the checkbox group selection changes.
 slots.default: Child checkbox components.

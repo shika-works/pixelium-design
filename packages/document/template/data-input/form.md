@@ -2,36 +2,20 @@
 # 表单 Form
 用于收集信息。
 
-> 表单组件 Form 的 `size`、`disabled`、`readonly` 属性，会影响子树上的 Button 和 ButtonGroup 组件。
-> 
-> 表单项 FormItem 组件的 `size`、`disabled`、`readonly` 会影响子树上的以下组件：
-> - Input
-> - InputNumber
-> - InputTag
-> - AutoComplete
-> - Select
-> - Textarea
-> - InputGroup
-> - Slider
-> - Switch
+> 表单组件 Form 的 `size`、`disabled`、`readonly` 属性，会影响子树上的 Button 和 ButtonGroup 组件，以及后代组件 FormItem 子树上的 Input、InputNumber、InputTag、AutoComplete、Select、Textarea、InputGroup、Slider、Switch、Radio、RadioGroup、Checkbox、CheckboxGroup。
+
+> 表单项 FormItem 组件的 `disabled`、`readonly` 会影响子树上的以下组件：
+> Input、InputNumber、InputTag、AutoComplete、Select、Textarea、InputGroup、Slider、Switch、Radio、RadioGroup、Checkbox、CheckboxGroup。
 ]]]
 
 [[[en
 # Form
 Used to collect information.
 
-> The Form component's `size`, `disabled`, and `readonly` props affect Button and ButtonGroup components in its subtree.
-> 
-> The FormItem component's `size`, `disabled`, and `readonly` props affect the following components in its subtree:
-> - Input
-> - InputNumber
-> - InputTag
-> - AutoComplete
-> - Select
-> - Textarea
-> - InputGroup
-> - Slider
-> - Switch
+> The `size`, `disabled`, and `readonly` properties of the Form component affect Button and ButtonGroup components in its child tree, as well as Input, InputNumber, InputTag, AutoComplete, Select, Textarea, InputGroup, Slider, Switch, Radio, RadioGroup, Checkbox, and CheckboxGroup components in the descendant FormItem subtree.
+
+> The `disabled` and `readonly` properties of the FormItem component affect the following components in its child tree:
+> Input, InputNumber, InputTag, AutoComplete, Select, Textarea, InputGroup, Slider, Switch, Radio, RadioGroup, Checkbox, CheckboxGroup.
 ]]]
 
 [[[zh
@@ -155,8 +139,8 @@ ruleItem.validator: 自定义验证函数，返回错误提示字符串，返回
 field: 关联的表单字段名，支持字段路径的形式，例如 `'user[0].info.name'`。
 label: 标签文本。
 rule: 验证规则。
-disabled: 是否禁用。
-readonly: 是否只读。
+disabled: 是否禁用，和 Form 中的 `disabled` 取或运算决定最终是否禁用。
+readonly: 是否只读，和 Form 中的 `readonly` 取或运算决定最终是否只读。
 labelAlign: 标签的对齐方式。
 showAsterisk: 是否展示星号。
 asteriskPlacement: 星号的位置。
@@ -213,8 +197,8 @@ ruleItem.validator: Custom validation function that returns an error message str
 field: The associated form field name. Supports field path syntax, e.g. `'user[0].info.name'`.
 label: Label text.
 rule: Validation rules.
-disabled: Whether the item is disabled.
-readonly: Whether the item is read-only.
+disabled: Whether to disable. The final disabled state is determined by OR operation with `disabled` from Form.
+readonly: Whether to be read-only. The final read-only state is determined by OR operation with `readonly` from Form.
 labelAlign: Label alignment for this item.
 showAsterisk: Whether to show an asterisk.
 asteriskPlacement: Position of the asterisk.
