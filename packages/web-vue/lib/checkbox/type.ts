@@ -25,6 +25,11 @@ export type CheckboxProps = {
 	 */
 	readonly?: boolean
 	/**
+	 * @property {'normal' | 'retro'} [variant='normal']
+	 * @version 0.0.3
+	 */
+	variant?: 'normal' | 'retro'
+	/**
 	 * @property {string} [label]
 	 * @version 0.0.3
 	 */
@@ -34,6 +39,11 @@ export type CheckboxProps = {
 	 * @version 0.0.3
 	 */
 	value?: any
+	/**
+	 * @property {'medium' | 'large' | 'small'} [size='medium']
+	 * @version 0.0.3
+	 */
+	size?: 'medium' | 'large' | 'small'
 }
 
 export type CheckboxEvents = {

@@ -4,7 +4,9 @@
 		:class="{
 			'px-checkbox__checked': modelValue || props.indeterminate,
 			'px-checkbox__disabled': disabledComputed,
-			'px-checkbox__readonly': readonlyComputed
+			'px-checkbox__readonly': readonlyComputed,
+			[`px-checkbox__${sizeComputed}`]: sizeComputed,
+			[`px-checkbox__${variantComputed}`]: variantComputed
 		}"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
@@ -13,7 +15,7 @@
 		<div class="px-checkbox-box" ref="boxRef">
 			<canvas class="px-checkbox-canvas" ref="canvasRef"></canvas>
 			<CheckSolid
-				v-if="modelValue && !props.indeterminate"
+				v-if="modelValue && !props.indeterminate && variantComputed === 'normal'"
 				class="px-checkbox-checked-mark"
 			></CheckSolid>
 			<input
@@ -36,7 +38,7 @@
 import { inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import { getGlobalThemeColorString } from '../share/util/color'
 import { canvasPreprocess, calcPixelSize } from '../share/util/plot'
-import { drawBorder } from './draw'
+import { drawAsteriskMark, drawBorder, drawBracketBorder, drawLineMark } from './draw'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
@@ -58,7 +60,9 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
 	modelValue: undefined,
 	indeterminate: false,
 	disabled: false,
-	readonly: false
+	readonly: false,
+	size: 'medium',
+	variant: 'normal'
 })
 
 const emits = defineEmits<CheckboxEvents>()
@@ -70,6 +74,14 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 const checkboxGroupProvide = inject<undefined | CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE)
+
+const sizeComputed = createProvideComputed('size', [
+	checkboxGroupProvide,
+	formItemProvide,
+	props
+])
+
+const variantComputed = createProvideComputed('variant', [checkboxGroupProvide, props])
 
 const disabledComputed = createProvideComputed(
 	'disabled',
@@ -148,7 +160,7 @@ const drawPixel = () => {
 
 	const pixelSize = calcPixelSize()
 
-	const borderColor = disabledComputed.value
+	const mainColor = disabledComputed.value
 		? modelValue.value || props.indeterminate
 			? getGlobalThemeColorString('primary', 2)
 			: getGlobalThemeColorString('neutral', 8)
@@ -158,24 +170,37 @@ const drawPixel = () => {
 				? getGlobalThemeColorString('primary', 6)
 				: getGlobalThemeColorString('neutral', 10)
 
-	drawBorder(ctx, width, height, borderColor, pixelSize)
-
 	const backgroundColor = getGlobalThemeColorString('neutral', 1)
 
-	ctx.fillStyle = backgroundColor
-	ctx.fillRect(pixelSize, pixelSize, width - pixelSize * 2, height - pixelSize * 2)
+	const intervalSize = parseInt(
+		getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
+	)
 
-	if (props.indeterminate) {
-		ctx.fillStyle = borderColor
-		const intervalSize = parseInt(
-			getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
-		)
-		ctx.fillRect(
-			pixelSize + intervalSize,
-			pixelSize + intervalSize,
-			width - pixelSize * 2 - intervalSize * 2,
-			height - pixelSize * 2 - intervalSize * 2
-		)
+	if (variantComputed.value === 'normal') {
+		drawBorder(ctx, width, height, mainColor, pixelSize)
+
+		ctx.fillStyle = backgroundColor
+		ctx.fillRect(pixelSize, pixelSize, width - pixelSize * 2, height - pixelSize * 2)
+
+		if (props.indeterminate) {
+			ctx.fillStyle = mainColor
+			ctx.fillRect(
+				pixelSize + intervalSize,
+				pixelSize + intervalSize,
+				width - pixelSize * 2 - intervalSize * 2,
+				height - pixelSize * 2 - intervalSize * 2
+			)
+		}
+	} else {
+		drawBracketBorder(ctx, width, height, mainColor, pixelSize)
+
+		const size = Math.min(width, height)
+
+		if (props.indeterminate) {
+			drawLineMark(ctx, size, intervalSize, mainColor, pixelSize)
+		} else if (modelValue.value) {
+			drawAsteriskMark(ctx, size, intervalSize, mainColor, pixelSize)
+		}
 	}
 }
 
@@ -195,7 +220,9 @@ watch(
 		modelValue,
 		() => props.indeterminate,
 		disabledComputed,
-		readonlyComputed
+		readonlyComputed,
+		sizeComputed,
+		variantComputed
 	],
 	() => {
 		drawPixel()

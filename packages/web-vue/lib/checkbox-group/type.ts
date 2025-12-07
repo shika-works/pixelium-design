@@ -29,6 +29,11 @@ export type CheckboxGroupProps = {
 	 */
 	readonly?: boolean
 	/**
+	 * @property {'normal' | 'retro'} [variant='normal']
+	 * @version 0.0.3
+	 */
+	variant?: 'normal' | 'retro'
+	/**
 	 * @property {'horizontal' | 'vertical'} [direction='horizontal']
 	 * @version 0.0.3
 	 */
@@ -38,6 +43,11 @@ export type CheckboxGroupProps = {
 	 * @version 0.0.3
 	 */
 	options?: (CheckboxGroupOption | string)[]
+	/**
+	 * @property {'medium' | 'large' | 'small'} [size]
+	 * @version 0.0.3
+	 */
+	size?: 'medium' | 'large' | 'small'
 }
 
 export type CheckboxGroupEvents = {
@@ -64,6 +74,8 @@ export type CheckboxGroupSlots = {
 }
 
 export type CheckboxGroupProvide = {
+	size: ComputedRef<'medium' | 'large' | 'small' | undefined>
+	variant: Ref<CheckboxGroupProps['variant']>
 	disabled: ComputedRef<boolean | undefined>
 	readonly: ComputedRef<boolean | undefined>
 	modelValue: Ref<any[] | Nullish>

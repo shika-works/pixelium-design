@@ -3,13 +3,30 @@
 .px-checkbox {
 	@prefix: px-checkbox;
 
-	--checkbox-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
+	--checkbox-size: var(--px-medium-compat-size);
 	--text-color: var(--px-neutral-10);
+	--text-size: var(--px-medium-font-size);
+	--checkbox-interval: var(--px-interval-2);
 
 	color: var(--text-color);
 	display: inline-flex;
 	align-items: center;
 	cursor: pointer;
+
+	&.@{prefix} {
+		font-size: var(--text-size);
+	}
+
+	&__large {
+		--checkbox-size: var(--px-large-compat-size);
+		--text-size: var(--px-large-font-size);
+		--checkbox-interval: var(--px-interval-3);
+	}
+	&__small {
+		--checkbox-size: var(--px-small-compat-size);
+		--text-size: var(--px-small-font-size);
+		--checkbox-interval: var(--px-interval-1);
+	}
 
 	&-box {
 		width: var(--checkbox-size);
@@ -22,7 +39,7 @@
 		flex-shrink: 0;
 		flex-grow: 0;
 
-		margin-right: var(--px-interval-2);
+		margin-right: var(--checkbox-interval);
 
 		z-index: 0;
 
