@@ -113,7 +113,6 @@ import {
 	isString,
 	mergeSkipNullish,
 	omit,
-	pick,
 	setByPath,
 	mapFields,
 	isEmpty,
@@ -122,6 +121,7 @@ import {
 import { isUrl } from '../share/util/common'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import type { LooseRequired } from '../share/type'
+import { createProvideComputed } from '../share/util/reactivity'
 
 defineOptions({ name: 'FormItem' })
 
@@ -141,6 +141,9 @@ const formContext = inject<FormProvide>(FORM_PROVIDE)!
 if (!formContext) {
 	throwError('FormItem must be used inside Form.')
 }
+
+const disabledComputed = createProvideComputed('disabled', [formContext, props], 'or')
+const readonlyComputed = createProvideComputed('readonly', [formContext, props], 'or')
 
 const id = useId()
 
@@ -280,7 +283,9 @@ const provideStatus = computed(() => {
 })
 
 provide<FormItemProvide>(FORM_ITEM_PROVIDE, {
-	...pick(formContext, ['size', 'disabled', 'readonly']),
+	size: formContext.size,
+	disabled: disabledComputed,
+	readonly: readonlyComputed,
 	changeHandler,
 	blurHandler,
 	inputHandler,
@@ -433,6 +438,10 @@ const doValidate = async (trigger?: RuleTrigger) => {
 	tipMessage.value = formatTipMessage()
 	return tipMessage.value
 }
+
+defineExpose({
+	validate: doValidate
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
