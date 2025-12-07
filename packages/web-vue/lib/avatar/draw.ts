@@ -1,6 +1,6 @@
 import type { RgbaColor } from '../share/type'
 import { rgbaColor2string } from '../share/util/color'
-import { drawCircle } from '../share/util/plot'
+import { drawSmoothCircle } from '../share/util/plot'
 
 export const drawBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -15,7 +15,7 @@ export const drawBorder = (
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
 		if (borderRadius[i] > pixelSize) {
-			drawCircle(
+			drawSmoothCircle(
 				ctx,
 				center[i][0],
 				center[i][1],
