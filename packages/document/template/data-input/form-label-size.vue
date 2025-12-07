@@ -1,7 +1,13 @@
 <template>
 	<px-space direction="vertical">
 		<px-radio-group v-model="formSize" :options="radioSizeOptions"></px-radio-group>
-		<px-form :model="form" :size="formSize" style="width: 500px" @submit="submitHandler">
+		<px-form
+			label-auto-width
+			:model="form"
+			:size="formSize"
+			style="width: 500px"
+			@submit="submitHandler"
+		>
 			<px-form-item label="Input" field="input">
 				<px-input v-model="form.input"></px-input>
 			</px-form-item>
@@ -14,6 +20,12 @@
 					:options="radioOptions"
 					variant="retro"
 				></px-radio-group>
+			</px-form-item>
+			<px-form-item label="Checkbox" field="checkbox">
+				<px-checkbox-group
+					v-model="form.checkbox"
+					:options="checkboxOptions"
+				></px-checkbox-group>
 			</px-form-item>
 			<px-form-item label="Switch" field="switch">
 				<px-switch v-model="form.switch"></px-switch>
@@ -31,7 +43,8 @@ const form = ref({
 	input: 'text',
 	number: 114,
 	radio: 'Yes',
-	switch: false
+	switch: false,
+	checkbox: [] as string[]
 })
 
 const submitHandler = () => {
@@ -44,6 +57,8 @@ const radioSizeOptions = ref([
 	{ label: 'Medium', value: 'medium' },
 	{ label: 'Large', value: 'large' }
 ])
+
+const checkboxOptions = ref(['A', 'B', 'C', 'D'])
 
 const formSize = ref('medium')
 </script>

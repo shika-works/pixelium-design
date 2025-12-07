@@ -4,7 +4,7 @@
 			active-color="#13ce66"
 			inactive-color="#ff4949"
 			active-label="Active"
-			active-tip="inactive"
+			active-tip="active"
 			inactive-label="Inactive"
 			inactive-tip="inactive"
 		>

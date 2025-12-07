@@ -36,6 +36,8 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 	defaultField: 'defaultValue'
 })
 
+const sizeComputed = createProvideComputed('size', [formItemProvide, props])
+
 const getKey = (option: RadioGroupOption | string) => {
 	if (isString(option)) {
 		return option
@@ -52,6 +54,7 @@ const updateValue = (value: any) => {
 
 provide<RadioGroupProvide>(RADIO_GROUP_PROVIDE, {
 	variant: toRef(props, 'variant'),
+	size: sizeComputed,
 	modelValue,
 	disabled: disabledComputed,
 	readonly: readonlyComputed,

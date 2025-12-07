@@ -89,4 +89,39 @@ describe('Checkbox component', () => {
 		// indeterminate should mark component as checked visually
 		expect(wrapper.classes()).toContain('px-checkbox__checked')
 	})
+
+	it('applies size class when prop is set', async () => {
+		const wrapper = mount(Checkbox, {
+			props: { size: 'small' }
+		})
+		expect(wrapper.classes()).toContain('px-checkbox__small')
+	})
+	it('inherits size from checkbox group provide', async () => {
+		const groupModel = ref(null)
+		const updateSpy = vi.fn()
+		const groupProvide = {
+			modelValue: groupModel,
+			updateValue: updateSpy,
+			size: ref('small')
+		}
+
+		const wrapper = mount(Checkbox, {
+			props: { value: 'foo' },
+			global: {
+				provide: {
+					[CHECKBOX_GROUP_PROVIDE]: groupProvide
+				}
+			}
+		})
+
+		await nextTick()
+		expect(wrapper.classes()).toContain('px-checkbox__small')
+	})
+
+	it('renders in retro style', async () => {
+		const wrapper = mount(Checkbox, {
+			props: { variant: 'retro' }
+		})
+		expect(wrapper.find('.px-checkbox__retro').exists()).toBe(true)
+	})
 })

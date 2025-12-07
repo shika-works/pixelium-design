@@ -8,9 +8,14 @@ import { inject, provide, ref, toRefs } from 'vue'
 import type { ButtonGroupProps, ButtonGroupProvide, ChildrenInfo } from './type'
 import { emitParentUpdate } from '../share/hook/use-index-of-children'
 import { BUTTON_GROUP_UPDATE } from '../share/const/event-bus-key'
-import { BUTTON_GROUP_PROVIDE, FORM_PROVIDE } from '../share/const/provide-key'
+import {
+	BUTTON_GROUP_PROVIDE,
+	FORM_ITEM_PROVIDE,
+	FORM_PROVIDE
+} from '../share/const/provide-key'
 import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
 
 defineOptions({
 	name: 'ButtonGroup'
@@ -23,11 +28,12 @@ const props = withDefaults(defineProps<ButtonGroupProps>(), {
 })
 
 const formProvide = inject<undefined | FormProvide>(FORM_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const sizeComputed = createProvideComputed('size', [formProvide, props])
+const sizeComputed = createProvideComputed('size', [formItemProvide, formProvide, props])
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[formProvide, props],
+	[formItemProvide, formProvide, props],
 	(pre, value, cur) => {
 		return pre || value || ('readonly' in cur && cur['readonly'].value)
 	}

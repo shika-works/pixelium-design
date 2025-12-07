@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, provide } from 'vue'
+import { inject, provide, toRef } from 'vue'
 import type { FormItemProvide } from '../form-item/type'
 import { CHECKBOX_GROUP_PROVIDE, FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
@@ -69,10 +69,14 @@ const getKey = (option: CheckboxGroupOption | string) => {
 	}
 }
 
+const sizeComputed = createProvideComputed('size', [formItemProvide, props])
+
 provide<CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE, {
 	modelValue,
 	disabled: disabledComputed,
 	readonly: readonlyComputed,
+	variant: toRef(props, 'variant'),
+	size: sizeComputed,
 	updateValue: (value: any, checked: boolean) => {
 		const newValue = (modelValue.value || []).slice()
 		if (checked) {

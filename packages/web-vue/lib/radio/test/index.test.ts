@@ -108,4 +108,32 @@ describe('Radio component', () => {
 		})
 		expect(wrapper.find('.px-radio__retro').exists()).toBe(true)
 	})
+
+	it('applies size class when prop is set', async () => {
+		const wrapper = mount(Radio, {
+			props: { size: 'small' }
+		})
+		expect(wrapper.classes()).toContain('px-radio__small')
+	})
+	it('inherits size from radio group provide', async () => {
+		const groupModel = ref(null)
+		const updateSpy = vi.fn()
+		const groupProvide = {
+			modelValue: groupModel,
+			updateValue: updateSpy,
+			size: ref('small')
+		}
+
+		const wrapper = mount(Radio, {
+			props: { value: 'foo' },
+			global: {
+				provide: {
+					[RADIO_GROUP_PROVIDE]: groupProvide
+				}
+			}
+		})
+
+		await nextTick()
+		expect(wrapper.classes()).toContain('px-radio__small')
+	})
 })

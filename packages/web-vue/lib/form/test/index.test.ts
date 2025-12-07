@@ -18,6 +18,8 @@ import Switch from '../../switch/index.vue'
 import Slider from '../../slider/index.vue'
 import Checkbox from '../../checkbox/index.vue'
 import CheckboxGroup from '../../checkbox-group/index.vue'
+import Radio from '../../radio/index.vue'
+import RadioGroup from '../../radio-group/index.vue'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -578,6 +580,11 @@ describe('Form Component', () => {
 			await nextTick()
 			const input2 = wrapper.find('input')
 			expect(input2.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ size: 'large' })
+			await nextTick()
+			const input3 = wrapper.find('.px-checkbox')
+			expect(input3.attributes('class')).include('px-checkbox__large')
 		})
 		it('CheckboxGroup', async () => {
 			const form = ref({
@@ -623,6 +630,105 @@ describe('Form Component', () => {
 			await nextTick()
 			const input2 = wrapper.find('input')
 			expect(input2.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ size: 'large' })
+			await nextTick()
+			const input3 = wrapper.find('.px-checkbox')
+			expect(input3.attributes('class')).include('px-checkbox__large')
+		})
+		it('Radio', async () => {
+			const form = ref({
+				input: false
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(Radio, {
+										modelValue: form.value.input,
+										'onUpdate:modelValue': (e) => (form.value.input = e)
+									})
+							}
+						)
+					]
+				}
+			})
+
+			wrapper.setProps({ readonly: true })
+			await nextTick()
+			const input1 = wrapper.find('input')
+			expect(input1.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ readonly: false, disabled: true })
+			await nextTick()
+			const input2 = wrapper.find('input')
+			expect(input2.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ size: 'large' })
+			await nextTick()
+			const input3 = wrapper.find('.px-radio')
+			expect(input3.attributes('class')).include('px-radio__large')
+		})
+		it('RadioGroup', async () => {
+			const form = ref({
+				input: null as any
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(
+										RadioGroup,
+										{
+											modelValue: form.value.input,
+											'onUpdate:modelValue': (e) => (form.value.input = e)
+										},
+										{
+											default: () => h(Radio, {})
+										}
+									)
+							}
+						)
+					]
+				}
+			})
+
+			wrapper.setProps({ readonly: true })
+			await nextTick()
+			const input1 = wrapper.find('input')
+			expect(input1.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ readonly: false, disabled: true })
+			await nextTick()
+			const input2 = wrapper.find('input')
+			expect(input2.attributes('disabled')).toBe('')
+
+			wrapper.setProps({ size: 'large' })
+			await nextTick()
+			const input3 = wrapper.find('.px-radio')
+			expect(input3.attributes('class')).include('px-radio__large')
 		})
 	})
 	describe('Validate', () => {

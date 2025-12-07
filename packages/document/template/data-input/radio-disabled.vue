@@ -1,5 +1,5 @@
 <template>
-	<px-space>
+	<px-space direction="vertical">
 		<px-space>
 			<px-radio disabled :default-value="true">Checked</px-radio>
 			<px-radio disabled>Unchecked</px-radio>

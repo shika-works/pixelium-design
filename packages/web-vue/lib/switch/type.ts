@@ -18,7 +18,7 @@ export type SwitchProps = {
 	 * @property {'small' | 'medium'} [size='medium']
 	 * @version 0.0.3
 	 */
-	size?: 'small' | 'medium'
+	size?: 'small' | 'medium' | 'large'
 	/**
 	 * @property {boolean} [readonly=false]
 	 * @version 0.0.3

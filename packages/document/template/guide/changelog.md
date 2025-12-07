@@ -32,7 +32,7 @@
   - Improve form components: Form, FormItem, Switch, Slider, Radio, RadioGroup, Checkbox, CheckboxGroup.
   - Add image display component Image and avatar component Avatar.
   - Add virtual list component VirtualList.
-  - Add a utility function `pixelate` for image pixelation
+  - Add a utility function `pixelate` for image pixelation.
 - Optimizations:
   - Add `label` slot to the Select component.
   - Add `readonly` property to InputGroup.

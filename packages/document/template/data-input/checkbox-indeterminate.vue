@@ -1,5 +1,9 @@
 <template>
+	<px-switch v-model="retro" active-label="Retro" inactive-label="Normal"></px-switch>
+	<br />
+	<br />
 	<px-checkbox
+		:variant="retro ? 'retro' : 'normal'"
 		v-model="all"
 		@change="selectAllChangeHandler"
 		:indeterminate="group.length > 0 && group.length < options.length"
@@ -7,7 +11,11 @@
 	>
 	<br />
 	<br />
-	<px-checkbox-group v-model="group" @change="groupChangeHandler">
+	<px-checkbox-group
+		v-model="group"
+		@change="groupChangeHandler"
+		:variant="retro ? 'retro' : 'normal'"
+	>
 		<px-checkbox v-for="option in options" :key="option" :value="option">
 			{{ option }}
 		</px-checkbox>
@@ -36,4 +44,6 @@ const groupChangeHandler = (value: string[]) => {
 		all.value = false
 	}
 }
+
+const retro = ref(false)
 </script>

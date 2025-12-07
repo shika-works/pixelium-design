@@ -41,10 +41,16 @@ export type RadioGroupProps = {
 	 * @version 0.0.3
 	 */
 	options?: (RadioGroupOption | string)[]
+	/**
+	 * @property {'medium' | 'large' | 'small'} [size]
+	 * @version 0.0.3
+	 */
+	size?: 'medium' | 'large' | 'small'
 }
 
 export interface RadioGroupProvide {
 	variant: Ref<'normal' | 'retro' | undefined>
+	size: ComputedRef<'medium' | 'large' | 'small' | undefined>
 	modelValue: Ref<any>
 	disabled: ComputedRef<boolean | undefined>
 	readonly: ComputedRef<boolean | undefined>

@@ -1,8 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMocks } from '../../share/util/test'
 import { mount } from '@vue/test-utils'
 import CheckboxGroup from '../index.vue'
 import Checkbox from '../../checkbox/index.vue'
+import { nextTick } from 'vue'
 
 const { pre, post } = createMocks()
 
@@ -54,6 +55,27 @@ describe('CheckboxGroup', () => {
 		const payload = emitted![emitted!.length - 1][0]
 		expect(payload).toEqual(['b'])
 	})
+
+	it('update model-value when option toggled', async () => {
+		const options = ['a', 'b']
+		const update = vi.fn()
+		const wrapper = mount(CheckboxGroup, {
+			props: { options, 'onUpdate:modelValue': update, modelValue: null },
+			attachTo: 'body'
+		})
+		const inputs = wrapper.findAll('input[type="checkbox"]')
+
+		await nextTick()
+
+		// toggle second checkbox
+		await inputs[1].trigger('click')
+		await nextTick()
+
+		expect(update).toBeCalledTimes(2)
+		expect(update).toBeCalledWith([])
+		expect(update).toBeCalledWith(['b'])
+	})
+
 	it('renders checkboxes when provided via slot', async () => {
 		const wrapper = mount(CheckboxGroup, {
 			slots: {
@@ -101,5 +123,66 @@ describe('CheckboxGroup', () => {
 		expect(emitted).toBeTruthy()
 		const payload = emitted![emitted!.length - 1][0]
 		expect(payload).toEqual(['b'])
+	})
+
+	it('passes size prop to option checkboxes', async () => {
+		const options = ['a', 'b']
+		const wrapper = mount(CheckboxGroup, {
+			props: { options, size: 'small' }
+		})
+
+		const flag = wrapper
+			.findAll('.px-checkbox')
+			.map((e) => e.classes())
+			.every((cls) => cls.includes('px-checkbox__small'))
+		expect(flag).toBe(true)
+	})
+
+	it('passes size prop to slot checkboxes', async () => {
+		const wrapper = mount(CheckboxGroup, {
+			props: { size: 'small' },
+			slots: {
+				default: '<Checkbox value="a">A</Checkbox><Checkbox value="b">B</Checkbox>'
+			},
+			global: {
+				components: { Checkbox }
+			}
+		})
+
+		const flag = wrapper
+			.findAll('.px-checkbox')
+			.map((e) => e.classes())
+			.every((cls) => cls.includes('px-checkbox__small'))
+		expect(flag).toBe(true)
+	})
+
+	it('renders options with retro style', async () => {
+		const options = ['a', 'b']
+		const wrapper = mount(CheckboxGroup, {
+			props: { options, variant: 'retro' }
+		})
+
+		const flag = wrapper
+			.findAll('.px-radio')
+			.map((e) => e.classes())
+			.every((e) => e.includes('px-checkbox__retro'))
+		expect(flag).toBe(true)
+	})
+	it('renders sub-radio with retro style', async () => {
+		const wrapper = mount(CheckboxGroup, {
+			props: { variant: 'retro' },
+			slots: {
+				default: '<Checkbox value="a">A</Checkbox><Checkbox value="b">B</Checkbox>'
+			},
+			global: {
+				components: { Checkbox }
+			}
+		})
+
+		const flag = wrapper
+			.findAll('.px-radio')
+			.map((e) => e.classes())
+			.every((e) => e.includes('px-checkbox__retro'))
+		expect(flag).toBe(true)
 	})
 })

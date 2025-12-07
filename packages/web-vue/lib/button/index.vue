@@ -90,12 +90,14 @@ import { BUTTON_GROUP_UPDATE, INPUT_GROUP_UPDATE } from '../share/const/event-bu
 import type { InputGroupProvide } from '../input-group/type'
 import {
 	BUTTON_GROUP_PROVIDE,
+	FORM_ITEM_PROVIDE,
 	FORM_PROVIDE,
 	INPUT_GROUP_PROVIDE
 } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
 
 defineOptions({
 	name: 'Button'
@@ -125,6 +127,7 @@ const [index, first, last] = innerButtonGroup.value
 const buttonGroupProvide = inject<undefined | ButtonGroupProvide>(BUTTON_GROUP_PROVIDE)
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
 const formProps = inject<undefined | FormProvide>(FORM_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
 const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerButtonGroup.value && buttonGroupProvide,
@@ -138,6 +141,7 @@ const typeComputed = createProvideComputed('variant', [
 const sizeComputed = createProvideComputed('size', [
 	innerButtonGroup.value && buttonGroupProvide,
 	innerInputGroup.value && inputGroupProvide,
+	formItemProvide,
 	formProps,
 	props
 ])
@@ -151,6 +155,7 @@ const disabledComputed = createProvideComputed(
 	[
 		innerButtonGroup.value && buttonGroupProvide,
 		innerInputGroup.value && inputGroupProvide,
+		formItemProvide,
 		formProps,
 		props
 	],

@@ -11,9 +11,10 @@
 
 .px-radio {
 	@prefix: px-radio;
-	--radio-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2 - 2px);
-
+	--radio-size: var(--px-medium-compat-size);
+	--radio-interval: var(--px-interval-2);
 	--text-color: var(--px-neutral-10);
+	--text-size: var(--px-medium-font-size);
 
 	background-color: transparent;
 	color: var(--text-color);
@@ -24,9 +25,23 @@
 
 	transition: 0.25s;
 	z-index: 0;
-	font-size: var(--text-size);
+
+	&.@{prefix} {
+		font-size: var(--text-size);
+	}
 
 	cursor: pointer;
+
+	&__large {
+		--radio-size: var(--px-large-compat-size);
+		--text-size: var(--px-large-font-size);
+		--radio-interval: var(--px-interval-3);
+	}
+	&__small {
+		--radio-size: var(--px-small-compat-size);
+		--text-size: var(--px-small-font-size);
+		--radio-interval: var(--px-interval-1);
+	}
 
 	&__input {
 		height: 0;
@@ -55,7 +70,7 @@
 		display: flex;
 		align-items: center;
 
-		margin-right: var(--px-interval-2);
+		margin-right: var(--radio-interval);
 	}
 
 	&__checked {
