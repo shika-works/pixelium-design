@@ -314,6 +314,45 @@ describe('FormItem Component Tests', () => {
 			expect(wrapper.vm.mergedProps.readonly).toBe(true)
 			expect(wrapper.vm.mergedProps.size).toBe('small')
 		})
+
+		it('should merge properties from form context', async () => {
+			const createWrapper = (formDisabled: boolean, itemDisabled: boolean) => {
+				const mockFormContext = createMockFormContext({ disabled: formDisabled })
+				return mount(FormItem, {
+					props: {
+						label: 'Test',
+						disabled: itemDisabled
+					},
+					global: {
+						provide: {
+							[FORM_PROVIDE]: mockFormContext
+						}
+					},
+					slots: {
+						default: () => h(Input, { modelValue: mockFormContext.model.value.field })
+					}
+				})
+			}
+
+			const testCases = [
+				{ form: true, item: false, expected: true },
+				{ form: false, item: true, expected: true },
+				{ form: true, item: true, expected: true },
+				{ form: false, item: false, expected: false }
+			]
+
+			for (const { form, item, expected } of testCases) {
+				const wrapper = createWrapper(form, item)
+
+				await nextTick()
+				const input = wrapper.find('.px-input input')
+				const isDisabled = input.attributes('disabled') !== undefined
+
+				expect(isDisabled).toBe(expected)
+
+				wrapper.unmount()
+			}
+		})
 	})
 
 	describe('Validation Logic', () => {
