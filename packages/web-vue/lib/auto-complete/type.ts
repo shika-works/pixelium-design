@@ -110,6 +110,11 @@ export type AutoCompleteProps = {
 	 * @version 0.0.2
 	 */
 	autofocus?: boolean
+	/**
+	 * @property {boolean} [optionsDestroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	optionsDestroyOnHide?: boolean
 }
 
 export type AutoCompleteEvents = {

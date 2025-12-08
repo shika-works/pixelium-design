@@ -17,7 +17,8 @@ const props = withDefaults(defineProps<PopoverProps>(), {
 	arrow: true,
 	visible: undefined,
 	defaultVisible: undefined,
-	widthEqual: false
+	widthEqual: false,
+	destroyOnHide: false
 })
 
 const attrs = useAttrs()

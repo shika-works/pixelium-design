@@ -4,8 +4,9 @@
 		:zIndex="props.zIndex"
 		:visible="props.visible"
 		:close-delay="ANIMATION_DURATION"
+		:destroy-on-hide="props.destroyOnHide"
 	>
-		<Transition :name="'px-popup-content-fade__' + popupRoughPlacement">
+		<Transition :name="'px-popup-content-fade__' + popupRoughPlacement" appear>
 			<div
 				ref="contentRef"
 				v-show="props.visible"
@@ -70,7 +71,8 @@ const props = withDefaults(defineProps<PopupContentProps>(), {
 	offset: 8,
 	variant: 'light',
 	visible: undefined,
-	widthEqual: false
+	widthEqual: false,
+	destroyOnHide: false
 })
 
 const ANIMATION_DURATION = 250

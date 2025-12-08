@@ -1,7 +1,8 @@
 <template>
 	<Teleport :to="props.root || 'body'">
 		<div
-			v-show="innerVisible"
+			v-show="destroyOnHide === false ? innerVisible : true"
+			v-if="destroyOnHide !== false ? innerVisible : true"
 			:class="{
 				pixelium: true,
 				'px-popup-wrapper': true,
@@ -28,9 +29,11 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<PopupWrapperProps>(), {
-	root: 'body'
+	root: 'body',
+	destroyOnHide: false
 })
-const [currentZIndex, next] = useZIndex('popup')
+
+const [currentZIndex, next, release] = useZIndex('popup')
 
 const innerVisible = ref(!!props.visible)
 
@@ -45,6 +48,7 @@ const processVisible = (value: boolean) => {
 		innerVisible.value = true
 		next()
 	} else {
+		release()
 		if (isNumber(props.closeDelay)) {
 			timer = setTimeout(() => {
 				innerVisible.value = false

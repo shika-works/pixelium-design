@@ -162,6 +162,11 @@ export type SelectProps = {
 	 * @version 0.0.3
 	 */
 	popoverProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
+	/**
+	 * @property {boolean} [optionsDestroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	optionsDestroyOnHide?: boolean
 }
 
 export type SelectEvents = {
