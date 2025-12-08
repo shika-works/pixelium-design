@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import Popover from '../index.vue'
+import Tooltip from '../index.vue'
 import Popup from '../../popup/index.vue'
 import { createMocks } from '../../share/util/test'
 
@@ -15,12 +15,12 @@ afterEach(() => {
 	vi.restoreAllMocks()
 })
 
-describe('Popover Component', () => {
+describe('Tooltip Component', () => {
 	it('Check props of inner popup component', async () => {
 		const onClose = vi.fn()
 		const onOpen = vi.fn()
 		const onupdateVisible = vi.fn()
-		const wrapper = mount(Popover, {
+		const wrapper = mount(Tooltip, {
 			props: {
 				placement: 'left',
 				trigger: 'click',
