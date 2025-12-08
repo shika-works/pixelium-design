@@ -167,9 +167,7 @@ const mergedProps = computed(() => {
 })
 
 const labelRef = shallowRef<HTMLLabelElement | null>(null)
-const labelShowed = computed(() => {
-	return !!(props.label || slots.label) && !!mergedProps.value.labelAutoWidth
-})
+
 useResizeObserver(
 	labelRef,
 	() => {
@@ -181,8 +179,7 @@ useResizeObserver(
 			width: labelRef.value.clientWidth
 		})
 	},
-	true,
-	labelShowed
+	true
 )
 onBeforeUnmount(() => {
 	formContext.removeLabelWidth(id)

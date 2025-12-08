@@ -44,6 +44,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
 import { usePropsDetect } from '../share/hook/use-props-detect'
 import type { FormItemProvide } from '../form-item/type'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -170,6 +171,7 @@ const drawPixel = () => {
 
 useResizeObserver(labelRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(labelRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

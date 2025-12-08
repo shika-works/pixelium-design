@@ -208,18 +208,11 @@ export const calcValueFromEvent = (
 
 export const calcThumbLeft = (
 	value: number,
-	sliderRef: ShallowRef<HTMLDivElement | null>,
-	thumbRef: ShallowRef<HTMLDivElement | null>,
-	thumbStartRef: ShallowRef<HTMLDivElement | null>,
+	sliderRect: { width: number; height: number },
+	thumbRect: { width: number; height: number },
 	valueRange: number,
 	props: RemoveUndefinedFromFields<LooseRequired<SliderProps>, 'min' | 'max'>
 ) => {
-	const sliderEl = sliderRef.value
-	if (!sliderEl) return 0
-	const sliderRect = sliderEl.getBoundingClientRect()
-	const thumbEl = thumbRef.value || thumbStartRef.value
-	if (!thumbEl) return 0
-	const thumbRect = thumbEl.getBoundingClientRect()
 	const areaWidth =
 		props.direction === 'horizontal'
 			? sliderRect.width - thumbRect.width
@@ -234,18 +227,13 @@ export const calcThumbLeft = (
 }
 
 export const updateMarkPoints = (
-	sliderRef: ShallowRef<HTMLDivElement | null>,
+	rect: { width: number; height: number },
 	valueRange: number,
 	props: RemoveUndefinedFromFields<LooseRequired<SliderProps>, 'min' | 'max'>
 ) => {
 	if (!props.marks?.length) {
 		return []
 	}
-	const sliderEl = sliderRef.value
-	if (!sliderEl) {
-		return []
-	}
-	const rect = sliderEl.getBoundingClientRect()
 	const pixelSize = calcPixelSize()
 	const dotSize = props.direction === 'horizontal' ? rect.height : rect.width
 	const width =

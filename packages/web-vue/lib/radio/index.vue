@@ -64,6 +64,7 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Radio'
@@ -244,6 +245,7 @@ watch(
 
 useResizeObserver(canvasWrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(canvasWrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./style.less"></style>

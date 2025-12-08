@@ -51,6 +51,7 @@ import CheckSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-sol
 import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 defineOptions({
 	name: 'Checkbox'
 })
@@ -234,6 +235,7 @@ watch(
 
 useResizeObserver(boxRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(boxRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

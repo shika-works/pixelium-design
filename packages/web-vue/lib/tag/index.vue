@@ -50,6 +50,7 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Tag'
@@ -154,6 +155,7 @@ const drawPixel = () => {
 
 useResizeObserver(tagRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(tagRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -146,6 +146,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { VueComponent } from '../share/type'
 import { fixedNumber } from '../share/util/common'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'InputNumber'
@@ -598,6 +599,7 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -128,7 +128,7 @@ export function drawSmoothCircle(
 
 	const dx = rate < 4 ? (s / 4) * 3 : s
 	while (x <= end) {
-		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
+		plot(ctx, Math.floor(x), Math.floor(y), centerX, centerY, startRad, endRad, s)
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y

@@ -34,8 +34,8 @@
 			</div>
 			<canvas ref="canvasRef" class="px-switch-canvas"></canvas>
 			<div
-				v-if="slots['active-icon'] || slots['inactive-icon'] || props.loading"
-				class="px-switch-icon-wrapper"
+				class="px-switch-button"
+				ref="switchButtonRef"
 				:style="{
 					left: `${iconLeft}px`,
 					fill: iconColor,
@@ -48,6 +48,7 @@
 				></SpinnerThirdSolid>
 				<slot name="active-icon" v-else-if="progress > MID_PROGRESS"></slot>
 				<slot name="inactive-icon" v-else></slot>
+				<canvas ref="buttonCanvasRef" class="px-switch-canvas"></canvas>
 			</div>
 		</div>
 		<div
@@ -78,9 +79,9 @@ import {
 	calcBorderCornerCenter,
 	calcPixelSize,
 	canvasPreprocess,
+	drawSmoothCircle,
 	floodFill,
-	getBorderRadius,
-	roundToPixel
+	getBorderRadius
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
@@ -88,7 +89,6 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE, TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
 import { getGlobalThemeColor, parseColor, rgbaColor2string } from '../share/util/color'
 import { drawBorder } from './draw'
-import { fillArr } from '../share/util/common'
 import { useSmoothTransition } from '../share/hook/use-smooth-transition'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
@@ -98,6 +98,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { inBrowser } from '../share/util/env'
 import { usePropsDetect } from '../share/hook/use-props-detect'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 const MID_PROGRESS = 0.5
 
@@ -124,6 +125,8 @@ const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const switchRef = shallowRef<HTMLLabelElement | null>(null)
+const buttonCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
+const switchButtonRef = shallowRef<HTMLDivElement | null>(null)
 const canvasWrapperRef = shallowRef<HTMLDivElement | null>(null)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
@@ -181,21 +184,6 @@ onMounted(() => {
 	})
 })
 
-watch(
-	[
-		darkMode,
-		progress,
-		sizeComputed,
-		() => props.shape,
-		disabledComputed,
-		() => props.activeColor,
-		() => props.inactiveColor
-	],
-	() => {
-		drawPixel()
-	}
-)
-
 const updateSize = () => {
 	if (!canvasWrapperRef.value) {
 		return
@@ -209,12 +197,17 @@ const updateIconLeft = () => {
 		return 0
 	}
 
-	let sliceHeight = size.value[1] - 2
+	const pixelSize = calcPixelSize()
+	const intervalSize = parseInt(
+		getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
+	)
 
-	const start = 2
-	const end = size.value[0] - 2 - sliceHeight
+	const sliceHeight = size.value[1] + 2 * pixelSize - intervalSize * 2
 
-	iconLeft.value = Math.round(start + (end - start) * progress.value) + 0.5
+	const start = intervalSize / 2
+	const end = size.value[0] - sliceHeight - intervalSize / 2
+
+	iconLeft.value = start + (end - start) * progress.value
 }
 
 const iconLeft = ref(0)
@@ -250,6 +243,45 @@ watch(
 		deep: true
 	}
 )
+
+watch(
+	[
+		darkMode,
+		progress,
+		sizeComputed,
+		() => props.shape,
+		disabledComputed,
+		() => props.activeColor,
+		() => props.inactiveColor,
+		iconLeft
+	],
+	() => {
+		drawPixel()
+	}
+)
+
+const drawButton = () => {
+	const buttonPreprocessData = canvasPreprocess(switchButtonRef, buttonCanvasRef)
+	if (!buttonPreprocessData) {
+		return
+	}
+	const { ctx, width, height } = buttonPreprocessData
+
+	const size = Math.min(width, height)
+	const pixelSize = calcPixelSize()
+
+	const sliceColor = getGlobalThemeColor('neutral', 1)
+	ctx.fillStyle = rgbaColor2string(sliceColor)
+
+	const radius = Math.round(size / 2 - pixelSize / 2)
+	if (props.shape === 'round') {
+		drawSmoothCircle(ctx, radius, radius, radius, 0, Math.PI * 2, pixelSize)
+	} else {
+		ctx.fillRect(0, 0, size, size)
+	}
+
+	floodFill(ctx, Math.round(radius + 1), Math.round(radius + 1), sliceColor)
+}
 
 const drawPixel = () => {
 	const preprocessData = canvasPreprocess(canvasWrapperRef, canvasRef)
@@ -289,65 +321,17 @@ const drawPixel = () => {
 	)
 
 	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-
-	let sliceHeight = height - pixelSize * 2 - 2
-	const sliceBorderRadius = fillArr(
-		props.shape === 'round' ? roundToPixel(sliceHeight / 2, pixelSize) : 0,
-		4
-	)
-
-	const sliceColor = getGlobalThemeColor('neutral', 1)
-	const sliceCenter = calcBorderCornerCenter(
-		sliceBorderRadius,
-		sliceHeight,
-		sliceHeight,
-		pixelSize
-	)
-
-	const start = pixelSize + 2
-	const end = width - pixelSize - 2 - sliceHeight
-	const offsetX = Math.round(start + (end - start) * progress.value)
-
-	drawBorder(
-		ctx,
-		sliceHeight,
-		sliceHeight,
-		sliceCenter,
-		sliceBorderRadius,
-		rad,
-		sliceColor,
-		pixelSize,
-		offsetX,
-		pixelSize + 1,
-		true,
-		props.shape === 'round'
-	)
-	floodFill(
-		ctx,
-		Math.round((sliceCenter[0][0] + sliceCenter[1][0]) / 2 + offsetX),
-		Math.round((sliceCenter[0][1] + sliceCenter[3][1]) / 2 + pixelSize + 1),
-		sliceColor
-	)
-
-	if (sizeComputed.value === 'small') {
-		ctx.fillStyle = rgbaColor2string(sliceColor)
-		ctx.fillRect(
-			Math.round((sliceCenter[0][0] + sliceCenter[1][0]) / 2 + offsetX) - 1,
-			Math.round((sliceCenter[0][1] + sliceCenter[3][1]) / 2 + pixelSize + 1),
-			4,
-			4
-		)
-	}
+	drawButton()
 }
 
-useResizeObserver(canvasWrapperRef, () => {
+const refresh = () => {
 	drawPixel()
 	updateSize()
-})
-useWatchGlobalCssVal(() => {
-	drawPixel()
-	updateSize()
-})
+}
+
+useResizeObserver(canvasWrapperRef, refresh)
+useWatchGlobalCssVal(refresh)
+useTransitionEnd(canvasWrapperRef, refresh)
 </script>
 
 <style lang="less" src="./index.less"></style>

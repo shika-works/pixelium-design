@@ -57,6 +57,7 @@ import type { PopupContentEvents, PopupContentProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { inBrowser } from '../share/util/env'
 import PopupWrapper from '../popup-wrapper/index.vue'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'PopupContent'
@@ -354,6 +355,7 @@ const drawPixel = () => {
 
 useResizeObserver(contentRef, doOpen)
 useWatchGlobalCssVal(doOpen)
+useTransitionEnd(contentRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less" />
