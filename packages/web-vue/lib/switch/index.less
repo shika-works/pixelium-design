@@ -17,8 +17,10 @@
 	--text-color: var(--px-neutral-10);
 	--text-size: var(--px-medium-font-size);
 
+	--switch-button-size: calc(var(--switch-height) - 2 * var(--px-interval-1));
+
 	--icon-size: calc(
-		var(--px-medium-compat-size) - var(--px-interval-1) - 2 * var(--px-bit) - 2px
+		var(--switch-button-size) - var(--px-interval-1) - var(--px-interval-mini-1)
 	);
 
 	min-height: var(--switch-height);
@@ -42,14 +44,18 @@
 
 	&__active {
 		.@{prefix}-canvas-wrapper {
-			padding-left: var(--px-interval-1);
-			padding-right: calc(var(--switch-height) - var(--px-bit) + 2px);
+			padding-left: var(--px-interval-2);
+			padding-right: calc(
+				var(--switch-button-size) + var(--px-interval-1) + var(--px-interval-mini-1)
+			);
 		}
 	}
 	&__inactive {
 		.@{prefix}-canvas-wrapper {
-			padding-right: var(--px-interval-1);
-			padding-left: calc(var(--switch-height) - var(--px-bit) + 2px);
+			padding-right: var(--px-interval-2);
+			padding-left: calc(
+				var(--switch-button-size) + var(--px-interval-1) + var(--px-interval-mini-1)
+			);
 		}
 	}
 	&-canvas-wrapper {
@@ -71,20 +77,10 @@
 	&__small {
 		--switch-height: var(--px-small-compat-size);
 		--text-size: var(--px-small-font-size);
-		.@{prefix}-icon-wrapper {
-			--icon-size: calc(
-				var(--px-small-compat-size) - var(--px-interval-1) - 2 * var(--px-bit) - 2px
-			);
-		}
 	}
 	&__large {
 		--switch-height: var(--px-large-compat-size);
 		--text-size: var(--px-large-font-size);
-		.@{prefix}-icon-wrapper {
-			--icon-size: calc(
-				var(--px-large-compat-size) - var(--px-interval-1) - 2 * var(--px-bit) - 2px
-			);
-		}
 	}
 
 	&-inner {
@@ -101,15 +97,16 @@
 		cursor: not-allowed;
 	}
 
-	&-icon-wrapper {
+	&-button {
 		position: absolute;
-		height: calc(var(--switch-height) - 2 * var(--px-bit) - 2px);
-		width: calc(var(--switch-height) - 2 * var(--px-bit) - 2px);
+		height: var(--switch-button-size);
+		width: var(--switch-button-size);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-		top: 1px;
+		top: 50%;
+		transform: translateY(calc(-50%));
 
 		user-select: none;
 
