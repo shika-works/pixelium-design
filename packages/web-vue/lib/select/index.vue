@@ -11,7 +11,8 @@ import {
 	watch,
 	useAttrs,
 	Fragment,
-	h
+	h,
+	mergeProps
 } from 'vue'
 import type {
 	SelectEvents,
@@ -56,6 +57,7 @@ import {
 } from 'parsnip-kit'
 import {
 	BORDER_CORNER_RAD_RANGE,
+	GET_ELEMENT_RENDERED,
 	GROUP_OPTION_TYPE,
 	POPUP_CONTENT_DEFAULT_MAX_WIDTH
 } from '../share/const'
@@ -89,7 +91,8 @@ const props = withDefaults(defineProps<SelectProps>(), {
 	multiple: false,
 	collapseTagsPopover: true,
 	collapseTags: false,
-	virtualScroll: false
+	virtualScroll: false,
+	optionsDestroyOnHide: false
 })
 const propsDetect = usePropsDetect(props, 'size')
 
@@ -511,7 +514,7 @@ const optionsFiltered = computed(() => {
 	return ans
 })
 
-defineExpose<SelectExpose>({
+defineExpose<SelectExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | null }>({
 	focus: () => {
 		if (disabledComputed.value || readonlyComputed.value) {
 			return
@@ -521,7 +524,8 @@ defineExpose<SelectExpose>({
 	blur: () => {
 		blurSelectImpl()
 	},
-	clear: () => clearHandler()
+	clear: () => clearHandler(),
+	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
 })
 
 const popoverVisible = ref(false)
@@ -906,28 +910,31 @@ defineRender(() => {
 			trigger="click"
 			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
+			destroyOnHide={props.optionsDestroyOnHide}
 		>
 			{{
 				default: () =>
 					h(
 						'div',
-						{
-							ref: wrapperRef,
-							class: [
-								'pixelium px-select',
-								sizeComputed.value && `px-select__${sizeComputed.value}`,
-								shapeComputed.value && `px-select__${shapeComputed.value}`,
-								{ 'px-select__inner': innerInputGroup.value },
-								{ 'px-select__disabled': disabledComputed.value }
-							],
-							onFocusin: focusImpl,
-							onFocusout: focusoutHandler,
-							onClick: focusInputHandler,
-							onMouseenter: mouseenterHandler,
-							onMouseleave: mouseleaveHandler,
-							...scopeObj,
-							...attrs
-						},
+						mergeProps(
+							{
+								ref: wrapperRef,
+								class: [
+									'pixelium px-select',
+									sizeComputed.value && `px-select__${sizeComputed.value}`,
+									shapeComputed.value && `px-select__${shapeComputed.value}`,
+									{ 'px-select__inner': innerInputGroup.value },
+									{ 'px-select__disabled': disabledComputed.value }
+								],
+								onFocusin: focusImpl,
+								onFocusout: focusoutHandler,
+								onClick: focusInputHandler,
+								onMouseenter: mouseenterHandler,
+								onMouseleave: mouseleaveHandler,
+								...scopeObj
+							},
+							attrs
+						),
 						[Inner]
 					),
 				content: () =>

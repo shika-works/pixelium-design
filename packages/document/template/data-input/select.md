@@ -177,6 +177,8 @@ shape: 选择器形状。
 borderRadius: 圆角半径，优先级高于 `shape`，与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 status: 表单验证状态。
 popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
+optionsDestroyOnHide: 下拉选项是否会在隐藏时销毁。
+
 events.input: 搜索选项输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.update:inputValue: 更新 `inputValue` 的回调。
@@ -227,6 +229,8 @@ shape: Shape of the selector.
 borderRadius: Border-radius value; higher priority than `shape`. Single value or 1-item array → all corners; 2-item array → [top-left & bottom-right, top-right & bottom-left]; 3-item array → [top-left, top-right & bottom-left, bottom-right]; 4-item array → clockwise order for all four corners.
 status: Form validation status.
 popoverProps: Popover component properties when tags are collapsed.
+optionsDestroyOnHide: Whether the dropdown options will be destroyed when hidden.
+
 events.input: Fired on search input.
 events.update:modelValue: Fired when `modelValue` changes.
 events.update:inputValue: Fired when `inputValue` changes.

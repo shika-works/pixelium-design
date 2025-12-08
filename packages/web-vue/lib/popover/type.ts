@@ -78,6 +78,11 @@ export type PopoverProps = {
 	 * @version 0.0.2
 	 */
 	contentStyle?: CSSProperties
+	/**
+	 * @property {boolean} [destroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	destroyOnHide?: boolean
 }
 
 export type PopoverEvents = {

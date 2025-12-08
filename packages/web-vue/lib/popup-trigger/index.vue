@@ -1,10 +1,12 @@
 <script setup lang="tsx">
-import { useSlots, Fragment, cloneVNode, type VNode, shallowRef, ref } from 'vue'
+import { useSlots, Fragment, type VNode, shallowRef, ref, cloneVNode } from 'vue'
 import { flattenVNodes, isTextVNode } from '../share/util/render'
 import type { PopupTriggerEmits, PopupTriggerProps } from './type'
 import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
 import { inBrowser } from '../share/util/env'
 import { checkMouseInsideElementFromEvent } from '../share/util/dom'
+import { GET_ELEMENT_RENDERED } from '../share/const'
+import { isFunction } from 'parsnip-kit'
 
 defineOptions({
 	name: 'PopupTrigger'
@@ -16,15 +18,23 @@ const props = withDefaults(defineProps<PopupTriggerProps>(), {
 
 const emits = defineEmits<PopupTriggerEmits>()
 
-const currentTrigger = shallowRef<null | VNode>(null)
+const currentTrigger = shallowRef<null | SVGElement | HTMLElement>(null)
 
 async function openHandler(node: VNode, e: MouseEvent) {
 	if (inBrowser()) {
-		if (node.el instanceof HTMLElement) {
-			currentTrigger.value = node
+		let triggerEl = null
+		if (node.el instanceof HTMLElement || node.el instanceof SVGElement) {
+			triggerEl = node.el
 		} else {
-			currentTrigger.value = null
+			const getElFunc = node.component?.exposed?.[GET_ELEMENT_RENDERED]
+			if (isFunction(getElFunc)) {
+				const el = getElFunc()
+				if (el instanceof HTMLElement || el instanceof SVGElement) {
+					triggerEl = el
+				}
+			}
 		}
+		currentTrigger.value = triggerEl
 	}
 
 	if (props.disabled) {
@@ -65,11 +75,10 @@ function handleDrag(e: TouchEvent | MouseEvent) {
 
 function stopDrag(e: TouchEvent | MouseEvent) {
 	dragging.value = false
-
 	if (!currentTrigger.value) {
 		closeHandler(e)
 	} else {
-		const el = currentTrigger.value.el
+		const el = currentTrigger.value
 		if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) {
 			closeHandler(e)
 		} else {
@@ -94,6 +103,15 @@ const startDrag = (e: TouchEvent | MouseEvent) => {
 	emits('dragStart', e)
 }
 
+const initCurrentTrigger = (e: any) => {
+	if (currentTrigger.value) {
+		return
+	}
+	if (e instanceof HTMLElement || e instanceof SVGElement) {
+		currentTrigger.value = e
+	}
+}
+
 defineRender(() => {
 	const children = flattenVNodes(slots.default?.() || [])
 	return (
@@ -107,6 +125,7 @@ defineRender(() => {
 								onMousedown={startDrag}
 								// @ts-ignore
 								onTouchstartPassive={startDrag}
+								ref={initCurrentTrigger}
 							>
 								{child}
 							</span>
@@ -117,15 +136,13 @@ defineRender(() => {
 								onMousedown={startDrag}
 								// @ts-ignore
 								onTouchstartPassive={startDrag}
+								ref={initCurrentTrigger}
 							>
 								{child}
 							</span>
 						)
 					if (index === 0) {
 						firstVNodeRef.value = node
-						if (!currentTrigger.value) {
-							currentTrigger.value = node
-						}
 					}
 					return node
 				} else {
@@ -135,21 +152,20 @@ defineRender(() => {
 							? {
 									onClick: (e: MouseEvent) => openHandler(clone, e),
 									onMousedown: startDrag,
-									onTouchstart: startDrag
+									onTouchstart: startDrag,
+									ref: initCurrentTrigger
 								}
 							: {
 									onMouseenter: (e: MouseEvent) => openHandler(clone, e),
 									onMouseleave: (e: MouseEvent) => closeHandler(e),
 									onMousedown: startDrag,
-									onTouchstart: startDrag
+									onTouchstart: startDrag,
+									ref: initCurrentTrigger
 								},
 						true
 					)
 					if (index === 0) {
 						firstVNodeRef.value = clone
-						if (!currentTrigger.value) {
-							currentTrigger.value = clone
-						}
 					}
 					return clone
 				}

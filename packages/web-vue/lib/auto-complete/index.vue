@@ -15,6 +15,7 @@ import {
 } from 'vue'
 import type {
 	AutoCompleteEvents,
+	AutoCompleteExpose,
 	AutoCompleteGroupOption,
 	AutoCompleteOption,
 	AutoCompleteProps
@@ -45,7 +46,7 @@ import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
 import { defaultFilter } from '../share/util/common'
 import { isString, type Nullish } from 'parsnip-kit'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { BORDER_CORNER_RAD_RANGE, GET_ELEMENT_RENDERED } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
@@ -69,7 +70,9 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
 	status: 'normal',
 	options: () => [],
 	showPopoverEmpty: false,
-	append: false
+	append: false,
+	virtualScroll: false,
+	optionsDestroyOnHide: false
 })
 const propsDetect = usePropsDetect(props, 'size')
 
@@ -254,7 +257,7 @@ const optionsFiltered = computed(() => {
 	return defaultFilter(modelValue.value, props.options || [])
 })
 
-defineExpose({
+defineExpose<AutoCompleteExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | null }>({
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -264,7 +267,8 @@ defineExpose({
 	clear: () => clearHandler(),
 	select: () => {
 		inputRef.value?.select()
-	}
+	},
+	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
 })
 
 const popoverVisible = ref(false)
@@ -427,6 +431,7 @@ defineRender(() => {
 			onUpdate:visible={popoverVisibleUpdateHandler}
 			trigger="click"
 			contentStyle={{ padding: `${pixelSize}px` }}
+			destroyOnHide={props.optionsDestroyOnHide}
 		>
 			{{
 				default: () =>

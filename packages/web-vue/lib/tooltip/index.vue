@@ -16,7 +16,8 @@ const props = withDefaults(defineProps<TooltipProps>(), {
 	root: 'body',
 	arrow: true,
 	visible: undefined,
-	defaultVisible: undefined
+	defaultVisible: undefined,
+	destroyOnHide: false
 })
 
 const attrs = useAttrs()

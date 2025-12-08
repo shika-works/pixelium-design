@@ -11,7 +11,14 @@
 
 <script setup lang="ts">
 import { computed, nextTick, provide, ref, toRefs } from 'vue'
-import type { FieldItem, FormEvents, FormProps, FormProvide, RuleLevel } from './type'
+import type {
+	FieldItem,
+	FormEvents,
+	FormExpose,
+	FormProps,
+	FormProvide,
+	RuleLevel
+} from './type'
 import { FORM_PROVIDE } from '../share/const/provide-key'
 import { isNullish, isString, max } from 'parsnip-kit'
 
@@ -122,5 +129,5 @@ const clearValidation = async (field?: string | string[]) => {
 		.forEach((field) => field.clearValidation())
 }
 
-defineExpose({ validate, reset, clearValidation })
+defineExpose<FormExpose>({ validate, reset, clearValidation })
 </script>

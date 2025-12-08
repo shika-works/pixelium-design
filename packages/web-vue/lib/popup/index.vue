@@ -11,14 +11,17 @@ import {
 	onMounted
 } from 'vue'
 import type { PopupEvents, PopupProps } from './type'
-import { isNullish, throttle } from 'parsnip-kit'
+import { isFunction, isNullish, throttle } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
 import { inBrowser } from '../share/util/env'
 import { calcPixelSize } from '../share/util/plot'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { checkMouseInsideElementFromEvent } from '../share/util/dom'
+import { GET_ELEMENT_RENDERED } from '../share/const'
+import { logWarn } from '../share/util/console'
 
+// TODO: Refactor duplicate functionality between popup-trigger and popup components.
 defineOptions({
 	name: 'Popup'
 })
@@ -32,7 +35,8 @@ const props = withDefaults(defineProps<PopupProps>(), {
 	arrow: true,
 	visible: undefined,
 	defaultVisible: undefined,
-	widthEqual: false
+	widthEqual: false,
+	destroyOnHide: false
 })
 
 const controlledMode = computed(() => {
@@ -48,28 +52,45 @@ const triggerRef = shallowRef<InstanceType<typeof PopupTrigger> | undefined>()
 
 const emits = defineEmits<PopupEvents>()
 
-const currentTrigger = shallowRef<null | VNode>(null)
+const currentTrigger = shallowRef<null | SVGElement | HTMLElement>(null)
 
 const [wait, cancel] = useCancelableDelay()
 
+const getElFromVNode = (node: VNode) => {
+	if (inBrowser()) {
+		let triggerEl = null
+		if (node.el instanceof HTMLElement || node.el instanceof SVGElement) {
+			triggerEl = node.el
+		} else {
+			const getElFunc = node.component?.exposed?.[GET_ELEMENT_RENDERED]
+			if (isFunction(getElFunc)) {
+				const el = getElFunc()
+				if (el instanceof HTMLElement || el instanceof SVGElement) {
+					triggerEl = el
+				}
+			}
+			if (triggerEl === null) {
+				logWarn(
+					`Please ensure that the root node of the default slot passed to Tooltip, Popover, and similar components can be rendered as a DOM element, or expose a getElementRender function on the component to retrieve the DOM element for balloon attachment.`
+				)
+			}
+		}
+		return triggerEl
+	} else {
+		return null
+	}
+}
+
 async function openHandler(node: VNode, e: MouseEvent) {
 	cancel()
-	await openHandlerImpl(node)
+	currentTrigger.value = getElFromVNode(node)
+	await openHandlerImpl(currentTrigger.value)
 	emits('open', e)
 }
-async function openHandlerImpl(node: VNode, controlled = false) {
-	if (inBrowser()) {
-		resizeObserver?.disconnect()
-		if (node.el instanceof HTMLElement) {
-			currentTrigger.value = node
-		} else {
-			currentTrigger.value = null
-		}
-		if (currentTrigger.value && currentTrigger.value.el instanceof HTMLElement) {
-			resizeObserver?.observe(currentTrigger.value.el)
-		}
+async function openHandlerImpl(node: SVGElement | HTMLElement | null, controlled = false) {
+	if (node) {
+		resizeObserver?.observe(node)
 	}
-
 	if (controlledMode.value && !controlled) {
 		emits('update:visible', true)
 		await nextTick(() => {})
@@ -137,9 +158,9 @@ const preprocessCurrentTrigger = () => {
 	}
 	if (!currentTrigger.value && triggerRef.value && triggerRef.value.firstVNode) {
 		resizeObserver?.disconnect()
-		currentTrigger.value = triggerRef.value.firstVNode
-		if (currentTrigger.value.el instanceof HTMLElement) {
-			resizeObserver?.observe(currentTrigger.value.el)
+		currentTrigger.value = getElFromVNode(triggerRef.value.firstVNode)
+		if (currentTrigger.value instanceof HTMLElement) {
+			resizeObserver?.observe(currentTrigger.value)
 		}
 	}
 }
@@ -194,7 +215,7 @@ const checkCurrentTrigger = (_: any): _ is HTMLElement => {
 	if (!inBrowser()) {
 		return false
 	}
-	return currentTrigger.value?.el instanceof HTMLElement
+	return currentTrigger.value instanceof HTMLElement
 }
 
 const dragHandler = throttle(() => {
@@ -236,10 +257,11 @@ defineRender(() => {
 				borderRadius={pixelSize * 4}
 				root={props.root}
 				widthEqual={props.widthEqual}
-				target={checkCurrentTrigger(currentTrigger.value?.el) ? currentTrigger.value.el : null}
+				target={checkCurrentTrigger(currentTrigger.value) ? currentTrigger.value : null}
 				onContentMouseenter={contentMouseenterHandler}
 				onContentMouseleave={contentMouseleaveHandler}
 				contentStyle={props.contentStyle}
+				destroyOnHide={props.destroyOnHide}
 				// @ts-ignore
 				ref={(node: InstanceType<typeof PopupContent>) => (contentRef.value = node)}
 			>

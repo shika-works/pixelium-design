@@ -5,4 +5,5 @@ export type PopupWrapperProps = {
 	root?: HTMLElement | string
 	closeDelay?: number
 	position?: 'absolute' | 'fixed'
+	destroyOnHide?: boolean
 }

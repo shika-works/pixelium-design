@@ -66,6 +66,11 @@ export type TooltipProps = {
 	 * @version 0.0.2
 	 */
 	root?: HTMLElement | string
+	/**
+	 * @property {boolean} [destroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	destroyOnHide?: boolean
 }
 
 export type TooltipEvents = {

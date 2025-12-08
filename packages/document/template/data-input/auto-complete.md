@@ -135,6 +135,8 @@ status: 表单验证状态。
 autofocus: 原生 `<input>` 的 `autofocus` 属性。
 virtualScroll: 是否开启虚拟滚动。
 virtualListProps: 虚拟列表属性。
+optionsDestroyOnHide: 下拉选项是否会在隐藏时销毁。
+
 events.input: 自动填充输入框输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 输入内容变化时的回调。
@@ -172,6 +174,8 @@ status: Form validation status.
 virtualScroll: Whether render options with virtual list.
 virtualListProps: Properties of virtual list.
 autofocus: Native `<input>` `autofocus` attribute.
+optionsDestroyOnHide: Whether the dropdown options will be destroyed when hidden.
+
 events.input: Callback fired when the input value changes.
 events.update:modelValue: Callback fired when `modelValue` is updated.
 events.change: Callback fired when the input content changes.
