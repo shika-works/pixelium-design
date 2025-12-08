@@ -20,6 +20,7 @@
   - 选项组的子选项增加缩进。
   - 优化 Select 组件的 `focus` 和 `blur` 事件触发。
   - 优化代码 & 完善测试用例。
+  - 各种下拉和弹窗组件增加属性控制是否在隐藏时销毁内容。
 - 修复：
   - 修复 `variant="text"` 的 Button 组件在 ButtonGroup 和 InputGroup 下的渲染。
   - 修复表单控件 `focus` 和 `blur` 事件没有 emit 的问题。
@@ -40,6 +41,7 @@
   - Add indentation to sub-options of option groups.
   - Optimize the triggering of `focus` and `blur` events for the Select component.
   - Optimize code & improve test cases.
+  - Add a prop to dropdown and popup components to control whether content is destroyed when hidden.
 - Fixes:
   - Fix the rendering of Button components with `variant="text"` in ButtonGroup and InputGroup.
   - Fix the bug where the `focus` and `blur` events of form controls are not being emitted.
