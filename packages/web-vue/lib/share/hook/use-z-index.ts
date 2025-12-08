@@ -11,8 +11,6 @@ const DEFAULT_CONFIG: Record<string, NamespaceConfig> = {
 }
 
 type ZIndexState = {
-	max: number
-	count: number
 	initial: number
 }
 
@@ -20,27 +18,36 @@ const stateMap: Record<string, ZIndexState> = {}
 
 function ensureNamespace(ns: string, cfg: NamespaceConfig): ZIndexState {
 	if (!stateMap[ns]) {
-		stateMap[ns] = { max: cfg.start, count: 0, initial: cfg.start }
+		stateMap[ns] = { initial: cfg.start }
 	}
 	return stateMap[ns]
+}
+
+const usedZIndex = new Set<number>()
+
+const allocate = (ns: ZIndexState): number => {
+	const maxUsed = usedZIndex.size > 0 ? Math.max(...usedZIndex) : ns.initial
+	const nextZIndex = maxUsed + 1
+
+	usedZIndex.add(nextZIndex)
+	return nextZIndex
 }
 
 export function useZIndex(namespace: keyof typeof DEFAULT_CONFIG = 'popup') {
 	const cfg = DEFAULT_CONFIG[namespace]
 
 	const ns = ensureNamespace(namespace, cfg)
-	const localZIndex = ref<number>(++ns.max)
-	ns.count++
+
+	const curZIndex = allocate(ns)
+	const localZIndex = ref<number>(curZIndex)
 
 	const next = (): number => {
-		localZIndex.value = ++ns.max
+		localZIndex.value = allocate(ns)
 		return localZIndex.value
 	}
 
 	const release = () => {
-		if (--ns.count === 0) {
-			ns.max = ns.initial
-		}
+		usedZIndex.delete(localZIndex.value)
 	}
 
 	onUnmounted(release)
