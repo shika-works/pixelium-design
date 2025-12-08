@@ -56,7 +56,7 @@
 </template>
 <script setup lang="ts">
 import { computed, inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
-import type { TextareaEvents, TextareaProps } from './type'
+import type { TextareaEvents, TextareaExpose, TextareaProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { draw } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -225,7 +225,7 @@ const mouseleaveHandler = () => {
 	hoverFlag.value = false
 }
 
-defineExpose({
+defineExpose<TextareaExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},

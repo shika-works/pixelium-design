@@ -75,7 +75,7 @@ import {
 	useSlots,
 	watch
 } from 'vue'
-import type { InputEvents, InputProps } from './type'
+import type { InputEvents, InputExpose, InputProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -283,7 +283,7 @@ const typeComputed = computed(() => {
 
 const slots = useSlots()
 
-defineExpose({
+defineExpose<InputExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},

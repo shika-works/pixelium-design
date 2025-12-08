@@ -130,7 +130,7 @@ import {
 	useSlots,
 	watch
 } from 'vue'
-import type { InputTagEvents, InputTagProps } from './type'
+import type { InputTagEvents, InputTagExpose, InputTagProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -361,7 +361,7 @@ const tagCanClose = computed(() => {
 
 const slots = useSlots()
 
-defineExpose({
+defineExpose<InputTagExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},
