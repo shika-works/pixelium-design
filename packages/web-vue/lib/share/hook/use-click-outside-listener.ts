@@ -1,14 +1,14 @@
 import { isArray, isFunction } from 'parsnip-kit'
 import { onBeforeUnmount, onMounted, type ShallowRef, type VNode } from 'vue'
 
-const check = (target: HTMLElement, range?: HTMLElement | null) => {
+const check = (target: HTMLElement | SVGElement, range?: HTMLElement | SVGElement | null) => {
 	if (!range) {
 		return true
 	}
 	return range.contains(target)
 }
 
-type ElGetter = ShallowRef<HTMLElement | VNode | null> | (() => any)
+type ElGetter = ShallowRef<HTMLElement | SVGElement | VNode | null> | (() => any)
 
 const getEl = (ref: ElGetter) => {
 	if (isFunction(ref)) {
@@ -18,7 +18,7 @@ const getEl = (ref: ElGetter) => {
 	if (!ref.value) {
 		return null
 	}
-	return ref.value instanceof HTMLElement
+	return ref.value instanceof HTMLElement || ref.value instanceof SVGElement
 		? ref.value
 		: ref.value.el && ref.value.el instanceof HTMLElement
 			? ref.value.el

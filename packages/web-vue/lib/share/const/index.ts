@@ -35,3 +35,5 @@ export const POPUP_CONTENT_DEFAULT_MAX_WIDTH = 400
 
 export const SQRT3 = Math.sqrt(3)
 export const INV_SQRT3 = 1 / SQRT3
+
+export const GET_ELEMENT_RENDERED = 'getElementRendered'

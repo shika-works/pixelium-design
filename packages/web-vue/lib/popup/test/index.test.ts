@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { nextTick, Transition } from 'vue'
+import { h, nextTick, Transition } from 'vue'
 import Popup from '../index.vue'
 import PopupContent from '../../popup-content/index.vue'
+import AutoComplete from '../../auto-complete/index.vue'
 import { createMocks } from '../../share/util/test'
 
 const { pre, post } = createMocks()
@@ -105,5 +106,36 @@ describe('Popup Component', () => {
 		contentEl.trigger('mouseleave')
 		await new Promise((r) => setTimeout(r, 300))
 		expect(wrapper.findComponent(PopupContent).props('visible')).toBe(false)
+	})
+	
+	it('can correct trigger wrapping hyper component', async () => {
+		const wrapper = mount(Popup, {
+			props: {
+				trigger: 'hover',
+				defaultVisible: false,
+				content: 'hello'
+			},
+			slots: {
+				default: () => {
+					return h(AutoComplete)
+				}
+			},
+			attachTo: 'body'
+		})
+
+		const comp = wrapper.find('.px-auto-complete')
+		await comp.trigger('mouseenter')
+		await new Promise(res => setTimeout(res))
+
+		const content = wrapper.findAllComponents(PopupContent)
+		expect(content[1].exists()).toBe(true)
+		
+		expect(content[1].props('visible')).toBe(true)
+
+		await comp.trigger('mouseleave')
+		await new Promise((r) => setTimeout(r, 300))
+
+		expect(wrapper.findComponent(PopupContent).props('visible')).toBe(false)
+		expect(wrapper.emitted('close')).toBeTruthy()
 	})
 })
