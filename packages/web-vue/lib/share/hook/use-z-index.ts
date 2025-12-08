@@ -1,4 +1,3 @@
-// useZIndex.ts
 import { ref, onUnmounted } from 'vue'
 
 interface NamespaceConfig {
