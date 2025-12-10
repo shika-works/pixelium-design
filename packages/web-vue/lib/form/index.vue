@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, provide, ref, toRefs } from 'vue'
+import { computed, nextTick, onMounted, provide, ref, toRefs, type Ref } from 'vue'
 import type {
 	FieldItem,
 	FormEvents,
@@ -21,6 +21,7 @@ import type {
 } from './type'
 import { FORM_PROVIDE } from '../share/const/provide-key'
 import { isNullish, isString, max } from 'parsnip-kit'
+import { throwError } from '../share/util/console'
 
 defineOptions({ name: 'Form' })
 
@@ -34,15 +35,24 @@ const props = withDefaults(defineProps<FormProps>(), {
 	size: 'medium'
 })
 
+const model = computed(() => {
+	if (props.form) {
+		return props.form.model.value
+	} else if (props.model) {
+		return props.model
+	}
+	throwError('One of the model or form props must be provided to the Form component.')
+})
+
 const fields = ref<FieldItem[]>([])
 
 const labelWidth = ref<{ id: string; width: number }[]>([])
 const maxLabelWidth = computed(() => {
 	return max(labelWidth.value.map((e) => e.width))
 })
-
 provide<FormProvide>(FORM_PROVIDE, {
 	...toRefs(props),
+	model: model as Ref<Record<string | number, any>>,
 	registerField: (fieldItem: FieldItem) => {
 		fields.value.push(fieldItem)
 	},
@@ -57,7 +67,7 @@ provide<FormProvide>(FORM_PROVIDE, {
 		labelWidth.value = labelWidth.value.filter((e) => e.id !== itemId)
 	},
 	maxLabelWidth
-})
+} as any)
 
 const emits = defineEmits<FormEvents>()
 
@@ -107,7 +117,7 @@ const validate = async (field?: string | string[]) => {
 }
 
 const formSubmitHandler = (e: Event) => {
-	emits('submit', props.model, e)
+	emits('submit', model.value!, e)
 }
 
 const reset = (field?: string | string[]) => {
@@ -120,7 +130,7 @@ const reset = (field?: string | string[]) => {
 const formResetHandler = async (e: Event) => {
 	reset()
 	await nextTick()
-	emits('reset', props.model, e)
+	emits('reset', model.value!, e)
 }
 
 const clearValidation = async (field?: string | string[]) => {
@@ -129,5 +139,12 @@ const clearValidation = async (field?: string | string[]) => {
 		.forEach((field) => field.clearValidation())
 }
 
-defineExpose<FormExpose>({ validate, reset, clearValidation })
+const expose = { validate, reset, clearValidation }
+defineExpose<FormExpose>(expose)
+
+onMounted(() => {
+	if (props.form) {
+		props.form.register(expose)
+	}
+})
 </script>
