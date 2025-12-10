@@ -58,7 +58,8 @@ const newItems: string[] = [
 	'image',
 	'avatar',
 	'virtual-list',
-	'pixelate'
+	'pixelate',
+	'text-outline'
 ]
 
 const order = [
