@@ -1,4 +1,4 @@
-import type { ComputedRef, ToRefs } from 'vue'
+import type { ComputedRef, Ref, ToRefs } from 'vue'
 import type { ColProps } from '../col/type'
 import type { RowProps } from '../row/type'
 import type { LooseRequired } from '../share/type'
@@ -20,10 +20,15 @@ export type RuleTrigger = 'blur' | 'change' | 'input'
 
 export type FormProps = {
 	/**
-	 * @property {Record<number | string, any>} model
+	 * @property {Record<number | string, any>} [model]
 	 * @version 0.0.3
 	 */
-	model: Record<number | string, any>
+	model?: Record<number | string, any>
+	/**
+	 * @property {FormInstance} [form]
+	 * @version 0.0.3
+	 */
+	form?: UseFormReturn
 	/**
 	 * @property {Record<string, RuleItem | RuleItem[]>} [rules]
 	 * @version 0.0.3
@@ -79,6 +84,35 @@ export type FormProps = {
 	 * @version 0.0.3
 	 */
 	contentProps?: ColProps
+}
+
+export interface UseFormReturn<
+	T extends Record<string | number, any> = Record<string | number, any>
+> {
+	/**
+	 * @property {Ref<Record<string | number, any>>} model
+	 * @version 0.0.3
+	 */
+	model: Ref<T>
+	/**
+	 * @property {(field?: string | string[]) => FormValidateResult} validate
+	 * @version 0.0.3
+	 */
+	validate: (field?: string | string[]) => FormValidateResult
+	/**
+	 * @property {(field?: string | string[]) => void} reset
+	 * @version 0.0.3
+	 */
+	reset: (field?: string | string[]) => void
+	/**
+	 * @property {(field?: string | string[]) => void} clearValidation
+	 * @version 0.0.3
+	 */
+	clearValidation: (field?: string | string[]) => void
+	/**
+	 * @ignore
+	 */
+	register: (registerOptions: UseFormRegisterOptions) => void
 }
 
 export type FormEvents = {
@@ -212,4 +246,10 @@ export type FormProvide = {
 	unregisterField: (field: string) => void
 	collectLabelWidth: (item: { id: string; width: number }) => void
 	removeLabelWidth: (itemId: string) => void
-} & ToRefs<LooseRequired<FormProps>>
+	model: Ref<Record<string | number, any>>
+} & ToRefs<LooseRequired<Omit<FormProps, 'form' | 'model'>>>
+
+export type UseFormRegisterOptions = {
+	validate: (field?: string | string[]) => FormValidateResult
+	clearValidation: (field?: string | string[]) => void
+}

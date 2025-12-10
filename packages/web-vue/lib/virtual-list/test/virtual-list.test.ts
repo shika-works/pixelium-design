@@ -123,7 +123,7 @@ describe('VirtualList', () => {
 
 		const style = placeholder.attributes('style') || ''
 
-		expect(style).toContain('height: 400px;')
+		expect(style).toContain('height: 460px;')
 	})
 
 	it('calculates contentOffset based on scroll and item heights (non-fixed)', async () => {
@@ -141,11 +141,9 @@ describe('VirtualList', () => {
 
 		await nextTick()
 
-		const inner = wrapper.element.querySelector('.px-virtual-list') as HTMLElement
-		if (inner) inner.style.height = '120px'
-
+		const inner = wrapper.find('.px-virtual-list').element as HTMLElement
+		inner.style.height = '120px'
 		await nextTick()
-
 		const scrollArea = wrapper.element.querySelector('.px-virtual-list-scroll-area')
 		expect(scrollArea).instanceOf(HTMLElement)
 		scrollArea.scrollTop = 60
@@ -153,7 +151,49 @@ describe('VirtualList', () => {
 
 		await nextTick()
 		const contentEl = wrapper.element.querySelector('.px-virtual-list-item') as HTMLElement
+		expect(contentEl.style.transform).toContain('translateY(40px)')
+	})
 
-		expect(contentEl.style.transform).toContain('translateY(60px)')
+	it('correct render placeholder area height when list length change', async () => {
+		const items = makeItems(200)
+
+		const wrapper = mount(VirtualList as any, {
+			props: {
+				list: items,
+				fixedHeight: false,
+				estimatedHeight: 20,
+				buffer: 0
+			},
+			attachTo: document.body
+		})
+
+		await nextTick()
+
+		const placeholder1 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
+		expect(placeholder1.style.height).toBe('4000px')
+
+		await nextTick()
+
+		await new Promise((res) => setTimeout(res, 0))
+		const placeholder2 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
+		expect(placeholder2.style.height).toBe('4040px')
+
+		wrapper.setProps({ list: makeItems(1000) })
+		await new Promise((res) => setTimeout(res, 0))
+		const placeholder3 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
+		expect(placeholder3.style.height).toBe('20040px')
+
+		wrapper.setProps({ list: makeItems(500) })
+		await new Promise((res) => setTimeout(res, 0))
+		const placeholder4 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
+		expect(placeholder4.style.height).toBe('10040px')
 	})
 })

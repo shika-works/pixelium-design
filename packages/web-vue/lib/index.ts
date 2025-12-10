@@ -53,6 +53,7 @@ import RadioGroup from './radio-group/index.vue'
 import Checkbox from './checkbox/index.vue'
 import CheckboxGroup from './checkbox-group/index.vue'
 import TextOutline from './text-outline/index.vue'
+import { useForm } from './form/use-form.ts'
 
 const components = [
 	Button,
@@ -176,6 +177,7 @@ export {
 	CheckboxGroup,
 	imageDataToDataURL,
 	TextOutline,
+	useForm
 }
 export default {
 	install
@@ -203,5 +205,6 @@ export type {
 	RuleTrigger,
 	FieldType,
 	RuleLevel,
-	FormValidateResult
+	FormValidateResult,
+	UseFormReturn
 } from './form/type.ts'

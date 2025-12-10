@@ -107,7 +107,7 @@ describe('Popup Component', () => {
 		await new Promise((r) => setTimeout(r, 300))
 		expect(wrapper.findComponent(PopupContent).props('visible')).toBe(false)
 	})
-	
+
 	it('can correct trigger wrapping hyper component', async () => {
 		const wrapper = mount(Popup, {
 			props: {
@@ -125,11 +125,11 @@ describe('Popup Component', () => {
 
 		const comp = wrapper.find('.px-auto-complete')
 		await comp.trigger('mouseenter')
-		await new Promise(res => setTimeout(res))
+		await new Promise((res) => setTimeout(res))
 
 		const content = wrapper.findAllComponents(PopupContent)
 		expect(content[1].exists()).toBe(true)
-		
+
 		expect(content[1].props('visible')).toBe(true)
 
 		await comp.trigger('mouseleave')

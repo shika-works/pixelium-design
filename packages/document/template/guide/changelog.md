@@ -13,14 +13,16 @@
   - 新增图片展示组件 Image 和头像组件 Avatar。
   - 新增虚拟列表组件 VirtualList。
   - 新增图片像素化工具函数 `pixelate`。
+  - 新增视觉组件文本描边 TextOutline。
 - 优化：
   - Select 组件增加 `label` 插槽。
   - InputGroup 增加 `readonly` 属性。
   - 优化弧线绘制算法。
   - 选项组的子选项增加缩进。
   - 优化 Select 组件的 `focus` 和 `blur` 事件触发。
-  - 优化代码 & 完善测试用例。
   - 各种下拉和弹窗组件增加属性控制是否在隐藏时销毁内容。
+  - 按需导入图标时，将不会自动导入组件库公共样式。
+  - 优化代码 & 完善测试用例。
 - 修复：
   - 修复 `variant="text"` 的 Button 组件在 ButtonGroup 和 InputGroup 下的渲染。
   - 修复表单控件 `focus` 和 `blur` 事件没有 emit 的问题。
@@ -34,14 +36,16 @@
   - Add image display component Image and avatar component Avatar.
   - Add virtual list component VirtualList.
   - Add a utility function `pixelate` for image pixelation.
+  - Added visual component TextOutline for text stroke effect.
 - Optimizations:
   - Add `label` slot to the Select component.
   - Add `readonly` property to InputGroup.
   - Optimize the arc drawing algorithm.
   - Add indentation to sub-options of option groups.
   - Optimize the triggering of `focus` and `blur` events for the Select component.
-  - Optimize code & improve test cases.
   - Add a prop to dropdown and popup components to control whether content is destroyed when hidden.
+  - When importing icons on demand, component library common styles will no longer be automatically imported.
+  - Optimize code & improve test cases.
 - Fixes:
   - Fix the rendering of Button components with `variant="text"` in ButtonGroup and InputGroup.
   - Fix the bug where the `focus` and `blur` events of form controls are not being emitted.

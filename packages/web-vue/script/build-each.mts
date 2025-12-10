@@ -208,12 +208,12 @@ async function handleCssImports() {
 		icons: [
 			{
 				js: 'icon-hn.js',
-				css: `import '../index.css'\nimport './icon-hn.css'\n`,
+				css: `import './icon-hn.css'\n`,
 				cssFileName: 'css-hn.js'
 			},
 			{
 				js: 'icon-pa.js',
-				css: `import '../index.css'\nimport './icon-pa.css'\n`,
+				css: `import './icon-pa.css'\n`,
 				cssFileName: 'css-pa.js'
 			}
 		]
