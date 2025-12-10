@@ -52,7 +52,8 @@ const additionMap = {
 	switch: '开关',
 	slider: '滑动选择器',
 	radio: '单选框',
-	checkbox: '复选框'
+	checkbox: '复选框',
+	'text-outline': '文本描边'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)

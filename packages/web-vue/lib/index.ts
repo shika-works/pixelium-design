@@ -52,6 +52,7 @@ import Radio from './radio/index.vue'
 import RadioGroup from './radio-group/index.vue'
 import Checkbox from './checkbox/index.vue'
 import CheckboxGroup from './checkbox-group/index.vue'
+import TextOutline from './text-outline/index.vue'
 
 const components = [
 	Button,
@@ -94,7 +95,8 @@ const components = [
 	Radio,
 	RadioGroup,
 	Checkbox,
-	CheckboxGroup
+	CheckboxGroup,
+	TextOutline
 ]
 
 const defaultPrefix = 'Px'
@@ -172,7 +174,8 @@ export {
 	RadioGroup,
 	Checkbox,
 	CheckboxGroup,
-	imageDataToDataURL
+	imageDataToDataURL,
+	TextOutline,
 }
 export default {
 	install
