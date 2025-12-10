@@ -169,23 +169,31 @@ describe('VirtualList', () => {
 
 		await nextTick()
 
-		const placeholder1 = wrapper.element.querySelector('.px-virtual-list-placeholder') as HTMLElement
+		const placeholder1 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
 		expect(placeholder1.style.height).toBe('4000px')
-		
+
 		await nextTick()
 
-		await new Promise(res => setTimeout(res, 0))
-		const placeholder2 = wrapper.element.querySelector('.px-virtual-list-placeholder') as HTMLElement
+		await new Promise((res) => setTimeout(res, 0))
+		const placeholder2 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
 		expect(placeholder2.style.height).toBe('4040px')
 
 		wrapper.setProps({ list: makeItems(1000) })
-		await new Promise(res => setTimeout(res, 0))
-		const placeholder3 = wrapper.element.querySelector('.px-virtual-list-placeholder') as HTMLElement
+		await new Promise((res) => setTimeout(res, 0))
+		const placeholder3 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
 		expect(placeholder3.style.height).toBe('20040px')
 
 		wrapper.setProps({ list: makeItems(500) })
-		await new Promise(res => setTimeout(res, 0))
-		const placeholder4 = wrapper.element.querySelector('.px-virtual-list-placeholder') as HTMLElement
+		await new Promise((res) => setTimeout(res, 0))
+		const placeholder4 = wrapper.element.querySelector(
+			'.px-virtual-list-placeholder'
+		) as HTMLElement
 		expect(placeholder4.style.height).toBe('10040px')
 	})
 })

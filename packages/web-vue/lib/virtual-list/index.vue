@@ -124,38 +124,38 @@ const updateChunks = (currentLength: number) => {
 }
 
 const updateBlockPrefixHeights = () => {
-  const prefix: number[] = []
-  let sum = 0
-  let elementCount = 0
-  
-  const maxLength = props.list.length
+	const prefix: number[] = []
+	let sum = 0
+	let elementCount = 0
 
-  for (const chunk of chunks.value) {
-    const chunkSize = chunk.endIndex - chunk.startIndex + 1
-    
-    if (maxLength > 0 && elementCount >= maxLength) break
-    
-    if (maxLength > 0 && elementCount + chunkSize > maxLength) {
-      const remaining = maxLength - elementCount
-      
-      if (chunk.localPrefix && remaining > 0 && remaining <= chunk.localPrefix.length) {
-        sum += chunk.localPrefix[remaining - 1]
-        prefix.push(sum)
-        elementCount = maxLength
-        break
-      } else {
+	const maxLength = props.list.length
+
+	for (const chunk of chunks.value) {
+		const chunkSize = chunk.endIndex - chunk.startIndex + 1
+
+		if (maxLength > 0 && elementCount >= maxLength) break
+
+		if (maxLength > 0 && elementCount + chunkSize > maxLength) {
+			const remaining = maxLength - elementCount
+
+			if (chunk.localPrefix && remaining > 0 && remaining <= chunk.localPrefix.length) {
+				sum += chunk.localPrefix[remaining - 1]
+				prefix.push(sum)
+				elementCount = maxLength
+				break
+			} else {
 				// will not happen probably
-        break
-      }
-    }
-    
-    sum += chunk.totalHeight
-    prefix.push(sum)
-    elementCount += chunkSize
-  }
-  
-  blockPrefixHeights.value = prefix
-  totalHeight.value = prefix.at(-1) || 0
+				break
+			}
+		}
+
+		sum += chunk.totalHeight
+		prefix.push(sum)
+		elementCount += chunkSize
+	}
+
+	blockPrefixHeights.value = prefix
+	totalHeight.value = prefix.at(-1) || 0
 }
 
 const findChunkByIndex = (index: number): Chunk | null => {
