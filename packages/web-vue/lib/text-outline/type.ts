@@ -1,6 +1,6 @@
 export type TextOutlineProps = {
 	/**
-	 * @property {string} [color]
+	 * @property {string} [color='#fff']
 	 * @version 0.0.3
 	 */
 	color?: string
