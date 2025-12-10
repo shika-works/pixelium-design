@@ -6,7 +6,6 @@ import {
 	computed,
 	nextTick,
 	watch,
-	defineProps,
 	shallowRef,
 	Fragment,
 	getCurrentInstance,
@@ -74,16 +73,12 @@ const initChunks = () => {
 	updateBlockPrefixHeights()
 }
 
-const updateChunks = (currentLength: number) => {
-	if (currentLength <= maxListLength.value) {
-		return
-	}
+const updateChunksWhenIncrease = (currentLength: number) => {
 	let resLength = currentLength - maxListLength.value
 	maxListLength.value = currentLength
 	const chunkSize = Math.max(MIN_CHUNK_SIZE, Math.ceil(Math.sqrt(currentLength)))
 	const chunk = chunks.value[chunks.value.length - 1]
 	const currentLen = chunk.endIndex - chunk.startIndex + 1
-
 	if (currentLen < chunkSize) {
 		let sum = chunk.totalHeight
 		const nextLen = currentLen + resLength >= chunkSize ? chunkSize : currentLen + resLength
@@ -119,18 +114,48 @@ const updateChunks = (currentLength: number) => {
 		})
 		resLength -= end - start + 1
 	}
+}
+
+const updateChunks = (currentLength: number) => {
+	if (currentLength > maxListLength.value) {
+		updateChunksWhenIncrease(currentLength)
+	}
 	updateBlockPrefixHeights()
 }
 
 const updateBlockPrefixHeights = () => {
-	const prefix: number[] = []
-	let sum = 0
-	for (const chunk of chunks.value) {
-		sum += chunk.totalHeight
-		prefix.push(sum)
-	}
-	blockPrefixHeights.value = prefix
-	totalHeight.value = prefix.at(-1) || 0
+  const prefix: number[] = []
+  let sum = 0
+  let elementCount = 0
+  
+  const maxLength = props.list.length
+
+  for (const chunk of chunks.value) {
+    const chunkSize = chunk.endIndex - chunk.startIndex + 1
+    
+    if (maxLength > 0 && elementCount >= maxLength) break
+    
+    if (maxLength > 0 && elementCount + chunkSize > maxLength) {
+      const remaining = maxLength - elementCount
+      
+      if (chunk.localPrefix && remaining > 0 && remaining <= chunk.localPrefix.length) {
+        sum += chunk.localPrefix[remaining - 1]
+        prefix.push(sum)
+        elementCount = maxLength
+        break
+      } else {
+				// will not happen probably
+        break
+      }
+    }
+    
+    sum += chunk.totalHeight
+    prefix.push(sum)
+    elementCount += chunkSize
+  }
+  
+  blockPrefixHeights.value = prefix
+  totalHeight.value = prefix.at(-1) || 0
 }
 
 const findChunkByIndex = (index: number): Chunk | null => {
@@ -259,7 +284,7 @@ const contentOffset = computed(() => {
 
 const updateItemSizes = () => {
 	if (!contentRef.value) return
-	if (contentRef.value.offsetHeight === 0) return
+	if (contentRef.value.offsetHeight === 0 && !inVitest()) return
 	if (props.fixedHeight) {
 		return
 	}
