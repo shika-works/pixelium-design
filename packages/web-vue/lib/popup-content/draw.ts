@@ -93,78 +93,86 @@ export const drawArrow = (
 	arrowXOffset: number,
 	arrowYOffset: number
 ) => {
+	const factors = [0, 1, 1]
+	const borderColorStr = rgbaColor2string(borderColor)
+	const bgColorStr = rgbaColor2string(backgroundColor)
+
+	const adjust = (coord: number) =>
+		popupSide === 'start'
+			? Math.floor(coord)
+			: popupSide === 'end'
+				? Math.ceil(coord)
+				: Math.round(coord)
+
 	switch (placement) {
 		case 'right': {
 			const y = arrowYOffset - pixelSize / 2
-			const vertex = [
-				0,
-				popupSide === 'start'
-					? Math.floor(y)
-					: popupSide === 'end'
-						? Math.ceil(y)
-						: Math.round(y)
-			]
-			for (let i = 0; i < 4; i++) {
-				const factor = i > 1 ? i - 1 : i
-				ctx.fillStyle = rgbaColor2string(borderColor)
-				const top = Math.max(0, vertex[1] - factor * pixelSize)
-				const bottom = Math.min(height, vertex[1] + factor * pixelSize)
-				const x = vertex[0] + i * pixelSize
+			const vertexY = adjust(y)
+			const startX = 0
+
+			for (let i = 0; i < 3; i++) {
+				const factor = factors[i]
+				const spread = factor * pixelSize
+				const top = Math.max(0, vertexY - spread)
+				const bottom = Math.min(height, vertexY + spread)
+				const x = startX + i * pixelSize
+
+				ctx.fillStyle = i == 2 ? bgColorStr : borderColorStr
 				ctx.fillRect(x, top, pixelSize, pixelSize)
 				ctx.fillRect(x, bottom, pixelSize, pixelSize)
-				ctx.fillStyle = rgbaColor2string(backgroundColor)
-				if (bottom - top - pixelSize > 0) {
-					ctx.fillRect(x, top + pixelSize, pixelSize, bottom - top - pixelSize)
+
+				const bgHeight = bottom - top - pixelSize
+				if (bgHeight > 0) {
+					ctx.fillStyle = bgColorStr
+					ctx.fillRect(x, top + pixelSize, pixelSize, bgHeight)
 				}
 			}
 			break
 		}
 		case 'left': {
 			const y = arrowYOffset - pixelSize / 2
-			const vertex = [
-				Math.round(width - pixelSize),
-				popupSide === 'start'
-					? Math.floor(y)
-					: popupSide === 'end'
-						? Math.ceil(y)
-						: Math.round(y)
-			]
-			for (let i = 0; i < 4; i++) {
-				const factor = i > 1 ? i - 1 : i
-				ctx.fillStyle = rgbaColor2string(borderColor)
-				const top = Math.max(0, vertex[1] - factor * pixelSize)
-				const bottom = Math.min(height - pixelSize, vertex[1] + factor * pixelSize)
-				const x = vertex[0] - i * pixelSize
+			const vertexY = adjust(y)
+			const startX = Math.round(width - pixelSize)
+
+			for (let i = 0; i < 3; i++) {
+				const factor = factors[i]
+				const spread = factor * pixelSize
+				const top = Math.max(0, vertexY - spread)
+				const bottom = Math.min(height - pixelSize, vertexY + spread)
+				const x = startX - i * pixelSize
+
+				ctx.fillStyle = i == 2 ? bgColorStr : borderColorStr
 				ctx.fillRect(x, top, pixelSize, pixelSize)
 				ctx.fillRect(x, bottom, pixelSize, pixelSize)
-				ctx.fillStyle = rgbaColor2string(backgroundColor)
-				if (bottom - top - pixelSize > 0) {
-					ctx.fillRect(x, top + pixelSize, pixelSize, bottom - top - pixelSize)
+
+				const bgHeight = bottom - top - pixelSize
+				if (bgHeight > 0) {
+					ctx.fillStyle = bgColorStr
+					ctx.fillRect(x, top + pixelSize, pixelSize, bgHeight)
 				}
 			}
 			break
 		}
 		case 'bottom': {
 			const x = arrowXOffset - pixelSize / 2
-			const vertex = [
-				popupSide === 'start'
-					? Math.floor(x)
-					: popupSide === 'end'
-						? Math.ceil(x)
-						: Math.round(x),
-				0
-			]
-			for (let i = 0; i < 4; i++) {
-				const factor = i > 1 ? i - 1 : i
-				ctx.fillStyle = rgbaColor2string(borderColor)
-				const left = Math.max(0, vertex[0] - factor * pixelSize)
-				const right = Math.min(vertex[0] + factor * pixelSize, width - pixelSize)
-				const y = vertex[1] + i * pixelSize
+			const vertexX = adjust(x)
+			const startY = 0
+
+			for (let i = 0; i < 3; i++) {
+				const factor = factors[i]
+				const spread = factor * pixelSize
+				const left = Math.max(0, vertexX - spread)
+				const right = Math.min(vertexX + spread, width - pixelSize)
+				const y = startY + i * pixelSize
+
+				ctx.fillStyle = i == 2 ? bgColorStr : borderColorStr
 				ctx.fillRect(left, y, pixelSize, pixelSize)
 				ctx.fillRect(right, y, pixelSize, pixelSize)
-				ctx.fillStyle = rgbaColor2string(backgroundColor)
-				if (right - left - pixelSize > 0) {
-					ctx.fillRect(left + pixelSize, y, right - left - pixelSize, pixelSize)
+
+				const bgWidth = right - left - pixelSize
+				if (bgWidth > 0) {
+					ctx.fillStyle = bgColorStr
+					ctx.fillRect(left + pixelSize, y, bgWidth, pixelSize)
 				}
 			}
 			break
@@ -172,26 +180,24 @@ export const drawArrow = (
 		case 'top':
 		default: {
 			const x = arrowXOffset - pixelSize / 2
-			const vertex = [
-				popupSide === 'start'
-					? Math.floor(x)
-					: popupSide === 'end'
-						? Math.ceil(x)
-						: Math.round(x),
-				Math.round(height - pixelSize)
-			]
+			const vertexX = adjust(x)
+			const startY = Math.round(height - pixelSize)
 
-			for (let i = 0; i < 4; i++) {
-				const factor = i > 1 ? i - 1 : i
-				ctx.fillStyle = rgbaColor2string(borderColor)
-				const left = Math.max(0, vertex[0] - factor * pixelSize)
-				const right = Math.min(vertex[0] + factor * pixelSize, width - pixelSize)
-				const y = vertex[1] - i * pixelSize
+			for (let i = 0; i < 3; i++) {
+				const factor = factors[i]
+				const spread = factor * pixelSize
+				const left = Math.max(0, vertexX - spread)
+				const right = Math.min(vertexX + spread, width - pixelSize)
+				const y = startY - i * pixelSize
+
+				ctx.fillStyle = i == 2 ? bgColorStr : borderColorStr
 				ctx.fillRect(left, y, pixelSize, pixelSize)
 				ctx.fillRect(right, y, pixelSize, pixelSize)
-				ctx.fillStyle = rgbaColor2string(backgroundColor)
-				if (right - left - pixelSize > 0) {
-					ctx.fillRect(left + pixelSize, y, right - left - pixelSize, pixelSize)
+
+				const bgWidth = right - left - pixelSize
+				if (bgWidth > 0) {
+					ctx.fillStyle = bgColorStr
+					ctx.fillRect(left + pixelSize, y, bgWidth, pixelSize)
 				}
 			}
 			break

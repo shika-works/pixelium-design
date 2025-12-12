@@ -6,7 +6,10 @@
 		:close-delay="ANIMATION_DURATION"
 		:destroy-on-hide="props.destroyOnHide"
 	>
-		<Transition :name="'px-popup-content-fade__' + popupRoughPlacement" appear>
+		<Transition
+			:name="'px-popup-content-fade__' + (popupFinalPlacement || popupRoughPlacement)"
+			appear
+		>
 			<div
 				ref="contentRef"
 				v-show="props.visible"
@@ -157,10 +160,9 @@ async function updatePosition(element: HTMLElement | SVGElement) {
 
 	const borderRadius = Math.max(props.borderRadius || pixelSize, pixelSize)
 
-	const ds = Math.max(
-		0,
-		borderRadius - calcWhenLeaveBaseline(pixelSize, borderRadius) + pixelSize
-	)
+	const ds =
+		Math.max(0, borderRadius - calcWhenLeaveBaseline(pixelSize, borderRadius) + pixelSize) +
+		pixelSize
 
 	const data = await computePosition(element, contentRef.value, {
 		placement: props.placement,
@@ -217,10 +219,11 @@ const doOpen = () => {
 	) {
 		element = props.target.el
 	}
+	if (!inBrowser()) {
+		return
+	}
 	if (element) {
-		setTimeout(() => {
-			updatePosition(element)
-		})
+		updatePosition(element)
 	}
 }
 
@@ -295,9 +298,10 @@ const drawPixel = () => {
 
 	const pixelSize = calcPixelSize()
 
-	const borderRadius = fillArr(Math.max(props.borderRadius || pixelSize, pixelSize), 4)
+	const borderRadiusValue = Math.max(props.borderRadius || pixelSize, pixelSize)
+	const borderRadius = fillArr(borderRadiusValue, 4)
 
-	const offset = props.arrow ? pixelSize * 3 : 0
+	const offset = props.arrow ? pixelSize * 2 : 0
 	const offsetX =
 		popupFinalPlacement.value === 'left' || popupFinalPlacement.value === 'right' ? offset : 0
 	const offsetY =
