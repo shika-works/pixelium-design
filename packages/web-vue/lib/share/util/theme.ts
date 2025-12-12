@@ -18,6 +18,9 @@ export const setThemeColor = (
 	}
 	if (isString(color)) {
 		const rgbaColor = parseColor(color)
+		if (!rgbaColor) {
+			return
+		}
 		colorList.light = generatePalette(
 			rgbaColor.r,
 			rgbaColor.g,

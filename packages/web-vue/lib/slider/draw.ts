@@ -355,24 +355,28 @@ export const drawMark = (
 					: reverse
 						? markOffset + pixelSize
 						: areaWidth - markOffset - dotSize - pixelSize
-			drawThumbBorder(
-				ctx,
-				dotSize,
-				dotSize,
-				center,
-				borderRadius,
-				rad,
-				borderColor,
-				pixelSize,
-				paddingX,
-				paddingY
-			)
-			floodFill(
-				ctx,
-				Math.round(paddingX + dotSize / 2),
-				Math.round(paddingY + dotSize / 2),
-				dotColor
-			)
+			if (borderColor) {
+				drawThumbBorder(
+					ctx,
+					dotSize,
+					dotSize,
+					center,
+					borderRadius,
+					rad,
+					borderColor,
+					pixelSize,
+					paddingX,
+					paddingY
+				)
+			}
+			if (dotColor) {
+				floodFill(
+					ctx,
+					Math.round(paddingX + dotSize / 2),
+					Math.round(paddingY + dotSize / 2),
+					dotColor
+				)
+			}
 		}
 	}
 }

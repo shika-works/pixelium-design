@@ -215,7 +215,10 @@ const drawPixel = () => {
 
 		const size = Math.min(width, height)
 		const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
-		floodFill(ctx, fillStart, fillStart, parseColor(backgroundColor))
+
+		if (backgroundColor) {
+			floodFill(ctx, fillStart, fillStart, parseColor(backgroundColor)!)
+		}
 
 		if (modelValue.value) {
 			drawRadioCircleMark(ctx, size, mainColor, pixelSize)

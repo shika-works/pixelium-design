@@ -4,11 +4,9 @@
 		class="pixelium px-button"
 		:class="{
 			'px-button__block': !(innerButtonGroup || innerInputGroup) && !!props.block,
-			'px-button__circle': shapeComputed === 'circle',
-			'px-button__square': shapeComputed === 'square',
+			[`px-button__${shapeComputed}`]: shapeComputed,
 			'px-button__loading': loadingComputed,
-			'px-button__large': sizeComputed === 'large',
-			'px-button__small': sizeComputed === 'small',
+			[`px-button__${sizeComputed}`]: sizeComputed,
 			'px-button__outline': typeComputed === 'outline',
 			'px-button__plain': typeComputed === 'plain',
 			'px-button__text': typeComputed === 'text',
@@ -271,6 +269,9 @@ const nextIsTextButton = computed(() => {
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)
+	if (!color) {
+		return null
+	}
 	const palette = generatePalette(color.r, color.g, color.b, color.a, darkMode.value)
 	return palette
 })
@@ -360,21 +361,23 @@ const drawPixel = () => {
 			activeFlag.value
 		)
 	}
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		typeComputed.value || 'primary',
-		innerButtonGroup.value || innerInputGroup.value,
-		first.value,
-		last.value,
-		nextIsTextButton.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			typeComputed.value || 'primary',
+			innerButtonGroup.value || innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 	const backgroundColor = getBackgroundColor(
 		!!disabledComputed.value,
 		!!loadingComputed.value,
@@ -385,7 +388,9 @@ const drawPixel = () => {
 		activeFlag.value
 	)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(buttonRef, drawPixel)

@@ -4,6 +4,7 @@ import type { MessageProps } from './type'
 import {
 	generatePalette,
 	getGlobalThemeColor,
+	getGlobalThemeColorString,
 	parseColor,
 	rgbaColor2string
 } from '../share/util/color'
@@ -85,6 +86,9 @@ const darkMode = useDarkMode()
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)
+	if (!color) {
+		return null
+	}
 	const palette = generatePalette(color.r, color.g, color.b, color.a, darkMode.value)
 	return palette
 })
@@ -130,8 +134,8 @@ const draw = (
 	ctx.fillRect(pixelSize, height - pixelSize, width - 2 * pixelSize, pixelSize)
 	ctx.fillRect(0, pixelSize, pixelSize, height - 2 * pixelSize)
 
-	const backgroundColor = getGlobalThemeColor('neutral', 1)
-	ctx.fillStyle = rgbaColor2string(backgroundColor)
+	const backgroundColor = getGlobalThemeColorString('neutral', 1)
+	ctx.fillStyle = backgroundColor
 	ctx.fillRect(pixelSize, pixelSize, width - 2 * pixelSize, height - 2 * pixelSize)
 }
 const drawPixel = () => {
@@ -145,7 +149,9 @@ const drawPixel = () => {
 
 	const borderColor = getBorderColor(props.type, palette.value)
 
-	draw(ctx, width, height, borderColor, pixelSize)
+	if (borderColor) {
+		draw(ctx, width, height, borderColor, pixelSize)
+	}
 }
 
 useResizeObserver(messageRef, drawPixel)

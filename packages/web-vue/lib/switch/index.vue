@@ -228,7 +228,7 @@ const getMainColor = () => {
 
 const iconColor = computed(() => {
 	const color = getMainColor()
-	return rgbaColor2string(color)
+	return color ? rgbaColor2string(color) : undefined
 })
 
 watch(
@@ -268,6 +268,11 @@ const drawButton = () => {
 	const pixelSize = calcPixelSize()
 
 	const sliceColor = getGlobalThemeColor('neutral', 1)
+
+	if (!sliceColor) {
+		return
+	}
+
 	ctx.fillStyle = rgbaColor2string(sliceColor)
 
 	const radius = Math.round(size / 2 - pixelSize / 2)
@@ -303,21 +308,23 @@ const drawPixel = () => {
 	const backgroundColor = getMainColor()
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		backgroundColor,
-		pixelSize,
-		0,
-		0,
-		sizeComputed.value === 'small' && props.shape === 'round'
-	)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			backgroundColor,
+			pixelSize,
+			0,
+			0,
+			sizeComputed.value === 'small' && props.shape === 'round'
+		)
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 	drawButton()
 }
 

@@ -151,24 +151,29 @@ const drawPixel = () => {
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value,
-		nextIsTextButton.value
-	)
-	const backgroundColor = props.backgroundColor
-		? parseColor(props.backgroundColor)
-		: getGlobalThemeColor('neutral', 3)
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
+
+	const backgroundColor =
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
+		getGlobalThemeColor('neutral', 3)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(labelRef, drawPixel)

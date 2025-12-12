@@ -317,29 +317,34 @@ const drawPixel = () => {
 	const offsetTop = popupFinalPlacement.value === 'bottom' ? offset : 0
 	const offsetLeft = popupFinalPlacement.value === 'right' ? offset : 0
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		offsetX,
-		offsetY,
-		offsetTop,
-		offsetLeft
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			offsetX,
+			offsetY,
+			offsetTop,
+			offsetLeft
+		)
+	}
+
 	const backgroundColor = getBackgroundColor(props.variant)
 
-	floodFill(
-		ctx,
-		Math.round((width - offsetX) / 2 + offsetLeft),
-		Math.round((height - offsetY) / 2 + offsetTop),
-		backgroundColor
-	)
-	if (props.arrow) {
+	if (backgroundColor) {
+		floodFill(
+			ctx,
+			Math.round((width - offsetX) / 2 + offsetLeft),
+			Math.round((height - offsetY) / 2 + offsetTop),
+			backgroundColor
+		)
+	}
+	if (props.arrow && borderColor && backgroundColor) {
 		drawArrow(
 			ctx,
 			width,

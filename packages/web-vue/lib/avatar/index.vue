@@ -114,27 +114,29 @@ const drawPixel = () => {
 		false
 	)
 
-	const backgroundColor = props.backgroundColor
-		? parseColor(props.backgroundColor)
-		: getGlobalThemeColor('neutral', 7)
+	const backgroundColor =
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
+		getGlobalThemeColor('neutral', 7)
 
 	const borderColor = props.bordered
-		? props.borderColor
-			? parseColor(props.borderColor)
-			: getGlobalThemeColor('neutral', 10)
+		? (props.borderColor && parseColor(props.borderColor)) || getGlobalThemeColor('neutral', 10)
 		: backgroundColor
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+	if (borderColor) {
+		drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+	}
 
 	let dots = props.bordered
-		? floodFillEdge(
-				ctx,
-				Math.round(width / 2 + pixelSize / 2),
-				Math.round(height / 2 + pixelSize / 2),
-				backgroundColor
-			)
+		? backgroundColor
+			? floodFillEdge(
+					ctx,
+					Math.round(width / 2 + pixelSize / 2),
+					Math.round(height / 2 + pixelSize / 2),
+					backgroundColor
+				)
+			: []
 		: outerEdgePoints(ctx)
 
 	if (dots.length) {
@@ -155,7 +157,9 @@ const drawPixel = () => {
 		polygon.value = ''
 	}
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(avatarRef, drawPixel)

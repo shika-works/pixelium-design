@@ -279,7 +279,9 @@ const drawPixel = () => {
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	draw(ctx, width, height, borderColor, backgroundColor, pixelSize)
+	if (borderColor && backgroundColor) {
+		draw(ctx, width, height, borderColor, backgroundColor, pixelSize)
+	}
 }
 const drawPixelDebounce = debounce(drawPixel, 0, {
 	maxWait: 50
