@@ -20,18 +20,42 @@ importers:
       '@types/node':
         specifier: ^24.5.2
         version: 24.5.2
+      '@vitest/coverage-v8':
+        specifier: 3.2.4
+        version: 3.2.4(vitest@3.2.4(@types/node@24.5.2)(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(less@4.4.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.6
+      dts-bundle-generator:
+        specifier: ^9.5.1
+        version: 9.5.1
+      execa:
+        specifier: ^9.6.0
+        version: 9.6.0
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      jsdom:
+        specifier: ^27.0.1
+        version: 27.0.1(postcss@8.5.6)
       oxlint:
         specifier: ^1.19.0
         version: 1.19.0
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@24.5.2)(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(less@4.4.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1)
+      vue-tsc:
+        specifier: 3.0.6
+        version: 3.0.6(typescript@5.8.3)
 
   packages/document:
     dependencies:
@@ -121,9 +145,6 @@ importers:
       pixelarticons:
         specifier: ^1.8.1
         version: 1.8.1
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.0.1
       svgo:
         specifier: ^4.0.0
         version: 4.0.0
@@ -6538,7 +6559,7 @@ snapshots:
       '@babel/core': 7.28.4
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.4)
       '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4)
-      '@rolldown/pluginutils': 1.0.0-beta.40
+      '@rolldown/pluginutils': 1.0.0-beta.45
       '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.4)
       vite: rolldown-vite@7.2.11(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1)
       vue: 3.5.22(typescript@5.8.3)
@@ -6550,7 +6571,7 @@ snapshots:
       '@babel/core': 7.28.4
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.4)
       '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4)
-      '@rolldown/pluginutils': 1.0.0-beta.40
+      '@rolldown/pluginutils': 1.0.0-beta.45
       '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.4)
       vite: 7.1.7(@types/node@24.5.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1)
       vue: 3.5.22(typescript@5.8.3)
