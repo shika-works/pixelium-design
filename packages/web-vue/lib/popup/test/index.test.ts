@@ -27,7 +27,8 @@ describe('Popup Component', () => {
 			},
 			slots: {
 				default: '<button id="trigger-btn">Open</button>'
-			}
+			},
+			attachTo: 'body'
 		})
 
 		const btn = wrapper.find('#trigger-btn')
