@@ -1,23 +1,24 @@
 :root {
-	--px-bit: var(--px-bit-custom, 4px);
+	--px-bit: 4px;
 
 	--px-large-base-size: 36px;
 	--px-medium-base-size: 28px;
 	--px-small-base-size: 20px;
 
-	--px-large-size: calc(var(--px-large-base-size) + var(--px-bit) * 2);
-	--px-medium-size: calc(var(--px-medium-base-size) + var(--px-bit) * 2);
-	--px-small-size: calc(var(--px-small-base-size) + var(--px-bit) * 2);
+	--px-large-size: 44px;
+	--px-medium-size: 36px;
+	--px-small-size: 28px;
 
-	--px-large-sub-size: var(--px-medium-size);
-	--px-medium-sub-size: calc(
-		var(--px-medium-size) - var(--px-interval-1) * 2 - var(--px-interval-mini-1)
-	);
-	--px-small-sub-size: calc(var(--px-small-size) - var(--px-interval-1) * 2);
+	--px-large-sub-size: 36px;
+	--px-medium-sub-size: 26px;
+	--px-small-sub-size: 20px;
+	--px-large-sub-base-size: 28px;
+	--px-medium-sub-base-size: 18px;
+	--px-small-sub-base-size: 12px;
 
-	--px-large-compat-size: calc(var(--px-medium-size) - var(--px-interval-1));
-	--px-medium-compat-size: calc(var(--px-medium-size) - var(--px-interval-1) * 2);
-	--px-small-compat-size: calc(var(--px-small-size) - var(--px-interval-1));
+	--px-large-compat-size: 32px;
+	--px-medium-compat-size: 28px;
+	--px-small-compat-size: 24px;
 
 	--px-line-height: 1.5;
 
@@ -25,20 +26,8 @@
 	--px-large-font-size: 15px;
 	--px-small-font-size: 12px;
 
-	--px-interval-mini-1: 2px;
-
-	--px-interval-1: 4px;
-	--px-interval-2: 8px;
-	--px-interval-3: 12px;
-	--px-interval-4: 16px;
-	--px-interval-5: 20px;
-	--px-interval-6: 24px;
-	--px-interval-7: 28px;
-	--px-interval-8: 32px;
-	--px-interval-9: 36px;
-	--px-interval-10: 40px;
-
-	--px-input-area-width: 200px;
-
-	--px-font: 'Fusion Pixel Zh_hans', sans-serif;
+	--px-font:
+		'Fusion Pixel Zh_hans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+		'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', SimSun,
+		sans-serif;
 }

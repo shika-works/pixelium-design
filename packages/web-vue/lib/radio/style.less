@@ -1,4 +1,5 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-radio-canvas {
 	position: absolute;
@@ -11,10 +12,9 @@
 
 .px-radio {
 	@prefix: px-radio;
+
 	--radio-size: var(--px-medium-compat-size);
-	--radio-interval: var(--px-interval-2);
 	--text-color: var(--px-neutral-10);
-	--text-size: var(--px-medium-font-size);
 
 	background-color: transparent;
 	color: var(--text-color);
@@ -27,20 +27,24 @@
 	z-index: 0;
 
 	&.@{prefix} {
-		font-size: var(--text-size);
+		font-size: @px-medium-font-size;
 	}
 
 	cursor: pointer;
 
 	&__large {
 		--radio-size: var(--px-large-compat-size);
-		--text-size: var(--px-large-font-size);
-		--radio-interval: var(--px-interval-3);
+		font-size: @px-large-font-size;
+		.@{prefix}-canvas-wrapper {
+			margin-right: @px-interval-3;
+		}
 	}
 	&__small {
 		--radio-size: var(--px-small-compat-size);
-		--text-size: var(--px-small-font-size);
-		--radio-interval: var(--px-interval-1);
+		font-size: @px-small-font-size;
+		.@{prefix}-canvas-wrapper {
+			margin-right: @px-interval-1;
+		}
 	}
 
 	&__input {
@@ -70,7 +74,7 @@
 		display: flex;
 		align-items: center;
 
-		margin-right: var(--radio-interval);
+		margin-right: @px-interval-2;
 
 		transition: 0.25s;
 	}

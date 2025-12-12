@@ -1,4 +1,5 @@
 import { SQRT3 } from '../share/const'
+import { INTERVAL } from '../share/const/style'
 import { parseColor } from '../share/util/color'
 import { drawCircle, drawSmoothCircle, floodFill, roundToPixel } from '../share/util/plot'
 
@@ -107,9 +108,7 @@ export const drawRadioCircleMark = (
 	pixelSize: number
 ) => {
 	ctx.fillStyle = color
-	const intervalSize = parseInt(
-		getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
-	)
+	const intervalSize = INTERVAL
 	drawSmoothCircle(
 		ctx,
 		size / 2 - pixelSize / 2,

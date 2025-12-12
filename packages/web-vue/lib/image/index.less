@@ -1,4 +1,5 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 div.px-image {
 	font-size: 0;
@@ -32,8 +33,8 @@ div.px-image {
 			height: 20px;
 			position: absolute;
 			cursor: pointer;
-			top: var(--px-interval-4);
-			right: var(--px-interval-4);
+			top: @px-interval-4;
+			right: @px-interval-4;
 			fill: var(--px-neutral-10);
 			transition: fill 0.25s;
 			&:hover {

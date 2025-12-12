@@ -2,8 +2,7 @@
 	<div
 		class="pixelium px-input-group-label"
 		:class="{
-			'px-input-group-label__large': sizeComputed === 'large',
-			'px-input-group-label__small': sizeComputed === 'small',
+			[`px-input-group-label__${sizeComputed}`]: sizeComputed,
 			'px-input-group-label__inner': innerInputGroup
 		}"
 		ref="labelRef"

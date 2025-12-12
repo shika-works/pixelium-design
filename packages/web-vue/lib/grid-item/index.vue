@@ -143,5 +143,3 @@ const gridColumn = computed(() => {
 	return `${start + offsetComputed.value + 1} / span ${spanComputed.value}`
 })
 </script>
-
-<style lang="less" src="./index.less"></style>

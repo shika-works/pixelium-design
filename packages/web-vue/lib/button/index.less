@@ -1,4 +1,5 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-button-canvas {
 	position: absolute;
@@ -8,21 +9,18 @@
 	z-index: -1;
 	pointer-events: none;
 }
-button.px-button {
-	font-size: var(--text-size);
-}
 .px-button {
 	@prefix: px-button;
+	@px-medium-padding-x: @px-interval-4;
+	@px-large-padding-x: @px-interval-5;
+	@px-small-padding-x: @px-interval-3;
+
 	--button-size: var(--px-medium-size);
-	--px-medium-padding-x: var(--px-interval-4);
-	--px-large-padding-x: var(--px-interval-5);
-	--px-small-padding-x: var(--px-interval-3);
-	--padding-x-size: var(--px-medium-padding-x);
 	--text-color: var(--px-neutral-1);
-	--text-size: var(--px-medium-font-size);
+
 	height: var(--button-size);
-	padding-left: var(--padding-x-size);
-	padding-right: var(--padding-x-size);
+	padding-left: @px-medium-padding-x;
+	padding-right: @px-medium-padding-x;
 	background-color: transparent;
 	border-color: transparent;
 	border-width: var(--px-bit);
@@ -35,29 +33,43 @@ button.px-button {
 	user-select: none;
 	transition: 0.25s;
 	z-index: 0;
-	font-size: var(--text-size);
 	box-sizing: border-box;
-	&__inner {
-		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
-		&:last-child {
-			padding-right: var(--padding-x-size);
-		}
+
+	&.@{prefix} {
+		font-size: @px-medium-font-size;
 	}
+
+	@sizes: small, medium, large;
+
+	each(@sizes, {
+  &.@{prefix}__@{value} {
+    @paddingVar: ~"px-@{value}-padding-x";
+    &.@{prefix}__inner {
+      padding-right: calc(@@paddingVar + 1px + 1 * var(--px-bit));
+      &:last-child {
+        padding-right: @@paddingVar;
+      }
+    }
+  }
+});
+
 	&__circle,
 	&__square {
 		width: var(--button-size);
-		--padding-x-size: 0px;
+		padding: 0px;
 		justify-content: center;
 	}
 	&__large {
-		--padding-x-size: var(--px-large-padding-x);
+		padding-left: @px-large-padding-x;
+		padding-right: @px-large-padding-x;
 		--button-size: var(--px-large-size);
-		--text-size: var(--px-large-font-size);
+		font-size: @px-large-font-size;
 	}
 	&__small {
-		--padding-x-size: var(--px-small-padding-x);
+		padding-left: @px-small-padding-x;
+		padding-right: @px-small-padding-x;
 		--button-size: var(--px-small-size);
-		--text-size: var(--px-small-font-size);
+		font-size: @px-large-font-size;
 	}
 	&__loading {
 		cursor: auto;
@@ -71,18 +83,26 @@ button.px-button {
 		cursor: not-allowed;
 	}
 	&-icon-wrapper {
-		margin-right: var(--px-interval-2);
+		margin-right: @px-interval-2;
 		display: flex;
 		align-items: center;
 		&__last {
 			margin-right: 0;
 		}
 	}
-	&-icon {
-		height: var(--text-size);
-		width: var(--text-size);
-		fill: var(--text-color);
-	}
+
+	each(@sizes, {
+		&.@{prefix}__@{value} {
+			@fontVar: ~"px-@{value}-font-size";
+			
+			.@{prefix}-icon {
+				height: @@fontVar;
+				width: @@fontVar;
+				fill: var(--text-color);
+			}
+		}
+	});
+
 	@theme: primary, sakura, success, warning, danger;
 	each(@theme, {
     &.@{prefix}__@{value} {

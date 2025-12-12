@@ -168,10 +168,6 @@ const triggerPopover = async () => {
 	}
 }
 
-const closePopover = async () => {
-	popoverVisible.value = false
-}
-
 const inputHandler = async (e: Event) => {
 	e.stopPropagation()
 	const target = e.target as HTMLInputElement
@@ -242,7 +238,7 @@ const selectHandler = async (
 ) => {
 	const nextValue = props.append ? modelValue.value + value : value
 	await updateModelValue(nextValue)
-	closePopover()
+	popoverVisible.value = false
 	emits('select', nextValue, option, e)
 	emits('change', nextValue, e)
 	formItemProvide?.changeHandler()

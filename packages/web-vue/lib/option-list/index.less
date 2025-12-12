@@ -1,10 +1,14 @@
+@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
+
 .px-option-list {
 	@prefix: px-option-list;
-	--item-size: var(--px-medium-base-size);
-	--px-padding-x: var(--px-interval-1);
-	--px-padding-group-x: var(--px-interval-4);
+	@item-size: @px-medium-base-size;
+	@px-padding-x: @px-interval-1;
+	@px-padding-group-x: @px-interval-4;
+
 	overflow: auto;
-	max-height: calc(var(--item-size) * 6);
+	max-height: @item-size * 6;
 	background-color: var(--px-neutral-1);
 	color: var(--px-neutral-10);
 	list-style: none;
@@ -12,22 +16,22 @@
 	margin-top: 0;
 	margin-bottom: 0;
 	&-virtual-list.px-virtual-list {
-		height: calc(var(--item-size) * 6);
+		height: @item-size * 6;
 	}
 	&-item {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		height: var(--item-size);
+		height: @item-size;
 		display: flex;
 		align-items: center;
 		cursor: pointer;
 		transition: background-color 0.25s;
-		padding-left: var(--px-padding-x);
-		padding-right: var(--px-padding-x);
+		padding-left: @px-padding-x;
+		padding-right: @px-padding-x;
 		background-color: var(--px-neutral-1);
 		&__child {
-			padding-left: var(--px-padding-group-x);
+			padding-left: @px-padding-group-x;
 		}
 		&:hover {
 			background-color: var(--px-primary-1);
@@ -51,11 +55,11 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			color: var(--px-neutral-9);
-			height: var(--item-size);
+			height: @item-size;
 			display: flex;
 			align-items: center;
-			padding-left: var(--px-padding-x);
-			padding-right: var(--px-padding-x);
+			padding-left: @px-padding-x;
+			padding-right: @px-padding-x;
 		}
 	}
 }

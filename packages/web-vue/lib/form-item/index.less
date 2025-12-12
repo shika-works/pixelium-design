@@ -1,10 +1,12 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-form-item {
 	&-label {
 		display: flex;
 		min-height: var(--px-medium-size);
 		line-height: var(--px-medium-size);
+		font-size: @px-medium-font-size;
 		&__auto {
 			white-space: nowrap;
 			display: inline-flex;
@@ -18,12 +20,12 @@
 		&__large {
 			min-height: var(--px-large-size);
 			line-height: var(--px-large-size);
-			font-size: var(--px-large-font-size);
+			font-size: @px-large-font-size;
 		}
 		&__small {
 			min-height: var(--px-small-size);
 			line-height: var(--px-small-size);
-			font-size: var(--px-small-font-size);
+			font-size: @px-small-font-size;
 		}
 	}
 	&-label-wrapper {
@@ -33,13 +35,13 @@
 		}
 	}
 	&-addition {
-		min-height: var(--px-small-base-size);
+		min-height: @px-small-base-size;
 		width: 100%;
 	}
 	&-tip,
 	&-extra {
-		height: var(--px-small-base-size);
-		font-size: var(--px-small-font-size);
+		height: @px-small-base-size;
+		font-size: @px-small-font-size;
 		color: var(--px-neutral-8);
 	}
 	&-asterisk {
@@ -63,7 +65,7 @@
 		flex-wrap: wrap;
 
 		min-height: var(--px-medium-size);
-		font-size: var(--px-medium-font-size);
+		font-size: @px-medium-font-size;
 
 		& > *:first-child {
 			flex-grow: 1;
@@ -71,11 +73,11 @@
 
 		&__large {
 			min-height: var(--px-large-size);
-			font-size: var(--px-large-font-size);
+			font-size: @px-large-font-size;
 		}
 		&__small {
 			min-height: var(--px-small-size);
-			font-size: var(--px-small-font-size);
+			font-size: @px-small-font-size;
 		}
 	}
 	&-content-wrapper {
