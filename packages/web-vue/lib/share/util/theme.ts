@@ -4,6 +4,14 @@ import { throwError } from './console'
 import { inBrowser } from './env'
 import { EventBus } from './event-bus'
 import { GLOBAL_CSS_VAR_CHANGE } from '../const/event-bus-key'
+import {
+	MEDIUM_BASE_SIZE,
+	SMALL_BASE_SIZE,
+	INTERVAL,
+	INTERVAL_MINI,
+	LARGE_BASE_SIZE,
+	DEFAULT_PIXEL_SIZE
+} from '../const/style'
 
 export const setThemeColor = (
 	theme: 'primary' | 'success' | 'warning' | 'danger' | 'sakura' | 'neutral',
@@ -75,11 +83,38 @@ export const resetThemeColor = (
 	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
 }
 
+const calcSizes = (pixelSize: number) => {
+	const mediumSize = MEDIUM_BASE_SIZE + pixelSize * 2
+	const smallSize = SMALL_BASE_SIZE + pixelSize * 2
+	const largeSubSize = mediumSize
+	const mediumSubSize = mediumSize - INTERVAL * 2 - INTERVAL_MINI
+	const smallSubSize = smallSize - INTERVAL * 2
+
+	return {
+		'-px-large-size': LARGE_BASE_SIZE + pixelSize * 2,
+		'-px-medium-size': mediumSize,
+		'-px-small-size': smallSize,
+		'-px-large-sub-size': largeSubSize,
+		'-px-medium-sub-size': mediumSubSize,
+		'-px-small-sub-size': smallSubSize,
+		'-px-large-sub-base-size': largeSubSize - 2 * pixelSize,
+		'-px-medium-sub-base-size': mediumSubSize - 2 * pixelSize,
+		'-px-small-sub-base-size': smallSubSize - 2 * pixelSize,
+		'-px-large-compat-size': mediumSize - INTERVAL,
+		'-px-medium-compat-size': mediumSize - INTERVAL * 2,
+		'-px-small-compat-size': smallSize - INTERVAL
+	}
+}
+
 export const setPixelSize = (size: number): void => {
 	if (!inBrowser()) {
 		return
 	}
-	document.documentElement.style.setProperty(`--px-bit-custom`, size + 'px')
+	document.documentElement.style.setProperty(`--px-bit`, size + 'px')
+	const sizes = calcSizes(size)
+	Object.keys(sizes).forEach((key) => {
+		document.documentElement.style.setProperty(key, ((sizes as any)[key] as number) + 'px')
+	})
 	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
 }
 
@@ -87,6 +122,5 @@ export const resetPixelSize = (): void => {
 	if (!inBrowser()) {
 		return
 	}
-	document.documentElement.style.setProperty(`--px-bit-custom`, null)
-	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
+	setPixelSize(DEFAULT_PIXEL_SIZE)
 }

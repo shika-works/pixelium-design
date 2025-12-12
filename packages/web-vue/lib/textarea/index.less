@@ -1,16 +1,14 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
-div.px-textarea {
-	font-size: var(--text-size);
-}
 .px-textarea {
 	@prefix: px-textarea;
-	--px-medium-padding-x: var(--px-interval-2);
-	--px-large-padding-x: var(--px-interval-3);
-	--px-small-padding-x: var(--px-interval-2);
-	--padding-x-size: var(--px-medium-padding-x);
-	--text-size: var(--px-medium-font-size);
+	@px-medium-padding-x: @px-interval-2;
+	@px-large-padding-x: @px-interval-3;
+	@px-small-padding-x: @px-interval-2;
+
 	--textarea-size: var(--px-medium-size);
+
 	z-index: 0;
 	position: relative;
 	background-color: transparent;
@@ -23,6 +21,25 @@ div.px-textarea {
 
 	transition: 0.25s;
 
+	@sizes: small, medium, large;
+	each(@sizes, {
+		&.@{prefix}__@{value} {
+			@paddingVar: ~"px-@{value}-padding-x";
+			@fontVar: ~"px-@{value}-font-size";
+
+			font-size: @@fontVar;
+
+			.@{prefix}-inner {
+				padding-right: @@paddingVar;
+				padding-left: @@paddingVar;
+				font-size: @@fontVar;
+			}
+			.@{prefix}-addition-wrapper {
+				right: @@paddingVar;
+			}
+		}
+	});
+
 	&-inner {
 		height: 100%;
 		border: 0;
@@ -30,10 +47,9 @@ div.px-textarea {
 		box-sizing: border-box;
 		width: 100%;
 		font-size: var(--text-size);
-		line-height: var(--px-line-height);
+		line-height: @px-line-height;
 		font-family: var(--px-font);
-		padding: 0 var(--padding-x-size);
-		min-height: calc(var(--textarea-size) - var(--px-bit) * 2);
+		min-height: @px-medium-base-size;
 		resize: none;
 		&:focus-visible {
 			outline-color: var(--px-neutral-10);
@@ -52,16 +68,6 @@ div.px-textarea {
 			resize: vertical;
 		}
 	}
-	&__large {
-		--padding-x-size: var(--px-large-padding-x);
-		--text-size: var(--px-large-font-size);
-		--input-size: var(--px-large-size);
-	}
-	&__small {
-		--padding-x-size: var(--px-small-padding-x);
-		--input-size: var(--px-small-size);
-		--text-size: var(--px-small-font-size);
-	}
 	&__disabled {
 		cursor: not-allowed;
 		.@{prefix}-inner:disabled {
@@ -72,7 +78,6 @@ div.px-textarea {
 	&-addition-wrapper {
 		position: absolute;
 		bottom: 0;
-		right: var(--padding-x-size);
 		display: flex;
 		align-items: center;
 	}
@@ -82,7 +87,7 @@ div.px-textarea {
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
-		margin-left: var(--px-interval-2);
+		margin-left: @px-interval-2;
 	}
 	&-close-wrapper {
 		.@{prefix}-icon {

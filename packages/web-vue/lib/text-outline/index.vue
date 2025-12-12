@@ -7,7 +7,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<TextOutlineProps>(), {
-	color: '#fff',
+	color: 'var(--px-neutral-1)',
 	outlineWidth: 1,
 	autoPadding: true
 })

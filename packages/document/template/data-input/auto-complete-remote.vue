@@ -4,7 +4,7 @@
 		v-model="input"
 		:options="options"
 		:loading="loading"
-		append
+		show-popover-empty
 		@input="inputHandler"
 	></px-auto-complete>
 </template>

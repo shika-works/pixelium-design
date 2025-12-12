@@ -98,6 +98,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { inBrowser } from '../share/util/env'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { INTERVAL } from '../share/const/style'
 
 const MID_PROGRESS = 0.5
 
@@ -195,9 +196,7 @@ const updateIconLeft = () => {
 	}
 
 	const pixelSize = calcPixelSize()
-	const intervalSize = parseInt(
-		getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
-	)
+	const intervalSize = INTERVAL
 
 	const sliceHeight = size.value[1] + 2 * pixelSize - intervalSize * 2
 

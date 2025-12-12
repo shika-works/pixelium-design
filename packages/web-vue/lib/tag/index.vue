@@ -2,8 +2,7 @@
 	<span
 		class="pixelium px-tag"
 		:class="{
-			'px-tag__large': props.size === 'large',
-			'px-tag__small': props.size === 'small',
+			[`px-tag__${props.size}`]: props.size,
 			'px-tag__outline': props.variant === 'outline',
 			'px-tag__plain': props.variant === 'plain',
 			'px-tag__disabled': props.disabled,

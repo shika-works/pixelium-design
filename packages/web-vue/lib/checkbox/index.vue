@@ -51,6 +51,7 @@ import CheckSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-sol
 import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { INTERVAL } from '../share/const/style'
 defineOptions({
 	name: 'Checkbox'
 })
@@ -176,9 +177,7 @@ const drawPixel = () => {
 
 	const backgroundColor = getGlobalThemeColorString('neutral', 1)
 
-	const intervalSize = parseInt(
-		getComputedStyle(document.documentElement).getPropertyValue(`--px-interval-1`)
-	)
+	const intervalSize = INTERVAL
 
 	if (variantComputed.value === 'normal') {
 		drawBorder(ctx, width, height, mainColor, pixelSize)

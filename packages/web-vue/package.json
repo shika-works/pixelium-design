@@ -63,6 +63,7 @@
 	"dependencies": {
 		"@floating-ui/dom": "^1.7.4",
 		"mitt": "^3.0.1",
+		"modern-normalize": "^3.0.1",
 		"nanoid": "^5.1.5",
 		"parsnip-kit": "^0.0.6"
 	},

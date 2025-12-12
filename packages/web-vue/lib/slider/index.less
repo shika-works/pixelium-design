@@ -1,4 +1,5 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-slider-canvas {
 	position: absolute;
@@ -11,8 +12,8 @@
 
 .px-slider {
 	@prefix: px-slider;
-	--thumb-size: calc(var(--px-bit) * 4 + var(--px-interval-3));
-	--slider-size: calc(var(--px-bit) * 4 + var(--px-interval-1));
+	--thumb-size: calc(var(--px-bit) * 4 + @px-interval-3);
+	--slider-size: calc(var(--px-bit) * 4 + @px-interval-1);
 	--dot-size: var(--slider-size);
 
 	z-index: 0;
@@ -51,9 +52,7 @@
 		margin-left: calc((var(--thumb-size) - var(--slider-size)) / 2);
 		margin-right: calc((var(--thumb-size) - var(--slider-size)) / 2);
 		&.@{prefix}__marks {
-			margin-right: calc(
-				(var(--thumb-size) - var(--slider-size)) / 2 + var(--px-medium-base-size)
-			);
+			margin-right: calc((var(--thumb-size) - var(--slider-size)) / 2 + @px-medium-base-size);
 			margin-bottom: 0;
 		}
 		& .@{prefix}-thumb {
@@ -88,9 +87,7 @@
 		}
 	}
 	&__marks {
-		margin-bottom: calc(
-			(var(--thumb-size) - var(--slider-size)) / 2 + var(--px-medium-base-size)
-		);
+		margin-bottom: calc((var(--thumb-size) - var(--slider-size)) / 2 + @px-medium-base-size);
 	}
 	&-mark-wrapper {
 		position: absolute;
@@ -111,7 +108,7 @@
 		user-select: none;
 		pointer-events: all;
 
-		min-height: var(--px-medium-base-size);
+		min-height: @px-medium-base-size;
 	}
 
 	&-dot {
@@ -131,7 +128,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-width: var(--px-interval-4);
+		min-width: @px-interval-4;
 	}
 }
 

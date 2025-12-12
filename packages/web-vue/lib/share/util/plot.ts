@@ -3,6 +3,7 @@ import type { NumberOrPercentage, RgbaColor } from '../type'
 import { fillArr } from './common'
 import type { ShallowRef } from 'vue'
 import { inBrowser } from './env'
+import { LARGE_BASE_SIZE, MEDIUM_BASE_SIZE, SMALL_BASE_SIZE } from '../const/style'
 
 export const roundToPixel = (coord: number, pixelSize: number) =>
 	Math.floor(coord / pixelSize) * pixelSize
@@ -367,9 +368,12 @@ export const getBorderRadius = (
 		if (borderRadius) {
 			return getInnerRadius(canvas, borderRadius, pixelSize, first, last, direction)
 		}
-		const globalComputedStyle = getComputedStyle(document.documentElement)
 		const height =
-			parseInt(globalComputedStyle.getPropertyValue(`--px-${size}-base-size`)) + 2 * pixelSize
+			size === 'small'
+				? SMALL_BASE_SIZE
+				: size === 'large'
+					? LARGE_BASE_SIZE
+					: MEDIUM_BASE_SIZE + 2 * pixelSize
 		switch (shape) {
 			case 'round':
 				const roundArr = fillArr(getRadius(canvas, pixelSize, height, direction), 4)

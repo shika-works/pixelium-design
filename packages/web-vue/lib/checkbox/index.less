@@ -1,12 +1,14 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-checkbox {
 	@prefix: px-checkbox;
+	@px-large-interval-x: @px-interval-3;
+	@px-medium-interval-x: @px-interval-2;
+	@px-small-interval-x: @px-interval-1;
 
 	--checkbox-size: var(--px-medium-compat-size);
 	--text-color: var(--px-neutral-10);
-	--text-size: var(--px-medium-font-size);
-	--checkbox-interval: var(--px-interval-2);
 
 	color: var(--text-color);
 	display: inline-flex;
@@ -16,18 +18,22 @@
 	transition: 0.25s all;
 
 	&.@{prefix} {
-		font-size: var(--text-size);
+		font-size: @px-medium-font-size;
 	}
 
 	&__large {
 		--checkbox-size: var(--px-large-compat-size);
-		--text-size: var(--px-large-font-size);
-		--checkbox-interval: var(--px-interval-3);
+		font-size: @px-large-font-size;
+		.@{prefix}-box {
+			margin-right: @px-large-interval-x;
+		}
 	}
 	&__small {
 		--checkbox-size: var(--px-small-compat-size);
-		--text-size: var(--px-small-font-size);
-		--checkbox-interval: var(--px-interval-1);
+		font-size: @px-small-font-size;
+		.@{prefix}-box {
+			margin-right: @px-small-interval-x;
+		}
 	}
 
 	&-box {
@@ -41,7 +47,7 @@
 		flex-shrink: 0;
 		flex-grow: 0;
 
-		margin-right: var(--checkbox-interval);
+		margin-right: @px-medium-interval-x;
 
 		transition: 0.25s;
 

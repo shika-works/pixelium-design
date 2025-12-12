@@ -1,4 +1,5 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-tag-canvas {
 	position: absolute;
@@ -9,25 +10,20 @@
 	pointer-events: none;
 }
 span.px-tag {
-	font-size: var(--text-size);
-	line-height: calc(var(--tag-size) - 2 * var(--px-bit));
+	line-height: var(--px-medium-sub-base-size);
 }
 .px-tag {
 	@prefix: px-tag;
-	--tag-size: var(--px-medium-sub-size);
+	@px-medium-padding-x: @px-interval-2;
+	@px-large-padding-x: @px-interval-3;
+	@px-small-padding-x: @px-interval-2;
 
-	--px-medium-padding-x: var(--px-interval-2);
-	--px-large-padding-x: var(--px-interval-3);
-	--px-small-padding-x: var(--px-interval-2);
-	--padding-x-size: var(--px-medium-padding-x);
+	--tag-size: var(--px-medium-sub-size);
 	--text-color: var(--px-neutral-1);
-	--text-size: var(--px-medium-font-size);
 
 	min-height: var(--tag-size);
 	box-sizing: border-box;
 
-	padding-left: var(--padding-x-size);
-	padding-right: var(--padding-x-size);
 	background-color: transparent;
 	display: inline-flex;
 	align-items: center;
@@ -35,22 +31,35 @@ span.px-tag {
 	color: var(--text-color);
 	transition: 0.25s;
 	z-index: 0;
-	font-size: var(--text-size);
 	word-break: break-word;
 
 	border-color: transparent;
 	border-width: var(--px-bit);
 	border-style: solid;
 
+	@sizes: small, medium, large;
+
+	each(@sizes, {
+		&.@{prefix}__@{value} {
+			@paddingVar: ~"px-@{value}-padding-x";
+			@fontVar: ~"px-@{value}-font-size";
+
+			padding-right: @@paddingVar;
+			padding-left: @@paddingVar;
+			font-size: @@fontVar;
+
+			.@{prefix}-icon-wrapper {
+				height: @@fontVar - @px-interval-1;
+				width: @@fontVar - @px-interval-1;
+			}
+		}
+	});
+
 	&__large {
-		--padding-x-size: var(--px-large-padding-x);
 		--tag-size: var(--px-large-sub-size);
-		--text-size: var(--px-medium-font-size);
 	}
 	&__small {
-		--padding-x-size: var(--px-small-padding-x);
 		--tag-size: var(--px-small-sub-size);
-		--text-size: var(--px-small-font-size);
 	}
 	&.@{prefix}__disabled {
 		cursor: not-allowed;
@@ -59,13 +68,11 @@ span.px-tag {
 		}
 	}
 	&-icon-wrapper {
-		margin-left: var(--px-interval-1);
+		margin-left: @px-interval-1;
 		display: flex;
 		align-items: center;
 	}
 	&-icon-wrapper &-icon {
-		height: calc(var(--text-size) - 4px);
-		width: calc(var(--text-size) - 4px);
 		fill: var(--text-color);
 		cursor: pointer;
 	}

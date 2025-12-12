@@ -1,8 +1,11 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-link {
 	@prefix: px-link;
+
 	--text-color: var(--px-neutral-10);
+
 	display: inline-flex;
 	color: var(--text-color);
 	cursor: pointer;
@@ -16,8 +19,8 @@
 		}
 	}
 	&-icon {
-		height: 14px;
-		width: 14px;
+		height: @px-medium-font-size;
+		width: @px-medium-font-size;
 		fill: var(--text-color);
 	}
 	&__loading {
