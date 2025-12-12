@@ -14,6 +14,7 @@
   - 新增虚拟列表组件 VirtualList。
   - 新增图片像素化工具函数 `pixelate`。
   - 新增视觉组件文本描边 TextOutline。
+  - 加入了 modern-normalize 的预设样式可供导入。
 - 调整：
   - ⚠️需要注意⚠️ `'default'` 的 `shape` 属性重命名为 `'rect'`，旧有组件中的 `'default'` 依然生效。
   - ⚠️需要注意⚠️ ButtonGroup 增加 `theme` 属性，现在 ButtonGroup 和 Button 会将来自上级组件（例如 Form）注入的 `readonly` 属性作为 `disabled` 处理。
@@ -41,6 +42,7 @@
   - Add virtual list component VirtualList.
   - Add a utility function `pixelate` for image pixelation.
   - Added visual component TextOutline for text stroke effect.
+  - Added importable modern-normalize preset styles
 - Adjustment:
   - ⚠️ Note ⚠️ The `shape` property `'default'` is renamed to `'rect'`, `'default'` in existing components remains valid.
   - ⚠️ Note ⚠️ ButtonGroup now has a `theme` property, and both ButtonGroup and Button treat `readonly` property injected from ancestor components (e.g., Form) as `disabled`.

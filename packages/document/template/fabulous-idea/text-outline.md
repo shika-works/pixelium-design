@@ -42,14 +42,14 @@ Provide text as default slot. Use `color` to set the outline color and `outlineW
 
 ## API
 [[[api zh
-color: 填充颜色，接受任意合法 CSS 颜色或背景字符串（例如 `'#fff'`、`'rgba(255,0,0,0.8)'`、`'linear-gradient(...)'` 等），默认 `'#fff'`。
+color: 填充颜色，接受任意合法 CSS 颜色或背景字符串（例如 `'#fff'`、`'rgba(255,0,0,0.8)'`、`'linear-gradient(...)'` 等）。
 outlineWidth: 描边宽度，支持 number 或 字符串。number → 视为像素（例如 `1` → `1px`），字符串按字面使用（例如 `'0.1em'`、`'2px'`）。默认 `1`。
 autoPadding: 自动根据描边宽度加上左右 `padding` 以防止描边被裁剪。
 
 slots.default: 文本内容插槽。
 ]]]
 [[[api en
-color: Fill color — accepts any valid CSS color or background string (e.g. `'#fff'`, `'rgba(255,0,0,0.8)'`, `'linear-gradient(...)'`). Default `'#fff'`.
+color: Fill color — accepts any valid CSS color or background string (e.g. `'#fff'`, `'rgba(255,0,0,0.8)'`, `'linear-gradient(...)'`).
 outlineWidth: Stroke width — accepts number or string. Number is treated as pixels (e.g. `1` → `1px`); string is used verbatim (e.g. `'0.1em'`, `'2px'`). Default `1`.
 autoPadding: Automatically adds left and right `padding` based on outline width to prevent the outline from being clipped.
 
