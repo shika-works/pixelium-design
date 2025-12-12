@@ -39,6 +39,9 @@ const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 
 const calcDefaultBackgroundColor = () => {
 	const color = getGlobalThemeColor('neutral', 8)
+	if (!color) {
+		return 'none'
+	}
 	color.a = Math.floor(255 * 0.5)
 	return rgbaColor2string(color)
 }

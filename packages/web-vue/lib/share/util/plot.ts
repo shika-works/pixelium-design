@@ -342,7 +342,7 @@ export const getBorderRadius = (
 	canvas: HTMLCanvasElement,
 	pixelSize: number,
 	borderRadius: NumberOrPercentage | NumberOrPercentage[] | undefined,
-	shape: 'default' | 'round' | 'circle' | 'square' | 'normal' | undefined,
+	shape: 'rect' | 'round' | 'circle' | 'square' | 'default' | undefined,
 	size: 'medium' | 'small' | 'large' = 'medium',
 	inner: boolean = false,
 	first: boolean = false,

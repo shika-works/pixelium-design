@@ -50,7 +50,6 @@ import { BORDER_CORNER_RAD_RANGE, GET_ELEMENT_RENDERED } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
@@ -60,8 +59,6 @@ defineOptions({
 const attrs = useAttrs()
 
 const props = withDefaults(defineProps<AutoCompleteProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -74,7 +71,6 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
 	virtualScroll: false,
 	optionsDestroyOnHide: false
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<AutoCompleteEvents>()
 
@@ -100,16 +96,23 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', () => [
-	innerInputGroup.value && inputGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
-const shapeComputed = createProvideComputed('shape', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
 const disabledComputed = createProvideComputed(
 	'disabled',
 	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
@@ -316,7 +319,7 @@ const drawPixel = () => {
 		canvas,
 		pixelSize,
 		borderRadiusComputed.value,
-		shapeComputed.value,
+		shapeComputed.value || 'rect',
 		sizeComputed.value || 'medium',
 		innerInputGroup.value,
 		first.value,
@@ -337,26 +340,30 @@ const drawPixel = () => {
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value,
-		nextIsTextButton.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 
 	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 onMounted(() => {

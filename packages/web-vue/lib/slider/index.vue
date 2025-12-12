@@ -623,7 +623,10 @@ const drawPixel = () => {
 
 	const borderColor = getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(fillArr(pixelSize, 4), width, height, pixelSize)
-	drawBorder(ctx, width, height, center, borderColor, pixelSize)
+
+	if (borderColor) {
+		drawBorder(ctx, width, height, center, borderColor, pixelSize)
+	}
 
 	const fillColor = disabledComputed.value
 		? getGlobalThemeColor('primary', 2)
@@ -632,18 +635,20 @@ const drawPixel = () => {
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	drawRange(
-		ctx,
-		width,
-		height,
-		trackLeft.value,
-		trackWidth.value,
-		fillColor,
-		emptyColor,
-		pixelSize,
-		props.direction,
-		props.reverse
-	)
+	if (fillColor && emptyColor) {
+		drawRange(
+			ctx,
+			width,
+			height,
+			trackLeft.value,
+			trackWidth.value,
+			fillColor,
+			emptyColor,
+			pixelSize,
+			props.direction,
+			props.reverse
+		)
+	}
 
 	const rad = BORDER_CORNER_RAD_RANGE
 
@@ -651,19 +656,21 @@ const drawPixel = () => {
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	drawThumb(
-		thumbRef,
-		thumbCanvasRef,
-		thumbStartRef,
-		thumbStartCanvasRef,
-		thumbEndRef,
-		thumbEndCanvasRef,
-		props.range,
-		rad,
-		pixelSize,
-		thumbColor,
-		borderColor
-	)
+	if (thumbColor && borderColor) {
+		drawThumb(
+			thumbRef,
+			thumbCanvasRef,
+			thumbStartRef,
+			thumbStartCanvasRef,
+			thumbEndRef,
+			thumbEndCanvasRef,
+			props.range,
+			rad,
+			pixelSize,
+			thumbColor,
+			borderColor
+		)
+	}
 
 	if (markPoints.value.length) {
 		drawMark(

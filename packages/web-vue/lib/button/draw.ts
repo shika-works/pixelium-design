@@ -274,6 +274,11 @@ export const drawGradient = (
 	const innerAndLastOrNotInner = +!inner || +(inner && last)
 	if (!activeFlag || disabled) {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
+
+		if (!barColor) {
+			return
+		}
+
 		ctx.fillStyle = rgbaColor2string(barColor)
 		if (borderRadius[1] > pixelSize) {
 			drawCircle(
@@ -327,6 +332,11 @@ export const drawGradient = (
 			)
 	} else {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
+
+		if (!barColor) {
+			return
+		}
+
 		ctx.fillStyle = rgbaColor2string(barColor)
 
 		if (borderRadius[0] > pixelSize) {

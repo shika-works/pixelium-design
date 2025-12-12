@@ -97,7 +97,6 @@ import { createProvideComputed } from '../share/util/reactivity'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { inBrowser } from '../share/util/env'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 const MID_PROGRESS = 0.5
@@ -107,15 +106,13 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<SwitchProps>(), {
-	shape: 'round',
-	size: 'medium',
 	disabled: false,
 	readonly: false,
 	defaultValue: undefined,
 	modelValue: undefined,
-	loading: false
+	loading: false,
+	shape: 'round'
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<SwitchEvents>()
 
@@ -124,7 +121,6 @@ const slots = useSlots()
 const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const switchRef = shallowRef<HTMLLabelElement | null>(null)
 const buttonCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const switchButtonRef = shallowRef<HTMLDivElement | null>(null)
 const canvasWrapperRef = shallowRef<HTMLDivElement | null>(null)
@@ -140,11 +136,12 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
-const sizeComputed = createProvideComputed('size', () => [
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [props.size && props, formItemProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
 
 const ANIMATION_DURATION = 250
 
@@ -231,7 +228,7 @@ const getMainColor = () => {
 
 const iconColor = computed(() => {
 	const color = getMainColor()
-	return rgbaColor2string(color)
+	return color ? rgbaColor2string(color) : undefined
 })
 
 watch(
@@ -271,6 +268,11 @@ const drawButton = () => {
 	const pixelSize = calcPixelSize()
 
 	const sliceColor = getGlobalThemeColor('neutral', 1)
+
+	if (!sliceColor) {
+		return
+	}
+
 	ctx.fillStyle = rgbaColor2string(sliceColor)
 
 	const radius = Math.round(size / 2 - pixelSize / 2)
@@ -306,21 +308,23 @@ const drawPixel = () => {
 	const backgroundColor = getMainColor()
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		backgroundColor,
-		pixelSize,
-		0,
-		0,
-		sizeComputed.value === 'small' && props.shape === 'round'
-	)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			backgroundColor,
+			pixelSize,
+			0,
+			0,
+			sizeComputed.value === 'small' && props.shape === 'round'
+		)
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 	drawButton()
 }
 

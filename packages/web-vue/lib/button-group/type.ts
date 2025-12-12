@@ -9,13 +9,13 @@ export type ButtonGroupProps = {
 	 */
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	/**
-	 * @property {'default' | 'round'} [shape='default']
+	 * @property {'rect' | 'round'} [shape='rect']
 	 * @version 0.0.0-beta
 	 */
-	shape?: 'default' | 'round'
+	shape?: 'rect' | 'round' | 'default'
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
-	 * @version 0.0.0-beta
+	 * @version 0.0.3
 	 */
 	size?: 'medium' | 'large' | 'small'
 	/**
@@ -33,6 +33,11 @@ export type ButtonGroupProps = {
 	 * @version 0.0.0-beta
 	 */
 	variant?: 'primary' | 'plain' | 'text' | 'outline'
+	/**
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [theme]
+	 * @version 0.0.0-beta
+	 */
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
 }
 
 export type ButtonGroupSlots = {

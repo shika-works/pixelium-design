@@ -2,12 +2,12 @@
 	<div
 		class="pixelium px-avatar"
 		:class="{
-			[`px-avatar__${props.size}`]: isString(props.size),
-			[`px-avatar__${props.shape}`]: true
+			[`px-avatar__${sizeComputed}`]: isString(sizeComputed),
+			[`px-avatar__${shapeComputed}`]: true
 		}"
 		:style="{
-			height: isNumber(props.size) ? `${props.size}px` : undefined,
-			width: isNumber(props.size) ? `${props.size}px` : undefined
+			height: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined,
+			width: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined
 		}"
 		ref="avatarRef"
 	>
@@ -15,8 +15,8 @@
 		<div
 			class="px-avatar-inner"
 			:style="{
-				height: isNumber(props.size) ? `${props.size}px` : undefined,
-				width: isNumber(props.size) ? `${props.size}px` : undefined,
+				height: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined,
+				width: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined,
 				clipPath: polygon ? `polygon(${polygon})` : undefined
 			}"
 		>
@@ -25,7 +25,7 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { nextTick, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import type { AvatarProps } from './type'
 import {
 	calcBorderCornerCenter,
@@ -51,9 +51,14 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<AvatarProps>(), {
-	shape: 'circle',
-	size: 'medium',
 	bordered: false
+})
+
+const sizeComputed = computed(() => {
+	return props.size ?? 'medium'
+})
+const shapeComputed = computed(() => {
+	return props.shape ?? 'circle'
 })
 
 const hoverFlag = ref(false)
@@ -73,8 +78,8 @@ onMounted(() => {
 watch(
 	[
 		() => props.bordered,
-		() => props.shape,
-		() => props.size,
+		shapeComputed,
+		sizeComputed,
 		hoverFlag,
 		activeFlag,
 		darkMode,
@@ -102,34 +107,36 @@ const drawPixel = () => {
 		canvas,
 		pixelSize,
 		undefined,
-		props.shape,
+		shapeComputed.value,
 		undefined,
 		false,
 		false,
 		false
 	)
 
-	const backgroundColor = props.backgroundColor
-		? parseColor(props.backgroundColor)
-		: getGlobalThemeColor('neutral', 7)
+	const backgroundColor =
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
+		getGlobalThemeColor('neutral', 7)
 
 	const borderColor = props.bordered
-		? props.borderColor
-			? parseColor(props.borderColor)
-			: getGlobalThemeColor('neutral', 10)
+		? (props.borderColor && parseColor(props.borderColor)) || getGlobalThemeColor('neutral', 10)
 		: backgroundColor
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+	if (borderColor) {
+		drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+	}
 
 	let dots = props.bordered
-		? floodFillEdge(
-				ctx,
-				Math.round(width / 2 + pixelSize / 2),
-				Math.round(height / 2 + pixelSize / 2),
-				backgroundColor
-			)
+		? backgroundColor
+			? floodFillEdge(
+					ctx,
+					Math.round(width / 2 + pixelSize / 2),
+					Math.round(height / 2 + pixelSize / 2),
+					backgroundColor
+				)
+			: []
 		: outerEdgePoints(ctx)
 
 	if (dots.length) {
@@ -150,7 +157,9 @@ const drawPixel = () => {
 		polygon.value = ''
 	}
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(avatarRef, drawPixel)

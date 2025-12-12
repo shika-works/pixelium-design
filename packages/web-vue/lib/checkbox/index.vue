@@ -50,7 +50,6 @@ import { CHECKBOX_GROUP_PROVIDE, FORM_ITEM_PROVIDE } from '../share/const/provid
 import CheckSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-solid.svg'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 defineOptions({
 	name: 'Checkbox'
@@ -61,12 +60,8 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
 	modelValue: undefined,
 	indeterminate: false,
 	disabled: false,
-	readonly: false,
-	size: 'medium',
-	variant: 'normal'
+	readonly: false
 })
-
-const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<CheckboxEvents>()
 
@@ -78,14 +73,19 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 const checkboxGroupProvide = inject<undefined | CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE)
 
-const sizeComputed = createProvideComputed('size', () => [
-	checkboxGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [checkboxGroupProvide, props.size && props, formItemProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
 
-const variantComputed = createProvideComputed('variant', [checkboxGroupProvide, props])
+const variantComputed = createProvideComputed(
+	'variant',
+	[checkboxGroupProvide, props],
+	'nullish',
+	(val) => val || 'normal'
+)
 
 const disabledComputed = createProvideComputed(
 	'disabled',

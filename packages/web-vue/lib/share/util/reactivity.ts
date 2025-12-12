@@ -15,13 +15,14 @@ export const createProvideComputed = <
 >(
 	key: T,
 	provides: (() => P) | P,
-	mergeType: 'nullish' | 'or' | ((pre: V, value: V, cur: P[number] & object) => any) = 'nullish'
+	mergeType: 'nullish' | 'or' | ((pre: V, value: V, cur: P[number] & object) => V) = 'nullish',
+	feedback?: (arg: V) => V
 ) => {
 	return computed(() => {
 		const curProvides = isFunction(provides) ? provides() : provides
 		const provideValues = curProvides.filter((provide: P[number]) => !!provide) as (P[number] &
 			object)[]
-		return provideValues.reduce((pre, cur) => {
+		const res = provideValues.reduce((pre, cur) => {
 			const value = isRef(cur[key]) ? (cur[key].value as V) : (cur[key] as V)
 			if (mergeType === 'nullish') {
 				return pre ?? value
@@ -31,6 +32,11 @@ export const createProvideComputed = <
 				return mergeType(pre, value, cur)
 			}
 		}, undefined as V)
+		if (feedback) {
+			return feedback(res)
+		} else {
+			return res
+		}
 	})
 }
 

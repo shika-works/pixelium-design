@@ -50,6 +50,16 @@ export type AutoCompleteProps = {
 	 */
 	loading?: boolean
 	/**
+	 * @property {'medium' | 'large' | 'small'} [size='medium']
+	 * @version 0.0.2
+	 */
+	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {'rect' | 'round'} [shape='rect']
+	 * @version 0.0.3
+	 */
+	shape?: 'rect' | 'round' | 'default'
+	/**
 	 * @property {boolean} [showPopoverEmpty=false]
 	 * @version 0.0.2
 	 */
@@ -85,16 +95,6 @@ export type AutoCompleteProps = {
 	 * @version 0.0.3
 	 */
 	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
-	/**
-	 * @property {'medium' | 'large' | 'small'} [size='medium']
-	 * @version 0.0.2
-	 */
-	size?: 'medium' | 'large' | 'small'
-	/**
-	 * @property {'default' | 'round'} [shape='default']
-	 * @version 0.0.2
-	 */
-	shape?: 'default' | 'round'
 	/**
 	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
 	 * @version 0.0.2

@@ -57,7 +57,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<TagProps>(), {
-	shape: 'default',
+	shape: 'rect',
 	size: 'medium',
 	disabled: false,
 	variant: 'primary',
@@ -91,6 +91,9 @@ onMounted(() => {
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)
+	if (!color) {
+		return null
+	}
 	const palette = generatePalette(color.r, color.g, color.b, color.a, darkMode.value)
 	return palette
 })
@@ -142,7 +145,11 @@ const drawPixel = () => {
 	const borderColor = getBorderColor(props.disabled, props.variant, props.theme, palette.value)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
-	drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+
+	if (borderColor) {
+		drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+	}
+
 	const backgroundColor = getBackgroundColor(
 		props.disabled,
 		props.variant,
@@ -150,7 +157,9 @@ const drawPixel = () => {
 		palette.value
 	)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(tagRef, drawPixel)

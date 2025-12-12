@@ -14,6 +14,11 @@
   - 新增虚拟列表组件 VirtualList。
   - 新增图片像素化工具函数 `pixelate`。
   - 新增视觉组件文本描边 TextOutline。
+- 调整：
+  - ⚠️需要注意⚠️ `'default'` 的 `shape` 属性重命名为 `'rect'`，旧有组件中的 `'default'` 依然生效。
+  - ⚠️需要注意⚠️ ButtonGroup 增加 `theme` 属性，现在 ButtonGroup 和 Button 会将来自上级组件（例如 Form）注入的 `readonly` 属性作为 `disabled` 处理。
+  - ⚠️需要注意⚠️ 部分组件内部 `size`、`variant`、`theme`、`shape` 的默认值实现方法发生变动，从 `withDefaults` 变为 `computed`，以适应嵌套组件属性优先级影响的实现。
+  - ⚠️需要注意⚠️ 按需导入图标时，将不会自动导入组件库公共样式。
 - 优化：
   - Select 组件增加 `label` 插槽。
   - InputGroup 增加 `readonly` 属性。
@@ -21,7 +26,6 @@
   - 选项组的子选项增加缩进。
   - 优化 Select 组件的 `focus` 和 `blur` 事件触发。
   - 各种下拉和弹窗组件增加属性控制是否在隐藏时销毁内容。
-  - 按需导入图标时，将不会自动导入组件库公共样式。
   - 优化代码 & 完善测试用例。
 - 修复：
   - 修复 `variant="text"` 的 Button 组件在 ButtonGroup 和 InputGroup 下的渲染。
@@ -37,6 +41,11 @@
   - Add virtual list component VirtualList.
   - Add a utility function `pixelate` for image pixelation.
   - Added visual component TextOutline for text stroke effect.
+- Adjustment:
+  - ⚠️ Note ⚠️ The `shape` property `'default'` is renamed to `'rect'`, `'default'` in existing components remains valid.
+  - ⚠️ Note ⚠️ ButtonGroup now has a `theme` property, and both ButtonGroup and Button treat `readonly` property injected from ancestor components (e.g., Form) as `disabled`.
+  - ⚠️ Note ⚠️ Default value implementation for `size`, `variant`, `theme`, `shape` in some components changed from `withDefaults` to `computed` to support nested component property priority.
+  - ⚠️ Note ⚠️ When importing icons on demand, component library common styles will no longer be automatically imported.
 - Optimizations:
   - Add `label` slot to the Select component.
   - Add `readonly` property to InputGroup.
@@ -44,7 +53,6 @@
   - Add indentation to sub-options of option groups.
   - Optimize the triggering of `focus` and `blur` events for the Select component.
   - Add a prop to dropdown and popup components to control whether content is destroyed when hidden.
-  - When importing icons on demand, component library common styles will no longer be automatically imported.
   - Optimize code & improve test cases.
 - Fixes:
   - Fix the rendering of Button components with `variant="text"` in ButtonGroup and InputGroup.

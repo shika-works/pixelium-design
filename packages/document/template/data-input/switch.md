@@ -74,11 +74,11 @@ The `size` property sets the size of the switch.
 
 [[[zh
 ## 开关形状
-开关有 `round` 和 `normal` 两种形状，通过 `shape` 设置。
+开关有 `'round'` 和 `'rect'` 两种形状，通过 `shape` 设置。
 ]]]
 [[[en
 ## Switch Shape
-The switch has two shapes: `round` and `normal`, which are set via `shape`.
+The switch has two shapes: `'round'` and `'rect'`, which are set via `shape`.
 ]]]
 <preview path="./switch-shape.vue"></preview>
 

@@ -10,12 +10,12 @@ export type SwitchProps = {
 	 */
 	defaultValue?: boolean | null
 	/**
-	 * @property {'round' | 'normal'} [shape='round']
+	 * @property {'round' | 'rect'} [shape='round']
 	 * @version 0.0.3
 	 */
-	shape?: 'round' | 'normal'
+	shape?: 'round' | 'rect' | 'default'
 	/**
-	 * @property {'small' | 'medium'} [size='medium']
+	 * @property {'small' | 'medium' | 'large'} [size='medium']
 	 * @version 0.0.3
 	 */
 	size?: 'small' | 'medium' | 'large'

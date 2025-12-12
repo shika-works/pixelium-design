@@ -42,7 +42,6 @@ import type { InputGroupProvide } from '../input-group/type'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
@@ -50,11 +49,7 @@ defineOptions({
 	name: 'InputGroupLabel'
 })
 
-const props = withDefaults(defineProps<InputGroupLabelProps>(), {
-	shape: 'default',
-	size: 'medium'
-})
-const propsDetect = usePropsDetect(props, 'size')
+const props = withDefaults(defineProps<InputGroupLabelProps>(), {})
 
 const instance = getCurrentInstance()
 const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
@@ -70,16 +65,23 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', () => [
-	innerInputGroup.value && inputGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
-const shapeComputed = createProvideComputed('shape', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
@@ -149,24 +151,29 @@ const drawPixel = () => {
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value,
-		nextIsTextButton.value
-	)
-	const backgroundColor = props.backgroundColor
-		? parseColor(props.backgroundColor)
-		: getGlobalThemeColor('neutral', 3)
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
+
+	const backgroundColor =
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
+		getGlobalThemeColor('neutral', 3)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(labelRef, drawPixel)

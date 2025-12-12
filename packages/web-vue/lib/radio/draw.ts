@@ -120,6 +120,10 @@ export const drawRadioCircleMark = (
 		pixelSize
 	)
 	const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
-	floodFill(ctx, fillStart, fillStart, parseColor(color))
+
+	const rgbaColor = color ? parseColor(color) : null
+	if (rgbaColor) {
+		floodFill(ctx, fillStart, fillStart, rgbaColor)
+	}
 	ctx.fillRect(fillStart, fillStart, pixelSize, pixelSize)
 }

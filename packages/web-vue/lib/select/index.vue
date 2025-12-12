@@ -66,7 +66,6 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
@@ -76,8 +75,6 @@ defineOptions({
 const attrs = useAttrs()
 
 const props = withDefaults(defineProps<SelectProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -94,7 +91,6 @@ const props = withDefaults(defineProps<SelectProps>(), {
 	virtualScroll: false,
 	optionsDestroyOnHide: false
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const ANIMATION_DURATION = 250
 
@@ -122,16 +118,23 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', () => [
-	innerInputGroup.value && inputGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
-const shapeComputed = createProvideComputed('shape', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
 const disabledComputed = createProvideComputed(
 	'disabled',
 	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
@@ -651,26 +654,30 @@ const drawPixel = () => {
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value,
-		nextIsTextButton.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 
 	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 onMounted(() => {

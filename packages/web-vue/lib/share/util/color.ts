@@ -5,11 +5,11 @@ import { createLRU } from './lru-cache'
 
 const colorCache = createLRU<string, RgbaColor>(120)
 
-export function parseColor(color: string): RgbaColor {
+export function parseColor(color: string): RgbaColor | null {
 	const cached = colorCache.get(color)
 	if (cached) return { ...cached }
-	let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
 	if (color.startsWith('rgb(') || color.startsWith('rgba(')) {
+		let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
 		const matches = color.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/i)
 		if (matches) {
 			result.r = parseInt(matches[1], 10)
@@ -19,7 +19,10 @@ export function parseColor(color: string): RgbaColor {
 				result.a = Math.round(parseFloat(matches[4]) * 255)
 			}
 		}
+		colorCache.set(color, result)
+		return { ...result }
 	} else if (color.startsWith('#')) {
+		let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
 		color = color.slice(1)
 		if (color.length === 3) {
 			result.r = parseInt(color[0] + color[0], 16)
@@ -40,9 +43,10 @@ export function parseColor(color: string): RgbaColor {
 			result.b = parseInt(color.slice(4, 6), 16)
 			result.a = parseInt(color.slice(6, 8), 16)
 		}
+		colorCache.set(color, result)
+		return { ...result }
 	}
-	colorCache.set(color, result)
-	return { ...result }
+	return null
 }
 
 export const getGlobalThemeColor = (theme: string, level: number) => {

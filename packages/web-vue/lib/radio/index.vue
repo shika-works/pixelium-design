@@ -63,7 +63,6 @@ import type { RadioGroupProvide } from '../radio-group/type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
@@ -76,12 +75,9 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const props = withDefaults(defineProps<RadioProps>(), {
 	modelValue: undefined,
 	defaultValue: undefined,
-	variant: 'normal',
 	disabled: false,
-	readonly: false,
-	size: 'medium'
+	readonly: false
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<RadioEvents>()
 
@@ -94,12 +90,12 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, u
 
 const radioGroupProvide = inject<RadioGroupProvide | undefined>(RADIO_GROUP_PROVIDE)
 
-const sizeComputed = createProvideComputed('size', () => [
-	radioGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [radioGroupProvide, props.size && props, formItemProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
 
 const disabledComputed = createProvideComputed(
 	'disabled',
@@ -111,7 +107,12 @@ const readonlyComputed = createProvideComputed(
 	[radioGroupProvide, formItemProvide, props],
 	'or'
 )
-const variantComputed = createProvideComputed('variant', [radioGroupProvide, props])
+const variantComputed = createProvideComputed(
+	'variant',
+	[radioGroupProvide, props],
+	'nullish',
+	(val) => val || 'normal'
+)
 
 if (radioGroupProvide) {
 	watch(
@@ -214,7 +215,10 @@ const drawPixel = () => {
 
 		const size = Math.min(width, height)
 		const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
-		floodFill(ctx, fillStart, fillStart, parseColor(backgroundColor))
+
+		if (backgroundColor) {
+			floodFill(ctx, fillStart, fillStart, parseColor(backgroundColor)!)
+		}
 
 		if (modelValue.value) {
 			drawRadioCircleMark(ctx, size, mainColor, pixelSize)

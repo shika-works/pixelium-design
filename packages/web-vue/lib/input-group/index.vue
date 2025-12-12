@@ -17,19 +17,16 @@ import type { FormProvide } from '../form/type'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { ChildrenInfo } from '../button-group/type'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'InputGroup'
 })
 
 const props = withDefaults(defineProps<InputGroupProps>(), {
-	shape: 'default',
-	size: 'medium',
+	shape: 'rect',
 	disabled: false,
 	readonly: false
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const formProvide = inject<undefined | FormProvide>(FORM_PROVIDE)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
@@ -44,12 +41,12 @@ const readonlyComputed = createProvideComputed(
 	[formItemProvide, formProvide, props],
 	'or'
 )
-const sizeComputed = createProvideComputed('size', () => [
-	propsDetect.value.size && props,
-	formItemProvide,
-	formProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [props.size && props, formItemProvide, formProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
 
 const childrenInfo = ref<ChildrenInfo[]>([])
 
