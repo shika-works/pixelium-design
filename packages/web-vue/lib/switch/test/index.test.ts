@@ -97,9 +97,9 @@ describe('Switch Component', () => {
 
 		it('should apply shape styles', () => {
 			const wrapper = mount(Switch, {
-				props: { shape: 'normal' }
+				props: { shape: 'rect' }
 			})
-			expect(wrapper.vm.$props.shape).toBe('normal')
+			expect(wrapper.vm.$props.shape).toBe('rect')
 		})
 	})
 

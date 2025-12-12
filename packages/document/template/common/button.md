@@ -31,21 +31,21 @@ The button is available in four style variants: `'primary'` (default), `'plain'`
 
 [[[en
 ## Button Shapes
-The button comes in four shapes: `'default'` (default), `'round'`, `'circle'`, and `'square'`.
+The button comes in four shapes: `'rect'` (default), `'round'`, `'circle'`, and `'square'`.
 ]]]
 [[[zh
 ## 按钮形状
-按钮有 `'default'`（默认）、`'round'`、`'circle'`、`'square'` 四种形状。
+按钮有 `'rect'`（默认）、`'round'`、`'circle'`、`'square'` 四种形状。
 ]]]
 <preview path="./button-shape.vue"></preview>
 
 [[[en
 ## Button Sizes
-The button's style can be adjusted using the `size` prop, which offers three options: `'default'` (default), `'small'`, and `'large'`.
+The button's style can be adjusted using the `size` prop, which offers three options: `'medium'` (default), `'small'`, and `'large'`.
 ]]]
 [[[zh
 ## 按钮尺寸
-可以设置 `size` 属性改变按钮的样式，有 `'default'`（默认）、`'small'`、`'large'` 三种。
+可以设置 `size` 属性改变按钮的样式，有 `'medium'`（默认）、`'small'`、`'large'` 三种。
 ]]]
 <preview path="./button-size.vue"></preview>
 

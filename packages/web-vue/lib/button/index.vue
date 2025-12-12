@@ -15,7 +15,7 @@
 			'px-button__disabled': disabledComputed,
 			'px-button__custom': palette,
 			'px-button__inner': innerButtonGroup || innerInputGroup,
-			[`px-button__${props.theme || 'primary'}`]: true
+			[`px-button__${themeComputed || 'primary'}`]: true
 		}"
 		:style="{
 			color: textColor
@@ -98,7 +98,6 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
@@ -106,17 +105,12 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<ButtonProps>(), {
-	shape: 'default',
-	size: 'medium',
 	disabled: false,
-	variant: 'primary',
-	theme: 'primary',
 	autofocus: false,
 	nativeType: 'button',
 	block: false,
 	loading: false
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const instance = getCurrentInstance()
 const innerButtonGroup = ref(instance?.parent?.type.name === 'ButtonGroup')
@@ -137,23 +131,41 @@ const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const typeComputed = createProvideComputed('variant', [
-	innerButtonGroup.value && buttonGroupProvide,
-	props
-])
-const sizeComputed = createProvideComputed('size', () => [
-	innerButtonGroup.value && buttonGroupProvide,
-	innerInputGroup.value && inputGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	formProps,
-	props
-])
-const shapeComputed = createProvideComputed('shape', [
-	innerButtonGroup.value && buttonGroupProvide,
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const typeComputed = createProvideComputed(
+	'variant',
+	[innerButtonGroup.value && buttonGroupProvide, props],
+	'nullish',
+	(val) => val || 'primary'
+)
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerButtonGroup.value && buttonGroupProvide,
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		formProps,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[
+		innerButtonGroup.value && buttonGroupProvide,
+		innerInputGroup.value && inputGroupProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'rect'
+)
+const themeComputed = createProvideComputed(
+	'theme',
+	[innerButtonGroup.value && buttonGroupProvide, props],
+	'nullish',
+	(val) => val || 'primary'
+)
 const disabledComputed = createProvideComputed(
 	'disabled',
 	[
@@ -281,7 +293,7 @@ watch(
 		disabledComputed,
 		loadingComputed,
 		typeComputed,
-		() => props.theme,
+		themeComputed,
 		palette,
 		hoverFlag,
 		activeFlag,
@@ -309,7 +321,7 @@ const drawPixel = () => {
 		canvas,
 		pixelSize,
 		borderRadiusComputed.value,
-		shapeComputed.value,
+		shapeComputed.value || 'rect',
 		sizeComputed.value || 'medium',
 		innerButtonGroup.value || innerInputGroup.value,
 		first.value,
@@ -319,8 +331,8 @@ const drawPixel = () => {
 	const borderColor = getBorderColor(
 		!!disabledComputed.value,
 		!!loadingComputed.value,
-		typeComputed.value,
-		props.theme,
+		typeComputed.value || 'primary',
+		themeComputed.value || 'primary',
 		palette.value,
 		hoverFlag.value,
 		activeFlag.value
@@ -328,7 +340,7 @@ const drawPixel = () => {
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	if (typeComputed.value === 'primary') {
+	if (!typeComputed.value || typeComputed.value === 'primary') {
 		drawGradient(
 			ctx,
 			width,
@@ -339,7 +351,7 @@ const drawPixel = () => {
 			pixelSize,
 			!!disabledComputed.value,
 			!!loadingComputed.value,
-			props.theme,
+			themeComputed.value,
 			palette.value,
 			innerButtonGroup.value || innerInputGroup.value,
 			first.value,
@@ -357,7 +369,7 @@ const drawPixel = () => {
 		rad,
 		borderColor,
 		pixelSize,
-		typeComputed.value,
+		typeComputed.value || 'primary',
 		innerButtonGroup.value || innerInputGroup.value,
 		first.value,
 		last.value,
@@ -366,8 +378,8 @@ const drawPixel = () => {
 	const backgroundColor = getBackgroundColor(
 		!!disabledComputed.value,
 		!!loadingComputed.value,
-		typeComputed.value,
-		props.theme,
+		typeComputed.value || 'primary',
+		themeComputed.value || 'primary',
 		palette.value,
 		hoverFlag.value,
 		activeFlag.value

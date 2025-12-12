@@ -74,7 +74,6 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
@@ -82,7 +81,6 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<TextareaProps>(), {
-	size: 'medium',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -94,7 +92,6 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 	maxRows: Infinity,
 	autoResize: false
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
@@ -117,11 +114,12 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
-const sizeComputed = createProvideComputed('size', () => [
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [props.size && props, formItemProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
 
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
 

@@ -29,7 +29,7 @@ export type CheckboxGroupProps = {
 	 */
 	readonly?: boolean
 	/**
-	 * @property {'normal' | 'retro'} [variant='normal']
+	 * @property {'normal' | 'retro'} [variant]
 	 * @version 0.0.3
 	 */
 	variant?: 'normal' | 'retro'
@@ -44,7 +44,7 @@ export type CheckboxGroupProps = {
 	 */
 	options?: (CheckboxGroupOption | string)[]
 	/**
-	 * @property {'medium' | 'large' | 'small'} [size]
+	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.3
 	 */
 	size?: 'medium' | 'large' | 'small'

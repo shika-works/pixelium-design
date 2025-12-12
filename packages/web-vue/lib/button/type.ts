@@ -7,10 +7,10 @@ export type ButtonProps = {
 	 */
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	/**
-	 * @property {'default' | 'round' | 'circle' | 'square'} [shape='default']
-	 * @version 0.0.0-beta
+	 * @property {'rect' | 'round' | 'circle' | 'square'} [shape='rect']
+	 * @version 0.0.3
 	 */
-	shape?: 'default' | 'round' | 'circle' | 'square'
+	shape?: 'rect' | 'round' | 'circle' | 'square' | 'default'
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.0-beta

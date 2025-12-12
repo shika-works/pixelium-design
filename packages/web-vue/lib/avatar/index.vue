@@ -2,12 +2,12 @@
 	<div
 		class="pixelium px-avatar"
 		:class="{
-			[`px-avatar__${props.size}`]: isString(props.size),
-			[`px-avatar__${props.shape}`]: true
+			[`px-avatar__${sizeComputed}`]: isString(sizeComputed),
+			[`px-avatar__${shapeComputed}`]: true
 		}"
 		:style="{
-			height: isNumber(props.size) ? `${props.size}px` : undefined,
-			width: isNumber(props.size) ? `${props.size}px` : undefined
+			height: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined,
+			width: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined
 		}"
 		ref="avatarRef"
 	>
@@ -15,8 +15,8 @@
 		<div
 			class="px-avatar-inner"
 			:style="{
-				height: isNumber(props.size) ? `${props.size}px` : undefined,
-				width: isNumber(props.size) ? `${props.size}px` : undefined,
+				height: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined,
+				width: isNumber(sizeComputed) ? `${sizeComputed}px` : undefined,
 				clipPath: polygon ? `polygon(${polygon})` : undefined
 			}"
 		>
@@ -25,7 +25,7 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { nextTick, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import type { AvatarProps } from './type'
 import {
 	calcBorderCornerCenter,
@@ -51,9 +51,14 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<AvatarProps>(), {
-	shape: 'circle',
-	size: 'medium',
 	bordered: false
+})
+
+const sizeComputed = computed(() => {
+	return props.size ?? 'medium'
+})
+const shapeComputed = computed(() => {
+	return props.shape ?? 'circle'
 })
 
 const hoverFlag = ref(false)
@@ -73,8 +78,8 @@ onMounted(() => {
 watch(
 	[
 		() => props.bordered,
-		() => props.shape,
-		() => props.size,
+		shapeComputed,
+		sizeComputed,
 		hoverFlag,
 		activeFlag,
 		darkMode,
@@ -102,7 +107,7 @@ const drawPixel = () => {
 		canvas,
 		pixelSize,
 		undefined,
-		props.shape,
+		shapeComputed.value,
 		undefined,
 		false,
 		false,

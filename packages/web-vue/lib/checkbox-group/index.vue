@@ -36,7 +36,6 @@ import type {
 } from './type'
 import { isString } from 'parsnip-kit'
 import Checkbox from '../checkbox/index.vue'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 
 defineOptions({
 	name: 'CheckboxGroup'
@@ -47,7 +46,6 @@ const props = withDefaults(defineProps<CheckboxGroupProps>(), {
 	readonly: false,
 	direction: 'horizontal'
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<CheckboxGroupEvents>()
 
@@ -71,11 +69,12 @@ const getKey = (option: CheckboxGroupOption | string) => {
 	}
 }
 
-const sizeComputed = createProvideComputed('size', () => [
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [props.size && props, formItemProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
 
 provide<CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE, {
 	modelValue,

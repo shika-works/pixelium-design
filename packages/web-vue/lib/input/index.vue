@@ -106,7 +106,6 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
-import { usePropsDetect } from '../share/hook/use-props-detect'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
@@ -114,8 +113,6 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<InputProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -124,7 +121,6 @@ const props = withDefaults(defineProps<InputProps>(), {
 	showCount: false,
 	status: 'normal'
 })
-const propsDetect = usePropsDetect(props, 'size')
 
 const emits = defineEmits<InputEvents>()
 
@@ -148,16 +144,23 @@ const borderRadiusComputed = createProvideComputed('borderRadius', () => [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
-const sizeComputed = createProvideComputed('size', () => [
-	innerInputGroup.value && inputGroupProvide,
-	propsDetect.value.size && props,
-	formItemProvide,
-	props
-])
-const shapeComputed = createProvideComputed('shape', () => [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	() => [innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
 const disabledComputed = createProvideComputed(
 	'disabled',
 	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],

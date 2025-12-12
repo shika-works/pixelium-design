@@ -57,7 +57,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<TagProps>(), {
-	shape: 'default',
+	shape: 'rect',
 	size: 'medium',
 	disabled: false,
 	variant: 'primary',
