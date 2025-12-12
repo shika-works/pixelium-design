@@ -3,6 +3,7 @@ import Layout from './Layout.vue'
 
 import '@pixelium/web-vue/dist/font.css'
 import '@pixelium/web-vue/dist/pixelium-vue.css'
+import '@pixelium/web-vue/dist/normalize.css'
 import PixeliumVue from '@pixelium/web-vue'
 import '@vitepress-demo-preview/component/dist/style.css'
 

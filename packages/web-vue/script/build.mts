@@ -28,8 +28,8 @@ try {
 	log('Building font...')
 	await $('npx vite build --config ./script/vite.config.font.ts')
 
-	log('Building base CSS...')
-	await $('npx vite build --config ./script/vite.config.css.ts')
+	log('Building CSS...')
+	await $('node script/build-css.mts')
 
 	log('Building icons...')
 	await $('node script/build-icon.mts')

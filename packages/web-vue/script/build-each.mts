@@ -14,10 +14,7 @@ const onDemandImport: Plugin = {
 	enforce: 'pre',
 	transform(code: string, id: string) {
 		if (id.endsWith('less') || id.endsWith('css')) {
-			return code.replace(
-				/@import\s+(?:\/\*[\s\S]*?\*\/\s*)*(?:url\(\s*(['"]?)([\s\S]*?)\1\s*\)|(['"])([\s\S]*?)\3)\s*(?:\/\*[\s\S]*?\*\/\s*)*((?:[\s\S](?!;))*?);/g,
-				''
-			)
+			return code.replace(/@import\s+url\(\s*(["']?)([^"'()\s]+\.css)\1\s*\)\s*;/g, '')
 		}
 	}
 }
