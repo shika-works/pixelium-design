@@ -52,3 +52,4 @@ const gutter =
 	ref({ x: 0, y: 0 })
 </script>
 <style lang="less" src="./index.less"></style>
+<style lang="less" src="../share/style/index.css" />

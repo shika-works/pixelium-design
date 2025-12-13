@@ -253,3 +253,5 @@ useTransitionEnd(canvasWrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./style.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

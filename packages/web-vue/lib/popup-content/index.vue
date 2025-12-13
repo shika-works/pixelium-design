@@ -370,3 +370,5 @@ useTransitionEnd(contentRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less" />
+
+<style lang="less" src="../share/style/index.css" />
