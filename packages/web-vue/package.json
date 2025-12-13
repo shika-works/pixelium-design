@@ -42,7 +42,7 @@
 		"lint": "oxlint lib",
 		"lint:fix": "oxlint ./ --fix && prettier ./ --write",
 		"preview": "vite preview",
-		"release": "test && npm run build && npm publish --access public",
+		"release": "npm run test && npm run build && npm publish --access public",
 		"release:dry-run": "npm run build && npm publish --dry-run",
 		"test": "vitest run --config ./script/vite.config.vue.ts --coverage",
 		"test:watch": "vitest --config ./script/vite.config.vue.ts --coverage"
