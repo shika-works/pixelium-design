@@ -10,3 +10,13 @@
 .px-animation__loading {
 	animation: px-icon-spin 1s linear infinite;
 }
+
+@keyframes px-blink {
+	50% {
+		opacity: 0;
+	}
+}
+
+.px-animation__blink {
+	animation: px-blink 1s steps(1) 0s infinite normal none running;
+}

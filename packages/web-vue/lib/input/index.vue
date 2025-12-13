@@ -11,6 +11,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-input-prefix-wrapper" v-if="slots.prefix">
 			<slot name="prefix"></slot>
@@ -20,13 +22,11 @@
 			:value="inputValue"
 			ref="inputRef"
 			:placeholder="props.placeholder"
-			:disabled="disabledComputed || props.readonly"
+			:disabled="disabledComputed || readonlyComputed"
 			:autofocus="autofocus"
 			:type="typeComputed"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
-			@blur="blurHandler"
-			@focus="focusHandler"
 			@compositionstart="compositionStartHandler"
 			@compositionend="compositionUpdateHandler"
 		/>
@@ -75,7 +75,7 @@ import {
 	useSlots,
 	watch
 } from 'vue'
-import type { InputEvents, InputProps } from './type'
+import type { InputEvents, InputExpose, InputProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -88,27 +88,31 @@ import {
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
+// @ts-ignore
 import Eye from '@hackernoon/pixel-icon-library/icons/SVG/regular/eye.svg'
+// @ts-ignore
 import EyeCross from '@hackernoon/pixel-icon-library/icons/SVG/regular/eye-cross.svg'
 import { isNullish } from 'parsnip-kit'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import type { InputGroupProps } from '../input-group/type'
-import InputGroup from '../input-group/index.vue'
+import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import type { FormItemProvide } from '../form-item/type'
+import { createProvideComputed } from '../share/util/reactivity'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Input'
 })
 
 const props = withDefaults(defineProps<InputProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -129,29 +133,60 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
-const [_, first, last] = innerInputGroup.value
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
+const borderRadiusComputed = createProvideComputed('borderRadius', () => [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	() => [innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
+const disabledComputed = createProvideComputed(
+	'disabled',
+	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const statusComputed = createProvideComputed('status', () => [formItemProvide, props])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
-})
-const [inputValue, updateInputValue] = useControlledMode<any>('modelValue', props, emits, {
+
+const [inputValue, updateInputValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (nextValue: any) => {
 		return nextValue || ''
@@ -163,7 +198,9 @@ const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 
 const currentLength = computed(() => {
-	return props.countGraphemes ? props.countGraphemes(inputValue.value) : inputValue.value.length
+	return props.countGraphemes
+		? props.countGraphemes(inputValue.value!)
+		: inputValue.value!.length
 })
 
 const inputHandler = async (e: Event) => {
@@ -187,27 +224,33 @@ const inputHandler = async (e: Event) => {
 		}
 	}
 	updateInputValue(newValue)
+	formItemProvide?.inputHandler()
 }
 
 const clearHandler = async () => {
 	await updateInputValue('')
 	emits('change', '')
 	emits('clear', '')
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
 	const target = e.target as HTMLInputElement
 	emits('change', target.value, e)
+	formItemProvide?.changeHandler()
 }
 
 const focusMode = ref(false)
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
 	focusMode.value = false
+	emits('blur', e)
+	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const focusInputHandler = () => {
@@ -223,7 +266,7 @@ const mouseleaveHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const showPassword = ref(false)
@@ -243,7 +286,7 @@ const typeComputed = computed(() => {
 
 const slots = useSlots()
 
-defineExpose({
+defineExpose<InputExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -265,16 +308,17 @@ watch(
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		darkMode,
 		focusMode,
-		hoverFlag
+		hoverFlag,
+		statusComputed,
+		nextIsTextButton
 	],
 	() => {
-		setTimeout(() => {
-			drawPixel()
-		})
+		drawPixel()
 	}
 )
 
@@ -298,33 +342,43 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 
 	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 onMounted(() => {
@@ -335,6 +389,7 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

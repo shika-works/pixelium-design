@@ -12,12 +12,9 @@ const __dirname = process.cwd()
 const onDemandImport: Plugin = {
 	name: 'on-demand-import',
 	enforce: 'pre',
-	transform(code, id) {
+	transform(code: string, id: string) {
 		if (id.endsWith('less') || id.endsWith('css')) {
-			return code.replace(
-				/@import\s+(?:\/\*[\s\S]*?\*\/\s*)*(?:url\(\s*(['"]?)([\s\S]*?)\1\s*\)|(['"])([\s\S]*?)\3)\s*(?:\/\*[\s\S]*?\*\/\s*)*((?:[\s\S](?!;))*?);/g,
-				''
-			)
+			return code.replace(/@import\s+url\(\s*(["']?)([^"'()\s]+\.css)\1\s*\)\s*;/g, '')
 		}
 	}
 }
@@ -34,28 +31,49 @@ async function buildLib() {
 				cssMinify: false,
 				lib: {
 					entry: resolve(__dirname, 'lib/index.ts'),
-					name: 'YourLib',
-					fileName: 'index',
 					formats: ['es']
 				},
 				outDir: 'es',
 				minify: false,
 				rollupOptions: {
-					external: ['vue'],
+					external: ['vue', '@floating-ui/dom'],
+					preserveEntrySignatures: 'allow-extension',
 					output: {
+						exports: 'named',
 						globals: { vue: 'Vue' },
-						entryFileNames: '[name].js',
+						entryFileNames: 'index.js',
 						chunkFileNames: '[name].js',
 						inlineDynamicImports: false,
-						manualChunks(id) {
-							if (id && id.includes('node_modules')) return null
-							if (id.endsWith('.ts') || id.endsWith('.vue')) {
-								const rel = relative(resolve(process.cwd(), 'lib'), id)
-								const base = rel.split('?')[0]
-								const name = base.split('.')[0]
-								return name
+						assetFileNames: (assetInfo: { name?: string }) => {
+							if (assetInfo.name?.endsWith('.css')) {
+								return assetInfo.name
 							}
-							return undefined
+							return 'assets/[name][extname]'
+						},
+						advancedChunks: {
+							includeDependenciesRecursively: false,
+							groups: [
+								{
+									name(id: string) {
+										if (id && id.includes('node_modules')) return 'vendor'
+										if (
+											id.endsWith('.ts') ||
+											id.endsWith('.tsx') ||
+											id.endsWith('.vue') ||
+											id.endsWith('.less') ||
+											id.endsWith('.css')
+										) {
+											const rel = relative(resolve(process.cwd(), 'lib'), id)
+											const base = rel.split('?')[0]
+											const name = base.split('.')[0]
+											if (name === 'index') {
+												return 'entry'
+											}
+											return name
+										}
+									}
+								}
+							]
 						}
 					}
 				},
@@ -84,6 +102,7 @@ async function buildIcons() {
 				rollupOptions: {
 					external: ['vue'],
 					output: {
+						exports: 'named',
 						globals: { vue: 'Vue' }
 					}
 				},
@@ -109,6 +128,7 @@ async function buildIcons() {
 				rollupOptions: {
 					external: ['vue'],
 					output: {
+						exports: 'named',
 						globals: { vue: 'Vue' }
 					}
 				},
@@ -133,6 +153,8 @@ async function copyDtsFiles() {
 	for await (let src of walk(srcRoot)) {
 		src = src.replaceAll('\\', '/')
 		if (src.includes('lib/icons')) continue
+		if (src.includes('/test/')) continue
+		if (src.includes('/share/util/test')) continue
 		let code = await fs.readFile(src, 'utf-8')
 		code = code.replace(/\.vue(?=['"]|$)/g, '.ts')
 		const rel = relative(srcRoot, src)
@@ -180,19 +202,15 @@ async function handleCssImports() {
 		| { js: string; css: string; cssFileName?: string }
 		| { js: string; css: string; cssFileName?: string }[]
 	> = {
-		'message-box': {
-			js: 'message-box.js',
-			css: `import '../index.css'\nimport './message-box.css'\n`
-		},
 		icons: [
 			{
 				js: 'icon-hn.js',
-				css: `import '../index.css'\nimport './icon-hn.css'\n`,
+				css: `import './icon-hn.css'\n`,
 				cssFileName: 'css-hn.js'
 			},
 			{
 				js: 'icon-pa.js',
-				css: `import '../index.css'\nimport './icon-pa.css'\n`,
+				css: `import './icon-pa.css'\n`,
 				cssFileName: 'css-pa.js'
 			}
 		]

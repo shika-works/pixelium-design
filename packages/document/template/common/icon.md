@@ -2,7 +2,7 @@
 # 图标 Icon
 
 Pixelium Design 组件库使用了来自以下图标库的像素风图标：
-- [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/minus-solid)：该图标库提供了 400+ 矢量像素风格图标，包含了 SVG、字体图标、PNG 多种导出格式。许可证基于 [CC BY 4.0 International](https://pixeliconlibrary.com/license/) 协议。
+- [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/)：该图标库提供了 400+ 矢量像素风格图标，包含了 SVG、字体图标、PNG 多种导出格式。许可证基于 [CC BY 4.0 International](https://pixeliconlibrary.com/license/) 协议。
 - [pixelarticons](https://pixelarticons.com/) 的开源版本：它是一款采用单色调线条设计、兼具复古像素美学的极简图标库。该图标库，包含了 SVG、字体图标 的导出格式。开源版本许可证采用了 [MIT](https://github.com/halfmage/pixelarticons/blob/master/LICENSE) 协议。
 
 ## 导入
@@ -27,7 +27,7 @@ Pixelium Design 组件库使用了来自以下图标库的像素风图标：
 # Icon
 
 Pixelium Design uses pixel-style icons from the following icon libraries:
-- [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/minus-solid): This library offers 400+ vector pixel-style icons, available in SVG, icon font, and PNG formats. It is licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/).
+- [@hackernoon/pixel-icon-library](https://pixeliconlibrary.com/): This library offers 400+ vector pixel-style icons, available in SVG, icon font, and PNG formats. It is licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/).
 - The open-source version of [pixelarticons](https://pixelarticons.com/): This is a minimalist icon library featuring monochrome line designs with a retro pixel aesthetic. It provides SVG and icon font export formats. The open-source version is licensed under [MIT](https://github.com/halfmage/pixelarticons/blob/master/LICENSE).
 
 ## Import

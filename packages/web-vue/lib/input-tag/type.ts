@@ -1,5 +1,6 @@
-import type { NumberOrPercentage } from '../share/type'
-import type { TagProps } from '../tag/type'
+import type { PopoverProps, PopoverEvents } from '../popover/type'
+import type { EmitEvent, NumberOrPercentage } from '../share/type'
+import type { TagEvents, TagProps } from '../tag/type'
 
 export type InputTagProps = {
 	/**
@@ -53,10 +54,10 @@ export type InputTagProps = {
 	 */
 	size?: 'medium' | 'large' | 'small'
 	/**
-	 * @property {'default' | 'round'} [shape='default']
-	 * @version 0.0.2
+	 * @property {'rect' | 'round'} [shape='rect']
+	 * @version 0.0.3
 	 */
-	shape?: 'default' | 'round'
+	shape?: 'rect' | 'round' | 'default'
 	/**
 	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
 	 * @version 0.0.2
@@ -83,6 +84,21 @@ export type InputTagProps = {
 	 */
 	collapseTagsPopover?: boolean
 	/**
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>} [tagProps]
+	 * @version 0.0.3
+	 */
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>
+	/**
+	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
+	 * @version 0.0.2
+	 */
+	status?: 'success' | 'warning' | 'error' | 'normal'
+	/**
+	 * @property {boolean} [autofocus=false]
+	 * @version 0.0.2
+	 */
+	autofocus?: boolean
+	/**
 	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [tagTheme='info']
 	 * @version 0.0.2
 	 */
@@ -98,15 +114,10 @@ export type InputTagProps = {
 	 */
 	tagColor?: TagProps['color']
 	/**
-	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
-	 * @version 0.0.2
+	 * @property {Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>} [popoverProps]
+	 * @version 0.0.3
 	 */
-	status?: 'success' | 'warning' | 'error' | 'normal'
-	/**
-	 * @property {boolean} [autofocus=false]
-	 * @version 0.0.2
-	 */
-	autofocus?: boolean
+	popoverProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
 }
 
 export type InputTagEvents = {

@@ -23,11 +23,6 @@
 			<px-input-tag placeholder="Please input" :default-value="['Pixel Art', 'Dark Mode']">
 				<template #prefix>feat:</template>
 			</px-input-tag>
-			<px-input-tag placeholder="Please input">
-				<template #append>
-					<IconBolt></IconBolt>
-				</template>
-			</px-input-tag>
 		</px-space>
 		<px-space>
 			<px-input-group>

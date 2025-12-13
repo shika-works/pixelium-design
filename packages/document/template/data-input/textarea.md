@@ -76,7 +76,7 @@ rows: 默认行数。
 status: 表单验证状态。
 countGraphemes: 自定义字数统计函数，如果只传入 `countGraphemes` 而没有 `sliceGraphemes`，`maxLength` 的长度限制不会生效。
 sliceGraphemes: 自定义截取长度函数。
-autofocus: 原生 `<input>` 的 `autofocus` 属性。
+autofocus: 原生 `<textarea>` 的 `autofocus` 属性。
 events.change: 输入内容变化时的回调。
 events.clear: 点击清除文本按钮，清除内容时的回调。
 events.focus: 输入框聚焦时的回调。
@@ -109,7 +109,7 @@ rows: Default number of rows.
 status: Form validation status.
 countGraphemes: Custom function for counting characters. If only `countGraphemes` is provided without `sliceGraphemes`, the `maxLength` limit will not take effect.
 sliceGraphemes: Custom function for slicing the string.
-autofocus: Native `<input>` `autofocus` attribute.
+autofocus: Native `<textarea>` `autofocus` attribute.
 events.change: Callback when the input value changes.
 events.clear: Callback when the clear button is clicked and the content is cleared.
 events.focus: Callback when the textarea is focused.

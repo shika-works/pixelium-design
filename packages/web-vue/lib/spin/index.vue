@@ -23,6 +23,7 @@
 				:step="props.maskStep"
 				:line-width="props.maskLineWidth"
 				:grid="props.maskGrid"
+				v-bind="props.maskProps"
 				v-if="slots.default"
 			></Mask>
 			<div class="px-spin-content">

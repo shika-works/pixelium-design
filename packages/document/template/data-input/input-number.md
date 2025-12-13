@@ -136,7 +136,7 @@ inputNumberExpose.select: 选中当前数字输入框内容。
 modelValue: Value of the number input (controlled mode), supports `v-model`.
 defaultValue: Default value of the number input (uncontrolled mode).
 placeholder: Placeholder text.
-readonly: Whether the input is read-only.
+readonly: Whether the input is readonly.
 disabled: Whether the input is disabled.
 max: Maximum value (inclusive).
 min: Minimum value (inclusive).

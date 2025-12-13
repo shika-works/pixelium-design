@@ -24,16 +24,6 @@
 				<template #prefix>prefix</template>
 				<template #suffix>suffix</template>
 			</px-select>
-			<px-select placeholder="Please input" :options="options">
-				<template #prepend>
-					<IconBolt></IconBolt>
-				</template>
-			</px-select>
-			<px-select placeholder="Please input" :options="options">
-				<template #append>
-					<IconBolt></IconBolt>
-				</template>
-			</px-select>
 		</px-space>
 		<h4>Composite</h4>
 		<px-space>
@@ -68,22 +58,6 @@
 				</div>
 			</template>
 		</px-select>
-		<h4>Option Render</h4>
-		<px-select placeholder="Please input" v-model="input" :options="options">
-			<template #group-label="{ option }">
-				{{ option.label }}
-				<div
-					style="margin-left: 12px; color: red; font-size: 16px"
-					v-if="option.label === 'citrus fruits'"
-				>
-					HOT!
-				</div>
-			</template>
-			<template #option="{ option }">
-				{{ option.label }}
-				<px-tag style="margin-left: 12px" v-if="option.value === 'orange'">NEW!</px-tag>
-			</template>
-		</px-select>
 	</px-space>
 </template>
 
@@ -95,7 +69,7 @@ import { Select } from '@pixelium/web-vue'
 // If on-demand import
 // import { Select } from '@pixelium/web-vue/es'
 
-const selectRef = ref<InstanceType<typeof Select>>(null)
+const selectRef = ref<InstanceType<typeof Select> | null>(null)
 
 const focusHandler = () => {
 	setTimeout(() => {

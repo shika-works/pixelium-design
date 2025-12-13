@@ -1,15 +1,12 @@
-import type { NumberOrPercentage } from '../share/type'
-import type { GroupOption, Option } from '../share/type'
-import type { TagProps } from '../tag/type'
+import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
+import type { PopoverEvents, PopoverProps } from '../popover/type'
+import type { EmitEvent, NumberOrPercentage } from '../share/type'
+import type { TagEvents, TagProps } from '../tag/type'
+import type { VirtualListProps } from '../virtual-list/type'
 
-export interface SelectOption extends Option<string> {
-	value: any
-	disabled?: boolean
-}
+export interface SelectOption extends OptionListOption<any> {}
 
-export interface SelectGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
+export interface SelectGroupOption extends OptionListGroupOption {
 	children: (SelectOption | string)[]
 }
 
@@ -101,7 +98,7 @@ export type SelectProps = {
 	 */
 	collapseTags?: boolean
 	/**
-	 * @property {number} [collapseTags]
+	 * @property {number} [maxDisplayTags]
 	 * @version 0.0.2
 	 */
 	maxDisplayTags?: number
@@ -110,6 +107,41 @@ export type SelectProps = {
 	 * @version 0.0.2
 	 */
 	collapseTagsPopover?: boolean
+	/**
+	 * @property {boolean} [virtualScroll=false]
+	 * @version 0.0.3
+	 */
+	virtualScroll?: boolean
+	/**
+	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'>} [virtualListProps]
+	 * @version 0.0.3
+	 */
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
+	/**
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>} [tagProps]
+	 * @version 0.0.3
+	 */
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>
+	/**
+	 * @property {'medium' | 'large' | 'small'} [size='medium']
+	 * @version 0.0.2
+	 */
+	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {'rect' | 'round'} [shape='rect']
+	 * @version 0.0.3
+	 */
+	shape?: 'rect' | 'round' | 'default'
+	/**
+	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
+	 * @version 0.0.2
+	 */
+	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
+	/**
+	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
+	 * @version 0.0.2
+	 */
+	status?: 'success' | 'warning' | 'error' | 'normal'
 	/**
 	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [tagTheme='info']
 	 * @version 0.0.2
@@ -126,25 +158,15 @@ export type SelectProps = {
 	 */
 	tagColor?: TagProps['color']
 	/**
-	 * @property {'medium' | 'large' | 'small'} [size='medium']
-	 * @version 0.0.2
+	 * @property {Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>} [popoverProps]
+	 * @version 0.0.3
 	 */
-	size?: 'medium' | 'large' | 'small'
+	popoverProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
 	/**
-	 * @property {'default' | 'round'} [shape='default']
-	 * @version 0.0.2
+	 * @property {boolean} [optionsDestroyOnHide=false]
+	 * @version 0.0.3
 	 */
-	shape?: 'default' | 'round'
-	/**
-	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
-	 * @version 0.0.2
-	 */
-	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
-	/**
-	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
-	 * @version 0.0.2
-	 */
-	status?: 'success' | 'warning' | 'error' | 'normal'
+	optionsDestroyOnHide?: boolean
 }
 
 export type SelectEvents = {
@@ -190,12 +212,13 @@ export type SelectEvents = {
 	 * @event blur
 	 * @version 0.0.2
 	 */
-	blur: []
+	blur: [event: FocusEvent]
 	/**
 	 * @event focus
+	 * @param {FocusEvent} event
 	 * @version 0.0.2
 	 */
-	focus: []
+	focus: [event: FocusEvent]
 	/**
 	 * @event select
 	 * @param {any} value
@@ -240,9 +263,20 @@ export type SelectSlots = {
 	 * @param {any} value
 	 * @param {string} label
 	 * @param {number} index
-	 * @version 0.0.2
+	 * @param {boolean} disabled
+	 * @param {boolean} readonly
+	 * @version 0.0.3
 	 */
 	tag: {}
+	/**
+	 * @slot label
+	 * @param {any} value
+	 * @param {string} label
+	 * @param {boolean} disabled
+	 * @param {boolean} readonly
+	 * @version 0.0.3
+	 */
+	label: {}
 }
 
 export type SelectExpose = {

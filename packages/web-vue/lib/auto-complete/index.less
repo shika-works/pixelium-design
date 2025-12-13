@@ -1,16 +1,14 @@
 @import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
-div.px-auto-complete {
-	font-size: var(--text-size);
-}
 .px-auto-complete {
 	@prefix: px-auto-complete;
+	@px-medium-padding-x: @px-interval-2;
+	@px-large-padding-x: @px-interval-3;
+	@px-small-padding-x: @px-interval-2;
+
 	--auto-complete-size: var(--px-medium-size);
-	--px-medium-padding-x: var(--px-interval-2);
-	--px-large-padding-x: var(--px-interval-3);
-	--px-small-padding-x: var(--px-interval-2);
-	--padding-x-size: var(--px-medium-padding-x);
-	--text-size: var(--px-medium-font-size);
+
 	z-index: 0;
 	position: relative;
 	background-color: transparent;
@@ -19,24 +17,38 @@ div.px-auto-complete {
 	border-style: solid;
 	color: var(--px-neutral-10);
 	display: flex;
-	padding: 0 var(--padding-x-size);
+	padding: 0 @px-medium-padding-x;
 	box-sizing: border-box;
 	height: var(--auto-complete-size);
 	cursor: text;
-	&__inner {
-		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
-		&:last-child {
-			padding-right: var(--padding-x-size);
-		}
+
+	transition: 0.25s all;
+
+	&.@{prefix} {
+		font-size: @px-medium-font-size;
 	}
+
+	@sizes: small, medium, large;
+
+	each(@sizes, {
+  &.@{prefix}__@{value} {
+    @paddingVar: ~"px-@{value}-padding-x";
+    &.@{prefix}__inner {
+      padding-right: calc(@@paddingVar + 1px + 1 * var(--px-bit));
+      &:last-child {
+        padding-right: @@paddingVar;
+      }
+    }
+  }
+});
+
 	&-inner {
 		height: 100%;
 		border: 0;
 		background-color: transparent;
 		box-sizing: border-box;
 		width: 100%;
-		font-size: var(--text-size);
-		line-height: var(--px-line-height);
+		line-height: @px-line-height;
 		font-family: var(--px-font);
 		padding: 0;
 		&:focus-visible {
@@ -52,14 +64,14 @@ div.px-auto-complete {
 		}
 	}
 	&__large {
-		--padding-x-size: var(--px-large-padding-x);
-		--text-size: var(--px-large-font-size);
+		padding: 0 @px-large-padding-x;
+		font-size: @px-large-font-size;
 		--auto-complete-size: var(--px-large-size);
 	}
 	&__small {
-		--padding-x-size: var(--px-small-padding-x);
+		padding: 0 @px-small-padding-x;
+		font-size: @px-small-font-size;
 		--auto-complete-size: var(--px-small-size);
-		--text-size: var(--px-small-font-size);
 	}
 	&__disabled {
 		cursor: not-allowed;
@@ -77,39 +89,50 @@ div.px-auto-complete {
 		align-items: center;
 	}
 	&-prefix-wrapper {
-		margin-right: var(--px-interval-2);
+		margin-right: @px-interval-2;
 	}
 	&-suffix-wrapper,
 	&-loading-wrapper,
 	&-close-wrapper {
-		margin-left: var(--px-interval-2);
+		margin-left: @px-interval-2;
 	}
-	&-close-wrapper {
-		.@{prefix}-icon-placeholder {
-			width: var(--text-size);
-			height: var(--text-size);
+
+	each(@sizes, {
+  &.@{prefix}__@{value} {
+    @fontVar: ~"px-@{value}-font-size";
+    
+		.@{prefix}-inner {
+			font-size: @@fontVar;
 		}
-		.@{prefix}-icon {
-			width: var(--text-size);
-			height: var(--text-size);
-			cursor: pointer;
-			fill: var(--px-neutral-8);
-			transition: 0.25s;
-			&:hover {
-				fill: var(--px-neutral-7);
-			}
-			&:active {
-				fill: var(--px-neutral-9);
-			}
-		}
-	}
-	&-loading-wrapper {
-		.@{prefix}-icon {
-			width: var(--text-size);
-			height: var(--text-size);
-			fill: var(--px-primary-6);
-		}
-	}
+    .@{prefix}-close-wrapper {
+      .@{prefix}-icon-placeholder {
+        width: @@fontVar;
+        height: @@fontVar;
+      }
+      .@{prefix}-icon {
+        width: @@fontVar;
+        height: @@fontVar;
+        cursor: pointer;
+        fill: var(--px-neutral-8);
+        transition: 0.25s;
+        &:hover {
+          fill: var(--px-neutral-7);
+        }
+        &:active {
+          fill: var(--px-neutral-9);
+        }
+      }
+    }
+    .@{prefix}-loading-wrapper {
+      .@{prefix}-icon {
+        width: @@fontVar;
+        height: @@fontVar;
+        fill: var(--px-primary-6);
+      }
+    }
+  }
+});
+
 	&-prefix-wrapper,
 	&-suffix-wrapper {
 		color: var(--px-neutral-10);

@@ -2,8 +2,7 @@
 // Licensed under the MIT License.
 // https://github.com/element-plus/element-plus/blob/dev/packages/components/input/src/utils.ts
 
-import { parseTemplate } from 'parsnip-kit'
-import { clamp } from '../util/common'
+import { parseTemplate, clamp } from 'parsnip-kit'
 import { onBeforeUnmount, ref, type Ref } from 'vue'
 import { useResizeObserver } from './use-resize-observer'
 import { inBrowser } from '../util/env'

@@ -47,10 +47,10 @@ export type InputProps = {
 	 */
 	size?: 'medium' | 'large' | 'small'
 	/**
-	 * @property {'default' | 'round'} [shape='default']
-	 * @version 0.0.2
+	 * @property {'rect' | 'round'} [shape='rect']
+	 * @version 0.0.3
 	 */
-	shape?: 'default' | 'round'
+	shape?: 'rect' | 'round' | 'default'
 	/**
 	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
 	 * @version 0.0.2

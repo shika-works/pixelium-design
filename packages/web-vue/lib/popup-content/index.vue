@@ -1,6 +1,15 @@
 <template>
-	<Teleport :to="props.root || 'body'">
-		<Transition :name="'px-popup-content-fade__' + popupRoughPlacement">
+	<PopupWrapper
+		:root="props.root"
+		:zIndex="props.zIndex"
+		:visible="props.visible"
+		:close-delay="ANIMATION_DURATION"
+		:destroy-on-hide="props.destroyOnHide"
+	>
+		<Transition
+			:name="'px-popup-content-fade__' + (popupFinalPlacement || popupRoughPlacement)"
+			appear
+		>
 			<div
 				ref="contentRef"
 				v-show="props.visible"
@@ -15,7 +24,6 @@
 					...floatingStyles,
 					visibility: show ? 'visible' : 'hidden',
 					pointerEvents: show ? 'auto' : 'none',
-					zIndex: props.zIndex ?? currentZIndex,
 					width: isNumber(contentWidth) ? `${contentWidth}px` : undefined,
 					...props.contentStyle
 				}"
@@ -30,7 +38,7 @@
 				<canvas class="px-popup-content-canvas" ref="canvasRef" />
 			</div>
 		</Transition>
-	</Teleport>
+	</PopupWrapper>
 </template>
 
 <script setup lang="ts">
@@ -51,8 +59,9 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { PopupContentEvents, PopupContentProps } from './type'
 import { isNumber } from 'parsnip-kit'
-import { useZIndex } from '../share/hook/use-z-index'
 import { inBrowser } from '../share/util/env'
+import PopupWrapper from '../popup-wrapper/index.vue'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'PopupContent'
@@ -65,9 +74,9 @@ const props = withDefaults(defineProps<PopupContentProps>(), {
 	offset: 8,
 	variant: 'light',
 	visible: undefined,
-	widthEqual: false
+	widthEqual: false,
+	destroyOnHide: false
 })
-const [currentZIndex, next] = useZIndex('popup')
 
 const ANIMATION_DURATION = 250
 
@@ -95,7 +104,7 @@ const popupSide = computed<'start' | 'end' | 'middle'>(() => {
 
 const contentWidth = ref<undefined | number>(undefined)
 
-async function updatePosition(element: HTMLElement) {
+async function updatePosition(element: HTMLElement | SVGElement) {
 	if (!inBrowser()) {
 		return
 	}
@@ -151,10 +160,9 @@ async function updatePosition(element: HTMLElement) {
 
 	const borderRadius = Math.max(props.borderRadius || pixelSize, pixelSize)
 
-	const ds = Math.max(
-		0,
-		borderRadius - calcWhenLeaveBaseline(pixelSize, borderRadius) + pixelSize
-	)
+	const ds =
+		Math.max(0, borderRadius - calcWhenLeaveBaseline(pixelSize, borderRadius) + pixelSize) +
+		pixelSize
 
 	const data = await computePosition(element, contentRef.value, {
 		placement: props.placement,
@@ -191,17 +199,32 @@ async function updatePosition(element: HTMLElement) {
 	})
 }
 
-async function openHandler(element: HTMLElement) {
-	setTimeout(() => {
-		updatePosition(element)
-	})
-}
-
 async function closeHandler() {
+	if (show.value === false) {
+		return
+	}
 	setTimeout(() => {
 		show.value = false
 		popupFinalPlacement.value = undefined
 	}, ANIMATION_DURATION)
+}
+
+const doOpen = () => {
+	let element: HTMLElement | SVGElement | null = null
+	if (props.target instanceof HTMLElement || props.target instanceof SVGElement) {
+		element = props.target
+	} else if (
+		props.target &&
+		(props.target.el instanceof HTMLElement || props.target.el instanceof SVGElement)
+	) {
+		element = props.target.el
+	}
+	if (!inBrowser()) {
+		return
+	}
+	if (element) {
+		updatePosition(element)
+	}
 }
 
 const processVisible = (value: boolean) => {
@@ -209,12 +232,7 @@ const processVisible = (value: boolean) => {
 		return
 	}
 	if (value) {
-		next()
-		if (props.target instanceof HTMLElement) {
-			openHandler(props.target)
-		} else if (props.target && props.target.el instanceof HTMLElement) {
-			openHandler(props.target.el)
-		}
+		doOpen()
 	} else {
 		closeHandler()
 	}
@@ -222,8 +240,8 @@ const processVisible = (value: boolean) => {
 
 watch(
 	() => props.visible,
-	(val) => {
-		processVisible(!!val)
+	() => {
+		updateRenderState()
 	}
 )
 
@@ -236,12 +254,12 @@ const contentMouseleaveHandler = (e: MouseEvent) => {
 	emits('contentMouseleave', e)
 }
 
+const updateRenderState = () => {
+	processVisible(!!props.visible)
+}
+
 defineExpose({
-	updateRenderState: () => {
-		nextTick(() => {
-			processVisible(!!props.visible)
-		})
-	},
+	updateRenderState,
 	content: contentRef
 })
 
@@ -259,6 +277,7 @@ watch(
 		arrowXOffset,
 		arrowYOffset,
 		show,
+		floatingStyles,
 		() => props.variant,
 		() => props.arrow
 	],
@@ -279,9 +298,10 @@ const drawPixel = () => {
 
 	const pixelSize = calcPixelSize()
 
-	const borderRadius = fillArr(Math.max(props.borderRadius || pixelSize, pixelSize), 4)
+	const borderRadiusValue = Math.max(props.borderRadius || pixelSize, pixelSize)
+	const borderRadius = fillArr(borderRadiusValue, 4)
 
-	const offset = props.arrow ? pixelSize * 3 : 0
+	const offset = props.arrow ? pixelSize * 2 : 0
 	const offsetX =
 		popupFinalPlacement.value === 'left' || popupFinalPlacement.value === 'right' ? offset : 0
 	const offsetY =
@@ -301,29 +321,34 @@ const drawPixel = () => {
 	const offsetTop = popupFinalPlacement.value === 'bottom' ? offset : 0
 	const offsetLeft = popupFinalPlacement.value === 'right' ? offset : 0
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		offsetX,
-		offsetY,
-		offsetTop,
-		offsetLeft
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			offsetX,
+			offsetY,
+			offsetTop,
+			offsetLeft
+		)
+	}
+
 	const backgroundColor = getBackgroundColor(props.variant)
 
-	floodFill(
-		ctx,
-		Math.round((width - offsetX) / 2 + offsetLeft),
-		Math.round((height - offsetY) / 2 + offsetTop),
-		backgroundColor
-	)
-	if (props.arrow) {
+	if (backgroundColor) {
+		floodFill(
+			ctx,
+			Math.round((width - offsetX) / 2 + offsetLeft),
+			Math.round((height - offsetY) / 2 + offsetTop),
+			backgroundColor
+		)
+	}
+	if (props.arrow && borderColor && backgroundColor) {
 		drawArrow(
 			ctx,
 			width,
@@ -339,8 +364,9 @@ const drawPixel = () => {
 	}
 }
 
-useResizeObserver(contentRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
+useResizeObserver(contentRef, doOpen)
+useWatchGlobalCssVal(doOpen)
+useTransitionEnd(contentRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less" />

@@ -113,6 +113,29 @@ Set `creatable` to allow new options to be added (type `string`). `filterable` m
 <preview path="./select-creatable.vue"></preview>
 
 [[[zh
+## 虚拟列表
+
+`virtualScroll` 属性开启虚拟列表，选项数据量大时可以开启提高性能。
+
+]]]
+[[[en
+## Virtual List
+
+Enabling the `virtualScroll` property activates the virtual list, which can be turned on to improve performance when there is a large amount of option data.
+]]]
+<preview path="./select-virtual.vue"></preview>
+
+[[[zh
+## 选项自定义渲染
+通过插槽自定义渲染选项。
+]]]
+[[[en
+## Custom Rendering of Options
+Render options in a custom way via slots.
+]]]
+<preview path="./select-option.vue"></preview>
+
+[[[zh
 ## 更多配置
 选择器 Select 还拥有 Input、InputTag、AutoComplete 组件的部分功能。
 ]]]
@@ -143,13 +166,19 @@ creatable: 可否创建选项，需要开启 `filterable`。
 collapseTags: 是否开启折叠标签。
 maxDisplayTags: 展示标签的最大数量，开启 `collapseTags` 后生效。
 collapseTagsPopover: 是否在弹出框中展示被折叠的标签，开启 `collapseTags` 后生效。
-tagTheme: 标签的 `theme` 属性，设置标签主题颜色。
-tagVariant: 标签的 `variant` 属性，设置标签样式变体。
-tagColor: 标签的 `color` 属性，自定义标签颜色。
+tagTheme: <Badge type="warning" text="Deprecated" /> 标签的 `theme` 属性，设置标签主题颜色。
+tagVariant: <Badge type="warning" text="Deprecated" /> 标签的 `variant` 属性，设置标签样式变体。
+tagColor: <Badge type="warning" text="Deprecated" /> 标签的 `color` 属性，自定义标签颜色。
+tagProps: 标签的属性。
+virtualScroll: 是否开启虚拟滚动。
+virtualListProps: 虚拟列表属性。
 size: 选择器尺寸。
 shape: 选择器形状。
 borderRadius: 圆角半径，优先级高于 `shape`，与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 status: 表单验证状态。
+popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
+optionsDestroyOnHide: 下拉选项是否会在隐藏时销毁。
+
 events.input: 搜索选项输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.update:inputValue: 更新 `inputValue` 的回调。
@@ -165,6 +194,7 @@ slots.suffix: 后缀内容。
 slots.option: 选项内容。
 slots.group-label: 选项组的标签名。
 slots.tag: 标签内容。
+slots.label: 已选择的内容。
 selectExpose.focus: 聚焦当前控件。
 selectExpose.blur: 取消聚焦当前控件。
 selectExpose.clear: 清空当前输入内容。
@@ -188,13 +218,19 @@ creatable: Allow creating new options; requires `filterable`.
 collapseTags: Collapse selected tags in multi-select mode.
 maxDisplayTags: Max number of visible tags when `collapseTags` is on.
 collapseTagsPopover: Show collapsed tags in a popover when `collapseTags` is on.
-tagTheme: `theme` prop for tags (color theme).
-tagVariant: `variant` prop for tags (style variant).
-tagColor: `color` prop for tags (custom color).
+tagTheme: <Badge type="warning" text="Deprecated" /> `theme` properties for tags (color theme).
+tagVariant: <Badge type="warning" text="Deprecated" /> `variant` properties for tags (style variant).
+tagColor: <Badge type="warning" text="Deprecated" /> `color` properties for tags (custom color).
+tagProps: Properties of tags.
+virtualScroll: Whether render options with virtual list.
+virtualListProps: Properties of virtual list.
 size: Size of the selector.
 shape: Shape of the selector.
 borderRadius: Border-radius value; higher priority than `shape`. Single value or 1-item array → all corners; 2-item array → [top-left & bottom-right, top-right & bottom-left]; 3-item array → [top-left, top-right & bottom-left, bottom-right]; 4-item array → clockwise order for all four corners.
 status: Form validation status.
+popoverProps: Popover component properties when tags are collapsed.
+optionsDestroyOnHide: Whether the dropdown options will be destroyed when hidden.
+
 events.input: Fired on search input.
 events.update:modelValue: Fired when `modelValue` changes.
 events.update:inputValue: Fired when `inputValue` changes.
@@ -210,7 +246,47 @@ slots.suffix :Suffix content.
 slots.option: Custom option content.
 slots.group-label: Custom group-label content.
 slots.tag: Custom tag content.
+slots.label: Selected content.
 selectExpose.focus: Focus the selector.
 selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
 ]]]
+
+### SelectOption, SelectGroupOption
+
+```ts
+export interface Option<T = any> {
+	value: T
+	label: string
+}
+
+export interface GroupOption<T = any> {
+	children: (Option<T> | string)[]
+	type: typeof GROUP_OPTION_TYPE
+}
+
+export interface OptionListOption<T = any> extends Option<T> {
+	disabled?: boolean
+	key?: string | number | symbol
+}
+
+export interface OptionListGroupOption extends GroupOption {
+	label: string
+	key: string | number | symbol
+	children: (OptionListOption | string)[]
+}
+
+export interface SelectOption extends OptionListOption<any> {
+}
+
+export interface SelectGroupOption extends OptionListGroupOption {
+	children: (SelectOption | string)[]
+}
+```
+
+### EmitEvent
+```ts
+export type EmitEvent<T extends Record<string, any>> = {
+	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}
+```

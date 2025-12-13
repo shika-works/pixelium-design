@@ -59,7 +59,7 @@ export type PopoverProps = {
 	 */
 	disabled?: boolean
 	/**
-	 * @property {number} [disabled]
+	 * @property {number} [zIndex]
 	 * @version 0.0.2
 	 */
 	zIndex?: number
@@ -78,6 +78,11 @@ export type PopoverProps = {
 	 * @version 0.0.2
 	 */
 	contentStyle?: CSSProperties
+	/**
+	 * @property {boolean} [destroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	destroyOnHide?: boolean
 }
 
 export type PopoverEvents = {
@@ -92,7 +97,7 @@ export type PopoverEvents = {
 	 * @param {MouseEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e: MouseEvent]
+	close: [e: MouseEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e

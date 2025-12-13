@@ -13,18 +13,18 @@
 	},
 	"devDependencies": {
 		"comment-parser": "^1.4.1",
-		"oxlint": "^1.14.0",
 		"parsnip-kit": "^0.0.5",
-		"prettier": "^3.6.2",
 		"ts-morph": "^26.0.0",
 		"vitepress": "2.0.0-alpha.12"
 	},
 	"dependencies": {
 		"@pixelium/web-vue": "workspace:*",
-		"@vitepress-demo-preview/component": "^2.5.1",
-		"@vitepress-demo-preview/plugin": "^1.4.0",
+		"@vitepress-demo-preview/component": "^2.6.1",
+		"@vitepress-demo-preview/core": "^0.3.0",
+		"@vitepress-demo-preview/plugin": "^1.4.1",
 		"grapheme-splitter": "^1.0.4",
-		"markdown-it-katex": "^2.0.3"
+		"markdown-it-katex": "^2.0.3",
+		"vue": "^3.5.22"
 	},
 	"engines": {
 		"node": ">=23.11.1"

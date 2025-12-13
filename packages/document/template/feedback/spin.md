@@ -73,10 +73,11 @@ Use the `description` slot to add a loading description.
 [[[api zh
 loading: 加载状态，单独使用 Spin 时默认 `true`，包裹内容时默认 `false`。
 size: 图标尺寸。
-maskColor: 遮罩层 Mask 组件颜色。
-maskStep: 遮罩层 Mask 组件网格间隔。
-maskLineWidth: 遮罩层 Mask 组件线条尺寸。
-maskGrid: 遮罩层 Mask 组件是否为网格背景。
+maskColor: <Badge type="warning" text="Deprecated" /> 遮罩层 Mask 组件颜色。
+maskStep: <Badge type="warning" text="Deprecated" /> 遮罩层 Mask 组件网格间隔。
+maskLineWidth: <Badge type="warning" text="Deprecated" /> 遮罩层 Mask 组件线条尺寸。
+maskGrid: <Badge type="warning" text="Deprecated" /> 遮罩层 Mask 组件是否为网格背景。
+maskProps: 遮罩层的属性。
 zIndex: 包裹内容时，加载状态呈现的覆盖层的 `z-index`。
 slots.default: Spin 包裹的内容。
 slots.icon: Spin 的图标。
@@ -85,10 +86,11 @@ slots.description: Spin 加载时的描述。
 [[[api en
 loading: Loading state. Defaults to `true` when Spin is used alone, and `false` when wrapping content.
 size: Icon size.
-maskColor: Mask component color.
-maskStep: Grid spacing of the Mask component.
-maskLineWidth: Line width of the Mask component.
-maskGrid: Whether the Mask component has a grid background.
+maskProps: Properties of mask.
+maskColor: <Badge type="warning" text="Deprecated" /> Mask component color.
+maskStep: <Badge type="warning" text="Deprecated" /> Grid spacing of the Mask component.
+maskLineWidth: <Badge type="warning" text="Deprecated" /> Line width of the Mask component.
+maskGrid: <Badge type="warning" text="Deprecated" /> Whether the Mask component has a grid background.
 zIndex: `z-index` of the overlay when wrapping content.
 slots.default: Content wrapped by Spin.
 slots.icon: Icon for Spin.

@@ -1,0 +1,86 @@
+@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
+
+div.px-image {
+	font-size: 0;
+}
+
+.px-image {
+	display: inline-block;
+	position: relative;
+
+	transition: 0.25s all;
+
+	&-previewable {
+		cursor: pointer;
+	}
+
+	&-preview {
+		transition: 0.25s;
+		width: 100%;
+		height: 100%;
+		&-enter-to,
+		&-leave-from {
+			opacity: 1;
+		}
+		&-enter-from,
+		&-leave-to {
+			opacity: 0;
+		}
+
+		&-close {
+			width: 20px;
+			height: 20px;
+			position: absolute;
+			cursor: pointer;
+			top: @px-interval-4;
+			right: @px-interval-4;
+			fill: var(--px-neutral-10);
+			transition: fill 0.25s;
+			&:hover {
+				fill: var(--px-neutral-8);
+			}
+			&:active {
+				fill: var(--px-neutral-9);
+			}
+		}
+	}
+
+	&-fallback {
+		font-size: var(--px-medium-font-size);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.px-image-img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.object-fit(@type) {
+		.px-image-img {
+			object-fit: @type;
+		}
+	}
+
+	&__fill {
+		.object-fit(fill);
+	}
+	&__contain {
+		.object-fit(contain);
+	}
+	&__cover {
+		.object-fit(cover);
+	}
+	&__none {
+		.object-fit(none);
+	}
+	&__scale-down {
+		.object-fit(scale-down);
+	}
+}

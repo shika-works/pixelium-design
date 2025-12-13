@@ -47,20 +47,23 @@ function getProps(node: TypeAliasDeclaration | InterfaceDeclaration, compName: s
 				const propertyTag = parsed[0]?.tags.find((tag) => tag.tag === 'property')
 				const name = propertyTag?.name || prop.getName()
 				const optional = propertyTag?.optional || false
+				const ignore = parsed[0]?.tags.find((tag) => tag.tag === 'ignore')
 				propType = propertyTag?.type || ''
 				const defaultValue = propertyTag?.default || ''
 
-				props.push({
-					nodeName,
-					nodeApiType,
-					version,
-					props: {
-						prop: name,
-						type: propType,
-						optional,
-						defaultValue
-					}
-				})
+				if (!ignore) {
+					props.push({
+						nodeName,
+						nodeApiType,
+						version,
+						props: {
+							prop: name,
+							type: propType,
+							optional,
+							defaultValue
+						}
+					})
+				}
 			} else if (nodeApiType === 'events') {
 				const eventTag = parsed[0]?.tags.find((tag) => tag.tag === 'event')
 				const name = eventTag?.name || prop.getName()

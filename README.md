@@ -21,12 +21,15 @@ Pixelium Design – A pixel-art UI component library for Vue, built with TypeScr
 ## Documentation & Support
 - **Documentation**: [View the documentation](https://shika-works.github.io/pixelium-design/) to learn more about features and usage.
 - **Support**: Encounter any issues? Feel free to submit an [Issue](https://github.com/shika-works/pixelium-design/issues) or [Pull Request](https://github.com/shika-works/pixelium-design/pulls).
+- Please read the [Conventional Commits](./conventional-commits.md) specification before committing.
 
 ## License
 Pixelium Design is released under the [MIT License](./LICENSE).  
 This project uses the following third-party assets:  
-- **Font**: [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font), licensed under [SIL OFL 1.1](https://github.com/TakWolf/fusion-pixel-font/blob/master/LICENSE-OFL)  
-- **Icons**: Icons from Pixel Icon Library by HackerNoon, [@hackernoon/pixel-icon-library](https://github.com/hackernoon/pixel-icon-library), licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/)
+- **Font**: [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font), licensed under [SIL OFL 1.1](https://github.com/TakWolf/fusion-pixel-font/blob/master/LICENSE-OFL).
+- **Icons**:
+  - Icons from Pixel Icon Library by HackerNoon, [@hackernoon/pixel-icon-library](https://github.com/hackernoon/pixel-icon-library), licensed under [CC BY 4.0 International](https://pixeliconlibrary.com/license/).
+  - The open-source version of [pixelarticons](https://pixelarticons.com/). The open-source version is licensed under [MIT](https://github.com/halfmage/pixelarticons/blob/master/LICENSE).
 
 ---
 

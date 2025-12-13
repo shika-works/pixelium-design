@@ -1,0 +1,58 @@
+@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
+
+.px-avatar {
+	@prefix: px-avatar;
+
+	--avatar-size: var(--px-medium-size);
+	--text-color: var(--px-neutral-1);
+
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	display: inline-block;
+	position: relative;
+	color: var(--text-color);
+	user-select: none;
+	transition: 0.25s;
+	z-index: 0;
+	box-sizing: border-box;
+
+	width: var(--avatar-size);
+	height: var(--avatar-size);
+
+	&.@{prefix} {
+		font-size: @px-medium-font-size;
+	}
+
+	&__large {
+		--avatar-size: var(--px-large-size);
+		font-size: @px-large-font-size;
+	}
+	&__small {
+		--avatar-size: var(--px-small-size);
+		font-size: @px-small-font-size;
+	}
+	&-canvas,
+	&-inner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+	}
+	&-canvas {
+		z-index: -1;
+	}
+	&-inner {
+		z-index: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: var(--avatar-size);
+		height: var(--avatar-size);
+		border-width: 0;
+		overflow: hidden;
+	}
+}

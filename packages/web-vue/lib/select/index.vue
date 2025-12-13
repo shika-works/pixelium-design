@@ -11,9 +11,16 @@ import {
 	watch,
 	useAttrs,
 	Fragment,
-	h
+	h,
+	mergeProps
 } from 'vue'
-import type { SelectEvents, SelectGroupOption, SelectOption, SelectProps } from './type'
+import type {
+	SelectEvents,
+	SelectExpose,
+	SelectGroupOption,
+	SelectOption,
+	SelectProps
+} from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -26,14 +33,15 @@ import {
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import type { InputGroupProps } from '../input-group/type'
-import InputGroup from '../input-group/index.vue'
+import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Popover from '../popover/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
@@ -47,10 +55,18 @@ import {
 	isString,
 	isUndefined
 } from 'parsnip-kit'
-import { BORDER_CORNER_RAD_RANGE, GROUP_OPTION_TYPE } from '../share/const'
-import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
+import {
+	BORDER_CORNER_RAD_RANGE,
+	GET_ELEMENT_RENDERED,
+	GROUP_OPTION_TYPE,
+	POPUP_CONTENT_DEFAULT_MAX_WIDTH
+} from '../share/const'
 import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Select'
@@ -58,11 +74,7 @@ defineOptions({
 
 const attrs = useAttrs()
 
-const pixelSize = calcPixelSize()
-
 const props = withDefaults(defineProps<SelectProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -75,7 +87,9 @@ const props = withDefaults(defineProps<SelectProps>(), {
 	tagVariant: 'plain',
 	multiple: false,
 	collapseTagsPopover: true,
-	collapseTags: false
+	collapseTags: false,
+	virtualScroll: false,
+	optionsDestroyOnHide: false
 })
 
 const ANIMATION_DURATION = 250
@@ -91,27 +105,60 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
-const [_, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const [index, first, last] = innerInputGroup.value
+	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
+			return instance?.vnode.el?.nextElementSibling
+		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
 
 const modelValueIsFalse = (modelValue: any) => {
@@ -121,7 +168,7 @@ const modelValueIsFalse = (modelValue: any) => {
 		(props.multiple && isArray(modelValue) && modelValue.length === 0)
 	)
 }
-const [modelValue, updateModelValue] = useControlledMode<any>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (nextValue: any) => {
 		if (!props.multiple) {
@@ -138,7 +185,7 @@ const [modelValue, updateModelValue] = useControlledMode<any>('modelValue', prop
 	}
 })
 
-const [inputValue, updateInputValue] = useControlledMode<string>('inputValue', props, emits, {
+const [inputValue, updateInputValue] = useControlledMode('inputValue', props, emits, {
 	defaultField: 'defaultInputValue',
 	transform: (nextValue: string | undefined | null) => {
 		return nextValue || ''
@@ -214,6 +261,7 @@ const currentLabelSelected = computed(() => {
 })
 
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
+const contentRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 const popoverRef = shallowRef<InstanceType<typeof Popover> | null>(null)
@@ -265,17 +313,14 @@ const inputHandler = async (e: Event) => {
 }
 
 const clearHandler = async () => {
-	await new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		})
-	})
+	await new Promise((res) => setTimeout(res))
 	const nextModelValue = props.multiple ? [] : null
 	await updateInputValue('')
 	await updateModelValue(nextModelValue)
 	emits('change', nextModelValue)
 	emits('clear', nextModelValue)
 	emits('inputChange', '')
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
@@ -284,9 +329,16 @@ const changeHandler = (e: Event) => {
 	emits('inputChange', target.value, e)
 }
 
+const [wait, cancel] = useCancelableDelay()
+
 const focusMode = ref(false)
 
-const focusImpl = () => {
+const focusImpl = async (e: FocusEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
+		return
+	}
+	cancel()
+
 	focusMode.value = true
 	nextTick(() => {
 		if (inputRef.value && props.filterable) {
@@ -301,10 +353,10 @@ const focusImpl = () => {
 		}
 	})
 	triggerPopover()
-	emits('focus')
+	emits('focus', e)
 }
-const focusInputHandler = (e: MouseEvent) => {
-	if (disabledComputed.value || props.readonly) {
+const focusInputHandler = async (e: MouseEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
 	const target = e.target
@@ -313,29 +365,45 @@ const focusInputHandler = (e: MouseEvent) => {
 			return
 		}
 	}
-	focusImpl()
+	contentRef.value?.focus()
 }
 
-const blurSelect = async () => {
+const blurSelectImpl = async () => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
+
 	focusMode.value = false
-	popoverVisible.value = false
+	closePopover()
 	inputRef.value?.blur()
+	contentRef.value?.blur()
 	setTimeout(async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
-	emits('blur')
+	return next
 }
 
-useClickOutsideListener(
-	[
-		wrapperRef,
-		() => {
-			return popoverRef.value?.triggerContent?.content
-		}
-	],
-	blurSelect
-)
+const blurSelect = async (e: FocusEvent) => {
+	const next = await blurSelectImpl()
+	if (!next) {
+		return
+	}
+	emits('blur', e)
+	formItemProvide?.blurHandler()
+}
+
+const focusoutHandler = (e: FocusEvent) => {
+	const relatedTarget = e.relatedTarget as Node
+	if (relatedTarget && popoverRef.value?.triggerContent?.content?.contains(relatedTarget)) {
+		return
+	}
+	if (relatedTarget && wrapperRef.value?.contains(relatedTarget)) {
+		return
+	}
+	blurSelect(e)
+}
 
 const hoverFlag = ref(false)
 const mouseenterHandler = () => {
@@ -346,7 +414,7 @@ const mouseleaveHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const getNextModelValue = (value: any) => {
@@ -370,11 +438,7 @@ const getNextModelValue = (value: any) => {
 }
 
 const selectHandler = async (value: any, option: string | SelectOption, e: MouseEvent) => {
-	await new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		})
-	})
+	await new Promise((res) => setTimeout(res))
 	const nextValue = getNextModelValue(value)
 	const nextInputValue = ''
 	await updateModelValue(nextValue)
@@ -382,6 +446,8 @@ const selectHandler = async (value: any, option: string | SelectOption, e: Mouse
 		focusMode.value = false
 		closePopover()
 		emits('select', nextValue, option, e)
+		emits('change', nextValue)
+		formItemProvide?.changeHandler()
 		setTimeout(async () => {
 			await updateInputValue(nextInputValue)
 		}, ANIMATION_DURATION)
@@ -451,10 +517,18 @@ const optionsFiltered = computed(() => {
 	return ans
 })
 
-defineExpose({
-	focus: focusImpl,
-	blur: blurSelect,
-	clear: () => clearHandler()
+defineExpose<SelectExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | null }>({
+	focus: () => {
+		if (disabledComputed.value || readonlyComputed.value) {
+			return
+		}
+		contentRef.value?.focus()
+	},
+	blur: () => {
+		blurSelectImpl()
+	},
+	clear: () => clearHandler(),
+	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
 })
 
 const popoverVisible = ref(false)
@@ -476,7 +550,7 @@ const tagSize = computed(() => {
 })
 
 const tagCanClose = computed(() => {
-	return !disabledComputed.value && !props.readonly
+	return !disabledComputed.value && !readonlyComputed.value
 })
 
 const tagCloseHandler = async (value: any, e: MouseEvent) => {
@@ -490,6 +564,7 @@ const tagCloseHandler = async (value: any, e: MouseEvent) => {
 	await updateModelValue(nextValue)
 	emits('tagClose', value, e)
 	emits('change', nextValue)
+	formItemProvide?.changeHandler()
 }
 
 const shouldCollapseTags = computed(() => {
@@ -531,16 +606,17 @@ watch(
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		darkMode,
 		focusMode,
-		hoverFlag
+		hoverFlag,
+		statusComputed,
+		nextIsTextButton
 	],
 	() => {
-		setTimeout(() => {
-			drawPixel()
-		})
+		drawPixel()
 	}
 )
 
@@ -565,33 +641,43 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 
 	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 onMounted(() => {
@@ -602,16 +688,27 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 
-const stopHandler = (e: Event) => {
-	e.stopPropagation()
-}
+const popoverProps = computed(() => {
+	return {
+		...props.popoverProps,
+		contentStyle: {
+			maxWidth: `${POPUP_CONTENT_DEFAULT_MAX_WIDTH}px`,
+			...props.popoverProps?.contentStyle
+		}
+	}
+})
 
 defineRender(() => {
 	const Inner = (
 		<Fragment>
 			{slots.prefix && <div class="px-select-prefix-wrapper">{slots.prefix()}</div>}
-			<div class="px-select-content">
+			<div
+				class="px-select-content"
+				ref={contentRef}
+				tabindex={disabledComputed.value || readonlyComputed.value ? -1 : 0}
+			>
 				{props.multiple &&
 					tagsShowed.value.map((e: any, index: number) => {
 						return (
@@ -623,6 +720,7 @@ defineRender(() => {
 								closable={tagCanClose.value}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								{...props.tagProps}
 								onClose={(event) => tagCloseHandler(e, event)}
 							>
 								{{
@@ -631,7 +729,9 @@ defineRender(() => {
 											? slots.tag({
 													value: e,
 													label: currentLabelSelectedMultiple.value[index],
-													index
+													index,
+													disabled: disabledComputed.value,
+													readonly: readonlyComputed.value
 												})
 											: currentLabelSelectedMultiple.value[index]
 								}}
@@ -647,6 +747,7 @@ defineRender(() => {
 								theme={props.tagTheme}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								{...props.tagProps}
 							>
 								{{
 									default: () =>
@@ -654,13 +755,15 @@ defineRender(() => {
 											? slots.tag({
 													value: null,
 													label: `+${tagsCollapsed.value.length}`,
-													index: -1
+													index: -1,
+													disabled: disabledComputed.value,
+													readonly: readonlyComputed.value
 												})
 											: `+${tagsCollapsed.value.length}`
 								}}
 							</Tag>
 						) : (
-							<Popover>
+							<Popover {...popoverProps.value}>
 								{{
 									default: () => (
 										<Tag
@@ -669,6 +772,7 @@ defineRender(() => {
 											theme={props.tagTheme}
 											disabled={disabledComputed.value}
 											color={props.tagColor}
+											{...props.tagProps}
 										>
 											{{
 												default: () =>
@@ -676,7 +780,9 @@ defineRender(() => {
 														? slots.tag({
 																value: null,
 																label: `+${tagsCollapsed.value.length}`,
-																index: -1
+																index: -1,
+																disabled: disabledComputed.value,
+																readonly: readonlyComputed.value
 															})
 														: `+${tagsCollapsed.value.length}`
 											}}
@@ -694,6 +800,7 @@ defineRender(() => {
 														disabled={disabledComputed.value}
 														color={props.tagColor}
 														closable={tagCanClose.value}
+														{...props.tagProps}
 														onClose={(event) => tagCloseHandler(e, event)}
 													>
 														{{
@@ -703,7 +810,9 @@ defineRender(() => {
 																	? slots.tag({
 																			value: e,
 																			label: currentLabelSelectedMultiple.value[currentIndex],
-																			index: currentIndex
+																			index: currentIndex,
+																			disabled: disabledComputed.value,
+																			readonly: readonlyComputed.value
 																		})
 																	: currentLabelSelectedMultiple.value[currentIndex]
 															}
@@ -719,14 +828,13 @@ defineRender(() => {
 					</Fragment>
 				)}
 				<input
+					tabindex={-1}
 					ref={inputRef}
 					class="px-select-inner"
 					value={inputValue.value}
-					disabled={disabledComputed.value || props.readonly}
+					disabled={disabledComputed.value || readonlyComputed.value}
 					onInput={inputHandler}
 					onChange={changeHandler}
-					onFocus={stopHandler}
-					onBlur={stopHandler}
 					onCompositionstart={compositionStartHandler}
 					onCompositionend={compositionUpdateHandler}
 					v-show={props.filterable && focusMode.value}
@@ -748,7 +856,14 @@ defineRender(() => {
 							'px-select-label__disabled': disabledComputed.value
 						}}
 					>
-						{currentLabelSelected.value}
+						{slots.label
+							? slots.label({
+									label: currentLabelSelected.value,
+									value: modelValue.value,
+									disabled: disabledComputed.value,
+									readonly: readonlyComputed.value
+								})
+							: currentLabelSelected.value}
 					</div>
 				)}
 			</div>
@@ -790,6 +905,7 @@ defineRender(() => {
 	if (parentScopeId) {
 		scopeObj[parentScopeId] = ''
 	}
+	const pixelSize = calcPixelSize()
 	const Render = (
 		<Popover
 			placement="bottom"
@@ -801,26 +917,31 @@ defineRender(() => {
 			trigger="click"
 			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
+			destroyOnHide={props.optionsDestroyOnHide}
 		>
 			{{
 				default: () =>
 					h(
 						'div',
-						{
-							ref: wrapperRef,
-							class: [
-								'pixelium px-select',
-								sizeComputed.value && `px-select__${sizeComputed.value}`,
-								shapeComputed.value && `px-select__${shapeComputed.value}`,
-								{ 'px-select__inner': innerInputGroup.value },
-								{ 'px-select__disabled': disabledComputed.value }
-							],
-							onClick: focusInputHandler,
-							onMouseenter: mouseenterHandler,
-							onMouseleave: mouseleaveHandler,
-							...scopeObj,
-							...attrs
-						},
+						mergeProps(
+							{
+								ref: wrapperRef,
+								class: [
+									'pixelium px-select',
+									sizeComputed.value && `px-select__${sizeComputed.value}`,
+									shapeComputed.value && `px-select__${shapeComputed.value}`,
+									{ 'px-select__inner': innerInputGroup.value },
+									{ 'px-select__disabled': disabledComputed.value }
+								],
+								onFocusin: focusImpl,
+								onFocusout: focusoutHandler,
+								onClick: focusInputHandler,
+								onMouseenter: mouseenterHandler,
+								onMouseleave: mouseleaveHandler,
+								...scopeObj
+							},
+							attrs
+						),
 						[Inner]
 					),
 				content: () =>
@@ -829,6 +950,8 @@ defineRender(() => {
 							options={optionsFiltered.value}
 							onSelect={selectHandler}
 							activeValues={props.multiple ? modelValue.value : [modelValue.value]}
+							virtualScroll={props.virtualScroll}
+							virtualListProps={props.virtualListProps}
 						>
 							{{
 								'group-label': ({ option }: any) =>

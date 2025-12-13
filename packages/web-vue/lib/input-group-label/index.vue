@@ -2,8 +2,7 @@
 	<div
 		class="pixelium px-input-group-label"
 		:class="{
-			'px-input-group-label__large': sizeComputed === 'large',
-			'px-input-group-label__small': sizeComputed === 'small',
+			[`px-input-group-label__${sizeComputed}`]: sizeComputed,
 			'px-input-group-label__inner': innerInputGroup
 		}"
 		ref="labelRef"
@@ -32,53 +31,68 @@ import {
 	getBorderRadius
 } from '../share/util/plot'
 import { getGlobalThemeColor, parseColor } from '../share/util/color'
-import InputGroup from '../input-group/index.vue'
 import { drawBorder } from './draw'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
-import type { InputGroupProps } from '../input-group/type'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import type { InputGroupProvide } from '../input-group/type'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { FormItemProvide } from '../form-item/type'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'InputGroupLabel'
 })
 
-const props = withDefaults(defineProps<InputGroupLabelProps>(), {
-	shape: 'default',
-	size: 'medium',
-	disabled: false,
-	variant: 'primary',
-	theme: 'primary',
-	autofocus: false,
-	nativeType: 'button',
-	block: false,
-	loading: false
-})
+const props = withDefaults(defineProps<InputGroupLabelProps>(), {})
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
-const [_, first, last] = innerInputGroup.value
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
 
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
 
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
 
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
 
 const hoverFlag = ref(false)
@@ -95,9 +109,20 @@ onMounted(() => {
 	})
 })
 
-watch([borderRadiusComputed, shapeComputed, hoverFlag, activeFlag, darkMode], () => {
-	drawPixel()
-})
+watch(
+	[
+		borderRadiusComputed,
+		shapeComputed,
+		hoverFlag,
+		activeFlag,
+		darkMode,
+		() => props.backgroundColor,
+		nextIsTextButton
+	],
+	() => {
+		drawPixel()
+	}
+)
 watch([first, last], () => {
 	drawPixel()
 })
@@ -125,27 +150,34 @@ const drawPixel = () => {
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value
-	)
-	const backgroundColor = props.backgroundColor
-		? parseColor(props.backgroundColor)
-		: getGlobalThemeColor('neutral', 3)
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
+
+	const backgroundColor =
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
+		getGlobalThemeColor('neutral', 3)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(labelRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(labelRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>

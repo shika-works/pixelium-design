@@ -22,7 +22,6 @@ import {
 	type Ref
 } from 'vue'
 
-import Grid from '../grid/index.vue'
 import type { GridItemProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { useScreenWidth } from '../share/hook/use-screen-width'
@@ -35,7 +34,7 @@ defineOptions({
 })
 
 const instance = getCurrentInstance()
-const inner = ref(instance?.parent?.type === Grid)
+const inner = ref(instance?.parent?.type.name === 'Grid')
 
 const provide = inner.value
 	? inject<{
@@ -144,5 +143,3 @@ const gridColumn = computed(() => {
 	return `${start + offsetComputed.value + 1} / span ${spanComputed.value}`
 })
 </script>
-
-<style lang="less" src="./index.less"></style>

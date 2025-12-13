@@ -19,12 +19,24 @@ export default defineConfig({
 			formats: ['es', 'cjs', 'umd']
 		},
 		rollupOptions: {
-			external: ['vue'],
+			external: ['vue', '@floating-ui/dom'],
 			output: {
+				exports: 'named',
 				globals: {
-					vue: 'Vue'
+					vue: 'Vue',
+					'@floating-ui/dom': 'FloatingUI'
 				}
 			}
+		}
+	},
+	// @ts-ignore
+	test: {
+		environment: 'jsdom',
+		coverage: {
+			provider: 'v8',
+			include: ['lib/**/*.{ts,tsx,js,jsx,vue}'],
+			exclude: ['lib/**/type.ts', '**/*.d.ts'],
+			reporter: ['text', 'html', 'json']
 		}
 	}
 })

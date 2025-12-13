@@ -3,9 +3,9 @@
 
 Tooltip 用于弹出隐藏的文本提示。
 
->目前 Tooltip 和 Tooltip 组件除了样式外几乎是一样的，保留两个组件是出于 UI 设计和代码后续开发的可维护性考虑。
+>目前 Popover 和 Tooltip 组件除了样式外几乎是一样的，保留两个组件是出于 UI 设计和代码后续开发的可维护性考虑。
 >
->从 UI 角度来说，Tooltip 用于只读短文本提示，Tooltip 承载更丰富的内容（标题、按钮、表单等）可以让用户完成轻量操作。
+>从 UI 角度来说，Tooltip 用于只读短文本提示，Popover 承载更丰富的内容（标题、按钮、表单等）可以让用户完成轻量操作。
 ]]]
 
 [[[en
@@ -13,9 +13,9 @@ Tooltip 用于弹出隐藏的文本提示。
 
 The Tooltip is used to display hidden content in a popup.
 
-> Currently, the Tooltip and Tooltip components are almost identical except for their styles. Both are retained for UI design and future code maintainability.
+> Currently, the Popover and Tooltip components are almost identical except for their styles. Both are retained for UI design and future code maintainability.
 >
-> From a UI perspective, Tooltip is used for read-only short text hints, while Tooltip is designed to hold richer content (titles, buttons, forms, etc.) and allows users to perform lightweight actions.
+> From a UI perspective, Tooltip is used for read-only short text hints, while Popover is designed to hold richer content (titles, buttons, forms, etc.) and allows users to perform lightweight actions.
 ]]]
 
 [[[zh
@@ -120,6 +120,8 @@ arrow: 是否显示箭头。
 disabled: 是否禁用气泡。
 zIndex: 气泡的 `z-index`。
 root: 气泡挂载的元素。
+destroyOnHide: 是否在隐藏时销毁气泡。
+
 events.update:visible: v-model 更新 visible 属性。
 events.close: 气泡关闭时的回调。
 events.open: 气泡打开时的回调。
@@ -138,6 +140,8 @@ arrow: Whether to show the arrow.
 disabled: Whether the tooltip is disabled.
 zIndex: The `z-index` of the tooltip.
 root: The element where the tooltip is mounted.
+destroyOnHide: Whether the tooltip will be destroyed when hidden.
+
 events.update:visible: v-model update for the visible property.
 events.close: Callback when the tooltip closes.
 events.open: Callback when the tooltip opens.
