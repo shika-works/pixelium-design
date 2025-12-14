@@ -48,7 +48,9 @@ const instance = getCurrentInstance()
 const inner = ref(instance?.parent?.type.name === 'Row')
 
 const gutter =
-	(inner.value && inject<Ref<{ x: number; y: number }>>('px-row-provide')) ||
+	(inner.value &&
+		inject<Ref<{ x: number; y: number }> | undefined>('px-row-provide', undefined)) ||
 	ref({ x: 0, y: 0 })
 </script>
 <style lang="less" src="./index.less"></style>
+<style lang="less" src="../share/style/index.css" />

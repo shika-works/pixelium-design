@@ -22,11 +22,6 @@ onContentUpdated(() => {
 	if (!inBrowser) {
 		return
 	}
-	const supportsMathML = document.implementation.hasFeature(
-		'http://www.w3.org/TR/MathML2/',
-		'2.0'
-	)
-
 	document
 		.querySelectorAll('.katex-mathml')
 		.forEach((el) => el instanceof HTMLElement && (el.style.display = 'none'))

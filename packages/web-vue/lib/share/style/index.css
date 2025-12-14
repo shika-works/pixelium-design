@@ -5,5 +5,4 @@
 .pixelium {
 	font-family: var(--px-font);
 	line-height: var(--px-line-height);
-	font-size: var(--px-medium-font-size);
 }

@@ -89,8 +89,8 @@ const [index, first, last] = innerInputGroup.value
 			return instance?.vnode.el?.nextElementSibling
 		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
@@ -493,3 +493,4 @@ defineRender(() => {
 </script>
 
 <style lang="less" src="./index.less"></style>
+<style lang="less" src="../share/style/index.css" />

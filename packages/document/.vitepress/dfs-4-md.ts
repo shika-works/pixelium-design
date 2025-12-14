@@ -79,7 +79,8 @@ const guideOrder = [
 	'starting',
 	'controlled-and-uncontrolled',
 	'update-plan',
-	'changelog'
+	'changelog',
+	'example'
 ]
 
 export const dfs4Md = (
