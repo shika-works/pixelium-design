@@ -3,8 +3,14 @@
 .px-main {
 	flex: 1;
 	overflow: auto;
-	padding: 16px;
+	padding: @px-interval-4;
 	background-color: var(--px-neutral-1);
 	color: var(--px-neutral-10);
 	width: 100%;
+
+	box-sizing: border-box;
+
+	&__soft {
+		background-color: var(--px-neutral-2);
+	}
 }
