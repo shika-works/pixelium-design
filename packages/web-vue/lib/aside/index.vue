@@ -32,7 +32,9 @@ defineOptions({ name: 'Aside' })
 
 const instance = getCurrentInstance()
 const inner = ref(instance?.parent?.type.name === 'Container')
-const asideCounter = inner.value ? inject<Ref<number>>(CONTAINER_PROVIDE) : undefined
+const asideCounter = inner.value
+	? inject<Ref<number> | undefined>(CONTAINER_PROVIDE, undefined)
+	: undefined
 
 onMounted(() => {
 	if (asideCounter) {

@@ -136,7 +136,7 @@ const props = withDefaults(defineProps<FormItemProps>(), {
 	contentProps: undefined
 })
 
-const formContext = inject<FormProvide>(FORM_PROVIDE)!
+const formContext = inject<FormProvide | undefined>(FORM_PROVIDE, undefined)!
 
 if (!formContext) {
 	throwError('FormItem must be used inside Form.')

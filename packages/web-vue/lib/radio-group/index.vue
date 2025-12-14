@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<RadioGroupProps>(), {
 
 const emits = defineEmits<RadioGroupEvents>()
 
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')

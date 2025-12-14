@@ -26,8 +26,8 @@ const props = withDefaults(defineProps<ButtonGroupProps>(), {
 	disabled: false
 })
 
-const formProvide = inject<undefined | FormProvide>(FORM_PROVIDE)
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const formProvide = inject<undefined | FormProvide>(FORM_PROVIDE, undefined)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const sizeComputed = createProvideComputed(
 	'size',

@@ -93,7 +93,7 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 	autoResize: false
 })
 
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const emits = defineEmits<TextareaEvents>()
 

@@ -71,8 +71,11 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 	transform: (val) => !!val
 })
 
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
-const checkboxGroupProvide = inject<undefined | CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
+const checkboxGroupProvide = inject<undefined | CheckboxGroupProvide>(
+	CHECKBOX_GROUP_PROVIDE,
+	undefined
+)
 
 const sizeComputed = createProvideComputed(
 	'size',

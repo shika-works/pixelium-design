@@ -219,7 +219,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
 
 const emits = defineEmits<SliderEvent>()
 
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
 
