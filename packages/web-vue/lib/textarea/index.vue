@@ -3,20 +3,22 @@
 		class="pixelium px-textarea"
 		ref="wrapperRef"
 		:class="{
-			[`px-textarea__${props.size}`]: !!props.size,
-			'px-textarea__disabled': !!props.disabled,
+			[`px-textarea__${sizeComputed}`]: !!sizeComputed,
+			'px-textarea__disabled': !!disabledComputed,
 			'px-textarea__resize': !!props.resize
 		}"
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<textarea
 			class="px-textarea-inner"
 			:value="modelValue"
 			ref="inputRef"
 			:placeholder="props.placeholder"
-			:disabled="props.disabled || props.readonly"
+			:disabled="disabledComputed || readonlyComputed"
 			:autofocus="autofocus"
 			:rows="props.rows"
 			:style="{
@@ -25,8 +27,6 @@
 			}"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
-			@blur="blurHandler"
-			@focus="focusHandler"
 			@compositionstart="compositionStartHandler"
 			@compositionend="compositionUpdateHandler"
 		/>
@@ -55,27 +55,32 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
-import type { TextareaEvents, TextareaProps } from './type'
+import { computed, inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
+import type { TextareaEvents, TextareaExpose, TextareaProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { draw } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { debounce, isNullish, type Nullish } from 'parsnip-kit'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { useTextareaHeight } from '../share/hook/use-textarea-height'
 import { calcPixelSize, canvasPreprocess } from '../share/util/plot'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import type { FormItemProvide } from '../form-item/type'
+import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
+import { createProvideComputed } from '../share/util/reactivity'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Textarea'
 })
 
 const props = withDefaults(defineProps<TextareaProps>(), {
-	size: 'medium',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -88,6 +93,8 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 	autoResize: false
 })
 
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
+
 const emits = defineEmits<TextareaEvents>()
 
 const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComposition({
@@ -98,12 +105,23 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 	}
 })
 
-const [modelValue, updateModelValue] = useControlledMode<string>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (e: string | Nullish) => {
 		return e || ''
 	}
 })
+
+const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
+const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [props.size && props, formItemProvide, props],
+	'nullish',
+	(val) => val || 'medium'
+)
+
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
@@ -141,18 +159,21 @@ const inputHandler = async (e: Event) => {
 
 	emits('input', newValue, e)
 	updateModelValue(newValue)
+	formItemProvide?.inputHandler()
 }
 
 const clearHandler = async () => {
 	await updateModelValue('')
 	emits('change', '')
 	emits('clear', '')
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
 	const target = e.target as HTMLInputElement
 	refreshHeight()
 	emits('change', target.value, e)
+	formItemProvide?.changeHandler()
 }
 
 const focusMode = ref(false)
@@ -167,22 +188,25 @@ watch(height, () => {
 	setHeight()
 })
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
 	setHeight()
 	focusMode.value = false
+	emits('blur', e)
+	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	setHeight()
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const showClose = computed(() => {
 	return (
 		props.clearable &&
 		focusMode.value &&
-		!props.disabled &&
-		!props.readonly &&
+		!disabledComputed.value &&
+		!readonlyComputed.value &&
 		!!modelValue.value
 	)
 })
@@ -199,7 +223,7 @@ const mouseleaveHandler = () => {
 	hoverFlag.value = false
 }
 
-defineExpose({
+defineExpose<TextareaExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -214,11 +238,22 @@ defineExpose({
 
 const darkMode = useDarkMode()
 
-watch([() => props.size, () => props.disabled, darkMode, hoverFlag, focusMode], () => {
-	setTimeout(() => {
-		drawPixelDebounce()
-	})
-})
+watch(
+	[
+		sizeComputed,
+		disabledComputed,
+		readonlyComputed,
+		darkMode,
+		hoverFlag,
+		focusMode,
+		statusComputed
+	],
+	() => {
+		setTimeout(() => {
+			drawPixelDebounce()
+		})
+	}
+)
 
 const drawPixel = () => {
 	const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
@@ -230,16 +265,23 @@ const drawPixel = () => {
 	const pixelSize = calcPixelSize()
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !props.disabled && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
-	const backgroundColor = props.disabled
+	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	draw(ctx, width, height, borderColor, backgroundColor, pixelSize)
+	if (borderColor && backgroundColor) {
+		draw(ctx, width, height, borderColor, backgroundColor, pixelSize)
+	}
 }
 const drawPixelDebounce = debounce(drawPixel, 0, {
 	maxWait: 50
@@ -257,6 +299,10 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixelDebounce)
 
 useWatchGlobalCssVal(drawPixelDebounce)
+
+useTransitionEnd(wrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

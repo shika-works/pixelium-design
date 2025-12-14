@@ -1,18 +1,20 @@
-@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-spin {
 	@prefix: px-spin;
 	position: relative;
 	display: inline-block;
-	min-height: var(--px-medium-base-size);
-	min-width: var(--px-medium-base-size);
+	min-height: @px-medium-base-size;
+	min-width: @px-medium-base-size;
+
+	transition: 0.25s;
 	&__small {
-		min-height: var(--px-small-base-size);
-		min-width: var(--px-small-base-size);
+		min-height: @px-small-base-size;
+		min-width: @px-small-base-size;
 	}
 	&__large {
-		min-height: var(--px-large-base-size);
-		min-width: var(--px-large-base-size);
+		min-height: @px-large-base-size;
+		min-width: @px-large-base-size;
 	}
 	&-cover {
 		position: absolute;
@@ -35,34 +37,34 @@
 		justify-content: center;
 		align-items: center;
 		color: var(--px-primary-6);
-		font-size: var(--px-large-font-size);
+		font-size: @px-large-font-size;
 	}
 	&-icon-wrapper {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-bottom: var(--px-interval-2);
+		margin-bottom: @px-interval-2;
 		&__last {
 			margin-bottom: 0;
 		}
-		font-size: var(--px-medium-base-size);
+		font-size: @px-medium-base-size;
 		& .@{prefix}-icon {
-			height: var(--px-medium-base-size);
-			width: var(--px-medium-base-size);
+			height: @px-medium-base-size;
+			width: @px-medium-base-size;
 			fill: var(--px-primary-6);
 		}
 		&__small {
-			font-size: var(--px-small-base-size);
+			font-size: @px-small-base-size;
 			& .@{prefix}-icon {
-				height: var(--px-small-base-size);
-				width: var(--px-small-base-size);
+				height: @px-small-base-size;
+				width: @px-small-base-size;
 			}
 		}
 		&__large {
-			font-size: var(--px-large-base-size);
+			font-size: @px-large-base-size;
 			& .@{prefix}-icon {
-				height: var(--px-large-base-size);
-				width: var(--px-large-base-size);
+				height: @px-large-base-size;
+				width: @px-large-base-size;
 			}
 		}
 	}

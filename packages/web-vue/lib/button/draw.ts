@@ -161,12 +161,13 @@ export const drawBorder = (
 	type: ButtonProps['variant'],
 	inner: boolean,
 	first: boolean,
-	last: boolean
+	last: boolean,
+	nextIsTextButton: boolean
 ) => {
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
 		if (borderRadius[i] > pixelSize) {
-			if (i === 1 || i === 2 ? (inner && (last || type === 'text')) || !inner : true) {
+			if (i === 1 || i === 2 ? (inner && last) || !inner : true) {
 				drawCircle(
 					ctx,
 					center[i][0],
@@ -181,13 +182,14 @@ export const drawBorder = (
 	}
 
 	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(center[0][0], 0, center[1][0] - center[0][0] + pixelSize, pixelSize)
+		let length = center[1][0] - center[0][0] + pixelSize
+		if (inner && !last) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[0][0], 0, length, pixelSize)
 	}
 
-	if (
-		center[2][1] + pixelSize > center[1][1] &&
-		((inner && (last || type === 'text')) || !inner)
-	) {
+	if (center[2][1] + pixelSize > center[1][1] && ((inner && last) || !inner)) {
 		ctx.fillRect(
 			width - pixelSize,
 			center[1][1],
@@ -197,25 +199,26 @@ export const drawBorder = (
 	}
 
 	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0],
-			height - pixelSize,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
+		let length = center[2][0] - center[3][0] + pixelSize
+		if (inner && !last) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[3][0], height - pixelSize, length, pixelSize)
 	}
 
-	const flag = inner && !first && type !== 'text'
-
-	if (!flag && center[3][1] + pixelSize > center[0][1]) {
+	if ((!inner || first) && center[3][1] + pixelSize > center[0][1]) {
 		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
 	}
 
-	if (inner && !first && type !== 'text') {
+	if (inner && !first) {
 		ctx.fillRect(pixelSize / 2, 0, pixelSize / 2, height)
 	}
-	if (inner && !last && type !== 'text') {
-		ctx.fillRect(width - 2 * pixelSize - 1, 0, pixelSize, height)
+	if (inner && !last) {
+		let length = pixelSize
+		if (type === 'text' || nextIsTextButton) {
+			length /= 2
+		}
+		ctx.fillRect(width - 2 * pixelSize - 1, 0, length, height)
 	}
 }
 
@@ -267,10 +270,15 @@ export const drawGradient = (
 	const dxBottomLeft = calcWhenLeaveBaseline(pixelSize, borderRadius[3])
 	const dxTopRight = calcWhenLeaveBaseline(pixelSize, borderRadius[1])
 	const dxTopLeft = calcWhenLeaveBaseline(pixelSize, borderRadius[0])
-	const innerFlag = +!(inner && !first)
-	const innerAndLastOrNotInner = +!inner || (inner && last)
+	const innerAndFirstOrNotInner = +!(inner && !first)
+	const innerAndLastOrNotInner = +!inner || +(inner && last)
 	if (!activeFlag || disabled) {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
+
+		if (!barColor) {
+			return
+		}
+
 		ctx.fillStyle = rgbaColor2string(barColor)
 		if (borderRadius[1] > pixelSize) {
 			drawCircle(
@@ -302,15 +310,14 @@ export const drawGradient = (
 		}
 
 		const barLenX =
-			center[2][0] +
-			pixelSize -
+			center[2][0] -
 			center[3][0] +
-			dxBottomLeft * innerFlag +
-			dxBottomRight * +innerAndLastOrNotInner -
+			dxBottomLeft * innerAndFirstOrNotInner +
+			dxBottomRight * innerAndLastOrNotInner -
 			1 * +!innerAndLastOrNotInner
 		barLenX > 0 &&
 			ctx.fillRect(
-				center[3][0] - dxBottomLeft * innerFlag,
+				center[3][0] - dxBottomLeft * innerAndFirstOrNotInner,
 				height - pixelSize * 2,
 				barLenX,
 				pixelSize
@@ -325,6 +332,11 @@ export const drawGradient = (
 			)
 	} else {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
+
+		if (!barColor) {
+			return
+		}
+
 		ctx.fillStyle = rgbaColor2string(barColor)
 
 		if (borderRadius[0] > pixelSize) {
@@ -361,10 +373,15 @@ export const drawGradient = (
 			pixelSize -
 			center[0][0] +
 			dxTopRight * +innerAndLastOrNotInner +
-			dxTopLeft * innerFlag -
+			dxTopLeft * innerAndFirstOrNotInner -
 			1 * +!innerAndLastOrNotInner
 		barLenX > 0 &&
-			ctx.fillRect(center[0][0] - dxTopLeft * innerFlag, pixelSize, barLenX, pixelSize)
+			ctx.fillRect(
+				center[0][0] - dxTopLeft * innerAndFirstOrNotInner,
+				pixelSize,
+				barLenX,
+				pixelSize
+			)
 		const barLenY = pixelSize + center[3][1] - center[0][1] + dxBottomLeft + dxTopLeft
 		barLenY > 0 && ctx.fillRect(pixelSize, center[0][1] - dxTopLeft, pixelSize, barLenY)
 	}

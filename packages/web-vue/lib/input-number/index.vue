@@ -11,6 +11,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-input-number-prefix-wrapper" v-if="slots.prefix">
 			<slot name="prefix"></slot>
@@ -28,14 +30,18 @@
 				@click="increaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showPlusPrefix"
+				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
+				ref="plusRef"
 			></Plus>
 			<Minus
 				class="px-input-number-icon"
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusPrefix"
+				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
+				ref="minusRef"
 			></Minus>
 		</div>
 		<input
@@ -43,12 +49,10 @@
 			:value="inputValue"
 			ref="inputRef"
 			:placeholder="props.placeholder"
-			:disabled="disabledComputed || props.readonly"
+			:disabled="disabledComputed || readonlyComputed"
 			:autofocus="autofocus"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
-			@blur="blurHandler"
-			@focus="focusHandler"
 			@compositionstart="compositionStartHandler"
 			@compositionend="compositionUpdateHandler"
 		/>
@@ -73,14 +77,18 @@
 				@click="increaseHandler"
 				v-if="showPlusSuffix"
 				@mousedown="subButtonMousedownHandler"
+				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
+				ref="plusRef"
 			></Plus>
 			<Minus
 				class="px-input-number-icon"
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusSuffix"
+				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
+				ref="minusRef"
 			></Minus>
 		</div>
 		<div class="px-input-number-loading-wrapper" v-if="props.loading">
@@ -104,7 +112,7 @@ import {
 	useSlots,
 	watch
 } from 'vue'
-import type { InputNumberEvents, InputNumberProps } from './type'
+import type { InputNumberEvents, InputNumberExpose, InputNumberProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -116,29 +124,34 @@ import {
 	getBorderRadius
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import Minus from '@hackernoon/pixel-icon-library/icons/SVG/regular/minus.svg'
+// @ts-ignore
 import Plus from '@hackernoon/pixel-icon-library/icons/SVG/regular/plus.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
-import { isInfinity, isNanValue, isNullish, isNumber, type Nullish } from 'parsnip-kit'
+import { isInfinity, isNanValue, isNullish, isNumber, type Nullish, clamp } from 'parsnip-kit'
 import { useComposition } from '../share/hook/use-composition'
-import { clamp } from '../share/util/common'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import InputGroup from '../input-group/index.vue'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
-import type { InputGroupProps } from '../input-group/type'
+import type { InputGroupProvide } from '../input-group/type'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import type { FormItemProvide } from '../form-item/type'
+import { createProvideComputed } from '../share/util/reactivity'
+import type { VueComponent } from '../share/type'
+import { fixedNumber } from '../share/util/common'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'InputNumber'
 })
 
 const props = withDefaults(defineProps<InputNumberProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -154,27 +167,57 @@ const props = withDefaults(defineProps<InputNumberProps>(), {
 const emits = defineEmits<InputNumberEvents>()
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
-const [_, first, last] = innerInputGroup.value
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
 
 const reg4Number = /^[+-]?\d+(?:\.\d*)?$/
@@ -184,7 +227,7 @@ const adjustValue = (value: number) => {
 		value = 0
 	}
 	if (isNumber(props.precision)) {
-		value = parseFloat(value.toFixed(clamp(Math.round(props.precision), 0, 100)))
+		value = fixedNumber(value, props.precision)
 	}
 	const min = props.min ?? Number.MIN_SAFE_INTEGER
 	const max = props.max ?? Number.MAX_SAFE_INTEGER
@@ -238,7 +281,7 @@ const formatEmitModelValue = (value: string) => {
 	return parseFloat(value)
 }
 
-const [modelValue, updateModelValue] = useControlledMode<number>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (value: number | Nullish) => {
 		if (!isNullish(value)) {
@@ -264,6 +307,8 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
+const plusRef = shallowRef<InstanceType<VueComponent> | null>(null)
+const minusRef = shallowRef<InstanceType<VueComponent> | null>(null)
 
 const setInputValue = (value: string) => {
 	inputValue.value = value
@@ -302,6 +347,7 @@ const clearHandler = async () => {
 	setInputValue(formatNumberValue(modelValue.value))
 	emits('change', defaultValue)
 	emits('clear', defaultValue)
+	formItemProvide?.changeHandler()
 }
 
 const changeHandler = (e: Event) => {
@@ -310,26 +356,30 @@ const changeHandler = (e: Event) => {
 
 	setInputValue(formatNumberValue(modelValue.value))
 	emits('change', numberValue, e)
+	formItemProvide?.changeHandler()
 }
 
 const focusMode = ref(false)
 
-const blurHandler = () => {
+const blurHandler = (e: FocusEvent) => {
 	setInputValue(formatNumberValue(modelValue.value))
 	focusMode.value = false
+	emits('blur', e)
+	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const slots = useSlots()
 
-defineExpose({
+defineExpose<InputNumberExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -344,16 +394,16 @@ defineExpose({
 
 const increaseDisabled = computed(() => {
 	return (
-		props.readonly ||
+		readonlyComputed.value ||
 		disabledComputed.value ||
-		(modelValue.value && modelValue.value >= props.max)
+		(!isNullish(modelValue.value) && modelValue.value >= props.max)
 	)
 })
 const decreaseDisabled = computed(() => {
 	return (
-		props.readonly ||
+		readonlyComputed.value ||
 		disabledComputed.value ||
-		(modelValue.value && modelValue.value <= props.min)
+		(!isNullish(modelValue.value) && modelValue.value <= props.min)
 	)
 })
 const increaseHandler = async () => {
@@ -368,7 +418,9 @@ const increaseHandler = async () => {
 	const nextValue = adjustValue(currentValue + props.step)
 
 	await updateModelValue(nextValue)
+	emits('change', nextValue)
 	setInputValue(formatNumberValue(modelValue.value))
+	formItemProvide?.changeHandler()
 }
 
 const decreaseHandler = async () => {
@@ -383,7 +435,9 @@ const decreaseHandler = async () => {
 	const nextValue = adjustValue(currentValue - props.step)
 
 	await updateModelValue(nextValue)
+	emits('change', nextValue)
 	setInputValue(formatNumberValue(modelValue.value))
+	formItemProvide?.changeHandler()
 }
 
 const showSettingSuffix = computed(() => {
@@ -436,7 +490,18 @@ const subButtonMousedownHandler = (e: MouseEvent) => {
 		e.preventDefault()
 	}
 }
-const focusInputHandler = () => {
+const focusInputHandler = (e: MouseEvent) => {
+	const target = e.target as Element
+	const plusIcon = plusRef.value.$el as Nullish | SVGElement
+	const minusIcon = minusRef.value.$el as Nullish | SVGElement
+
+	if (
+		inputRef.value?.contains(target) ||
+		minusIcon?.contains(target) ||
+		plusIcon?.contains(target)
+	) {
+		return
+	}
 	inputRef.value?.focus()
 }
 
@@ -452,17 +517,19 @@ const darkMode = useDarkMode()
 
 watch(
 	[
-		() => props.status,
+		statusComputed,
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		first,
 		last,
 		darkMode,
 		hoverFlag,
-		focusMode
+		focusMode,
+		nextIsTextButton
 	],
 	() => {
 		setTimeout(() => {
@@ -492,33 +559,43 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 
 	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 onMounted(() => {
@@ -529,6 +606,9 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

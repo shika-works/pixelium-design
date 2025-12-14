@@ -26,12 +26,10 @@ try {
 	await $('node script/build-dts.mts')
 
 	log('Building font...')
-	await $(
-		'npx esbuild lib/share/style/font.css --bundle --outdir=dist --minify --loader:.woff2=file --asset-names=[name]'
-	)
+	await $('npx vite build --config ./script/vite.config.font.ts')
 
 	log('Building CSS...')
-	await $('npx esbuild lib/share/style/index.css --bundle --outdir=es --asset-names=[name]')
+	await $('node script/build-css.mts')
 
 	log('Building icons...')
 	await $('node script/build-icon.mts')

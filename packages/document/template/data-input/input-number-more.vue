@@ -52,16 +52,6 @@
 				<template #prefix>+</template>
 				<template #suffix>s</template>
 			</px-input-number>
-			<px-input-number placeholder="Please input number" :default-value="0">
-				<template #prepend>
-					<IconBolt></IconBolt>
-				</template>
-			</px-input-number>
-			<px-input-number placeholder="Please input number">
-				<template #append>
-					<IconBolt></IconBolt>
-				</template>
-			</px-input-number>
 		</px-space>
 		<h4>Composite</h4>
 		<px-space>

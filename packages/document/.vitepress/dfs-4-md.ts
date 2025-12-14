@@ -1,9 +1,10 @@
 import fs from 'fs'
+import { titleCase } from 'parsnip-kit'
 
-const capitalize = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
+const badge = `<span class="VPBadge tip" style="background-color: rgba(203, 231, 202, 1);color: rgba(0, 180, 42, 1)">NEW!</span>`
 
 const dfs = (
-	files,
+	files: string[],
 	prefix: string[],
 	container: any[],
 	titleMap: Record<string, string>,
@@ -17,12 +18,12 @@ const dfs = (
 		if (fs.statSync(fullPath).isDirectory()) {
 			const curFiles = fs.readdirSync(fullPath)
 			prefix.push(file)
-			const curContainer = []
+			const curContainer = [] as any[]
 			const add = additionMap?.[file.toLowerCase()]
 
 			container.push({
 				key: file,
-				text: (titleMap[file.toLowerCase()] || capitalize(file)) + (add ? `  ${add}` : ''),
+				text: (titleMap[file.toLowerCase()] || titleCase(file)) + (add ? `  ${add}` : ''),
 				items: curContainer,
 				collapsible: true,
 				collapsed: false
@@ -38,7 +39,9 @@ const dfs = (
 
 			container.push({
 				text:
-					(titleMap[fileName.toLowerCase()] || capitalize(fileName)) + (add ? `  ${add}` : ''),
+					(titleMap[fileName.toLowerCase()] || titleCase(fileName)) +
+					(add ? `  ${add}` : '') +
+					(newItems.includes(fileName) ? ` ${badge}` : ''),
 				link: '/' + prefix.slice(0).join('/') + `/${fileName}`,
 				key: fileName
 			})
@@ -46,9 +49,39 @@ const dfs = (
 	})
 }
 
-const order = ['guide', 'config', 'common', 'layout', 'data-input', 'feedback']
+const newItems: string[] = [
+	'form',
+	'switch',
+	'slider',
+	'checkbox',
+	'radio',
+	'image',
+	'avatar',
+	'virtual-list',
+	'pixelate',
+	'text-outline'
+]
 
-const guideOrder = ['intro', 'starting', 'update-plan', 'changelog']
+const order = [
+	'guide',
+	'config',
+	'common',
+	'layout',
+	'data-input',
+	'data-display',
+	'feedback',
+	'base',
+	'fabulous-idea'
+]
+
+const guideOrder = [
+	'intro',
+	'starting',
+	'controlled-and-uncontrolled',
+	'update-plan',
+	'changelog',
+	'example'
+]
 
 export const dfs4Md = (
 	lang: string,

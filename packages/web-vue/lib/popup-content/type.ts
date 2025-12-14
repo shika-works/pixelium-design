@@ -26,6 +26,7 @@ export type PopupContentProps = {
 	borderRadius?: number
 	widthEqual?: boolean
 	contentStyle?: CSSProperties
+	destroyOnHide?: boolean
 }
 
 export type PopupContentEvents = {

@@ -11,6 +11,8 @@
 		@click="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-input-tag-prefix-wrapper" v-if="slots.prefix">
 			<slot name="prefix"></slot>
@@ -25,7 +27,8 @@
 				:closable="tagCanClose"
 				:disabled="disabledComputed"
 				:color="props.tagColor"
-				@close="(e) => tagCloseHandler(index, e)"
+				v-bind="props.tagProps"
+				@close="(e: MouseEvent) => tagCloseHandler(index, e)"
 			>
 				<slot name="tag" :tag="tag" :index="index">{{ tag }}</slot>
 			</Tag>
@@ -37,18 +40,20 @@
 					:theme="props.tagTheme"
 					:disabled="disabledComputed"
 					:color="props.tagColor"
+					v-bind="props.tagProps"
 				>
 					<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
 						>+{{ tagsCollapsed.length }}</slot
 					>
 				</Tag>
-				<Popover v-else>
+				<Popover v-else v-bind="popoverProps">
 					<Tag
 						:size="tagSize"
 						:variant="props.tagVariant"
 						:theme="props.tagTheme"
 						:disabled="disabledComputed"
 						:color="props.tagColor"
+						v-bind="props.tagProps"
 					>
 						<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
 							>+{{ tagsCollapsed.length }}</slot
@@ -65,7 +70,11 @@
 								:closable="tagCanClose"
 								:disabled="disabledComputed"
 								:color="props.tagColor"
-								@close="(e) => tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)"
+								v-bind="props.tagProps"
+								@close="
+									(e: MouseEvent) =>
+										tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)
+								"
 							>
 								<slot
 									name="tag"
@@ -83,12 +92,10 @@
 				:value="inputValue"
 				ref="inputRef"
 				:placeholder="modelValue && modelValue.length ? '' : props.placeholder"
-				:disabled="disabledComputed || props.readonly"
+				:disabled="disabledComputed || readonlyComputed"
 				:autofocus="autofocus"
 				@input.stop="inputHandler"
 				@change.stop="inputChangeHandler"
-				@blur="blurHandler"
-				@focus="focusHandler"
 				@compositionstart="compositionStartHandler"
 				@compositionend="compositionUpdateHandler"
 				@keydown.enter="enterDownHandler"
@@ -123,7 +130,7 @@ import {
 	useSlots,
 	watch
 } from 'vue'
-import type { InputTagEvents, InputTagProps } from './type'
+import type { InputTagEvents, InputTagExpose, InputTagProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
 import { getGlobalThemeColor } from '../share/util/color'
@@ -136,27 +143,29 @@ import {
 } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useComposition } from '../share/hook/use-composition'
+// @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+// @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import type { InputGroupProps } from '../input-group/type'
-import InputGroup from '../input-group/index.vue'
+import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
-import { INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
+import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Tag from '../tag/index.vue'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
 import Popover from '../popover/index.vue'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { BORDER_CORNER_RAD_RANGE, POPUP_CONTENT_DEFAULT_MAX_WIDTH } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
+import type { FormItemProvide } from '../form-item/type'
+import { createProvideComputed } from '../share/util/reactivity'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'InputTag'
 })
 
 const props = withDefaults(defineProps<InputTagProps>(), {
-	size: 'medium',
-	shape: 'default',
 	disabled: false,
 	clearable: false,
 	loading: false,
@@ -179,34 +188,65 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type === InputGroup)
-const [_, first, last] = innerInputGroup.value
+const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProps = inject<undefined | InputGroupProps>(INPUT_GROUP_PROVIDE)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.borderRadius
-		: props.borderRadius
-})
-const sizeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.size : props.size
-})
-const shapeComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps ? inputGroupProps.shape : props.shape
-})
-const disabledComputed = computed(() => {
-	return innerInputGroup.value && inputGroupProps
-		? inputGroupProps.disabled || props.disabled
-		: props.disabled
+const borderRadiusComputed = createProvideComputed('borderRadius', [
+	innerInputGroup.value && inputGroupProvide,
+	props
+])
+const sizeComputed = createProvideComputed(
+	'size',
+	() => [
+		innerInputGroup.value && inputGroupProvide,
+		props.size && props,
+		formItemProvide,
+		props
+	],
+	'nullish',
+	(val) => val || 'medium'
+)
+const shapeComputed = createProvideComputed(
+	'shape',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'nullish',
+	(val) => val || 'rect'
+)
+const disabledComputed = createProvideComputed(
+	'disabled',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const readonlyComputed = createProvideComputed(
+	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
+
+const nextIsTextButton = computed(() => {
+	if (index.value >= 0) {
+		return innerInputGroup.value
+			? !!(
+					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
+						?.variant === 'text'
+				)
+			: false
+	} else {
+		return false
+	}
 })
 
 const tagSize = computed(() => {
 	return sizeComputed.value === 'small' ? 'small' : 'medium'
 })
 
-const [modelValue, updateModelValue] = useControlledMode<string[]>('modelValue', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
 	transform: (value: string[] | Nullish) => {
 		if (isArray(value)) {
@@ -216,7 +256,7 @@ const [modelValue, updateModelValue] = useControlledMode<string[]>('modelValue',
 	}
 })
 
-const [inputValue, updateInputValue] = useControlledMode<string>('inputValue', props, emits, {
+const [inputValue, updateInputValue] = useControlledMode('inputValue', props, emits, {
 	defaultField: 'defaultInputValue',
 	transform: (value: string | Nullish) => {
 		return value || ''
@@ -248,6 +288,7 @@ const clearHandler = async () => {
 	emits('clear', newTags)
 	emits('change', newTags)
 	emits('inputChange', '')
+	formItemProvide?.changeHandler()
 }
 
 const tagCloseHandler = async (index: number, e: MouseEvent) => {
@@ -258,6 +299,7 @@ const tagCloseHandler = async (index: number, e: MouseEvent) => {
 
 	emits('tagClose', closed[0], index, e)
 	emits('change', currentTags)
+	formItemProvide?.changeHandler()
 }
 
 const inputChangeHandler = (e: Event) => {
@@ -267,14 +309,17 @@ const inputChangeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = async () => {
+const blurHandler = async (e: FocusEvent) => {
 	focusMode.value = false
 	await updateInputValue('')
 	emits('inputChange', '')
+	emits('blur', e)
+	formItemProvide?.blurHandler()
 }
 
-const focusHandler = () => {
+const focusHandler = (e: FocusEvent) => {
 	focusMode.value = true
+	emits('focus', e)
 }
 
 const enterDownHandler = async (e: KeyboardEvent) => {
@@ -294,6 +339,7 @@ const enterDownHandler = async (e: KeyboardEvent) => {
 	emits('tagAdd', currentValue, e)
 	emits('change', currentTags)
 	emits('inputChange', '')
+	formItemProvide?.changeHandler()
 }
 
 const focusInputHandler = () => {
@@ -309,16 +355,16 @@ const mouseleaveHandler = () => {
 }
 
 const showClose = computed(() => {
-	return props.clearable && !disabledComputed.value && !props.readonly
+	return props.clearable && !disabledComputed.value && !readonlyComputed.value
 })
 
 const tagCanClose = computed(() => {
-	return !disabledComputed.value && !props.readonly
+	return !disabledComputed.value && !readonlyComputed.value
 })
 
 const slots = useSlots()
 
-defineExpose({
+defineExpose<InputTagExpose>({
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -346,6 +392,16 @@ const tagsCollapsed = computed(() => {
 		: []
 })
 
+const popoverProps = computed(() => {
+	return {
+		...props.popoverProps,
+		contentStyle: {
+			maxWidth: `${POPUP_CONTENT_DEFAULT_MAX_WIDTH}px`,
+			...props.popoverProps?.contentStyle
+		}
+	}
+})
+
 const darkMode = useDarkMode()
 
 watch(
@@ -355,11 +411,14 @@ watch(
 		borderRadiusComputed,
 		shapeComputed,
 		sizeComputed,
+		readonlyComputed,
 		disabledComputed,
 		() => slots,
 		darkMode,
 		focusMode,
-		hoverFlag
+		hoverFlag,
+		statusComputed,
+		nextIsTextButton
 	],
 	() => {
 		setTimeout(() => {
@@ -389,33 +448,43 @@ const drawPixel = () => {
 	)
 
 	const borderColor =
-		props.status !== 'normal'
-			? getGlobalThemeColor(props.status === 'error' ? 'danger' : props.status, 6)
-			: (hoverFlag.value || focusMode.value) && !disabledComputed.value && !props.readonly
+		statusComputed.value !== 'normal'
+			? getGlobalThemeColor(
+					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
+					6
+				)
+			: (hoverFlag.value || focusMode.value) &&
+				  !disabledComputed.value &&
+				  !readonlyComputed.value
 				? getGlobalThemeColor('primary', 6)
 				: getGlobalThemeColor('neutral', 10)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
 
-	drawBorder(
-		ctx,
-		width,
-		height,
-		center,
-		borderRadius,
-		rad,
-		borderColor,
-		pixelSize,
-		innerInputGroup.value,
-		first.value,
-		last.value
-	)
+	if (borderColor) {
+		drawBorder(
+			ctx,
+			width,
+			height,
+			center,
+			borderRadius,
+			rad,
+			borderColor,
+			pixelSize,
+			innerInputGroup.value,
+			first.value,
+			last.value,
+			nextIsTextButton.value
+		)
+	}
 
 	const backgroundColor = disabledComputed.value
 		? getGlobalThemeColor('neutral', 6)
 		: getGlobalThemeColor('neutral', 1)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 onMounted(() => {
@@ -426,6 +495,9 @@ onMounted(() => {
 
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(wrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

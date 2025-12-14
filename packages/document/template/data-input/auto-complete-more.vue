@@ -52,16 +52,6 @@
 				<template #prefix>prefix</template>
 				<template #suffix>suffix</template>
 			</px-auto-complete>
-			<px-auto-complete placeholder="Please input" :options="options">
-				<template #prepend>
-					<IconBolt></IconBolt>
-				</template>
-			</px-auto-complete>
-			<px-auto-complete placeholder="Please input" :options="options">
-				<template #append>
-					<IconBolt></IconBolt>
-				</template>
-			</px-auto-complete>
 		</px-space>
 		<h4>Composite</h4>
 		<px-space>

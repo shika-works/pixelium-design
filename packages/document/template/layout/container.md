@@ -60,11 +60,30 @@ Header, Footer, and Aside can enable dark mode using the `dark` property.
 
 <preview path="./container-dark.vue"></preview>
 
+
+[[[zh
+## 柔和背景
+
+主体内容区域组件 Main 可以用 `soft` 属性设置展示浅灰色的柔和背景。
+]]]
+[[[en
+## Soft Background
+
+The `soft` property can be used on Main to display a soft light gray background.
+]]]
+<preview path="./container-soft.vue"></preview>
+
 ## API
 
 [[[api zh
 direction: 子元素排列方向，如果有 Aside 子组件，默认为 `'vertical'`，否则为 `'horizontal'`。
 slots.default: 用于传入子布局容器组件。
+]]]
+
+
+[[[api main zh
+soft: 浅灰色柔和背景。
+slots.default: 主体区域的内容。
 ]]]
 
 [[[api header zh
@@ -89,13 +108,15 @@ side: 属性用于标记侧边栏位置，从而修改边框展示的位置，�
 slots.default: 侧边栏区域的内容。
 ]]]
 
-[[[api main zh
-slots.default: 主体区域的内容。
-]]]
-
 [[[api en
 direction: The direction in which child elements are arranged. If there is an Aside child component, the default is `'vertical'`, otherwise `'horizontal'`.
 slots.default: Used to pass in child layout container components.
+]]]
+
+
+[[[api main en
+soft: Soft light gray background.
+slots.default: Content of the main area.
 ]]]
 
 [[[api header en
@@ -118,8 +139,4 @@ bordered: Whether the Aside component displays a border.
 dark: Whether the Aside component uses dark mode.
 side: Property used to indicate the sidebar position, which changes where the border appears. If set to `'left'`, the border appears on the right; if set to `'right'`, the border appears on the left.
 slots.default: Content of the sidebar area.
-]]]
-
-[[[api main en
-slots.default: Content of the main area.
 ]]]

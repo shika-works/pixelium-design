@@ -1,14 +1,10 @@
+import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
 import type { NumberOrPercentage } from '../share/type'
-import type { GroupOption, Option } from '../share/type'
+import type { VirtualListProps } from '../virtual-list/type'
 
-export interface AutoCompleteOption extends Option<string> {
-	value: string
-	disabled?: boolean
-}
+export interface AutoCompleteOption extends OptionListOption<string> {}
 
-export interface AutoCompleteGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
+export interface AutoCompleteGroupOption extends OptionListGroupOption {
 	children: (AutoCompleteOption | string)[]
 }
 
@@ -54,6 +50,16 @@ export type AutoCompleteProps = {
 	 */
 	loading?: boolean
 	/**
+	 * @property {'medium' | 'large' | 'small'} [size='medium']
+	 * @version 0.0.2
+	 */
+	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {'rect' | 'round'} [shape='rect']
+	 * @version 0.0.3
+	 */
+	shape?: 'rect' | 'round' | 'default'
+	/**
 	 * @property {boolean} [showPopoverEmpty=false]
 	 * @version 0.0.2
 	 */
@@ -80,15 +86,15 @@ export type AutoCompleteProps = {
 	 */
 	append?: boolean
 	/**
-	 * @property {'medium' | 'large' | 'small'} [size='medium']
-	 * @version 0.0.2
+	 * @property {boolean} [virtualScroll=false]
+	 * @version 0.0.3
 	 */
-	size?: 'medium' | 'large' | 'small'
+	virtualScroll?: boolean
 	/**
-	 * @property {'default' | 'round'} [shape='default']
-	 * @version 0.0.2
+	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'>} [virtualListProps]
+	 * @version 0.0.3
 	 */
-	shape?: 'default' | 'round'
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
 	/**
 	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
 	 * @version 0.0.2
@@ -104,6 +110,11 @@ export type AutoCompleteProps = {
 	 * @version 0.0.2
 	 */
 	autofocus?: boolean
+	/**
+	 * @property {boolean} [optionsDestroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	optionsDestroyOnHide?: boolean
 }
 
 export type AutoCompleteEvents = {

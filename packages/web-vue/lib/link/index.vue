@@ -57,6 +57,9 @@ const darkMode = useDarkMode()
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)
+	if (!color) {
+		return null
+	}
 	const palette = generatePalette(color.r, color.g, color.b, color.a, darkMode.value)
 	return palette
 })
@@ -109,3 +112,5 @@ const clickHandler = (e: MouseEvent) => {
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

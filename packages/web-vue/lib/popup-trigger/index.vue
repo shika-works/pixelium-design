@@ -1,9 +1,12 @@
 <script setup lang="tsx">
-import { useSlots, Fragment, mergeProps, cloneVNode, type VNode, shallowRef } from 'vue'
+import { useSlots, Fragment, type VNode, shallowRef, ref, cloneVNode } from 'vue'
 import { flattenVNodes, isTextVNode } from '../share/util/render'
 import type { PopupTriggerEmits, PopupTriggerProps } from './type'
 import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
 import { inBrowser } from '../share/util/env'
+import { checkMouseInsideElementFromEvent } from '../share/util/dom'
+import { GET_ELEMENT_RENDERED } from '../share/const'
+import { isFunction } from 'parsnip-kit'
 
 defineOptions({
 	name: 'PopupTrigger'
@@ -15,15 +18,23 @@ const props = withDefaults(defineProps<PopupTriggerProps>(), {
 
 const emits = defineEmits<PopupTriggerEmits>()
 
-const currentTrigger = shallowRef<null | VNode>(null)
+const currentTrigger = shallowRef<null | SVGElement | HTMLElement>(null)
 
 async function openHandler(node: VNode, e: MouseEvent) {
 	if (inBrowser()) {
-		if (node.el instanceof HTMLElement) {
-			currentTrigger.value = node
+		let triggerEl = null
+		if (node.el instanceof HTMLElement || node.el instanceof SVGElement) {
+			triggerEl = node.el
 		} else {
-			currentTrigger.value = null
+			const getElFunc = node.component?.exposed?.[GET_ELEMENT_RENDERED]
+			if (isFunction(getElFunc)) {
+				const el = getElFunc()
+				if (el instanceof HTMLElement || el instanceof SVGElement) {
+					triggerEl = el
+				}
+			}
 		}
+		currentTrigger.value = triggerEl
 	}
 
 	if (props.disabled) {
@@ -31,8 +42,14 @@ async function openHandler(node: VNode, e: MouseEvent) {
 	}
 	emits('open', node, e)
 }
-async function closeHandler(e: MouseEvent) {
+
+const dragging = ref(false)
+
+async function closeHandler(e: TouchEvent | MouseEvent) {
 	if (props.disabled) {
+		return
+	}
+	if (dragging.value) {
 		return
 	}
 	emits('close', e)
@@ -52,6 +69,49 @@ defineExpose({
 	firstVNode: firstVNodeRef
 })
 
+function handleDrag(e: TouchEvent | MouseEvent) {
+	emits('drag', e)
+}
+
+function stopDrag(e: TouchEvent | MouseEvent) {
+	dragging.value = false
+	if (!currentTrigger.value) {
+		closeHandler(e)
+	} else {
+		const el = currentTrigger.value
+		if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) {
+			closeHandler(e)
+		} else {
+			if (!checkMouseInsideElementFromEvent(el, e)) {
+				closeHandler(e)
+			}
+		}
+	}
+	document.removeEventListener('mousemove', handleDrag)
+	document.removeEventListener('mouseup', stopDrag)
+	document.removeEventListener('touchmove', handleDrag)
+	document.removeEventListener('touchend', stopDrag)
+	emits('dragEnd', e)
+}
+
+const startDrag = (e: TouchEvent | MouseEvent) => {
+	dragging.value = true
+	document.addEventListener('mousemove', handleDrag)
+	document.addEventListener('mouseup', stopDrag)
+	document.addEventListener('touchmove', handleDrag)
+	document.addEventListener('touchend', stopDrag)
+	emits('dragStart', e)
+}
+
+const initCurrentTrigger = (e: any) => {
+	if (currentTrigger.value) {
+		return
+	}
+	if (e instanceof HTMLElement || e instanceof SVGElement) {
+		currentTrigger.value = e
+	}
+}
+
 defineRender(() => {
 	const children = flattenVNodes(slots.default?.() || [])
 	return (
@@ -60,43 +120,52 @@ defineRender(() => {
 				if (isTextVNode(child)) {
 					const node =
 						props.trigger === 'click' ? (
-							<span onClick={(e: MouseEvent) => openHandler(node, e)}>{child}</span>
+							<span
+								onClick={(e: MouseEvent) => openHandler(node, e)}
+								onMousedown={startDrag}
+								// @ts-ignore
+								onTouchstartPassive={startDrag}
+								ref={initCurrentTrigger}
+							>
+								{child}
+							</span>
 						) : (
 							<span
 								onMouseenter={(e: MouseEvent) => openHandler(node, e)}
 								onMouseleave={(e: MouseEvent) => closeHandler(e)}
+								onMousedown={startDrag}
+								// @ts-ignore
+								onTouchstartPassive={startDrag}
+								ref={initCurrentTrigger}
 							>
 								{child}
 							</span>
 						)
 					if (index === 0) {
 						firstVNodeRef.value = node
-						if (!currentTrigger.value) {
-							currentTrigger.value = node
-						}
 					}
 					return node
 				} else {
 					const clone = cloneVNode(
 						child,
-						mergeProps(
-							child.props || {},
-							props.trigger === 'click'
-								? {
-										onClick: (e: MouseEvent) => openHandler(clone, e)
-									}
-								: {
-										onMouseenter: (e: MouseEvent) => openHandler(clone, e),
-										onMouseleave: (e: MouseEvent) => closeHandler(e)
-									}
-						)
+						props.trigger === 'click'
+							? {
+									onClick: (e: MouseEvent) => openHandler(clone, e),
+									onMousedown: startDrag,
+									onTouchstart: startDrag,
+									ref: initCurrentTrigger
+								}
+							: {
+									onMouseenter: (e: MouseEvent) => openHandler(clone, e),
+									onMouseleave: (e: MouseEvent) => closeHandler(e),
+									onMousedown: startDrag,
+									onTouchstart: startDrag,
+									ref: initCurrentTrigger
+								},
+						true
 					)
-					clone.ref = child.ref
 					if (index === 0) {
 						firstVNodeRef.value = clone
-						if (!currentTrigger.value) {
-							currentTrigger.value = clone
-						}
 					}
 					return clone
 				}

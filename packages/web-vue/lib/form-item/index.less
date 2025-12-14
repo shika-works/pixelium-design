@@ -1,0 +1,90 @@
+@import url(../share/style/variable.less);
+
+.px-form-item {
+	&-label {
+		display: flex;
+		min-height: var(--px-medium-size);
+		line-height: var(--px-medium-size);
+		font-size: @px-medium-font-size;
+		&__auto {
+			white-space: nowrap;
+			display: inline-flex;
+		}
+		&__left {
+			justify-content: flex-start;
+		}
+		&__right {
+			justify-content: flex-end;
+		}
+		&__large {
+			min-height: var(--px-large-size);
+			line-height: var(--px-large-size);
+			font-size: @px-large-font-size;
+		}
+		&__small {
+			min-height: var(--px-small-size);
+			line-height: var(--px-small-size);
+			font-size: @px-small-font-size;
+		}
+	}
+	&-label-wrapper {
+		&__auto {
+			box-sizing: content-box;
+			flex-basis: 0;
+		}
+	}
+	&-addition {
+		min-height: @px-small-base-size;
+		width: 100%;
+	}
+	&-tip,
+	&-extra {
+		height: @px-small-base-size;
+		font-size: @px-small-font-size;
+		color: var(--px-neutral-8);
+	}
+	&-asterisk {
+		color: var(--px-danger-6);
+	}
+	&-tip {
+		&__error {
+			color: var(--px-danger-6);
+		}
+		&__warning {
+			color: var(--px-warning-6);
+		}
+		&__success {
+			color: var(--px-success-6);
+		}
+	}
+	&-content {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+
+		min-height: var(--px-medium-size);
+		font-size: @px-medium-font-size;
+
+		& > *:first-child {
+			flex-grow: 1;
+		}
+
+		&__large {
+			min-height: var(--px-large-size);
+			font-size: @px-large-font-size;
+		}
+		&__small {
+			min-height: var(--px-small-size);
+			font-size: @px-small-font-size;
+		}
+	}
+	&-content-wrapper {
+		&__auto {
+			width: 100%;
+			flex-basis: 0;
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
+	}
+}

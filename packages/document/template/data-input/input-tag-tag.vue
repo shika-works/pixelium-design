@@ -1,9 +1,21 @@
 <template>
 	<px-space direction="vertical">
 		<px-input-tag placeholder="Please input" v-model="tags"></px-input-tag>
-		<px-input-tag placeholder="Please input" v-model="tags" tag-variant="plain"></px-input-tag>
-		<px-input-tag placeholder="Please input" v-model="tags" tag-theme="primary"></px-input-tag>
-		<px-input-tag placeholder="Please input" v-model="tags" tag-color="#E956AE"></px-input-tag>
+		<px-input-tag
+			placeholder="Please input"
+			v-model="tags"
+			:tag-props="{ variant: 'outline' }"
+		></px-input-tag>
+		<px-input-tag
+			placeholder="Please input"
+			v-model="tags"
+			:tag-props="{ theme: 'primary' }"
+		></px-input-tag>
+		<px-input-tag
+			placeholder="Please input"
+			v-model="tags"
+			:tag-props="{ color: '#E956AE' }"
+		></px-input-tag>
 	</px-space>
 </template>
 

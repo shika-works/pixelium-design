@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.0.2-fix",
+	"version": "0.0.3-alpha",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
@@ -42,36 +42,30 @@
 		"lint": "oxlint lib",
 		"lint:fix": "oxlint ./ --fix && prettier ./ --write",
 		"preview": "vite preview",
-		"release": "npm run build && npm publish --access public",
-		"release:dry-run": "npm run build && npm publish --dry-run"
+		"release": "npm run test && npm run build && npm publish --access public",
+		"release:dry-run": "npm run build && npm publish --dry-run",
+		"test": "vitest run --config ./script/vite.config.vue.ts --coverage",
+		"test:watch": "vitest --config ./script/vite.config.vue.ts --coverage"
 	},
 	"peerDependencies": {
 		"vue": "^3.5.17"
 	},
 	"devDependencies": {
 		"@hackernoon/pixel-icon-library": "^1.0.6",
-		"@types/node": "^24.5.2",
-		"@vitejs/plugin-vue": "^6.0.0",
+		"@vitejs/plugin-vue": "^6.0.1",
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
-		"dts-bundle-generator": "^9.5.1",
-		"esbuild": "^0.25.9",
-		"execa": "^9.6.0",
 		"less": "^4.4.0",
-		"oxlint": "^1.12.0",
 		"pixelarticons": "^1.8.1",
-		"prettier": "^3.6.2",
-		"rimraf": "^6.0.1",
 		"svgo": "^4.0.0",
-		"typescript": "~5.8.3",
-		"vite": "^7.1.5",
-		"vue-macros": "3.0.0-beta.23",
-		"vue-tsc": "3.0.6"
+		"vite": "npm:rolldown-vite@latest",
+		"vue-macros": "3.0.0-beta.23"
 	},
 	"dependencies": {
 		"@floating-ui/dom": "^1.7.4",
 		"mitt": "^3.0.1",
+		"modern-normalize": "^3.0.1",
 		"nanoid": "^5.1.5",
-		"parsnip-kit": "^0.0.5"
+		"parsnip-kit": "^0.0.6"
 	},
 	"repository": {
 		"type": "git",

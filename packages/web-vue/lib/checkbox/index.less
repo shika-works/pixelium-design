@@ -1,0 +1,111 @@
+@import url(../share/style/variable.less);
+
+.px-checkbox {
+	@prefix: px-checkbox;
+	@px-large-interval-x: @px-interval-3;
+	@px-medium-interval-x: @px-interval-2;
+	@px-small-interval-x: @px-interval-1;
+
+	--checkbox-size: var(--px-medium-compat-size);
+	--text-color: var(--px-neutral-10);
+
+	color: var(--text-color);
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+
+	transition: 0.25s all;
+
+	&.@{prefix} {
+		font-size: @px-medium-font-size;
+	}
+
+	&__large {
+		--checkbox-size: var(--px-large-compat-size);
+		font-size: @px-large-font-size;
+		.@{prefix}-box {
+			margin-right: @px-large-interval-x;
+		}
+	}
+	&__small {
+		--checkbox-size: var(--px-small-compat-size);
+		font-size: @px-small-font-size;
+		.@{prefix}-box {
+			margin-right: @px-small-interval-x;
+		}
+	}
+
+	&-box {
+		width: var(--checkbox-size);
+		height: var(--checkbox-size);
+		border: var(--px-bit) solid transparent;
+		background-color: transparent;
+		position: relative;
+		box-sizing: border-box;
+
+		flex-shrink: 0;
+		flex-grow: 0;
+
+		margin-right: @px-medium-interval-x;
+
+		transition: 0.25s;
+
+		z-index: 0;
+
+		& > .@{prefix}-checked-mark {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			fill: var(--px-primary-6);
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	&-canvas {
+		@prefix: px-checkbox-canvas;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+
+		z-index: -1;
+	}
+
+	&-input {
+		width: 0;
+		height: 0;
+		margin: 0;
+		padding: 0;
+		position: absolute;
+	}
+
+	&:hover .@{prefix}-checked-mark {
+		fill: var(--px-primary-5);
+	}
+
+	&__checked {
+		--text-color: var(--px-primary-6);
+	}
+
+	&__readonly {
+		cursor: default;
+	}
+
+	&__disabled {
+		cursor: not-allowed;
+		--text-color: var(--px-neutral-8);
+		& .@{prefix}-checked-mark {
+			fill: var(--px-neutral-8);
+		}
+		&.@{prefix}__checked {
+			--text-color: var(--px-primary-2);
+			& .@{prefix}-checked-mark {
+				fill: var(--px-primary-2);
+			}
+		}
+	}
+}

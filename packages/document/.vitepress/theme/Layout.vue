@@ -22,20 +22,9 @@ onContentUpdated(() => {
 	if (!inBrowser) {
 		return
 	}
-	const supportsMathML = document.implementation.hasFeature(
-		'http://www.w3.org/TR/MathML2/',
-		'2.0'
-	)
-
-	if (supportsMathML) {
-		document
-			.querySelectorAll('.katex-html')
-			.forEach((el) => el instanceof HTMLElement && (el.style.display = 'none'))
-	} else {
-		document
-			.querySelectorAll('.katex-mathml')
-			.forEach((el) => el instanceof HTMLElement && (el.style.display = 'none'))
-	}
+	document
+		.querySelectorAll('.katex-mathml')
+		.forEach((el) => el instanceof HTMLElement && (el.style.display = 'none'))
 })
 
 const { isDark } = useData()

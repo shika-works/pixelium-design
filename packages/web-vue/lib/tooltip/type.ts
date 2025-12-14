@@ -57,7 +57,7 @@ export type TooltipProps = {
 	 */
 	disabled?: boolean
 	/**
-	 * @property {number} [disabled]
+	 * @property {number} [zIndex]
 	 * @version 0.0.2
 	 */
 	zIndex?: number
@@ -66,6 +66,11 @@ export type TooltipProps = {
 	 * @version 0.0.2
 	 */
 	root?: HTMLElement | string
+	/**
+	 * @property {boolean} [destroyOnHide=false]
+	 * @version 0.0.3
+	 */
+	destroyOnHide?: boolean
 }
 
 export type TooltipEvents = {
@@ -80,7 +85,7 @@ export type TooltipEvents = {
 	 * @param {MouseEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e: MouseEvent]
+	close: [e: MouseEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e

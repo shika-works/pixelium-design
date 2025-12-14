@@ -1,16 +1,13 @@
-@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
-div.px-input-tag {
-	font-size: var(--text-size);
-}
 .px-input-tag {
 	@prefix: px-input-tag;
+	@px-medium-padding-x: @px-interval-2;
+	@px-large-padding-x: @px-interval-3;
+	@px-small-padding-x: @px-interval-2;
+
 	--input-size: var(--px-medium-size);
-	--px-medium-padding-x: var(--px-interval-2);
-	--px-large-padding-x: var(--px-interval-3);
-	--px-small-padding-x: var(--px-interval-2);
-	--padding-x-size: var(--px-medium-padding-x);
-	--text-size: var(--px-medium-font-size);
+
 	z-index: 0;
 	position: relative;
 	background-color: transparent;
@@ -19,36 +16,76 @@ div.px-input-tag {
 	border-style: solid;
 	color: var(--px-neutral-10);
 	display: flex;
-	padding: 0 var(--padding-x-size);
 	box-sizing: border-box;
 	cursor: text;
-	&__inner {
-		padding-right: calc(var(--padding-x-size) + 1px + 1 * var(--px-bit));
-		&:last-child {
-			padding-right: var(--padding-x-size);
+
+	transition: 0.25s;
+
+	@sizes: small, medium, large;
+
+	each(@sizes, {
+		&.@{prefix}__@{value} {
+			@paddingVar: ~"px-@{value}-padding-x";
+			@fontVar: ~"px-@{value}-font-size";
+			@innerVar: ~"px-@{value}-base-size";
+
+			padding-right: @@paddingVar;
+			padding-left: @@paddingVar;
+			font-size: @@fontVar;
+
+			.@{prefix}-inner {
+				font-size: @@fontVar;
+			}
+			&.@{prefix}__inner {
+				padding-right: calc(@@paddingVar + 1px + 1 * var(--px-bit));
+				&:last-child {
+					padding-right: @@paddingVar;
+				}
+			}
+			.@{prefix}-content {
+				min-height: @@innerVar;
+			}
+			.@{prefix}-inner {
+				height: @@innerVar;
+			}
+			
+			.@{prefix}-close-wrapper {
+				.@{prefix}-icon-placeholder {
+					width: @@fontVar;
+					height: @@fontVar;
+				}
+				.@{prefix}-icon {
+					width: @@fontVar;
+					height: @@fontVar;
+				}
+			}
+			.@{prefix}-loading-wrapper {
+				.@{prefix}-icon {
+					width: @@fontVar;
+					height: @@fontVar;
+				}
+			}
 		}
-	}
+	});
+
 	&-content {
-		min-height: calc(var(--input-size) - var(--px-bit) * 2);
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		width: 100%;
 		.px-tag {
-			margin-right: var(--px-interval-2);
+			margin-right: @px-interval-2;
 			margin-top: 1px;
 			margin-bottom: 1px;
 		}
 	}
 	&-inner {
-		height: calc(var(--input-size) - var(--px-bit) * 2);
 		border: 0;
 		background-color: transparent;
 		box-sizing: border-box;
 		flex: 1;
-		font-size: var(--text-size);
-		line-height: var(--px-line-height);
-		font-family: 'Fusion Pixel Zh_hans', sans-serif;
+		line-height: @px-line-height;
+		font-family: var(--px-font);
 		padding: 0;
 		&:focus-visible {
 			outline-color: var(--px-neutral-10);
@@ -63,14 +100,10 @@ div.px-input-tag {
 		}
 	}
 	&__large {
-		--padding-x-size: var(--px-large-padding-x);
-		--text-size: var(--px-large-font-size);
 		--input-size: var(--px-large-size);
 	}
 	&__small {
-		--padding-x-size: var(--px-small-padding-x);
 		--input-size: var(--px-small-size);
-		--text-size: var(--px-small-font-size);
 		.@{prefix}-content {
 			.px-tag {
 				margin-top: 0px;
@@ -94,21 +127,15 @@ div.px-input-tag {
 		align-items: center;
 	}
 	&-prefix-wrapper {
-		margin-right: var(--px-interval-2);
+		margin-right: @px-interval-2;
 	}
 	&-suffix-wrapper,
 	&-loading-wrapper,
 	&-close-wrapper {
-		margin-left: var(--px-interval-2);
+		margin-left: @px-interval-2;
 	}
 	&-close-wrapper {
-		.@{prefix}-icon-placeholder {
-			width: var(--text-size);
-			height: var(--text-size);
-		}
 		.@{prefix}-icon {
-			width: var(--text-size);
-			height: var(--text-size);
 			cursor: pointer;
 			fill: var(--px-neutral-8);
 			transition: 0.25s;
@@ -122,8 +149,6 @@ div.px-input-tag {
 	}
 	&-loading-wrapper {
 		.@{prefix}-icon {
-			width: var(--text-size);
-			height: var(--text-size);
 			fill: var(--px-primary-6);
 		}
 	}

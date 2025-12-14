@@ -2,8 +2,7 @@
 	<span
 		class="pixelium px-tag"
 		:class="{
-			'px-tag__large': props.size === 'large',
-			'px-tag__small': props.size === 'small',
+			[`px-tag__${props.size}`]: props.size,
 			'px-tag__outline': props.variant === 'outline',
 			'px-tag__plain': props.variant === 'plain',
 			'px-tag__disabled': props.disabled,
@@ -19,7 +18,7 @@
 		<slot></slot>
 		<div v-if="props.closable" class="px-tag-icon-wrapper">
 			<Times
-				@mousedown="toggleActive(true)"
+				@mousedown.prevent="toggleActive(true)"
 				@mouseup="toggleActive(false)"
 				@mouseenter="toggleHover(true)"
 				@mouseleave="toggleHover(false)"
@@ -50,13 +49,14 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({
 	name: 'Tag'
 })
 
 const props = withDefaults(defineProps<TagProps>(), {
-	shape: 'default',
+	shape: 'rect',
 	size: 'medium',
 	disabled: false,
 	variant: 'primary',
@@ -90,6 +90,9 @@ onMounted(() => {
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)
+	if (!color) {
+		return null
+	}
 	const palette = generatePalette(color.r, color.g, color.b, color.a, darkMode.value)
 	return palette
 })
@@ -141,7 +144,11 @@ const drawPixel = () => {
 	const borderColor = getBorderColor(props.disabled, props.variant, props.theme, palette.value)
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
-	drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+
+	if (borderColor) {
+		drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+	}
+
 	const backgroundColor = getBackgroundColor(
 		props.disabled,
 		props.variant,
@@ -149,11 +156,16 @@ const drawPixel = () => {
 		palette.value
 	)
 
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	if (backgroundColor) {
+		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+	}
 }
 
 useResizeObserver(tagRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
+useTransitionEnd(tagRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

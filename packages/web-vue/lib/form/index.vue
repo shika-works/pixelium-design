@@ -1,0 +1,150 @@
+<template>
+	<form
+		class="px-form pixelium"
+		@submit.stop.prevent="formSubmitHandler"
+		@reset.stop="formResetHandler"
+		@keydown.enter.prevent
+	>
+		<slot></slot>
+	</form>
+</template>
+
+<script setup lang="ts">
+import { computed, nextTick, onMounted, provide, ref, toRefs, type Ref } from 'vue'
+import type {
+	FieldItem,
+	FormEvents,
+	FormExpose,
+	FormProps,
+	FormProvide,
+	RuleLevel
+} from './type'
+import { FORM_PROVIDE } from '../share/const/provide-key'
+import { isNullish, isString, max } from 'parsnip-kit'
+import { throwError } from '../share/util/console'
+
+defineOptions({ name: 'Form' })
+
+const props = withDefaults(defineProps<FormProps>(), {
+	disabled: false,
+	readonly: false,
+	showAsterisk: true,
+	asteriskPlacement: 'left',
+	labelAlign: 'right',
+	labelAutoWidth: false,
+	size: 'medium'
+})
+
+const model = computed(() => {
+	if (props.form) {
+		return props.form.model.value
+	} else if (props.model) {
+		return props.model
+	}
+	throwError('One of the model or form props must be provided to the Form component.')
+})
+
+const fields = ref<FieldItem[]>([])
+
+const labelWidth = ref<{ id: string; width: number }[]>([])
+const maxLabelWidth = computed(() => {
+	return max(labelWidth.value.map((e) => e.width))
+})
+provide<FormProvide>(FORM_PROVIDE, {
+	...toRefs(props),
+	model: model as Ref<Record<string | number, any>>,
+	registerField: (fieldItem: FieldItem) => {
+		fields.value.push(fieldItem)
+	},
+	unregisterField: (field: string) => {
+		fields.value = fields.value.filter((f) => f.field !== field)
+	},
+	collectLabelWidth: (item: { id: string; width: number }) => {
+		labelWidth.value = labelWidth.value.filter((e) => e.id !== item.id)
+		labelWidth.value.push(item)
+	},
+	removeLabelWidth: (itemId: string) => {
+		labelWidth.value = labelWidth.value.filter((e) => e.id !== itemId)
+	},
+	maxLabelWidth
+} as any)
+
+const emits = defineEmits<FormEvents>()
+
+const filterFieldItem = (fieldItem: FieldItem, field?: string | string[]) =>
+	isNullish(field)
+		? true
+		: isString(field)
+			? field === fieldItem.field
+			: field.includes(fieldItem.field)
+
+const validate = async (field?: string | string[]) => {
+	const validateObj: Record<
+		string,
+		PromiseSettledResult<{
+			message: string
+			level: RuleLevel
+		}>
+	> = {}
+	const validate = fields.value
+		.filter((fieldItem) => filterFieldItem(fieldItem, field))
+		.map((fieldItem) => {
+			const result = fieldItem.validate().then(
+				(res) => {
+					validateObj[fieldItem.field] = {
+						status: 'fulfilled',
+						value: res
+					}
+					return res
+				},
+				(err) => {
+					validateObj[fieldItem.field] = {
+						status: 'rejected',
+						reason: err
+					}
+					throw err
+				}
+			)
+			return result
+		})
+	const results = await Promise.allSettled(validate)
+	const isValid = results.every(
+		(result) =>
+			result.status === 'fulfilled' && (result.value.level !== 'error' || !result.value.level)
+	)
+
+	return { isValid, results: validateObj }
+}
+
+const formSubmitHandler = (e: Event) => {
+	emits('submit', model.value!, e)
+}
+
+const reset = (field?: string | string[]) => {
+	fields.value
+		.filter((fieldItem) => filterFieldItem(fieldItem, field))
+		.forEach((field) => field.reset())
+	clearValidation(field)
+}
+
+const formResetHandler = async (e: Event) => {
+	reset()
+	await nextTick()
+	emits('reset', model.value!, e)
+}
+
+const clearValidation = async (field?: string | string[]) => {
+	fields.value
+		.filter((fieldItem) => filterFieldItem(fieldItem, field))
+		.forEach((field) => field.clearValidation())
+}
+
+const expose = { validate, reset, clearValidation }
+defineExpose<FormExpose>(expose)
+
+onMounted(() => {
+	if (props.form) {
+		props.form.register(expose)
+	}
+})
+</script>

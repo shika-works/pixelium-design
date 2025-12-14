@@ -23,6 +23,7 @@
 				:step="props.maskStep"
 				:line-width="props.maskLineWidth"
 				:grid="props.maskGrid"
+				v-bind="props.maskProps"
 				v-if="slots.default"
 			></Mask>
 			<div class="px-spin-content">
@@ -85,3 +86,4 @@ const loadingComputed = computed(() => {
 </script>
 
 <style lang="less" src="./index.less"></style>
+<style lang="less" src="../share/style/index.css" />

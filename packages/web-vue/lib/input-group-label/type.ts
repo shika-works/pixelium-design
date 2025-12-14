@@ -12,10 +12,10 @@ export type InputGroupLabelProps = {
 	 */
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	/**
-	 * @property {'default' | 'round'} [shape='default']
-	 * @version 0.0.2
+	 * @property {'rect' | 'round'} [shape='rect']
+	 * @version 0.0.3
 	 */
-	shape?: 'default' | 'round'
+	shape?: 'rect' | 'round' | 'default'
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.2

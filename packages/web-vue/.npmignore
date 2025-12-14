@@ -13,3 +13,5 @@ node_modules
 script
 plugin
 lib
+
+coverage

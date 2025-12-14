@@ -1,10 +1,10 @@
 [[[zh
-# 标签输入 Input Number
+# 标签输入 Input Tag
 
 专门输入标签的输入框，如果需要输入一系列的文本，这可能有用。
 ]]]
 [[[en
-# Tag Input Input Number
+# Input Tag
 
 An input box specifically for entering tags. If you need to input a series of texts, this might be useful.
 ]]]
@@ -91,9 +91,10 @@ InputTag also has some features of the Input component.
 ## API
 
 [[[api zh
-tagTheme: 标签的 `theme` 属性，设置标签主题颜色。
-tagVariant: 标签的 `variant` 属性，设置标签样式变体。
-tagColor: 标签的 `color` 属性，自定义标签颜色。
+tagTheme: <Badge type="warning" text="Deprecated" /> 标签的 `theme` 属性，设置标签主题颜色。
+tagVariant: <Badge type="warning" text="Deprecated" /> 标签的 `variant` 属性，设置标签样式变体。
+tagColor: <Badge type="warning" text="Deprecated" /> 标签的 `color` 属性，自定义标签颜色。
+tagProps: 标签的属性。
 modelValue: 标签输入框的值（受控模式），支持 `v-model`。
 defaultValue: 标签输入框的默认值（非受控模式）。
 inputValue: 内部文本输入框的值（受控模式），支持 `v-model`。
@@ -112,6 +113,7 @@ status: 表单验证状态。
 collapseTags: 是否开启折叠标签。
 maxDisplayTags: 展示标签的最大数量，开启 `collapseTags` 后生效。
 collapseTagsPopover: 是否在弹出框中展示被折叠的标签，开启 `collapseTags` 后生效。
+popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
 events.clear: 点击清除文本按钮，清除内容时的回调。
 events.focus: 输入框聚焦时的回调。
 events.blur: 输入框失焦时的回调。
@@ -132,6 +134,10 @@ inputTagExpose.clear: 清空当前输入框。
 ]]]
 
 [[[api en
+tagTheme: <Badge type="warning" text="Deprecated" /> `theme` properties for tags (color theme).
+tagVariant: <Badge type="warning" text="Deprecated" /> `variant` properties for tags (style variant).
+tagColor: <Badge type="warning" text="Deprecated" /> `color` properties for tags (custom color).
+tagProps: Properties of tags.
 modelValue: The value of the tag input box (controlled mode), supports `v-model`.
 defaultValue: The default value of the tag input box (uncontrolled mode).
 inputValue: The value of the internal text input box (controlled mode), supports `v-model`.
@@ -150,6 +156,7 @@ status: Form validation status.
 collapseTags: Whether to enable collapsed tags.
 maxDisplayTags: Maximum number of tags to display, effective when `collapseTags` is enabled.
 collapseTagsPopover: Whether to show collapsed tags in a popover, effective when `collapseTags` is enabled.
+popoverProps: Popover component properties when tags are collapsed.
 events.clear: Callback when the clear button is clicked and the content is cleared.
 events.focus: Callback when the input box is focused.
 events.blur: Callback when the input box loses focus.
@@ -172,4 +179,11 @@ inputNumberExpose.select: Select the content of the current input box.
 ### NumberOrPercentage
 ```ts
 export type NumberOrPercentage = number | `${number}%`
+```
+
+### EmitEvent
+```ts
+export type EmitEvent<T extends Record<string, any>> = {
+	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}
 ```

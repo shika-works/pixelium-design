@@ -55,8 +55,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import Pixelium from '@pixelium/web-vue'
 import '@pixelium/web-vue/dist/pixelium-vue.css'
-// Import the font
+// Import the font [optional]
 import '@pixelium/web-vue/dist/font.css'
+// Import the normalize [optional]
+import '@pixelium/web-vue/dist/normalize.css'
 
 createApp(App)
   .use(Pixelium)
@@ -88,9 +90,13 @@ You can perform on-demand imports directly from `@pixelium/web-vue/es`.
 > Ensure your project uses *TypeScript 4.7+* to avoid type-resolution issues.
 ]]]
 ```ts
-// Import the font at the project entry
+// Import the font at the project entry [optional]
 import '@pixelium/web-vue/dist/font.css'
+// Import the normalize at the project entry [optional]
+import '@pixelium/web-vue/dist/normalize.css'
 ```
+
+
 ```ts
 // Use components in the business code by on-demand import
 import { Button, Link } from '@pixelium/web-vue/es'

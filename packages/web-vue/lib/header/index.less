@@ -1,12 +1,15 @@
-@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-header {
 	@prefix: px-header;
 	width: 100%;
-	padding: 0 16px;
+	padding: 0 @px-interval-4;
 	background-color: var(--px-neutral-1);
 	color: var(--px-neutral-10);
 	min-height: 64px;
+
+	box-sizing: border-box;
+
 	&__bordered {
 		border-bottom: 2px solid var(--px-neutral-3);
 	}

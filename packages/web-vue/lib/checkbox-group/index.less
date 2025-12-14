@@ -1,0 +1,26 @@
+@import url(../share/style/variable.less);
+
+div.px-checkbox-group {
+	font-size: 0;
+}
+
+.px-checkbox-group {
+	@prefix: px-checkbox-group;
+	display: inline-block;
+	&-inner {
+		display: inline-flex;
+		flex-wrap: wrap;
+
+		margin: -(@px-interval-2);
+
+		& > * {
+			margin: @px-interval-2;
+		}
+	}
+	&__vertical {
+		display: inline-block;
+		& > .@{prefix}-inner {
+			flex-direction: column;
+		}
+	}
+}

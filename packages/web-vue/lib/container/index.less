@@ -1,10 +1,13 @@
-@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-container {
 	@prefix: px-container;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+
+	box-sizing: border-box;
+
 	&.@{prefix}__has-aside {
 		flex-direction: row;
 	}

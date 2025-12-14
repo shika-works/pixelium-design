@@ -23,16 +23,18 @@ import {
 	ref,
 	type Ref
 } from 'vue'
-import Container from '../container/index.vue'
 import type { AsideProps } from './type'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { isNullish, isNumber } from 'parsnip-kit'
+import { CONTAINER_PROVIDE } from '../share/const/provide-key'
 
 defineOptions({ name: 'Aside' })
 
 const instance = getCurrentInstance()
-const inner = ref(instance?.parent?.type === Container)
-const asideCounter = inner.value ? inject<Ref<number>>('px-container-provide') : undefined
+const inner = ref(instance?.parent?.type.name === 'Container')
+const asideCounter = inner.value
+	? inject<Ref<number> | undefined>(CONTAINER_PROVIDE, undefined)
+	: undefined
 
 onMounted(() => {
 	if (asideCounter) {
@@ -63,3 +65,4 @@ const width = computed(() => {
 })
 </script>
 <style lang="less" src="./index.less" />
+<style lang="less" src="../share/style/index.css" />

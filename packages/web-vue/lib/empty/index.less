@@ -1,3 +1,5 @@
+@import url(../share/style/variable.less);
+
 .px-empty {
 	@prefix: px-empty;
 	color: var(--px-neutral-8);
@@ -5,16 +7,16 @@
 	flex-direction: column;
 	align-items: center;
 	& .@{prefix}-icon {
-		width: var(--px-large-base-size);
-		height: var(--px-large-base-size);
+		width: @px-large-base-size;
+		height: @px-large-base-size;
 	}
 	&-icon-wrapper {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: var(--px-large-base-size);
+		font-size: @px-large-base-size;
 	}
 	&-description {
-		margin-top: var(--px-interval-1);
+		margin-top: @px-interval-1;
 	}
 }

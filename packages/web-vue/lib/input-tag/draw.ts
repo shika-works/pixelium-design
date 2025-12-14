@@ -13,32 +13,32 @@ export const drawBorder = (
 	pixelSize: number,
 	inner: boolean,
 	first: boolean,
-	last: boolean
+	last: boolean,
+	nextIsTextButton: boolean
 ) => {
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] <= pixelSize) {
-			continue
-		}
-		if (i === 1 || i === 2 ? (inner && last) || !inner : true) {
-			drawCircle(
-				ctx,
-				center[i][0],
-				center[i][1],
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize
-			)
+		if (borderRadius[i] > pixelSize) {
+			if (i === 1 || i === 2 ? (inner && last) || !inner : true) {
+				drawCircle(
+					ctx,
+					center[i][0],
+					center[i][1],
+					borderRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize
+				)
+			}
 		}
 	}
 
 	if (center[1][0] + pixelSize > center[0][0]) {
-		const width =
-			inner && !last
-				? center[1][0] - center[0][0] + pixelSize / 2 + 1
-				: center[1][0] - center[0][0] + pixelSize
-		ctx.fillRect(center[0][0], 0, width, pixelSize)
+		let length = center[1][0] - center[0][0] + pixelSize
+		if (inner && !last) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[0][0], 0, length, pixelSize)
 	}
 
 	if (center[2][1] + pixelSize > center[1][1] && ((inner && last) || !inner)) {
@@ -51,14 +51,14 @@ export const drawBorder = (
 	}
 
 	if (center[3][0] < center[2][0] + pixelSize) {
-		const width =
-			inner && !last
-				? center[2][0] - center[3][0] + pixelSize / 2
-				: center[2][0] - center[3][0] + pixelSize
-		ctx.fillRect(center[3][0], height - pixelSize, width, pixelSize)
+		let length = center[2][0] - center[3][0] + pixelSize
+		if (inner && !last) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[3][0], height - pixelSize, length, pixelSize)
 	}
 
-	if (center[3][1] + pixelSize > center[0][1] && !(inner && !first)) {
+	if ((!inner || first) && center[3][1] + pixelSize > center[0][1]) {
 		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
 	}
 
@@ -66,6 +66,10 @@ export const drawBorder = (
 		ctx.fillRect(pixelSize / 2, 0, pixelSize / 2, height)
 	}
 	if (inner && !last) {
-		ctx.fillRect(width - 2 * pixelSize - 1, 0, pixelSize / 2 + 1, height)
+		let length = pixelSize
+		if (nextIsTextButton) {
+			length /= 2
+		}
+		ctx.fillRect(width - 2 * pixelSize - 1, 0, length, height)
 	}
 }

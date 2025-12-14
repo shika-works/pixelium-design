@@ -1,24 +1,49 @@
-import type { Nullish } from 'parsnip-kit'
-import { onBeforeUnmount, onMounted, type Ref } from 'vue'
-import { inBrowser } from '../util/env'
+import { type Ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { inBrowser, inVitest } from '../util/env'
 
 export const useResizeObserver = (
-	ref: Ref<Nullish | HTMLElement>,
-	callback: () => any,
+	ref: Ref<HTMLElement | null | undefined>,
+	callback: () => void,
 	leading?: boolean
 ) => {
-	if (!inBrowser()) {
-		return null
-	}
-	const resizeObserver = new ResizeObserver(callback)
-	onMounted(() => {
-		setTimeout(() => {
-			leading && callback()
-			ref.value && resizeObserver.observe(ref.value)
+	if (leading) {
+		onMounted(() => {
+			nextTick(() => {
+				callback()
+			})
 		})
-	})
+	}
+
+	if (!inBrowser()) {
+		return
+	}
+
+	if (inVitest()) {
+		return
+	}
+
+	let resizeObserver: ResizeObserver | null = null
+
+	watch(
+		ref,
+		(element) => {
+			if (resizeObserver) {
+				resizeObserver.disconnect()
+				resizeObserver = null
+			}
+
+			if (element) {
+				resizeObserver = new ResizeObserver(callback)
+				resizeObserver.observe(element)
+			}
+		},
+		{ flush: 'post' }
+	)
+
 	onBeforeUnmount(() => {
-		resizeObserver.disconnect()
+		if (resizeObserver) {
+			resizeObserver.disconnect()
+			resizeObserver = null
+		}
 	})
-	return resizeObserver
 }

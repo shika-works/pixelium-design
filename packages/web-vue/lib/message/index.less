@@ -1,4 +1,4 @@
-@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-message-canvas {
 	position: absolute;
@@ -11,7 +11,9 @@
 
 .px-message {
 	@prefix: px-message;
+
 	--text-color: var(--px-neutral-10);
+
 	color: var(--text-color);
 	position: relative;
 	border-color: transparent;
@@ -21,6 +23,7 @@
 	display: flex;
 	transition: 0.25s;
 	pointer-events: auto;
+
 	&-fade-enter-to,
 	&-fade-leave-from {
 		opacity: 1;
@@ -46,7 +49,7 @@
 		display: flex;
 		align-items: center;
 		flex-shrink: 0;
-		margin-left: var(--px-interval-2);
+		margin-left: @px-interval-2;
 		.@{prefix}-icon {
 			cursor: pointer;
 			width: 1em;

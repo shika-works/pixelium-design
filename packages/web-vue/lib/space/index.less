@@ -1,10 +1,10 @@
-@import url(../share/style/index.css);
+@import url(../share/style/variable.less);
 
 .px-space {
 	@prefix: px-space;
-	--px-medium-interval: var(--px-interval-2);
-	--px-large-interval: var(--px-interval-3);
-	--px-small-interval: var(--px-interval-1);
+	@px-medium-interval: @px-interval-2;
+	@px-large-interval: @px-interval-3;
+	@px-small-interval: @px-interval-1;
 
 	&__inline {
 		display: inline-block;
@@ -39,15 +39,19 @@
 		display: flex;
 
 		.space-margin(@size) {
-			margin-top: calc(-1 * var(~'--px-@{size}-interval') / 2);
-			margin-bottom: calc(-1 * var(~'--px-@{size}-interval') / 2);
-			margin-left: calc(-1 * var(~'--px-@{size}-interval') / 2);
-			margin-right: calc(-1 * var(~'--px-@{size}-interval') / 2);
+			@var-name: ~'px-@{size}-interval';
+			@interval: @@var-name;
+
+			margin-top: -(@interval / 2);
+			margin-bottom: -(@interval / 2);
+			margin-left: -(@interval / 2);
+			margin-right: -(@interval / 2);
+
 			.px-space-item {
-				margin-top: calc(var(~'--px-@{size}-interval') / 2);
-				margin-bottom: calc(var(~'--px-@{size}-interval') / 2);
-				margin-left: calc(var(~'--px-@{size}-interval') / 2);
-				margin-right: calc(var(~'--px-@{size}-interval') / 2);
+				margin-top: (@interval / 2);
+				margin-bottom: (@interval / 2);
+				margin-left: (@interval / 2);
+				margin-right: (@interval / 2);
 			}
 		}
 

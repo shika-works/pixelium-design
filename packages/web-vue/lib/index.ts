@@ -16,7 +16,12 @@ import Main from './main/index.vue'
 import Aside from './aside/index.vue'
 import Header from './header/index.vue'
 import Footer from './footer/index.vue'
-import { setThemeColor } from './share/util/theme.ts'
+import {
+	setThemeColor,
+	resetThemeColor,
+	setPixelSize,
+	resetPixelSize
+} from './share/util/theme.ts'
 import { useThemeMode } from './share/hook/use-theme-mode.ts'
 import Icon from './icon/index.vue'
 import { inBrowser } from './share/util/env.ts'
@@ -34,6 +39,21 @@ import AutoComplete from './auto-complete/index.vue'
 import Mask from './mask/index.vue'
 import Spin from './spin/index.vue'
 import Select from './select/index.vue'
+import VirtualList from './virtual-list/index.vue'
+import Image from './image/index.vue'
+import Avatar from './avatar/index.vue'
+import Form from './form/index.vue'
+import FormItem from './form-item/index.vue'
+import { pixelateImage } from './pixelate/pixel.ts'
+import { imageDataToDataURL } from './share/util/dom.ts'
+import Switch from './switch/index.vue'
+import Slider from './slider/index.vue'
+import Radio from './radio/index.vue'
+import RadioGroup from './radio-group/index.vue'
+import Checkbox from './checkbox/index.vue'
+import CheckboxGroup from './checkbox-group/index.vue'
+import TextOutline from './text-outline/index.vue'
+import { useForm } from './form/use-form.ts'
 
 const components = [
 	Button,
@@ -65,7 +85,19 @@ const components = [
 	AutoComplete,
 	Mask,
 	Spin,
-	Select
+	Select,
+	VirtualList,
+	Image,
+	Avatar,
+	Form,
+	FormItem,
+	Switch,
+	Slider,
+	Radio,
+	RadioGroup,
+	Checkbox,
+	CheckboxGroup,
+	TextOutline
 ]
 
 const defaultPrefix = 'Px'
@@ -127,7 +159,25 @@ export {
 	AutoComplete,
 	Mask,
 	Spin,
-	Select
+	Select,
+	resetThemeColor,
+	setPixelSize,
+	resetPixelSize,
+	VirtualList,
+	Image,
+	Avatar,
+	pixelateImage,
+	Form,
+	FormItem,
+	Switch,
+	Slider,
+	Radio,
+	RadioGroup,
+	Checkbox,
+	CheckboxGroup,
+	imageDataToDataURL,
+	TextOutline,
+	useForm
 }
 export default {
 	install
@@ -142,5 +192,19 @@ export type {
 	ValueWithDeviceWidth
 } from './share/type/index.ts'
 
+export type { MessageOptions, MessageReturn } from './message-box/type.ts'
+
 export type { AutoCompleteOption, AutoCompleteGroupOption } from './auto-complete/type.ts'
 export type { SelectOption, SelectGroupOption } from './select/type.ts'
+export type { OptionListOption, OptionListGroupOption } from './option-list/type.ts'
+export type { CheckboxGroupOption } from './checkbox-group/type.ts'
+export type { RadioGroupOption } from './radio-group/type.ts'
+
+export type {
+	RuleItem,
+	RuleTrigger,
+	FieldType,
+	RuleLevel,
+	FormValidateResult,
+	UseFormReturn
+} from './form/type.ts'

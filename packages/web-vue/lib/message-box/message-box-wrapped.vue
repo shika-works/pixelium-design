@@ -35,5 +35,3 @@ defineExpose<MessageBoxExpose>({
 	}
 })
 </script>
-
-<style lang="less" src="./index.less"></style>

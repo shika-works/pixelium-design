@@ -3,21 +3,21 @@ const isNotProdMode =
 	typeof process !== 'undefined' && process.env.NODE_ENV !== 'production'
 const projectName = 'Pixelium'
 
-export function logInfo(...message: any[]) {
-	if (isNotProdMode) {
-		console.log(`[${projectName}]`, ...message)
+export function logInfo(message: any, showInProd = false) {
+	if (isNotProdMode || showInProd) {
+		console.log(`[${projectName}]`, message)
 	}
 }
 
-export function logWarn(...message: any[]) {
-	if (isNotProdMode) {
-		console.warn(`[${projectName}]`, ...message)
+export function logWarn(message: any, showInProd = false) {
+	if (isNotProdMode || showInProd) {
+		console.warn(`[${projectName}]`, message)
 	}
 }
 
-export function logError(...message: any[]) {
-	if (isNotProdMode) {
-		console.error(`[${projectName}]`, ...message)
+export function logError(message: any, showInProd = true) {
+	if (isNotProdMode || showInProd) {
+		console.error(`[${projectName}]`, message)
 	}
 }
 

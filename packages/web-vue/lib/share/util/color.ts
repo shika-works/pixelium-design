@@ -1,15 +1,15 @@
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../const'
-import type { RgbaColor } from '../type'
+import type { RgbaColor, RgbColor } from '../type'
 import { inBrowser } from './env'
 import { createLRU } from './lru-cache'
 
 const colorCache = createLRU<string, RgbaColor>(120)
 
-export function parseColor(color: string): RgbaColor {
+export function parseColor(color: string): RgbaColor | null {
 	const cached = colorCache.get(color)
 	if (cached) return { ...cached }
-	let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
 	if (color.startsWith('rgb(') || color.startsWith('rgba(')) {
+		let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
 		const matches = color.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/i)
 		if (matches) {
 			result.r = parseInt(matches[1], 10)
@@ -19,7 +19,10 @@ export function parseColor(color: string): RgbaColor {
 				result.a = Math.round(parseFloat(matches[4]) * 255)
 			}
 		}
+		colorCache.set(color, result)
+		return { ...result }
 	} else if (color.startsWith('#')) {
+		let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
 		color = color.slice(1)
 		if (color.length === 3) {
 			result.r = parseInt(color[0] + color[0], 16)
@@ -40,9 +43,10 @@ export function parseColor(color: string): RgbaColor {
 			result.b = parseInt(color.slice(4, 6), 16)
 			result.a = parseInt(color.slice(6, 8), 16)
 		}
+		colorCache.set(color, result)
+		return { ...result }
 	}
-	colorCache.set(color, result)
-	return { ...result }
+	return null
 }
 
 export const getGlobalThemeColor = (theme: string, level: number) => {
@@ -52,6 +56,13 @@ export const getGlobalThemeColor = (theme: string, level: number) => {
 	return parseColor(
 		getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
 	)
+}
+
+export const getGlobalThemeColorString = (theme: string, level: number) => {
+	if (!inBrowser()) {
+		return 'rgba(0,0,0,0)'
+	}
+	return getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
 }
 
 function toLinear(c: number) {
@@ -214,4 +225,28 @@ export function generatePalette(
 
 export const rgbaColor2string = (color: RgbaColor) => {
 	return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 255})`
+}
+
+const blendWithBackground = (rgba: RgbaColor, bg: RgbColor) => {
+	const alpha = rgba.a / 255
+	return {
+		r: (rgba.r * alpha + bg.r * (1 - alpha)) / 255,
+		g: (rgba.g * alpha + bg.g * (1 - alpha)) / 255,
+		b: (rgba.b * alpha + bg.b * (1 - alpha)) / 255
+	}
+}
+
+export function rgbaEuclideanDistance(
+	color1: RgbaColor,
+	color2: RgbaColor,
+	background: RgbColor = { r: 255, g: 255, b: 255 }
+): number {
+	const blended1 = blendWithBackground(color1, background)
+	const blended2 = blendWithBackground(color2, background)
+
+	const deltaR = blended1.r - blended2.r
+	const deltaG = blended1.g - blended2.g
+	const deltaB = blended1.b - blended2.b
+
+	return Math.sqrt(deltaR ** 2 + deltaG ** 2 + deltaB ** 2)
 }

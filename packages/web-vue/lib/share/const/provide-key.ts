@@ -1,3 +1,8 @@
 export const BUTTON_GROUP_PROVIDE = 'px-button-group-provide'
 export const INPUT_GROUP_PROVIDE = 'px-input-group-provide'
 export const GRID_PROVIDE = 'px-grid-provide'
+export const CONTAINER_PROVIDE = 'px-container-provide'
+export const FORM_PROVIDE = 'px-form-provide'
+export const FORM_ITEM_PROVIDE = 'px-form-item-provide'
+export const CHECKBOX_GROUP_PROVIDE = 'px-checkbox-group-provide'
+export const RADIO_GROUP_PROVIDE = 'px-radio-group-provide'

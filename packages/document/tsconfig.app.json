@@ -25,5 +25,12 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true
 	},
-	"include": ["template/**/*.ts", "template/**/*.tsx", "template/**/*.vue"]
+	"include": [
+		"template/**/*.ts",
+		"template/**/*.tsx",
+		"template/**/*.vue",
+		".vitepress/theme/**/*.ts",
+		".vitepress/theme/**/*.tsx",
+		".vitepress/theme/**/*.vue"
+	]
 }
