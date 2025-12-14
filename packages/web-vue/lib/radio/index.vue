@@ -88,7 +88,7 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const radioGroupProvide = inject<RadioGroupProvide | undefined>(RADIO_GROUP_PROVIDE)
+const radioGroupProvide = inject<RadioGroupProvide | undefined>(RADIO_GROUP_PROVIDE, undefined)
 
 const sizeComputed = createProvideComputed(
 	'size',
@@ -253,3 +253,5 @@ useTransitionEnd(canvasWrapperRef, drawPixel)
 </script>
 
 <style lang="less" src="./style.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

@@ -112,3 +112,5 @@ const clickHandler = (e: MouseEvent) => {
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

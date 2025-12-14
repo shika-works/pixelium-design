@@ -1,13 +1,15 @@
-@import url(../share/style/index.css);
 @import url(../share/style/variable.less);
 
 .px-footer {
 	@prefix: px-footer;
 	width: 100%;
-	padding: 0 16px;
+	padding: 0 @px-interval-4;
 	background-color: var(--px-neutral-1);
 	color: var(--px-neutral-10);
 	min-height: 64px;
+
+	box-sizing: border-box;
+
 	&__bordered {
 		border-top: 2px solid var(--px-neutral-3);
 	}

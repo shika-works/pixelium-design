@@ -37,18 +37,21 @@ const instance = getCurrentInstance()
 const inner = ref(instance?.parent?.type.name === 'Grid')
 
 const provide = inner.value
-	? inject<{
-			column: ComputedRef<number>
-			gutter: ComputedRef<{ x: number; y: number }>
-			itemsStat: Ref<
-				{
-					id: string
-					index: number
-					offset: number
-					span: number
-				}[]
-			>
-		}>(GRID_PROVIDE)
+	? inject<
+			| {
+					column: ComputedRef<number>
+					gutter: ComputedRef<{ x: number; y: number }>
+					itemsStat: Ref<
+						{
+							id: string
+							index: number
+							offset: number
+							span: number
+						}[]
+					>
+			  }
+			| undefined
+		>(GRID_PROVIDE, undefined)
 	: undefined
 
 const props = withDefaults(defineProps<GridItemProps>(), {

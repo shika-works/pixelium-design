@@ -219,7 +219,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
 
 const emits = defineEmits<SliderEvent>()
 
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
 
@@ -699,3 +699,5 @@ useTransitionEnd(sliderRef, refresh)
 </script>
 
 <style lang="less" src="./index.less"></style>
+
+<style lang="less" src="../share/style/index.css" />

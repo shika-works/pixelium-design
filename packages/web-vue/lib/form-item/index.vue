@@ -136,7 +136,7 @@ const props = withDefaults(defineProps<FormItemProps>(), {
 	contentProps: undefined
 })
 
-const formContext = inject<FormProvide>(FORM_PROVIDE)!
+const formContext = inject<FormProvide | undefined>(FORM_PROVIDE, undefined)!
 
 if (!formContext) {
 	throwError('FormItem must be used inside Form.')
@@ -442,3 +442,4 @@ defineExpose({
 </script>
 
 <style lang="less" src="./index.less"></style>
+<style lang="less" src="../share/style/index.css" />

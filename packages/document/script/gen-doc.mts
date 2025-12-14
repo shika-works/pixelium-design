@@ -7,6 +7,38 @@ const BLOCK_RE = /\[\[\[\s*([a-zA-Z-]+)([\s\S]*?)\]\]\]/g
 const API_BLOCK_RE = /\[\[\[api(?: +([a-zA-Z-]+))? +([a-zA-Z-]+)(\s*[\s\S]*?\]\]\])/g
 const collapseNewlines = (s: string): string => s.trim().replace(/\n{3,}/g, '\n\n')
 
+function getValidLineNumber(mdContent: string): number {
+	const lines = mdContent.split(/\r?\n/)
+	let inFrontmatter = false
+	let frontmatterStartLine = -1
+	let frontmatterEndLine = -1
+
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i].trim()
+		if (!inFrontmatter && line === '---') {
+			inFrontmatter = true
+			frontmatterStartLine = i
+			continue
+		}
+		if (inFrontmatter && line === '---') {
+			frontmatterEndLine = i
+			inFrontmatter = false
+			break
+		}
+	}
+
+	if (frontmatterStartLine === -1 || frontmatterEndLine === -1) {
+		return 0
+	}
+	for (let i = frontmatterEndLine + 1; i < lines.length; i++) {
+		const originalLine = lines[i]
+		if (originalLine.trim().length > 0) {
+			return i
+		}
+	}
+	return frontmatterEndLine + 1
+}
+
 async function processMd(src: string, dst: string, lang: string): Promise<void> {
 	const text = await fs.readFile(src, 'utf8')
 	let newText = text.replace(BLOCK_RE, (_: any, l: string, c: any) => {
@@ -43,11 +75,13 @@ async function processMd(src: string, dst: string, lang: string): Promise<void> 
 		await fs.writeFile('./index.md', newText, 'utf8')
 	}
 	if (lang !== 'zh' && path.basename(src) !== 'index.md') {
-		const idx = newText.indexOf('\n')
-		newText =
-			newText.slice(0, idx) +
-			'\n<div style="font-size: 0.8em; color: #777; text-align: right;">🌏 Translated with the assistance of DeepSeek and ChatGPT</div>\n' +
-			newText.slice(idx)
+		const idx = getValidLineNumber(newText)
+		const rows = newText.split(/\r?\n/)
+		newText = [
+			...rows.slice(0, idx),
+			'\n<div style="font-size: 0.8em; color: #777; text-align: right;">🌏 Translated with the assistance of DeepSeek and ChatGPT</div>\n',
+			...rows.slice(idx)
+		].join('\n')
 	}
 	await fs.writeFile(dst, newText, 'utf8')
 }

@@ -119,10 +119,13 @@ const [index, first, last] = innerButtonGroup.value
 		? useIndexOfChildren(INPUT_GROUP_UPDATE)
 		: [ref(0), ref(false), ref(false)]
 
-const buttonGroupProvide = inject<undefined | ButtonGroupProvide>(BUTTON_GROUP_PROVIDE)
-const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE)
-const formProps = inject<undefined | FormProvide>(FORM_PROVIDE)
-const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE)
+const buttonGroupProvide = inject<undefined | ButtonGroupProvide>(
+	BUTTON_GROUP_PROVIDE,
+	undefined
+)
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+const formProps = inject<undefined | FormProvide>(FORM_PROVIDE, undefined)
+const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerButtonGroup.value && buttonGroupProvide,
@@ -399,3 +402,4 @@ useTransitionEnd(buttonRef, drawPixel)
 </script>
 
 <style lang="less" src="./index.less"></style>
+<style lang="less" src="../share/style/index.css" />
