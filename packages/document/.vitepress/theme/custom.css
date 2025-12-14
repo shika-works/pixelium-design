@@ -49,6 +49,7 @@ img[alt='Static Badge'] {
 	display: inline-flex;
 	color: var(--text-color);
 	cursor: pointer;
+	text-decoration: none !important;
 }
 .vp-doc .px-link-icon-wrapper {
 	margin-right: 4px;

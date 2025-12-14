@@ -11,7 +11,8 @@ const titleMap = {
 	'pixel-size': '像素尺寸',
 	'update-plan': '更新计划',
 	changelog: '更新日志',
-	'controlled-and-uncontrolled': '受控 & 非受控模式'
+	'controlled-and-uncontrolled': '受控 & 非受控模式',
+	example: '组件示例'
 }
 const additionMap = {
 	button: '按钮',

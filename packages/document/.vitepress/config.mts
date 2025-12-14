@@ -38,6 +38,9 @@ export default defineConfig({
 		logo: '/logo.png',
 		search: {
 			provider: 'local'
+		},
+		outline: {
+			label: 'deep'
 		}
 	}
 })

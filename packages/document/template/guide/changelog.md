@@ -23,6 +23,7 @@
 - 优化：
   - Select 组件增加 `label` 插槽。
   - InputGroup 增加 `readonly` 属性。
+  - Main 组件增加 `soft` 属性设置柔和背景。
   - 优化弧线绘制算法。
   - 选项组的子选项增加缩进。
   - 优化 Select 组件的 `focus` 和 `blur` 事件触发。
@@ -51,6 +52,7 @@
 - Optimizations:
   - Add `label` slot to the Select component.
   - Add `readonly` property to InputGroup.
+  - Add the `soft` property to the Main component to set a soft background.
   - Optimize the arc drawing algorithm.
   - Add indentation to sub-options of option groups.
   - Optimize the triggering of `focus` and `blur` events for the Select component.
