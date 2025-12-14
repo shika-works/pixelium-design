@@ -124,21 +124,6 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: ^5.1.1
         version: 5.1.1(rolldown-vite@7.2.11(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1))(vue@3.5.22(typescript@5.8.3))
-      '@vitest/coverage-v8':
-        specifier: 3.2.4
-        version: 3.2.4(vitest@3.2.4(@types/node@24.5.2)(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(less@4.4.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))
-      '@vue/test-utils':
-        specifier: ^2.4.6
-        version: 2.4.6
-      dts-bundle-generator:
-        specifier: ^9.5.1
-        version: 9.5.1
-      execa:
-        specifier: ^9.6.0
-        version: 9.6.0
-      jsdom:
-        specifier: ^27.0.1
-        version: 27.0.1(postcss@8.5.6)
       less:
         specifier: ^4.4.0
         version: 4.4.1
@@ -151,15 +136,9 @@ importers:
       vite:
         specifier: npm:rolldown-vite@latest
         version: rolldown-vite@7.2.11(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1)
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.4(@types/node@24.5.2)(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(less@4.4.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1)
       vue-macros:
         specifier: 3.0.0-beta.23
         version: 3.0.0-beta.23(@vueuse/core@13.9.0(vue@3.5.22(typescript@5.8.3)))(esbuild@0.25.10)(rolldown-vite@7.2.11(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1))(rollup@4.52.3)(typescript@5.8.3)(vue-tsc@3.0.6(typescript@5.8.3))(vue@3.5.22(typescript@5.8.3))
-      vue-tsc:
-        specifier: 3.0.6
-        version: 3.0.6(typescript@5.8.3)
 
 packages:
 
@@ -1425,9 +1404,6 @@ packages:
 
   '@rolldown/pluginutils@1.0.0-beta.29':
     resolution: {integrity: sha512-NIJgOsMjbxAXvoGq/X0gD7VPMQ8j9g0BiDaNjVNVjvl+iKXxL3Jre0v31RmBYeLEmkbj2s02v8vFTbUXi5XS2Q==}
-
-  '@rolldown/pluginutils@1.0.0-beta.40':
-    resolution: {integrity: sha512-s3GeJKSQOwBlzdUrj4ISjJj5SfSh+aqn0wjOar4Bx95iV1ETI7F6S/5hLcfAxZ9kXDcyrAkxPlqmd1ZITttf+w==}
 
   '@rolldown/pluginutils@1.0.0-beta.53':
     resolution: {integrity: sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ==}
@@ -6292,8 +6268,6 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.0-beta.29': {}
 
-  '@rolldown/pluginutils@1.0.0-beta.40': {}
-
   '@rolldown/pluginutils@1.0.0-beta.53': {}
 
   '@rollup/plugin-alias@5.1.1(rollup@4.52.3)':
@@ -6559,7 +6533,7 @@ snapshots:
       '@babel/core': 7.28.4
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.4)
       '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4)
-      '@rolldown/pluginutils': 1.0.0-beta.45
+      '@rolldown/pluginutils': 1.0.0-beta.53
       '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.4)
       vite: rolldown-vite@7.2.11(@types/node@24.5.2)(esbuild@0.25.10)(jiti@2.6.1)(less@4.4.1)(terser@5.44.0)(yaml@2.8.1)
       vue: 3.5.22(typescript@5.8.3)
@@ -6571,7 +6545,7 @@ snapshots:
       '@babel/core': 7.28.4
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.4)
       '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4)
-      '@rolldown/pluginutils': 1.0.0-beta.45
+      '@rolldown/pluginutils': 1.0.0-beta.53
       '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.4)
       vite: 7.1.7(@types/node@24.5.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1)
       vue: 3.5.22(typescript@5.8.3)
