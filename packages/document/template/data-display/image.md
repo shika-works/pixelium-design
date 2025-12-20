@@ -92,6 +92,7 @@ maskProps: 预览时遮罩的属性。
 popupWrapperProps: 预览时浮动层的属性。
 zoomOptions: 预览图片尺寸的选项，`maxWidth` 和 `maxHeight` 为预览图片的最大宽高，`margin` 为预览图片距视口边缘的距离。
 referrerpolicy: 原生 `<img>` 的 `referrerpolicy`。
+previewDestroyOnHide: 预览模式的浮层是否会在隐藏时销毁。
 crossorigin: 原生 `<img>` 的 `crossorigin`。
 events.load: 图片加载完成的回调。
 events.error: 图片加载失败的回调。
@@ -116,6 +117,7 @@ popupWrapperProps: Properties for the floating layer during preview.
 zoomOptions: Options for preview image size. `maxWidth` and `maxHeight` set the maximum width and height of the preview image, and `margin` sets the distance from the viewport edge.
 referrerpolicy: Same as the native `<img>` `referrerpolicy`.
 crossorigin: Same as the native `<img>` `crossorigin`.
+previewDestroyOnHide: Whether the overlay in preview mode be destroyed when hidden.
 events.load: Callback when the image loads successfully.
 events.error: Callback when the image fails to load.
 events.loading: Callback when the image starts loading with the `lazy` property.
