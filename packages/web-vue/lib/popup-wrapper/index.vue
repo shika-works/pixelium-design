@@ -1,21 +1,19 @@
 <template>
-	<Teleport :to="props.root || 'body'">
-		<div
-			v-show="destroyOnHide === false ? innerVisible : true"
-			v-if="destroyOnHide !== false ? innerVisible : true"
-			:class="{
-				pixelium: true,
-				'px-popup-wrapper': true,
-				'px-popup-wrapper__fixed': props.position === 'fixed'
-			}"
-			:style="{
-				zIndex: props.zIndex ?? currentZIndex
-			}"
-			v-bind="$attrs"
-		>
-			<slot> </slot>
-		</div>
-	</Teleport>
+	<div
+		v-show="destroyOnHide === false ? innerVisible : true"
+		v-if="destroyOnHide !== false ? innerVisible : true"
+		:class="{
+			pixelium: true,
+			'px-popup-wrapper': true,
+			'px-popup-wrapper__fixed': props.position === 'fixed'
+		}"
+		:style="{
+			zIndex: props.zIndex ?? currentZIndex
+		}"
+		v-bind="$attrs"
+	>
+		<slot> </slot>
+	</div>
 </template>
 
 <script setup lang="ts">
