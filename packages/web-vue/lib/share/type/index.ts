@@ -1,4 +1,4 @@
-import type { DefineComponent, VNode } from 'vue'
+import type { DefineComponent, StyleValue, VNode } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'
 import type { GROUP_OPTION_TYPE, SCREEN_SIZE_TYPE } from '../const'
 
@@ -34,4 +34,12 @@ export type VueComponent = DefineComponent<Record<string, never>, Record<string,
 
 export type EmitEvent<T extends Record<string, any>> = {
 	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}
+
+export type VueClassValue = string | Record<string, any> | VueClassValue[]
+
+export type RestAttrs = {
+	style?: StyleValue | null
+	class?: VueClassValue | null
+	[x: string]: any
 }

@@ -1,5 +1,5 @@
 import type { PopoverProps, PopoverEvents } from '../popover/type'
-import type { EmitEvent, NumberOrPercentage } from '../share/type'
+import type { EmitEvent, NumberOrPercentage, RestAttrs } from '../share/type'
 import type { TagEvents, TagProps } from '../tag/type'
 
 export type InputTagProps = {
@@ -84,10 +84,10 @@ export type InputTagProps = {
 	 */
 	collapseTagsPopover?: boolean
 	/**
-	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>} [tagProps]
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents> & RestAttrs} [tagProps]
 	 * @version 0.0.3
 	 */
-	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents> & RestAttrs
 	/**
 	 * @property {'success' | 'warning' | 'error' | 'normal'} [status='normal']
 	 * @version 0.0.2
