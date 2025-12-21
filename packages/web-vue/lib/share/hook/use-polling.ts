@@ -10,7 +10,7 @@ export const usePolling = (watchTarge: WatchSource<any>, callback: Function) => 
 		}
 		timer = setInterval(() => {
 			callback()
-		}, 100)
+		}, 50)
 	}
 	const clearPoll = () => {
 		if (timer) {

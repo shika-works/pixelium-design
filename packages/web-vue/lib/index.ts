@@ -55,6 +55,10 @@ import CheckboxGroup from './checkbox-group/index.vue'
 import TextOutline from './text-outline/index.vue'
 import { useForm } from './form/use-form.ts'
 
+import Dialog from './dialog/index.ts'
+
+import { locale } from './share/util/locale.ts'
+
 const components = [
 	Button,
 	ButtonGroup,
@@ -97,7 +101,8 @@ const components = [
 	RadioGroup,
 	Checkbox,
 	CheckboxGroup,
-	TextOutline
+	TextOutline,
+	Dialog
 ]
 
 const defaultPrefix = 'Px'
@@ -117,12 +122,15 @@ const install = (
 	if (options.attachToApp !== false) {
 		app.config.globalProperties.PixeliumVue = {
 			message: Message,
+			dialog: Dialog,
 			useThemeMode: useThemeMode
 		}
 	}
 	if (options.attachToWindow !== false && inBrowser()) {
 		// @ts-ignore
 		window.$message = Message
+		// @ts-ignore
+		window.$dialog = Dialog
 	}
 }
 export { install }
@@ -177,7 +185,9 @@ export {
 	CheckboxGroup,
 	imageDataToDataURL,
 	TextOutline,
-	useForm
+	useForm,
+	Dialog,
+	locale
 }
 export default {
 	install

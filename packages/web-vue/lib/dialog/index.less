@@ -1,0 +1,186 @@
+@import url(../share/style/variable.less);
+
+.px-dialog {
+	width: 100%;
+	height: 100%;
+	transition: 0.25s;
+
+	&-container {
+		width: calc(@px-dialog-width - var(--px-bit) * 2);
+		max-height: calc(100vh - var(--px-bit) * 2);
+
+		z-index: 0;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		transition: all 0.25s;
+
+		background-color: var(--px-neutral-1);
+		box-sizing: border-box;
+
+		font-size: var(--px-neutral-9);
+
+		display: flex;
+		flex-direction: column;
+
+		font-size: @px-medium-font-size;
+	}
+
+	&-header {
+		box-sizing: content-box;
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: @px-medium-base-size;
+		padding: @px-interval-2;
+		border-bottom: 2px solid var(--px-neutral-6);
+
+		flex-shrink: 0;
+	}
+
+	&-icon-wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	&-header-icon-wrapper {
+		margin-right: @px-interval-2;
+		&__last {
+			margin-right: 0;
+		}
+		svg {
+			width: @px-medium-font-size;
+			height: @px-medium-font-size;
+		}
+	}
+
+	&-close-icon-wrapper {
+		width: @px-medium-font-size - @px-interval-1;
+		height: @px-medium-font-size - @px-interval-1;
+		font-size: @px-medium-font-size - @px-interval-1;
+		position: absolute;
+		top: 50%;
+		right: @px-interval-2;
+		transform: translateY(-50%);
+	}
+
+	&-close-icon {
+		transition: 0.25s;
+		cursor: pointer;
+		fill: var(--px-neutral-8);
+		&:hover {
+			fill: var(--px-neutral-7);
+		}
+		&:active {
+			fill: var(--px-neutral-9);
+		}
+	}
+
+	&-body {
+		box-sizing: content-box;
+		padding: @px-interval-3 @px-interval-2;
+		min-height: @px-medium-base-size;
+		overflow: auto;
+	}
+	&-footer {
+		box-sizing: content-box;
+		padding: @px-interval-2 @px-interval-2;
+		min-height: @px-medium-base-size;
+		border-top: 2px solid var(--px-neutral-6);
+		flex-shrink: 0;
+	}
+	&-button {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	&-mask {
+		transition: 0.25s;
+		opacity: 1;
+	}
+	&-fade-enter-to,
+	&-fade-leave-from {
+		opacity: 1;
+		.px-dialog-container {
+			transform: translate(-50%, -50%) scale(1);
+		}
+		.px-dialog-mask {
+			opacity: 1;
+		}
+	}
+	&-fade-enter-from,
+	&-fade-leave-to {
+		opacity: 0;
+		.px-dialog-container {
+			transform: translate(-50%, -50%) scale(0.2);
+		}
+		.px-dialog-mask {
+			opacity: 0;
+		}
+	}
+
+	&-confirm-button {
+		margin-left: @px-interval-2;
+	}
+}
+
+.corner-gradient::after {
+	@border-width: var(--px-bit);
+	@border-width-minus-1: calc(var(--px-bit) - 1px);
+
+	width: calc(var(--px-bit) * 2 + 100%);
+	height: calc(var(--px-bit) * 2 + 100%);
+	z-index: 0;
+	content: '';
+	display: block;
+	position: absolute;
+
+	left: calc(var(--px-bit) * -1);
+	top: calc(var(--px-bit) * -1);
+
+	pointer-events: none;
+
+	background:
+		linear-gradient(
+				to right,
+				transparent 0,
+				transparent @border-width-minus-1,
+				#000 @border-width,
+				#000 calc(100% - @border-width),
+				transparent calc(100% - @border-width-minus-1),
+				transparent 100%
+			)
+			top left / 100% @border-width no-repeat,
+		linear-gradient(
+				to right,
+				transparent 0,
+				transparent @border-width-minus-1,
+				#000 @border-width,
+				#000 calc(100% - @border-width),
+				transparent calc(100% - @border-width-minus-1),
+				transparent 100%
+			)
+			bottom left / 100% @border-width no-repeat,
+		linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent @border-width-minus-1,
+				#000 @border-width,
+				#000 calc(100% - @border-width),
+				transparent calc(100% - @border-width-minus-1),
+				transparent 100%
+			)
+			top left / @border-width 100% no-repeat,
+		linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent @border-width-minus-1,
+				#000 @border-width,
+				#000 calc(100% - @border-width),
+				transparent calc(100% - @border-width-minus-1),
+				transparent 100%
+			)
+			top right / @border-width 100% no-repeat;
+}
