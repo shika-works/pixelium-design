@@ -53,7 +53,7 @@ if (inBrowser) {
 	})
 }
 
-let lastUrl = window.location.href
+let lastUrl = ''
 
 const checkUrlChange = () => {
 	const currentUrl = window.location.href
