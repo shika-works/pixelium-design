@@ -1,0 +1,12 @@
+{
+	"compilationOptions": {
+		"preferredConfigPath": "../tsconfig.app.json"
+	},
+	"entries": [
+		{
+			"noCheck": true,
+			"filePath": "../lib/index.ts",
+			"outFile": "../dist/index.d.ts"
+		}
+	]
+}
