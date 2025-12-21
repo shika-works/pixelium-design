@@ -717,6 +717,8 @@ usePolling(pollSizeChangeComputed, () => {
 				height: rect.height
 			}
 			drawPixel()
+			updateSliderRect()
+			updateThumbRect()
 		}
 	}
 })
