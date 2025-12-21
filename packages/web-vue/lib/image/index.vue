@@ -37,6 +37,7 @@
 				:position="'fixed'"
 				:close-delay="ANIMATION_DURATION"
 				:destroy-on-hide="props.previewDestroyOnHide"
+				prevent-document-scroll
 				v-bind="props.popupWrapperProps"
 			>
 				<Transition name="px-image-preview">
