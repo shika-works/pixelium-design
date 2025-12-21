@@ -71,7 +71,6 @@ const checkUrlChange = () => {
 }
 
 window.addEventListener('popstate', checkUrlChange)
-
 ;['pushState', 'replaceState'].forEach((method) => {
 	// @ts-ignore
 	const original = window.history[method]
