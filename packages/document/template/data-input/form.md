@@ -160,6 +160,8 @@ labelProps: 表单项标签列的属性。
 contentProps: 表单项内容列的属性。
 labelAutoWidth: 表单项标签宽度自适应。
 
+pollSizeChange: 开启轮询组件尺寸变化，会影响子树上组件的按钮组件和数据输入组件的同名属性。
+
 events.submit: 表单触发原生的提交时的回调。
 events.reset: 表单触发原生的重置时触发的回调。
 events.validate: 表单验证时触发的回调。
@@ -203,6 +205,8 @@ rowProps: 表单项行容器的属性。
 labelProps: 表单项标签列的属性。
 contentProps: 表单项内容列的属性。
 
+pollSizeChange: 开启轮询组件尺寸变化，会影响子树上组件的按钮组件和数据输入组件的同名属性。
+
 slots.tip: 验证提示。
 slots.extra: 额外内容插槽，位于内容区域下方。
 slots.label: 自定义标签。
@@ -223,6 +227,8 @@ rowProps: Props for the form item row container.
 labelProps: Props for the form item's label column.
 contentProps: Props for the form item's content column.
 labelAutoWidth: Enable auto width for form item labels.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in button and data input components within its subtree.
 
 events.submit: Callback for native form submit.
 events.reset: Callback for native form reset.
@@ -266,6 +272,8 @@ asteriskPlacement: Position of the asterisk.
 rowProps: Props for the form item's row container.
 labelProps: Props for the form item's label column.
 contentProps: Props for the form item's content column.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in button and data input components within its subtree.
 
 slots.tip: Validation tip slot.
 slots.extra: Extra content slot located below the content area.

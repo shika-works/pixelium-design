@@ -27,6 +27,7 @@
 				:closable="tagCanClose"
 				:disabled="disabledComputed"
 				:color="props.tagColor"
+				:poll-size-change="pollSizeChangeComputed"
 				v-bind="props.tagProps"
 				@close="(e: MouseEvent) => tagCloseHandler(index, e)"
 			>
@@ -40,6 +41,7 @@
 					:theme="props.tagTheme"
 					:disabled="disabledComputed"
 					:color="props.tagColor"
+					:poll-size-change="pollSizeChangeComputed"
 					v-bind="props.tagProps"
 				>
 					<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
@@ -53,6 +55,7 @@
 						:theme="props.tagTheme"
 						:disabled="disabledComputed"
 						:color="props.tagColor"
+						:poll-size-change="pollSizeChangeComputed"
 						v-bind="props.tagProps"
 					>
 						<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
@@ -70,6 +73,7 @@
 								:closable="tagCanClose"
 								:disabled="disabledComputed"
 								:color="props.tagColor"
+								:poll-size-change="pollSizeChangeComputed"
 								v-bind="props.tagProps"
 								@close="
 									(e: MouseEvent) =>
@@ -160,6 +164,7 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'InputTag'
@@ -223,6 +228,11 @@ const disabledComputed = createProvideComputed(
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
 	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
 	'or'
 )
@@ -496,6 +506,24 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

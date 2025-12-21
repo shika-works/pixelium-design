@@ -91,6 +91,11 @@ export type InputProps = {
 	 * @version 0.0.2
 	 */
 	nativeType?: 'text' | 'password' | 'email' | 'tel' | 'url' | 'search'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type InputEvents = {

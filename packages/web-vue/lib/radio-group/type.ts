@@ -46,12 +46,18 @@ export type RadioGroupProps = {
 	 * @version 0.0.3
 	 */
 	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export interface RadioGroupProvide {
 	variant: Ref<'normal' | 'retro' | undefined>
 	size: ComputedRef<'medium' | 'large' | 'small' | undefined>
 	modelValue: Ref<any>
+	pollSizeChange: ComputedRef<boolean | undefined>
 	disabled: ComputedRef<boolean | undefined>
 	readonly: ComputedRef<boolean | undefined>
 	updateValue: (value: any) => void

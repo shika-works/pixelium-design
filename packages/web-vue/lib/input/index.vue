@@ -107,6 +107,7 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Input'
@@ -140,7 +141,7 @@ const [index, first, last] = innerInputGroup.value
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', () => [
+const borderRadiusComputed = createProvideComputed('borderRadius', [
 	innerInputGroup.value && inputGroupProvide,
 	props
 ])
@@ -157,21 +158,26 @@ const sizeComputed = createProvideComputed(
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	() => [innerInputGroup.value && inputGroupProvide, props],
+	[innerInputGroup.value && inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	() => [innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
 	'or'
 )
-const statusComputed = createProvideComputed('status', () => [formItemProvide, props])
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
@@ -390,6 +396,27 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(
+	() => pollSizeChangeComputed.value,
+	() => {
+		const wrapper = wrapperRef.value
+		if (wrapper) {
+			const rect = wrapper.getBoundingClientRect()
+			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+				wrapperSize = {
+					width: rect.width,
+					height: rect.height
+				}
+				drawPixel()
+			}
+		}
+	}
+)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -99,6 +99,7 @@ import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/sp
 import { inBrowser } from '../share/util/env'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
+import { usePolling } from '../share/hook/use-polling'
 
 const MID_PROGRESS = 0.5
 
@@ -137,6 +138,11 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, u
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 const sizeComputed = createProvideComputed(
 	'size',
 	() => [props.size && props, formItemProvide, props],
@@ -335,6 +341,24 @@ const refresh = () => {
 useResizeObserver(canvasWrapperRef, refresh)
 useWatchGlobalCssVal(refresh)
 useTransitionEnd(canvasWrapperRef, refresh)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = canvasWrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

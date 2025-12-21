@@ -52,6 +52,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
+import { usePolling } from '../share/hook/use-polling'
 defineOptions({
 	name: 'Checkbox'
 })
@@ -98,6 +99,11 @@ const disabledComputed = createProvideComputed(
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
+	[checkboxGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
 	[checkboxGroupProvide, formItemProvide, props],
 	'or'
 )
@@ -238,6 +244,24 @@ watch(
 useResizeObserver(boxRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(boxRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = boxRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

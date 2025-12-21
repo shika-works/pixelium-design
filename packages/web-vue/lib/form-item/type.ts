@@ -1,4 +1,4 @@
-import type { Ref, ToRefs } from 'vue'
+import type { ComputedRef, Ref, ToRefs } from 'vue'
 import type { ColProps } from '../col/type'
 import type { RuleItem, RuleLevel } from '../form/type'
 import type { RowProps } from '../row/type'
@@ -60,6 +60,11 @@ export type FormItemProps = {
 	 * @version 0.0.3
 	 */
 	contentProps?: ColProps & RestAttrs
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type FormItemSlots = {
@@ -92,10 +97,11 @@ export type FormItemProvide = {
 	blurHandler: () => Promise<void>
 	inputHandler: () => Promise<void>
 	status: Ref<RuleLevel>
+	pollSizeChange: ComputedRef<boolean | undefined>
+	disabled: ComputedRef<boolean | undefined>
+	readonly: ComputedRef<boolean | undefined>
 } & ToRefs<
 	LooseRequired<{
 		size: 'small' | 'medium' | 'large' | undefined
-		disabled?: boolean
-		readonly?: boolean
 	}>
 >

@@ -200,6 +200,7 @@ import {
 } from './util'
 import Tooltip from '../tooltip/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Slider'
@@ -222,6 +223,11 @@ const emits = defineEmits<SliderEvent>()
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
@@ -696,6 +702,24 @@ const refresh = () => {
 useResizeObserver(sliderRef, refresh)
 useWatchGlobalCssVal(refresh)
 useTransitionEnd(sliderRef, refresh)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = sliderRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

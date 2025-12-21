@@ -44,6 +44,11 @@ export type CheckboxProps = {
 	 * @version 0.0.3
 	 */
 	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type CheckboxEvents = {

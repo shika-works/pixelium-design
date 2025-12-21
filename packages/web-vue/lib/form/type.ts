@@ -84,6 +84,11 @@ export type FormProps = {
 	 * @version 0.0.3
 	 */
 	contentProps?: ColProps & RestAttrs
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export interface UseFormReturn<

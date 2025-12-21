@@ -43,6 +43,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -80,6 +81,11 @@ const shapeComputed = createProvideComputed(
 	[innerInputGroup.value && inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[innerInputGroup.value && inputGroupProvide, props],
+	'or'
 )
 
 const nextIsTextButton = computed(() => {
@@ -178,6 +184,24 @@ const drawPixel = () => {
 useResizeObserver(labelRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(labelRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = labelRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

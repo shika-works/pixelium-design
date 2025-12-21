@@ -167,6 +167,11 @@ export type SelectProps = {
 	 * @version 0.0.3
 	 */
 	optionsDestroyOnHide?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type SelectEvents = {

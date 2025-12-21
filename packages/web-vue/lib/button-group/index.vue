@@ -42,13 +42,18 @@ const disabledComputed = createProvideComputed(
 		return pre || value || ('readonly' in cur && cur['readonly'].value)
 	}
 )
-
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, formProvide, props],
+	'or'
+)
 const childrenInfo = ref<ChildrenInfo[]>([])
 
 provide<ButtonGroupProvide>(BUTTON_GROUP_PROVIDE, {
 	...toRefs(props),
 	size: sizeComputed,
 	disabled: disabledComputed,
+	pollSizeChange: pollSizeChangeComputed,
 	childrenInfo,
 	collectChildrenInfo: (info: ChildrenInfo) => {
 		const idx = childrenInfo.value.findIndex((e) => e.id === info.id)

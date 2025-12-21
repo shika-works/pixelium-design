@@ -104,6 +104,8 @@ value: 单选框的原生 `value` 属性。
 variant: 单选框的样式变体。
 size: 单选框的大小。
 
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 选中单选框的回调。
 events.change: 单选框选中状态改变的回调。
@@ -122,6 +124,8 @@ size: 后代的单选框组件的尺寸大小，如果设置，优先于后代�
 direction: 单选框子组件排列方向。
 options: 单选组选项。
 
+pollSizeChange: 开启轮询组件尺寸变化，会影响 Radio 子组件的同名属性。
+
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 单选组选中内容改变的回调。
 slots.default: 单选框子组件。
@@ -135,6 +139,8 @@ label: The text of the radio button.
 value: The native `value` attribute of the radio button.
 variant: The style variant of the radio button.
 size: Size of the radio button.
+
+pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
 
 events.update:modelValue: Callback for updating `modelValue`.
 events.input: Callback when the radio button is selected.
@@ -153,6 +159,8 @@ variant: The style variant for descendant Radio components, which takes preceden
 size: Size for descendant Radio components. When set, it overrides the `size` prop on those components.
 direction: The arrangement direction of child radio buttons.
 options: Options for the radio group.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in Radio sub-components.
 
 events.update:modelValue: Callback for updating `modelValue`.
 events.change: Callback when the selection in the radio group changes.

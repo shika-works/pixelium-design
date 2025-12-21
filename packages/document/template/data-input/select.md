@@ -179,6 +179,8 @@ status: 表单验证状态。
 popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
 optionsDestroyOnHide: 下拉选项是否会在隐藏时销毁。
 
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.input: 搜索选项输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.update:inputValue: 更新 `inputValue` 的回调。
@@ -230,6 +232,8 @@ borderRadius: Border-radius value; higher priority than `shape`. Single value or
 status: Form validation status.
 popoverProps: Popover component properties when tags are collapsed.
 optionsDestroyOnHide: Whether the dropdown options will be destroyed when hidden.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
 
 events.input: Fired on search input.
 events.update:modelValue: Fired when `modelValue` changes.

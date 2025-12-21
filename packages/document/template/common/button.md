@@ -142,6 +142,8 @@ color: 自定义主色，内部基于此生成完整色板，该色板优先级�
 block: 是否占据整行。
 nativeType: HTML `<button>` 原生 `type` 属性。
 autofocus: HTML `<button>` 原生 `autofocus` 属性。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.click: 点击事件。
 slots.default: 按钮内容。
 slots.icon: 按钮图标。
@@ -158,6 +160,9 @@ color: Custom primary color: the component will generate a complete color palett
 nativeType: Native HTML `<button>` `type` attribute.
 autofocus: Native HTML `<button>` `autofocus` attribute.
 block: Whether to take up the full line.
+
+pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+
 events.click: Click event.
 slots.default: The button's content.
 slots.icon: The button's icon.
@@ -170,6 +175,7 @@ size: 按钮尺寸，将覆盖 Button 子组件的 `size`。
 disabled: 是否禁用，Button 子组件的 `disabled` 和当前属性取或，决定该子组件是否禁用。
 loading: 是否加载状态，Button 子组件的 `loading` 和当前属性取或，决定该子组件是否加载状态。
 variant: 按钮样式变体，Button 子组件的 `variant` 和当前属性取或，决定该子组件的样式变体。
+pollSizeChange: 开启轮询组件尺寸变化，会影响 Button 子组件的同名属性。
 slots.default: 子按钮。
 ]]]
 [[[api button-group en
@@ -179,6 +185,7 @@ size: Button size, overrides the `size` of the Button child components.
 disabled: Whether to disable. The Button sub-component's `disabled` and this prop are OR-ed to decide if the sub-component is disabled.
 loading: Whether to show loading state. The Button sub-component's `loading` and this prop are OR-ed to decide if the sub-component is in loading state.
 variant: Button style variant. The Button sub-component's `variant` and this prop are OR-ed to decide the style variant of the sub-component.
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in Button sub-components.
 slots.default: The sub-buttons.
 ]]]
 

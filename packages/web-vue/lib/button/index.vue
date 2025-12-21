@@ -97,6 +97,7 @@ import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Button'
@@ -183,6 +184,17 @@ const disabledComputed = createProvideComputed(
 const loadingComputed = createProvideComputed(
 	'loading',
 	[innerButtonGroup.value && buttonGroupProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[
+		innerButtonGroup.value && buttonGroupProvide,
+		innerInputGroup.value && inputGroupProvide,
+		formItemProvide,
+		formProps,
+		props
+	],
 	'or'
 )
 
@@ -399,6 +411,24 @@ const drawPixel = () => {
 useResizeObserver(buttonRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(buttonRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const button = buttonRef.value
+	if (button) {
+		const rect = button.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

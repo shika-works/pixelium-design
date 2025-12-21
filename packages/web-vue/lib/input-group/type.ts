@@ -28,6 +28,11 @@ export type InputGroupProps = {
 	 * @version 0.0.3
 	 */
 	readonly?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type InputGroupSlots = {

@@ -181,6 +181,9 @@ sliceGraphemes: 自定义截取长度函数。
 nativeType: 原生 `<input>` 的 `type` 属性。
 autofocus: 原生 `<input>` 的 `autofocus` 属性。
 status: 表单验证状态。
+
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.change: 输入内容变化时的回调。
 events.clear: 点击清除文本按钮，清除内容时的回调。
 events.focus: 输入框聚焦时的回调。
@@ -215,6 +218,9 @@ countGraphemes: Custom character count function. If only `countGraphemes` is pro
 sliceGraphemes: Custom function to slice the string to the specified length.
 nativeType: Native `<input>` `type` attribute.
 autofocus: Native `<input>` `autofocus` attribute.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
+
 events.change: Callback when input content changes.
 events.clear: Callback when the clear button is clicked and content is cleared.
 events.focus: Callback when the input box is focused.

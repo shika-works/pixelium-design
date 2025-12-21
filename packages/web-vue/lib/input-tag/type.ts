@@ -118,6 +118,11 @@ export type InputTagProps = {
 	 * @version 0.0.3
 	 */
 	popoverProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type InputTagEvents = {
