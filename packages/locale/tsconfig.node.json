@@ -21,10 +21,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 
-		"types": ["node"],
-		"paths": {
-			"@pixelium/locale/*": ["../locale/src/*"]
-		}
+		"types": ["node", "vite/client"]
 	},
-	"include": ["*.js", "script/**/*.ts", "plugin/**/*.ts", "script/**/*.mts"]
+	"include": ["*.js", "script/**/*.ts", "script/**/*.mts"]
 }

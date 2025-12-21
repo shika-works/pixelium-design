@@ -2,6 +2,8 @@
 import DefaultTheme from 'vitepress/theme'
 import { onMounted, watchEffect } from 'vue'
 import { inBrowser, onContentUpdated, useData } from 'vitepress'
+import { locale } from '@pixelium/web-vue'
+
 const base = 'pixelium-design'
 if (inBrowser) {
 	const lang = navigator.language
@@ -50,6 +52,38 @@ if (inBrowser) {
 		updateThemeClass()
 	})
 }
+
+let lastUrl = window.location.href
+
+const checkUrlChange = () => {
+	const currentUrl = window.location.href
+
+	if (currentUrl !== lastUrl) {
+		lastUrl = currentUrl
+		const pathname = window.location.pathname
+
+		if (pathname.includes('/zh/')) {
+			locale.setLocale('zh-cn')
+		} else if (pathname.includes('/en/')) {
+			locale.setLocale('en')
+		}
+	}
+}
+
+window.addEventListener('popstate', checkUrlChange)
+
+;['pushState', 'replaceState'].forEach((method) => {
+	// @ts-ignore
+	const original = window.history[method]
+	// @ts-ignore
+	window.history[method] = function (...args) {
+		const result = original.apply(this, args)
+		checkUrlChange()
+		return result
+	}
+})
+
+checkUrlChange()
 </script>
 
 <template>
