@@ -50,6 +50,7 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Tag'
@@ -164,6 +165,27 @@ const drawPixel = () => {
 useResizeObserver(tagRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(tagRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(
+	() => props.pollSizeChange,
+	() => {
+		const wrapper = tagRef.value
+		if (wrapper) {
+			const rect = wrapper.getBoundingClientRect()
+			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+				wrapperSize = {
+					width: rect.width,
+					height: rect.height
+				}
+				drawPixel()
+			}
+		}
+	}
+)
 </script>
 
 <style lang="less" src="./index.less"></style>

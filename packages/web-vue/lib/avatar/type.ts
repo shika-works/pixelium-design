@@ -24,6 +24,11 @@ export type AvatarProps = {
 	 * @version 0.0.3
 	 */
 	borderColor?: string
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type AvatarSlots = {

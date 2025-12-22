@@ -4,15 +4,17 @@
 
 ## 0. Git Branching & Release Workflow
 1. **main branch**  
-   - Serves as the release branch. All production-ready code must reach main through a Pull Request (PR).  
-   - Tag immediately after merge: `v{major}.{breaking/large-change}.{patch}[-extra]`, e.g. `v1.0.1`, `v1.0.1-beta`.
+   - Used exclusively for production releases. All code to be deployed must be merged into the main branch via a Pull Request (PR).  
+   - Immediately tag the merge commit after merging. Naming format: `v{major}.{breaking or major change}.{patch}[-additional description]`, e.g., `v1.0.1`, `v1.0.1-beta`.
+   - Hotfix Handling: For fixes to released versions, create a branch prefixed with `hotfix/` from the main branch. After completing the fix, merge it back into the main branch via a PR.
 
 2. **dev branch**  
-   - The integration branch for unreleased features/fixes. Open PRs against dev first.  
-   - Dev can be merged into main.
+   - Serves as the daily development integration branch. Unreleased features/fixes must first submit a PR to the dev branch.  
+   - The dev branch can be merged into the main branch for releases.
 
 3. **docs branch**  
-   - Reserved for documentation updates; accepts PRs or direct merges **only** from dev.
+   - Dedicated to documentation updates. It receives PRs from or is directly merged from the dev branch.
+   - Documentation Hotfix: When fixing online documentation issues, create a branch prefixed with `hotfix-docs/` from the docs branch. After completing the fix, merge it back into the docs branch via a PR.
 
 ## 1. 格式
 ```

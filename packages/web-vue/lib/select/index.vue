@@ -67,6 +67,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Select'
@@ -142,6 +143,11 @@ const disabledComputed = createProvideComputed(
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
+	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
 	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
 	'or'
 )
@@ -690,6 +696,24 @@ useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
 
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
+
 const popoverProps = computed(() => {
 	return {
 		...props.popoverProps,
@@ -720,6 +744,7 @@ defineRender(() => {
 								closable={tagCanClose.value}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								pollSizeChange={pollSizeChangeComputed.value}
 								{...props.tagProps}
 								onClose={(event) => tagCloseHandler(e, event)}
 							>
@@ -747,6 +772,7 @@ defineRender(() => {
 								theme={props.tagTheme}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								pollSizeChange={pollSizeChangeComputed.value}
 								{...props.tagProps}
 							>
 								{{
@@ -772,6 +798,7 @@ defineRender(() => {
 											theme={props.tagTheme}
 											disabled={disabledComputed.value}
 											color={props.tagColor}
+											pollSizeChange={pollSizeChangeComputed.value}
 											{...props.tagProps}
 										>
 											{{
@@ -800,6 +827,7 @@ defineRender(() => {
 														disabled={disabledComputed.value}
 														color={props.tagColor}
 														closable={tagCanClose.value}
+														pollSizeChange={pollSizeChangeComputed.value}
 														{...props.tagProps}
 														onClose={(event) => tagCloseHandler(e, event)}
 													>

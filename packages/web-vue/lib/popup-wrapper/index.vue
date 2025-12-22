@@ -1,28 +1,27 @@
 <template>
-	<Teleport :to="props.root || 'body'">
-		<div
-			v-show="destroyOnHide === false ? innerVisible : true"
-			v-if="destroyOnHide !== false ? innerVisible : true"
-			:class="{
-				pixelium: true,
-				'px-popup-wrapper': true,
-				'px-popup-wrapper__fixed': props.position === 'fixed'
-			}"
-			:style="{
-				zIndex: props.zIndex ?? currentZIndex
-			}"
-			v-bind="$attrs"
-		>
-			<slot> </slot>
-		</div>
-	</Teleport>
+	<div
+		v-show="destroyOnHide === false ? innerVisible : true"
+		v-if="destroyOnHide !== false ? innerVisible : true"
+		:class="{
+			pixelium: true,
+			'px-popup-wrapper': true,
+			'px-popup-wrapper__fixed': props.position === 'fixed'
+		}"
+		:style="{
+			zIndex: props.zIndex ?? currentZIndex
+		}"
+		v-bind="$attrs"
+	>
+		<slot> </slot>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, useId, watch } from 'vue'
 import { useZIndex } from '../share/hook/use-z-index'
 import type { PopupWrapperProps } from './type'
 import { isNumber } from 'parsnip-kit'
+import { usePopupWrapperManager } from './use-popup-wrapper-manager'
 
 defineOptions({
 	name: 'PopupWrapper'
@@ -30,8 +29,13 @@ defineOptions({
 
 const props = withDefaults(defineProps<PopupWrapperProps>(), {
 	root: 'body',
-	destroyOnHide: false
+	destroyOnHide: false,
+	preventDocumentScroll: false
 })
+
+const id = useId()
+
+const [activate, hide] = usePopupWrapperManager(id)
 
 const [currentZIndex, next, release] = useZIndex('popup')
 
@@ -46,9 +50,15 @@ const processVisible = (value: boolean) => {
 	}
 	if (value) {
 		innerVisible.value = true
+		if (props.preventDocumentScroll) {
+			activate()
+		}
 		next()
 	} else {
 		release()
+		if (props.preventDocumentScroll) {
+			hide()
+		}
 		if (isNumber(props.closeDelay)) {
 			timer = setTimeout(() => {
 				innerVisible.value = false

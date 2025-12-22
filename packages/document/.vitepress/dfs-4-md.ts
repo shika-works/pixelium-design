@@ -49,18 +49,7 @@ const dfs = (
 	})
 }
 
-const newItems: string[] = [
-	'form',
-	'switch',
-	'slider',
-	'checkbox',
-	'radio',
-	'image',
-	'avatar',
-	'virtual-list',
-	'pixelate',
-	'text-outline'
-]
+const newItems: string[] = []
 
 const order = [
 	'guide',

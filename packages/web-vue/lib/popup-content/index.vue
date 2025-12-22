@@ -1,44 +1,45 @@
 <template>
-	<PopupWrapper
-		:root="props.root"
-		:zIndex="props.zIndex"
-		:visible="props.visible"
-		:close-delay="ANIMATION_DURATION"
-		:destroy-on-hide="props.destroyOnHide"
-	>
-		<Transition
-			:name="'px-popup-content-fade__' + (popupFinalPlacement || popupRoughPlacement)"
-			appear
+	<PopupPortal :root="props.root">
+		<PopupWrapper
+			:zIndex="props.zIndex"
+			:visible="props.visible"
+			:close-delay="ANIMATION_DURATION"
+			:destroy-on-hide="props.destroyOnHide"
 		>
-			<div
-				ref="contentRef"
-				v-show="props.visible"
-				:class="{
-					pixelium: true,
-					'px-popup-content': true,
-					'px-popup-content__arrow': !!props.arrow,
-					[`px-popup-content__${popupFinalPlacement || popupRoughPlacement}`]: true,
-					[`px-popup-content__${props.variant}`]: true
-				}"
-				:style="{
-					...floatingStyles,
-					visibility: show ? 'visible' : 'hidden',
-					pointerEvents: show ? 'auto' : 'none',
-					width: isNumber(contentWidth) ? `${contentWidth}px` : undefined,
-					...props.contentStyle
-				}"
-				v-bind="$attrs"
-				@mouseenter="contentMouseenterHandler"
-				@mouseleave="contentMouseleaveHandler"
+			<Transition
+				:name="'px-popup-content-fade__' + (popupFinalPlacement || popupRoughPlacement)"
+				appear
 			>
-				<slot name="content">
-					{{ props.content }}
-				</slot>
-				<div class="px-popup-content-arrow" :style="arrowStyles" ref="arrowRef" />
-				<canvas class="px-popup-content-canvas" ref="canvasRef" />
-			</div>
-		</Transition>
-	</PopupWrapper>
+				<div
+					ref="contentRef"
+					v-show="props.visible"
+					:class="{
+						pixelium: true,
+						'px-popup-content': true,
+						'px-popup-content__arrow': !!props.arrow,
+						[`px-popup-content__${popupFinalPlacement || popupRoughPlacement}`]: true,
+						[`px-popup-content__${props.variant}`]: true
+					}"
+					:style="{
+						...floatingStyles,
+						visibility: show ? 'visible' : 'hidden',
+						pointerEvents: show ? 'auto' : 'none',
+						width: isNumber(contentWidth) ? `${contentWidth}px` : undefined,
+						...props.contentStyle
+					}"
+					v-bind="$attrs"
+					@mouseenter="contentMouseenterHandler"
+					@mouseleave="contentMouseleaveHandler"
+				>
+					<slot name="content">
+						{{ props.content }}
+					</slot>
+					<div class="px-popup-content-arrow" :style="arrowStyles" ref="arrowRef" />
+					<canvas class="px-popup-content-canvas" ref="canvasRef" />
+				</div>
+			</Transition>
+		</PopupWrapper>
+	</PopupPortal>
 </template>
 
 <script setup lang="ts">
@@ -61,6 +62,7 @@ import type { PopupContentEvents, PopupContentProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { inBrowser } from '../share/util/env'
 import PopupWrapper from '../popup-wrapper/index.vue'
+import PopupPortal from '../popup-portal/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 defineOptions({

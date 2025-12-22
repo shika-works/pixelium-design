@@ -16,7 +16,7 @@
 [[[en
 ## v0.0.4
 - Navigation components: Menu, Dropdown, Breadcrumb, BackTop.
-- Feedback components: Dialog, PopupConfirm, Tooltip, Badge, Progress.
+- Feedback components: Dialog, PopupConfirm, Alert, Badge, Progress.
 - Data display components: Table.
 - Layout components: Scrollbar.
 - Improved test cases.

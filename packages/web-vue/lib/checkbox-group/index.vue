@@ -60,6 +60,11 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, u
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 
 const getKey = (option: CheckboxGroupOption | string) => {
 	if (isString(option)) {
@@ -81,6 +86,7 @@ provide<CheckboxGroupProvide>(CHECKBOX_GROUP_PROVIDE, {
 	disabled: disabledComputed,
 	readonly: readonlyComputed,
 	variant: toRef(props, 'variant'),
+	pollSizeChange: pollSizeChangeComputed,
 	size: sizeComputed,
 	updateValue: (value: any, checked: boolean) => {
 		const newValue = (modelValue.value || []).slice()

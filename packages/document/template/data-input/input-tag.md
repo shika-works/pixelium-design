@@ -114,6 +114,9 @@ collapseTags: 是否开启折叠标签。
 maxDisplayTags: 展示标签的最大数量，开启 `collapseTags` 后生效。
 collapseTagsPopover: 是否在弹出框中展示被折叠的标签，开启 `collapseTags` 后生效。
 popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
+
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.clear: 点击清除文本按钮，清除内容时的回调。
 events.focus: 输入框聚焦时的回调。
 events.blur: 输入框失焦时的回调。
@@ -157,6 +160,9 @@ collapseTags: Whether to enable collapsed tags.
 maxDisplayTags: Maximum number of tags to display, effective when `collapseTags` is enabled.
 collapseTagsPopover: Whether to show collapsed tags in a popover, effective when `collapseTags` is enabled.
 popoverProps: Popover component properties when tags are collapsed.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
+
 events.clear: Callback when the clear button is clicked and the content is cleared.
 events.focus: Callback when the input box is focused.
 events.blur: Callback when the input box loses focus.
@@ -181,9 +187,18 @@ inputNumberExpose.select: Select the content of the current input box.
 export type NumberOrPercentage = number | `${number}%`
 ```
 
-### EmitEvent
+### RestAttrs & EmitEvent
+
 ```ts
 export type EmitEvent<T extends Record<string, any>> = {
 	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
+}
+
+export type VueClassValue = string | Record<string, any> | VueClassValue[]
+
+export type RestAttrs = {
+	style?: StyleValue | null
+	class?: VueClassValue | null
+	[x: string]: any
 }
 ```

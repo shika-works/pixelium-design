@@ -48,6 +48,11 @@ export type CheckboxGroupProps = {
 	 * @version 0.0.3
 	 */
 	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type CheckboxGroupEvents = {
@@ -76,6 +81,7 @@ export type CheckboxGroupSlots = {
 export type CheckboxGroupProvide = {
 	size: ComputedRef<'medium' | 'large' | 'small' | undefined>
 	variant: Ref<CheckboxGroupProps['variant']>
+	pollSizeChange: ComputedRef<boolean | undefined>
 	disabled: ComputedRef<boolean | undefined>
 	readonly: ComputedRef<boolean | undefined>
 	modelValue: Ref<any[] | Nullish>

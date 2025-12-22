@@ -4,7 +4,8 @@ import { dfs4Md } from './dfs-4-md'
 const titleMap = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
-	theme: 'Custom Theme'
+	theme: 'Custom Theme',
+	i18n: 'Internationalization'
 }
 const additionMap = {}
 const sidebar = dfs4Md('en', titleMap, additionMap)

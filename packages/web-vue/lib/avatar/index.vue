@@ -45,6 +45,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { isNumber, isString } from 'parsnip-kit'
 import { offsetOutward } from '../share/util/common'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Avatar'
@@ -165,6 +166,27 @@ const drawPixel = () => {
 useResizeObserver(avatarRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(avatarRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(
+	() => props.pollSizeChange,
+	() => {
+		const wrapper = avatarRef.value
+		if (wrapper) {
+			const rect = wrapper.getBoundingClientRect()
+			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+				wrapperSize = {
+					width: rect.width,
+					height: rect.height
+				}
+				drawPixel()
+			}
+		}
+	}
+)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -96,3 +96,15 @@ slots.default: Content wrapped by Spin.
 slots.icon: Icon for Spin.
 slots.description: Description during Spin loading.
 ]]]
+
+### RestAttrs
+
+```ts
+export type VueClassValue = string | Record<string, any> | VueClassValue[]
+
+export type RestAttrs = {
+	style?: StyleValue | null
+	class?: VueClassValue | null
+	[x: string]: any
+}
+```

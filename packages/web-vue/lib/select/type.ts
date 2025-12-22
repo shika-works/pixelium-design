@@ -1,6 +1,6 @@
 import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
 import type { PopoverEvents, PopoverProps } from '../popover/type'
-import type { EmitEvent, NumberOrPercentage } from '../share/type'
+import type { EmitEvent, NumberOrPercentage, RestAttrs } from '../share/type'
 import type { TagEvents, TagProps } from '../tag/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
@@ -113,15 +113,15 @@ export type SelectProps = {
 	 */
 	virtualScroll?: boolean
 	/**
-	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'>} [virtualListProps]
+	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'> & RestAttrs} [virtualListProps]
 	 * @version 0.0.3
 	 */
-	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'> & RestAttrs
 	/**
-	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>} [tagProps]
+	 * @property {Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents> & RestAttrs} [tagProps]
 	 * @version 0.0.3
 	 */
-	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents>
+	tagProps?: Omit<TagProps, 'size' | 'disabled' | 'closable'> & EmitEvent<TagEvents> & RestAttrs
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.2
@@ -167,6 +167,11 @@ export type SelectProps = {
 	 * @version 0.0.3
 	 */
 	optionsDestroyOnHide?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type SelectEvents = {

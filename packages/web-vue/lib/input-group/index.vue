@@ -47,6 +47,11 @@ const sizeComputed = createProvideComputed(
 	'nullish',
 	(val) => val || 'medium'
 )
+const pollSizeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, formProvide, props],
+	'or'
+)
 
 const childrenInfo = ref<ChildrenInfo[]>([])
 
@@ -55,6 +60,7 @@ provide<InputGroupProvide>(INPUT_GROUP_PROVIDE, {
 	disabled: disabledComputed,
 	size: sizeComputed,
 	readonly: readonlyComputed,
+	pollSizeChange: pollSizeComputed,
 	collectChildrenInfo: (info: ChildrenInfo) => {
 		const idx = childrenInfo.value.findIndex((e) => e.id === info.id)
 		if (idx >= 0) {

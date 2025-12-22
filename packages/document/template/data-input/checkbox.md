@@ -117,6 +117,8 @@ value: 复选框的原生 `value` 属性。
 variant: 复选框的样式变体。
 size: 复选框的大小。
 
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 选中/取消选择复选框的回调。
 events.change: 复选框选中状态改变的回调。
@@ -134,6 +136,8 @@ label: The text of the checkbox.
 value: the native `value` attribute of checkboxes.
 size: Size of the checkbox.
 variant: The style variant of the checkbox.
+
+pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
 
 events.update:modelValue: Callback for updating `modelValue`.
 events.input: Callback for selecting/deselecting the checkbox.
@@ -153,6 +157,8 @@ options: 复选组选项。
 variant: 后代的单选框组件的样式变体，如果设置，优先于后代的单选框组件自身的 `variant`。
 size: 后代的复选框组件的尺寸大小，如果设置，优先于后代的复选框组件自身的 `size`。
 
+pollSizeChange: 开启轮询组件尺寸变化，会影响 Checkbox 子组件的同名属性。
+
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 复选组选中内容改变的回调。
 slots.default: 复选框子组件。
@@ -166,6 +172,8 @@ direction: The arrangement direction of child checkbox components.
 options: Options for the checkbox group.
 size: Size for descendant checkbox components. When set, it overrides the `size` prop on those components.
 variant: The style variant for descendant Radio components, which takes precedence over the `variant` of individual Radio components if set.
+
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in Checkbox sub-components.
 
 events.update:modelValue: Callback for updating `modelValue`.
 events.change: Callback for when the checkbox group selection changes.

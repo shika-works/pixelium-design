@@ -342,7 +342,8 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: collectSpy,
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false)
 				}
 
 				const wrapper = mount(Button, {
@@ -451,7 +452,8 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: vi.fn(),
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false)
 				}
 
 				const wrapper = mount(Button, {
@@ -496,7 +498,8 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: vi.fn(),
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false)
 				}
 
 				const wrapper = mount(Button, {
@@ -534,7 +537,8 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: vi.fn(),
 					removeChildrenInfo: removeSpy,
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false)
 				}
 
 				const wrapper = mount(Button, {
@@ -565,7 +569,8 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: collectSpy,
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false)
 				}
 
 				const wrapper = mount(Button, {

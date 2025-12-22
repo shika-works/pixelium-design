@@ -1,5 +1,5 @@
 import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
-import type { NumberOrPercentage } from '../share/type'
+import type { NumberOrPercentage, RestAttrs } from '../share/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
 export interface AutoCompleteOption extends OptionListOption<string> {}
@@ -91,10 +91,10 @@ export type AutoCompleteProps = {
 	 */
 	virtualScroll?: boolean
 	/**
-	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'>} [virtualListProps]
+	 * @property {Omit<VirtualListProps, 'list' | 'fixedHeight'> & RestAttrs} [virtualListProps]
 	 * @version 0.0.3
 	 */
-	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'>
+	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'> & RestAttrs
 	/**
 	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
 	 * @version 0.0.2
@@ -115,6 +115,11 @@ export type AutoCompleteProps = {
 	 * @version 0.0.3
 	 */
 	optionsDestroyOnHide?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type AutoCompleteEvents = {

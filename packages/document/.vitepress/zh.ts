@@ -12,7 +12,8 @@ const titleMap = {
 	'update-plan': '更新计划',
 	changelog: '更新日志',
 	'controlled-and-uncontrolled': '受控 & 非受控模式',
-	example: '组件示例'
+	example: '组件示例',
+	i18n: '多语言国际化'
 }
 const additionMap = {
 	button: '按钮',
@@ -54,7 +55,8 @@ const additionMap = {
 	slider: '滑动选择器',
 	radio: '单选框',
 	checkbox: '复选框',
-	'text-outline': '文本描边'
+	'text-outline': '文本描边',
+	dialog: '对话框'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)

@@ -12,9 +12,7 @@
 		"lint:fix": "oxlint ./ --fix && prettier ./ --write --no-cache"
 	},
 	"devDependencies": {
-		"comment-parser": "^1.4.1",
 		"parsnip-kit": "^0.0.5",
-		"ts-morph": "^26.0.0",
 		"vitepress": "2.0.0-alpha.12"
 	},
 	"dependencies": {

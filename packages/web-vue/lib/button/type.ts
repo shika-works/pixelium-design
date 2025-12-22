@@ -56,6 +56,11 @@ export type ButtonProps = {
 	 * @version 0.0.0-beta
 	 */
 	autofocus?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type ButtonEvents = {

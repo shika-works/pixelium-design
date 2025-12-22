@@ -10,6 +10,7 @@ import Input from '../../input/index.vue'
 
 // Mock form context
 const createMockFormContext = (options: any = {}): FormProvide => ({
+	pollSizeChange: ref(options.pollSizeChange || {}),
 	model: ref(options.model || {}),
 	rules: ref(options.rules || {}),
 	disabled: ref(options.disabled || false),

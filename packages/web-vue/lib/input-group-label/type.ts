@@ -21,6 +21,11 @@ export type InputGroupLabelProps = {
 	 * @version 0.0.2
 	 */
 	size?: 'medium' | 'large' | 'small'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type InputGroupLabelSlots = {

@@ -38,6 +38,11 @@ export type ButtonGroupProps = {
 	 * @version 0.0.0-beta
 	 */
 	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type ButtonGroupSlots = {

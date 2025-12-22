@@ -64,6 +64,7 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Radio'
@@ -104,6 +105,11 @@ const disabledComputed = createProvideComputed(
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
+	[radioGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
 	[radioGroupProvide, formItemProvide, props],
 	'or'
 )
@@ -250,6 +256,24 @@ watch(
 useResizeObserver(canvasWrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(canvasWrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = canvasWrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./style.less"></style>

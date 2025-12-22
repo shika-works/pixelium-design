@@ -144,6 +144,11 @@ if (!formContext) {
 
 const disabledComputed = createProvideComputed('disabled', [formContext, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formContext, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formContext, props],
+	'or'
+)
 
 const id = useId()
 
@@ -283,6 +288,7 @@ provide<FormItemProvide>(FORM_ITEM_PROVIDE, {
 	size: formContext.size,
 	disabled: disabledComputed,
 	readonly: readonlyComputed,
+	pollSizeChange: pollSizeChangeComputed,
 	changeHandler,
 	blurHandler,
 	inputHandler,

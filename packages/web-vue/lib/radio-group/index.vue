@@ -28,6 +28,11 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, u
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	transform: (val) => {
@@ -60,6 +65,7 @@ const updateValue = (value: any) => {
 provide<RadioGroupProvide>(RADIO_GROUP_PROVIDE, {
 	variant: toRef(props, 'variant'),
 	size: sizeComputed,
+	pollSizeChange: pollSizeChangeComputed,
 	modelValue,
 	disabled: disabledComputed,
 	readonly: readonlyComputed,

@@ -1,4 +1,6 @@
 import type { MaskProps } from '../mask/type'
+import type { PopupPortalProps } from '../popup-portal/type'
+import type { PopupWrapperProps } from '../popup-wrapper/type'
 
 export type ImageProps = {
 	/**
@@ -52,10 +54,10 @@ export type ImageProps = {
 	 */
 	maskProps?: Omit<MaskProps, 'zIndex'>
 	/**
-	 * @property {{ zIndex: number, root: HTMLElement | string }} [popupWrapperProps]
+	 * @property {{ zIndex?: number, root?: HTMLElement | string, destroyOnHide?: boolean }} [popupWrapperProps]
 	 * @version 0.0.3
 	 */
-	popupWrapperProps?: { zIndex: number; root: HTMLElement | string }
+	popupWrapperProps?: Pick<PopupWrapperProps, 'zIndex' | 'destroyOnHide'> & PopupPortalProps
 	/**
 	 * @property {{ maxWidth?: number, maxHeight?: number, margin?: number}} [popupWrapperProps={ margin: 32, maxWidth: Infinity, maxHeight: Infinity }]
 	 * @version 0.0.3
@@ -71,6 +73,11 @@ export type ImageProps = {
 	 * @version 0.0.3
 	 */
 	crossorigin?: 'anonymous' | 'use-credentials' | ''
+	/**
+	 * @property {boolean} [previewDestroyOnHide=false]
+	 * @version 0.0.4
+	 */
+	previewDestroyOnHide?: boolean
 }
 
 export type ImageEvents = {

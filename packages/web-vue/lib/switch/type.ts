@@ -64,6 +64,11 @@ export type SwitchProps = {
 	 * @version 0.0.3
 	 */
 	inactiveColor?: string
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.0.4
+	 */
+	pollSizeChange?: boolean
 }
 
 export type SwitchEvents = {
