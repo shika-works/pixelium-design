@@ -15,7 +15,7 @@
 		:style="{
 			color: textColor
 		}"
-		ref="tagRef"
+		ref="alertRef"
 	>
 		<canvas ref="canvasRef" class="px-alert-canvas"></canvas>
 		<div
@@ -146,7 +146,7 @@ const toggleActive = (value: boolean) => {
 const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const tagRef = shallowRef<HTMLButtonElement | null>(null)
+const alertRef = shallowRef<HTMLButtonElement | null>(null)
 
 onMounted(() => {
 	nextTick(() => {
@@ -189,7 +189,7 @@ watch(
 	}
 )
 const drawPixel = () => {
-	const preprocessData = canvasPreprocess(tagRef, canvasRef)
+	const preprocessData = canvasPreprocess(alertRef, canvasRef)
 	if (!preprocessData) {
 		return
 	}
@@ -223,9 +223,9 @@ const drawPixel = () => {
 	}
 }
 
-useResizeObserver(tagRef, drawPixel)
+useResizeObserver(alertRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(tagRef, drawPixel)
+useTransitionEnd(alertRef, drawPixel)
 
 let wrapperSize = {
 	width: 0,
@@ -234,7 +234,7 @@ let wrapperSize = {
 usePolling(
 	() => props.pollSizeChange,
 	() => {
-		const wrapper = tagRef.value
+		const wrapper = alertRef.value
 		if (wrapper) {
 			const rect = wrapper.getBoundingClientRect()
 			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
