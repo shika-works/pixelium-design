@@ -54,10 +54,9 @@ import Checkbox from './checkbox/index.vue'
 import CheckboxGroup from './checkbox-group/index.vue'
 import TextOutline from './text-outline/index.vue'
 import { useForm } from './form/use-form.ts'
-
 import Dialog from './dialog/index.ts'
-
 import { locale } from './share/util/locale.ts'
+import Alert from './alert/index.vue'
 
 const components = [
 	Button,
@@ -102,7 +101,8 @@ const components = [
 	Checkbox,
 	CheckboxGroup,
 	TextOutline,
-	Dialog
+	Dialog,
+	Alert
 ]
 
 const defaultPrefix = 'Px'
@@ -187,7 +187,8 @@ export {
 	TextOutline,
 	useForm,
 	Dialog,
-	locale
+	locale,
+	Alert
 }
 export default {
 	install
