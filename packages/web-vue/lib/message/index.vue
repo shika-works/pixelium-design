@@ -178,7 +178,7 @@ defineRender(() => {
 					class={{
 						'px-message': true,
 						pixelium: true,
-						[`px-message__${props.type || 'primary'}`]: true
+						[`px-message__${props.type || 'normal'}`]: true
 					}}
 				>
 					{(!!props.icon ||

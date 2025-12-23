@@ -56,7 +56,8 @@ const additionMap = {
 	radio: '单选框',
 	checkbox: '复选框',
 	'text-outline': '文本描边',
-	dialog: '对话框'
+	dialog: '对话框',
+	alert: '警告'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
@@ -92,6 +93,9 @@ export default defineConfig({
 					}
 				}
 			}
+		},
+		outline: {
+			level: [2, 4]
 		}
 	}
 })
