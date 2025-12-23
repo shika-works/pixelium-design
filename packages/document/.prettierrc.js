@@ -1,3 +1,5 @@
+import * as prettierPluginOxc from '@prettier/plugin-oxc'
+
 export default {
 	printWidth: 96,
 	tabWidth: 2,
@@ -21,18 +23,14 @@ export default {
 	endOfLine: 'lf',
 	overrides: [
 		{
-			files: '**/*.{js,mjs,cjs,jsx}',
-			options: {
-				plugins: ['@prettier/plugin-oxc'],
-				parser: 'oxc'
-			}
+			files: ['**/*.{js,mjs,cjs,jsx}'],
+			parser: 'oxc',
+			plugins: [prettierPluginOxc]
 		},
 		{
-			files: '**/*.{ts,mts,cts,tsx}',
-			options: {
-				plugins: ['@prettier/plugin-oxc'],
-				parser: 'oxc-ts'
-			}
+			files: ['**/*.{ts,mts,cts,tsx}'],
+			parser: 'oxc-ts',
+			plugins: [prettierPluginOxc]
 		}
 	]
 }
