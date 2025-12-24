@@ -124,7 +124,7 @@ const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const buttonCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const switchButtonRef = shallowRef<HTMLDivElement | null>(null)
+const switchButtonRef = shallowRef<HTMLLabelElement | null>(null)
 const canvasWrapperRef = shallowRef<HTMLDivElement | null>(null)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
