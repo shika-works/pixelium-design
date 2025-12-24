@@ -80,7 +80,7 @@ const toggleActive = (value: boolean) => {
 const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const tagRef = shallowRef<HTMLButtonElement | null>(null)
+const tagRef = shallowRef<HTMLSpanElement | null>(null)
 
 onMounted(() => {
 	nextTick(() => {
