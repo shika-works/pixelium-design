@@ -1,0 +1,87 @@
+@import url(../share/style/variable.less);
+
+.px-progress-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+	pointer-events: none;
+}
+
+.px-progress {
+	@prefix: px-progress;
+	@px-medium-padding-x: @px-interval-2;
+	@px-large-padding-x: @px-interval-3;
+	@px-small-padding-x: @px-interval-2;
+
+	--progress-size: var(--px-medium-sub-size);
+
+	min-height: var(--progress-size);
+	box-sizing: border-box;
+
+	background-color: transparent;
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+	position: relative;
+	transition: 0.25s;
+	z-index: 0;
+	word-break: break-word;
+
+	color: var(--px-neutral-10);
+
+	font-size: @px-medium-font-size;
+
+	@sizes: small, medium, large;
+
+	&-inner {
+		border: 0;
+		background-color: transparent;
+		box-sizing: border-box;
+		width: 100%;
+		height: var(--progress-size);
+		flex: 1;
+		position: relative;
+		transition: 0.25s;
+		color: var(--px-neutral-1);
+
+		border-color: transparent;
+		border-width: var(--px-bit);
+		border-style: solid;
+	}
+
+	&-indicator {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		z-index: 1;
+		transition: none;
+		width: max-content;
+		font-size: @px-medium-font-size;
+	}
+
+	each(@sizes, {
+		&.@{prefix}__@{value} {
+			@paddingVar: ~"px-@{value}-padding-x";
+
+			&.@{prefix}__append {
+				& > .@{prefix}-inner {
+					margin-right: @@paddingVar;
+				}
+			}
+			&.@{prefix}__prepend {
+				& > .@{prefix}-inner {
+					margin-left: @@paddingVar;
+				}
+			}
+		}
+	});
+
+	&__large {
+		--progress-size: var(--px-large-sub-size);
+	}
+	&__small {
+		--progress-size: var(--px-small-sub-size);
+	}
+}

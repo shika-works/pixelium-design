@@ -57,6 +57,7 @@ import { useForm } from './form/use-form.ts'
 import Dialog from './dialog/index.ts'
 import { locale } from './share/util/locale.ts'
 import Alert from './alert/index.vue'
+import Progress from './progress/index.vue'
 
 const components = [
 	Button,
@@ -102,7 +103,8 @@ const components = [
 	CheckboxGroup,
 	TextOutline,
 	Dialog,
-	Alert
+	Alert,
+	Progress
 ]
 
 const defaultPrefix = 'Px'
@@ -188,7 +190,8 @@ export {
 	useForm,
 	Dialog,
 	locale,
-	Alert
+	Alert,
+	Progress
 }
 export default {
 	install

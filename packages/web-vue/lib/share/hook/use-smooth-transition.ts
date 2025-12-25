@@ -1,4 +1,4 @@
-import { isNullish } from 'parsnip-kit'
+import { clamp, isNullish, isNumber } from 'parsnip-kit'
 import { ref } from 'vue'
 
 // simulating CSS transition timing function cubic-bezier(0.25, 0.1, 0.25, 1.0)
@@ -66,7 +66,7 @@ export function useSmoothTransition(duration = 250, initialValue: number = 0) {
 		}
 	}
 
-	const play = (direction: TransitionDirection, newDuration: number = duration) => {
+	const play = (target: TransitionDirection | number, newDuration: number = duration) => {
 		if (newDuration <= 0) {
 			return
 		}
@@ -78,7 +78,7 @@ export function useSmoothTransition(duration = 250, initialValue: number = 0) {
 		isPlaying.value = true
 		startTime = performance.now()
 		startValue = value.value
-		targetValue = direction === 'forward' ? 1 : 0
+		targetValue = isNumber(target) ? clamp(target, 0, 1) : target === 'forward' ? 1 : 0
 		duration = newDuration
 
 		animationFrameId = requestAnimationFrame(update)

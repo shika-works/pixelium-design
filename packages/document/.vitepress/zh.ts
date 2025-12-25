@@ -57,7 +57,8 @@ const additionMap = {
 	checkbox: '复选框',
 	'text-outline': '文本描边',
 	dialog: '对话框',
-	alert: '警告'
+	alert: '警告',
+	progress: '进度条'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
