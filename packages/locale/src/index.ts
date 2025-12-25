@@ -36,7 +36,7 @@ const messages = {
 type Lang = keyof typeof messages
 
 class LocaleManager {
-	private currentLang: string = 'zh-cn'
+	private currentLang: string = 'en'
 	// @ts-ignore
 	private emitter: Emitter<Events> = mitt()
 
