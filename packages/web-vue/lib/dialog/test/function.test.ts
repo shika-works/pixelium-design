@@ -46,7 +46,7 @@ describe('Dialog functional calls (index.ts)', () => {
 		const container = document.querySelector('.px-dialog-wrapper')
 		expect(container).toBeTruthy()
 
-		const confirmBtn = findButtonByText(container, '确认')
+		const confirmBtn = findButtonByText(container, 'Confirm')
 		expect(confirmBtn).toBeTruthy()
 
 		await expect(
@@ -71,7 +71,7 @@ describe('Dialog functional calls (index.ts)', () => {
 		const container = document.querySelector('.px-dialog-wrapper')
 		expect(container).toBeTruthy()
 
-		const cancelBtn = findButtonByText(container, '取消')
+		const cancelBtn = findButtonByText(container, 'Cancel')
 		expect(cancelBtn).toBeTruthy()
 
 		await expect(
