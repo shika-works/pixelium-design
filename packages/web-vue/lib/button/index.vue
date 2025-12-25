@@ -317,7 +317,9 @@ watch(
 		nextIsTextButton
 	],
 	() => {
-		drawPixel()
+		nextTick(() => {
+			drawPixel()
+		})
 	}
 )
 watch([first, last], () => {
@@ -420,6 +422,8 @@ usePolling(pollSizeChangeComputed, () => {
 	const button = buttonRef.value
 	if (button) {
 		const rect = button.getBoundingClientRect()
+		console.log(rect)
+
 		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
 			wrapperSize = {
 				width: rect.width,
