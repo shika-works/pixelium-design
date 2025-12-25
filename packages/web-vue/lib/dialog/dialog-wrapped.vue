@@ -40,6 +40,7 @@ const [visible, setVisible] = useControlledMode('visible', props, emits, {
 })
 
 const okHandler = async (event: MouseEvent) => {
+	await setVisible(false)
 	emits('ok', event)
 }
 const cancelHandler = async (event: MouseEvent | KeyboardEvent) => {
