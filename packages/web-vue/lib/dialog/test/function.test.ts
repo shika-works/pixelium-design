@@ -61,7 +61,7 @@ describe('Dialog functional calls (index.ts)', () => {
 
 		// allow unmount timer to run
 		await vi.advanceTimersByTimeAsync(UNMOUNT_DELAY + 50)
-		expect(document.querySelector(`#${container!.id}`)).toBeNull()
+		expect(document.querySelector(`[id="${container!.id}"]`)).toBeNull()
 	})
 
 	it('resolves false when cancel clicked on confirm dialog and removes container', async () => {
@@ -103,7 +103,7 @@ describe('Dialog functional calls (index.ts)', () => {
 		promise.close()
 
 		await vi.advanceTimersByTimeAsync(UNMOUNT_DELAY + 50)
-		expect(document.querySelector(`#${container!.id}`)).toBeNull()
+		expect(document.querySelector(`[id="${container!.id}"]`)).toBeNull()
 		expect(resolved).toBe(false)
 	})
 })
