@@ -26,7 +26,8 @@ describe('Progress Component', () => {
 		const wrapperLow = mount(Progress as any, {
 			props: { percentage: -10 },
 			slots: {
-				indicator: '<template #indicator="{ percentage }"><div class="slot-indicator">{{ percentage }}</div></template>'
+				indicator:
+					'<template #indicator="{ percentage }"><div class="slot-indicator">{{ percentage }}</div></template>'
 			}
 		})
 
@@ -36,7 +37,8 @@ describe('Progress Component', () => {
 		const wrapperHigh = mount(Progress as any, {
 			props: { percentage: 200 },
 			slots: {
-				indicator: '<template #indicator="{ percentage }"><div class="slot-indicator">{{ percentage }}</div></template>'
+				indicator:
+					'<template #indicator="{ percentage }"><div class="slot-indicator">{{ percentage }}</div></template>'
 			}
 		})
 
@@ -85,27 +87,47 @@ describe('Progress Component', () => {
 
 	it('indicator element should have computed right style when sizes are available', async () => {
 		const originalGetBoundingClientRect = HTMLElement.prototype.getBoundingClientRect
-		vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+		vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+			this: Element
+		) {
 			if (this.classList && this.classList.contains('px-progress-inner')) {
-				return { width: 200, height: 12, top: 0, left: 0, bottom: 0, right: 0, x: 0, y: 0 } as any
+				return {
+					width: 200,
+					height: 12,
+					top: 0,
+					left: 0,
+					bottom: 0,
+					right: 0,
+					x: 0,
+					y: 0
+				} as any
 			}
 			if (this.classList && this.classList.contains('px-progress-indicator')) {
-				return { width: 20, height: 12, top: 0, left: 0, bottom: 0, right: 0, x: 0, y: 0 } as any
+				return {
+					width: 20,
+					height: 12,
+					top: 0,
+					left: 0,
+					bottom: 0,
+					right: 0,
+					x: 0,
+					y: 0
+				} as any
 			}
 			return originalGetBoundingClientRect.call(this)
 		})
-    
-    const originalGetComputedStyle = window.getComputedStyle
+
+		const originalGetComputedStyle = window.getComputedStyle
 		vi.spyOn(window, 'getComputedStyle').mockImplementation(function (this: Element) {
 			return {
-        getPropertyValue: (key: string) => {
-          if (key === '--px-bit') {
-            return 4
-          } else {
-            return originalGetComputedStyle(document.documentElement).getPropertyValue(key)
-          }
-        }
-      } as any
+				getPropertyValue: (key: string) => {
+					if (key === '--px-bit') {
+						return 4
+					} else {
+						return originalGetComputedStyle(document.documentElement).getPropertyValue(key)
+					}
+				}
+			} as any
 		})
 
 		const wrapper = mount(Progress as any)
