@@ -9,6 +9,9 @@
 	color: var(--text-color);
 	cursor: pointer;
 	transition: 0.25s;
+
+	outline-offset: var(--px-bit);
+
 	&-icon-wrapper {
 		margin-right: 4px;
 		display: flex;
@@ -34,7 +37,6 @@
       --text-color: var(~"--px-@{value}-6");
       &:focus-visible {
         outline-color: var(~"--px-@{value}-6");
-        outline-offset: var(--px-bit);
       }
       &.@{prefix}__disabled {
         --text-color: var(~"--px-@{value}-2");
@@ -59,7 +61,6 @@
 		--text-color: var(--px-neutral-10);
 		&:focus-visible {
 			outline-color: var(--px-neutral-10);
-			outline-offset: var(--px-bit);
 		}
 		&.@{prefix}__disabled {
 			--text-color: var(--px-neutral-6);
