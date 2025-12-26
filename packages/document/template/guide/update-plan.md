@@ -6,7 +6,8 @@
 ]]]
 
 [[[zh
-## v0.0.4
+## v0.1.0
+> 原定 v0.0.4
 - 导航组件：菜单、下拉菜单、面包屑、返回顶部。
 - 反馈组件：对话框、浮窗确认、提示、徽章、进度条。
 - 数据展示组件：表格。
@@ -14,7 +15,8 @@
 - 完善测试用例。
 ]]]
 [[[en
-## v0.0.4
+## v0.1.0
+> Originally scheduled v0.0.4
 - Navigation components: Menu, Dropdown, Breadcrumb, BackTop.
 - Feedback components: Dialog, PopupConfirm, Tooltip, Badge, Progress.
 - Data display components: Table.
