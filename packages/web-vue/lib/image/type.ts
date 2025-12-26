@@ -75,7 +75,7 @@ export type ImageProps = {
 	crossorigin?: 'anonymous' | 'use-credentials' | ''
 	/**
 	 * @property {boolean} [previewDestroyOnHide=false]
-	 * @version 0.0.4
+	 * @version 0.1.0
 	 */
 	previewDestroyOnHide?: boolean
 }
