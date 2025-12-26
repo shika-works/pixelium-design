@@ -58,6 +58,7 @@ import Dialog from './dialog/index.ts'
 import { locale } from './share/util/locale.ts'
 import Alert from './alert/index.vue'
 import Progress from './progress/index.vue'
+import Popconfirm from './popconfirm/index.vue'
 
 const components = [
 	Button,
@@ -104,7 +105,8 @@ const components = [
 	TextOutline,
 	Dialog,
 	Alert,
-	Progress
+	Progress,
+	Popconfirm
 ]
 
 const defaultPrefix = 'Px'
@@ -191,7 +193,8 @@ export {
 	Dialog,
 	locale,
 	Alert,
-	Progress
+	Progress,
+	Popconfirm
 }
 export default {
 	install
