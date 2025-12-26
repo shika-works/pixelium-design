@@ -24,12 +24,12 @@ The `visible` property controls the display and hiding of the dialog. When `visi
 [[[zh
 ## 弹窗表单
 
-只是一个对话框中使用表单的栗子。
+只是一个对话框中使用表单的栗子🌰。就像栗子所展示的那样，你可以直接传入 `class` 和 `style` 等 attrs 穿透到对话框容器元素上。
 ]]]
 [[[en
 ## Form in Dialog
 
-This is just an example of using a form inside a dialog.
+This is just an example of using a form inside a dialog. As demonstrated by the example, you can directly pass attrs such as `class` and `style` through to the dialog container element.
 ]]]
 <preview path="./dialog-form.vue"></preview>
 
@@ -95,8 +95,15 @@ type DialogReturn = Promise<boolean> & {
 			| string
 	) => DialogReturn
 }
-
 ```
+
+[[[zh
+就像上面栗子所展示的那样🌰，作为组件时你可以直接传入 `class` 和 `style` 等 attrs 穿透到对话框容器元素上。
+]]]
+[[[en
+Just as demonstrated in the example above example, when used as a component, you can directly pass attributes such as `class` and `style` through to the dialog container element.
+]]]
+
 [[[api zh
 dialogOptions.content: 对话框内容。
 dialogOptions.title: 对话框标题。
