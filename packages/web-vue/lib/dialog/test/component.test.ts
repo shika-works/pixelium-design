@@ -71,8 +71,7 @@ describe('Dialog (wrapped component)', () => {
 		await nextTick()
 
 		expect(wrapper.emitted().ok).toBeTruthy()
-		// confirm does not auto-close in wrapped component
-		expect(container.element.getAttribute('style')).toBe(null)
+		expect(container.element.getAttribute('style')).include('display: none')
 
 		wrapper.unmount()
 	})

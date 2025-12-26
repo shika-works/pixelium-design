@@ -7,5 +7,9 @@ export default {
 		warningTitle: 'Warning',
 		errorTitle: 'Error',
 		confirmTitle: 'Confirmation'
+	},
+	popconfirm: {
+		confirm: 'Confirm',
+		cancel: 'Cancel'
 	}
 }

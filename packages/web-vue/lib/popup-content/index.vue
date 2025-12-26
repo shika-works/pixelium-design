@@ -201,11 +201,13 @@ async function updatePosition(element: HTMLElement | SVGElement) {
 	})
 }
 
+let closeTimer: any
+
 async function closeHandler() {
 	if (show.value === false) {
 		return
 	}
-	setTimeout(() => {
+	closeTimer = setTimeout(() => {
 		show.value = false
 		popupFinalPlacement.value = undefined
 	}, ANIMATION_DURATION)
@@ -232,6 +234,10 @@ const doOpen = () => {
 const processVisible = (value: boolean) => {
 	if (!inBrowser()) {
 		return
+	}
+	if (closeTimer) {
+		clearTimeout(closeTimer)
+		closeTimer = null
 	}
 	if (value) {
 		doOpen()

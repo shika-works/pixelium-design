@@ -58,12 +58,12 @@ When using on-demand import, you can also import `Dialog` from `@pixelium/web-vu
 [[[zh
 ## 异步确认
 
-传入 `onBeforeOk` 后，在确认时将会等待 `onBeforeOk` 执行完成，若结果为 `true` 再执行后续代码。
+传入 `onBeforeOk` 后，在确认时将会等待 `onBeforeOk` 执行完成，若结果不为 `false` 再执行后续代码。
 ]]]
 [[[en
 ## Asynchronous Confirmation
 
-When `onBeforeOk` is provided, the confirmation process will wait for `onBeforeOk` to complete. If the result is `true`, subsequent code will be executed.
+When `onBeforeOk` is provided, the confirmation process will wait for `onBeforeOk` to complete. If the result is not `false`, subsequent code will be executed.
 ]]]
 <preview path="./dialog-async-confirm.vue"></preview>
 
@@ -150,7 +150,7 @@ slots.icon: 对话框标题图标。
 slots.footer: 对话框底部区域。
 
 events.update:visible: 用于更新受控模式的 `visible` 值。
-events.beforeOk: 用于异步确认，需返回一个 `Promise<boolean | void> | boolean | void` 类型的数据判断是否成功。
+events.beforeOk: 用于异步确认，需返回一个 `Promise<boolean | void> | boolean | void` 类型的数据判断是否成功，`await` 操作后不为 `false` 即为确认成功。
 events.ok: 通过确认成功关闭弹窗的回调。
 events.cancel: 通过取消、关闭按钮、遮罩层、ESC 键等方法，关闭弹窗的回调。
 events.open: 弹窗打开时的回调。
@@ -162,7 +162,7 @@ dialogExpose.close: 关闭弹窗。
 dialogExpose.open: 打开弹窗。
 ]]]
 
-[[[en
+[[[api en
 dialogOptions.content: Dialog content.
 dialogOptions.title: Dialog title.
 dialogOptions.icon: Dialog title icon.
@@ -215,7 +215,7 @@ slots.icon: Dialog title icon.
 slots.footer: Dialog footer area.
 
 events.update:visible: Used to update the `visible` value in controlled mode.
-events.beforeOk: Used for asynchronous confirmation, must return data of type `Promise<boolean | void> | boolean | void` to determine success.
+events.beforeOk: For async confirmation. Must return a value of type `Promise<boolean | void> | boolean | void` to indicate success. Confirmation is successful if the result after `await` is not `false`.
 events.ok: Callback triggered when the dialog is successfully closed via confirmation.
 events.cancel: Callback triggered when the dialog is closed via cancellation, close button, mask layer, ESC key, etc.
 events.open: Callback triggered when the dialog opens.

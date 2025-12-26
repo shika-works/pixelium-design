@@ -160,7 +160,7 @@ function propsToMarkdown(
 						: lang === 'zh'
 							? '否'
 							: 'False'
-				} | \`${item.props?.defaultValue.replaceAll('|', '\\|') || ' '}\` | ${description} | ${item.version} |`
+				} | \`${item.props?.defaultValue.replaceAll('|', '\\|') || ' '}\` | ${description.replaceAll('|', '\\|')} | ${item.version} |`
 			})
 			return [headerLine, separatorLine, ...rows].join('\n')
 		} else if (group.nodeApiType === 'events') {
@@ -179,7 +179,7 @@ function propsToMarkdown(
 						})
 						.join(', ')
 						.replaceAll('|', '\\|') || ' '
-				}\` | ${description} | ${item.version} |`
+				}\` | ${description.replaceAll('|', '\\|')} | ${item.version} |`
 			})
 			return [headerLine, separatorLine, ...rows].join('\n')
 		} else if (group.nodeApiType === 'slots') {
@@ -198,7 +198,7 @@ function propsToMarkdown(
 						})
 						.join(', ')
 						.replaceAll('|', '\\|') || ' '
-				}\` | ${description} | ${item.version} |`
+				}\` | ${description.replaceAll('|', '\\|')} | ${item.version} |`
 			})
 			return [headerLine, separatorLine, ...rows].join('\n')
 		}

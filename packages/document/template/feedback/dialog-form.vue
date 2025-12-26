@@ -1,6 +1,11 @@
 <template>
 	<div>
-		<px-dialog title="Form" v-model:visible="visible" style="max-height: 70vh; width: 600px">
+		<px-dialog
+			title="Form"
+			v-model:visible="visible"
+			style="max-height: 70vh; width: 600px"
+			@before-ok="submitHandler"
+		>
 			<px-form
 				:model="form"
 				:rules="rules"
@@ -62,10 +67,6 @@
 				<px-form-item label="Number String" field="numberString">
 					<px-input v-model="form.numberString" placeholder="Please number..."></px-input>
 				</px-form-item>
-				<px-space justify="end">
-					<px-button native-type="submit">Submit</px-button>
-					<px-button theme="info" native-type="reset" style="margin-left: 8px">Reset</px-button>
-				</px-space>
 			</px-form>
 		</px-dialog>
 
@@ -129,9 +130,12 @@ const checkboxOptions = ref(['A', 'B', 'C', 'D'])
 
 const formRef = shallowRef<null | InstanceType<typeof Form>>(null)
 const submitHandler = () => {
-	formRef.value?.validate().then(({ isValid }) => {
+	return formRef.value?.validate().then(({ isValid }) => {
 		if (isValid) {
 			console.log('submit')
+			return true
+		} else {
+			return false
 		}
 	})
 }
