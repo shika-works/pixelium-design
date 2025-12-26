@@ -422,7 +422,6 @@ usePolling(pollSizeChangeComputed, () => {
 	const button = buttonRef.value
 	if (button) {
 		const rect = button.getBoundingClientRect()
-		console.log(rect)
 
 		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
 			wrapperSize = {
