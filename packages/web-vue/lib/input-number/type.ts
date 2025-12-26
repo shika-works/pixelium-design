@@ -109,7 +109,7 @@ export type InputNumberProps = {
 	autofocus?: boolean
 	/**
 	 * @property {boolean} [pollSizeChange=false]
-	 * @version 0.0.4
+	 * @version 0.1.0
 	 */
 	pollSizeChange?: boolean
 }

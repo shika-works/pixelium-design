@@ -93,7 +93,7 @@ export type InputProps = {
 	nativeType?: 'text' | 'password' | 'email' | 'tel' | 'url' | 'search'
 	/**
 	 * @property {boolean} [pollSizeChange=false]
-	 * @version 0.0.4
+	 * @version 0.1.0
 	 */
 	pollSizeChange?: boolean
 }
