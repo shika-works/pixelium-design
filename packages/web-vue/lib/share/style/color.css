@@ -5,7 +5,7 @@
 	--px-teal-light-3: rgba(155, 217, 202, 1);
 	--px-teal-light-4: rgba(119, 201, 183, 1);
 	--px-teal-light-5: rgba(79, 184, 164, 1);
-	--px-teal-light-6: rgba(0, 168, 145, 1);
+	--px-teal-light-6: rgba(0, 168, 145, 1); /* oklch(0.6547 0.1202 178.32) */
 	--px-teal-light-7: rgba(11, 128, 110, 1);
 	--px-teal-light-8: rgba(14, 90, 78, 1);
 	--px-teal-light-9: rgba(11, 55, 47, 1);
@@ -17,7 +17,7 @@
 	--px-green-light-3: rgba(167, 219, 166, 1);
 	--px-green-light-4: rgba(129, 207, 130, 1);
 	--px-green-light-5: rgba(86, 194, 91, 1);
-	--px-green-light-6: rgba(0, 180, 42, 1);
+	--px-green-light-6: rgba(0, 180, 42, 1); /* oklch(0.6687 0.2142 144.38) */
 	--px-green-light-7: rgba(34, 137, 44, 1);
 	--px-green-light-8: rgba(38, 96, 41, 1);
 	--px-green-light-9: rgba(34, 57, 34, 1);
@@ -29,7 +29,7 @@
 	--px-orange-light-3: rgba(253, 193, 158, 1);
 	--px-orange-light-4: rgba(255, 172, 121, 1);
 	--px-orange-light-5: rgba(255, 149, 80, 1);
-	--px-orange-light-6: rgba(255, 125, 0, 1);
+	--px-orange-light-6: rgba(255, 125, 0, 1); /* oklch(0.7274 0.1877 51.75) */
 	--px-orange-light-7: rgba(196, 103, 35, 1);
 	--px-orange-light-8: rgba(140, 80, 42, 1);
 	--px-orange-light-9: rgba(87, 58, 41, 1);
@@ -41,7 +41,7 @@
 	--px-red-light-3: rgba(255, 186, 178, 1);
 	--px-red-light-4: rgba(255, 161, 152, 1);
 	--px-red-light-5: rgba(255, 133, 124, 1);
-	--px-red-light-6: rgba(253, 104, 96, 1);
+	--px-red-light-6: rgba(253, 104, 96, 1); /* oklch(0.7029 0.1837 25.97) */
 	--px-red-light-7: rgba(193, 86, 79, 1);
 	--px-red-light-8: rgba(136, 68, 62, 1);
 	--px-red-light-9: rgba(82, 49, 46, 1);
@@ -53,7 +53,7 @@
 	--px-pink-light-3: rgba(253, 196, 208, 1);
 	--px-pink-light-4: rgba(255, 182, 198, 1);
 	--px-pink-light-5: rgba(255, 168, 188, 1);
-	--px-pink-light-6: rgba(255, 154, 178, 1);
+	--px-pink-light-6: rgba(255, 154, 178, 1); /* oklch(0.7964 0.1232 4.91) */
 	--px-pink-light-7: rgba(204, 126, 144, 1);
 	--px-pink-light-8: rgba(154, 99, 112, 1);
 	--px-pink-light-9: rgba(108, 73, 81, 1);

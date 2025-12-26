@@ -42,7 +42,7 @@ export type ImageProps = {
 	 * @property {number | [number, number]} [rootMargin=[100, 200]]
 	 * @version 0.0.3
 	 */
-	rootMargin?: number | [number, number]
+	rootMargin?: number | [number, number] | { x?: number; y?: number }
 	/**
 	 * @property {boolean} [previewable=false]
 	 * @version 0.0.3
