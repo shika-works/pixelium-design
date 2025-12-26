@@ -34,9 +34,8 @@
 	z-index: 0;
 	box-sizing: border-box;
 
-	&.@{prefix} {
-		font-size: @px-medium-font-size;
-	}
+	outline-offset: var(--px-bit);
+	font-size: @px-medium-font-size;
 
 	@sizes: small, medium, large;
 
@@ -107,7 +106,6 @@
     &.@{prefix}__@{value} {
       &:focus-visible {
         outline-color: var(~"--px-@{value}-6");
-        outline-offset: var(--px-bit);
       }
       &.@{prefix}__plain {
         --text-color: var(~"--px-@{value}-6");
@@ -159,7 +157,6 @@
 		--text-color: var(--px-neutral-10);
 		&:focus-visible {
 			outline-color: var(--px-neutral-10);
-			outline-offset: var(--px-bit);
 		}
 		&.@{prefix}__disabled {
 			--text-color: var(--px-neutral-7);
