@@ -75,6 +75,7 @@ import Mask from '../mask/index.vue'
 import { useWindowResizeListener } from '../share/hook/use-window-resize-listener'
 // @ts-ignore
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
+import { isArray, isNullish, isNumber } from 'parsnip-kit'
 
 defineOptions({
 	name: 'Image'
@@ -108,7 +109,10 @@ const emits = defineEmits<ImageEvents>()
 
 useLazyLoad(imgRef, {
 	root: props.root,
-	rootMargin: props.rootMargin,
+	rootMargin:
+		isArray(props.rootMargin) || isNumber(props.rootMargin) || isNullish(props.rootMargin)
+			? props.rootMargin
+			: [props.rootMargin.x || 0, props.rootMargin.y || 0],
 	onError: (img, error) => {
 		loadFailed.value = true
 		loaded.value = false
