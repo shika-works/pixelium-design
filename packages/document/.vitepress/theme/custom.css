@@ -17,6 +17,24 @@ img[alt='Static Badge'] {
 	list-style-type: none;
 	padding-left: 14px;
 }
+.VPSidebar {
+	.item {
+		font-size: 16px;
+	}
+	.VPSidebarItem.is-active {
+		background: rgb(221, 250, 242);
+	}
+	.VPSidebarItem.level-1 {
+		padding-left: 8px;
+		transition: 0.25s;
+	}
+}
+
+html.dark {
+	.VPSidebarItem.is-active {
+		background: #0d6d5e;
+	}
+}
 
 ::-webkit-scrollbar {
 	width: 8px;

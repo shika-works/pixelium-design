@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
-import { onMounted, watchEffect } from 'vue'
-import { inBrowser, onContentUpdated, useData } from 'vitepress'
+import { nextTick, onMounted, watch, watchEffect } from 'vue'
+import { inBrowser, onContentUpdated, useData, useRoute } from 'vitepress'
 import { locale } from '@pixelium/web-vue'
 
 const base = 'pixelium-design'
@@ -83,6 +83,28 @@ window.addEventListener('popstate', checkUrlChange)
 })
 
 checkUrlChange()
+
+const route = useRoute()
+const scrollCallback = () => {
+	nextTick(() => {
+		const activeElement = document.querySelector('.VPSidebarItem.is-active')
+		if (activeElement) {
+			activeElement.scrollIntoView({ block: 'center', behavior: 'smooth' })
+		}
+	})
+}
+watch(
+	() => route.path,
+	() => {
+		scrollCallback()
+	}
+)
+
+onMounted(() => {
+	setTimeout(() => {
+		scrollCallback()
+	})
+})
 </script>
 
 <template>
