@@ -60,7 +60,8 @@ const additionMap = {
 	alert: '警告',
 	progress: '进度条',
 	popconfirm: '确认弹出框',
-	badge: '角标'
+	badge: '角标',
+	'back-top': '回到顶部'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
