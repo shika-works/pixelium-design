@@ -49,7 +49,7 @@ const dfs = (
 	})
 }
 
-const newItems: string[] = []
+const newItems: string[] = ['dialog', 'popconfirm', 'badge', 'back-top', 'progress']
 
 const order = [
 	'guide',
@@ -58,6 +58,7 @@ const order = [
 	'layout',
 	'data-input',
 	'data-display',
+	'navigation',
 	'feedback',
 	'base',
 	'fabulous-idea'

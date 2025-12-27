@@ -170,6 +170,8 @@ popconfirmExpose.close: Closes the confirmation popup.
 ### RestAttrs, EmitEvent
 
 ```ts
+import type { StyleValue } from 'vue'
+
 export type EmitEvent<T extends Record<string, any>> = {
 	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
 }

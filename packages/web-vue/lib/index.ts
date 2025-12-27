@@ -60,6 +60,7 @@ import Alert from './alert/index.vue'
 import Progress from './progress/index.vue'
 import Popconfirm from './popconfirm/index.vue'
 import Badge from './badge/index.vue'
+import BackTop from './back-top/index.vue'
 
 const components = [
 	Button,
@@ -108,7 +109,8 @@ const components = [
 	Alert,
 	Progress,
 	Popconfirm,
-	Badge
+	Badge,
+	BackTop
 ]
 
 const defaultPrefix = 'Px'
@@ -197,7 +199,8 @@ export {
 	Alert,
 	Progress,
 	Popconfirm,
-	Badge
+	Badge,
+	BackTop
 }
 export default {
 	install

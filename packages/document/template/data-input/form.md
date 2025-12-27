@@ -302,6 +302,8 @@ export type FormValidateResult = Promise<{
 ### RestAttrs
 
 ```ts
+import type { StyleValue } from 'vue'
+
 export type VueClassValue = string | Record<string, any> | VueClassValue[]
 
 export type RestAttrs = {

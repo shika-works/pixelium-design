@@ -13,6 +13,8 @@ export const Z_INDEX = 1000
 
 export const COVER_Z_INDEX = 20
 
+export const FIXED_Z_INDEX = 1000
+
 export enum SCREEN_SIZE_TYPE {
 	XS = 'xs',
 	SM = 'sm',

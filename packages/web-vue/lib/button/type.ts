@@ -69,7 +69,7 @@ export type ButtonEvents = {
 	 * @version 0.0.0-beta
 	 * @param {MouseEvent} e
 	 */
-	click: (e: MouseEvent) => any
+	click: [e: MouseEvent]
 }
 
 export type ButtonSlots = {
