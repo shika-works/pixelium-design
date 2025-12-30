@@ -48,18 +48,19 @@
 		"test:watch": "vitest --config ./script/vite.config.vue.ts --coverage"
 	},
 	"peerDependencies": {
-		"vue": "^3.5.17"
+		"vue": "^3.5.17",
+		"vue-router": "^4.0.13"
 	},
 	"devDependencies": {
 		"@hackernoon/pixel-icon-library": "^1.0.6",
+		"@pixelium/locale": "workspace:*",
 		"@vitejs/plugin-vue": "^6.0.1",
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
 		"less": "^4.4.0",
 		"pixelarticons": "^1.8.1",
 		"svgo": "^4.0.0",
 		"vite": "npm:rolldown-vite@latest",
-		"vue-macros": "3.0.0-beta.23",
-		"@pixelium/locale": "workspace:*"
+		"vue-macros": "3.0.0-beta.23"
 	},
 	"dependencies": {
 		"@floating-ui/dom": "^1.7.4",
