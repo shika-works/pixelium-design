@@ -61,6 +61,10 @@ import Progress from './progress/index.vue'
 import Popconfirm from './popconfirm/index.vue'
 import Badge from './badge/index.vue'
 import BackTop from './back-top/index.vue'
+import Menu from './menu/index.vue'
+import MenuItem from './menu-item/index.vue'
+import MenuGroup from './menu-group/index.vue'
+import Submenu from './submenu/index.vue'
 
 const components = [
 	Button,
@@ -110,7 +114,11 @@ const components = [
 	Progress,
 	Popconfirm,
 	Badge,
-	BackTop
+	BackTop,
+	Menu,
+	MenuItem,
+	MenuGroup,
+	Submenu
 ]
 
 const defaultPrefix = 'Px'
@@ -200,7 +208,11 @@ export {
 	Progress,
 	Popconfirm,
 	Badge,
-	BackTop
+	BackTop,
+	Menu,
+	MenuItem,
+	MenuGroup,
+	Submenu
 }
 export default {
 	install
