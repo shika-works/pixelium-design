@@ -8,20 +8,24 @@ import {
 	shallowRef,
 	watch,
 	computed,
-	onMounted
+	onMounted,
+	inject,
+	useId,
+	provide,
+	onBeforeUnmount
 } from 'vue'
-import type { PopupEvents, PopupProps } from './type'
-import { isFunction, isNullish, throttle } from 'parsnip-kit'
+import type { PopupContentGetter, PopupEvents, PopupProps, PopupProvide } from './type'
+import { isNullish, throttle } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
 import { inBrowser } from '../share/util/env'
 import { calcPixelSize } from '../share/util/plot'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
-import { checkMouseInsideElementFromEvent } from '../share/util/dom'
-import { GET_ELEMENT_RENDERED } from '../share/const'
-import { logWarn } from '../share/util/console'
+import { checkMouseInsideElement, checkMouseInsideElementFromEvent } from '../share/util/dom'
+import { POPUP_PROVIDE } from '../share/const/provide-key'
+import { getElFromVNode, traversePopupContentGetters } from './util'
+import { useMousePosition } from './use-mouse-position'
 
-// TODO: Refactor duplicate functionality between popup-trigger and popup components.
 defineOptions({
 	name: 'Popup'
 })
@@ -36,7 +40,8 @@ const props = withDefaults(defineProps<PopupProps>(), {
 	visible: undefined,
 	defaultVisible: undefined,
 	widthEqual: false,
-	destroyOnHide: false
+	destroyOnHide: false,
+	cascade: false
 })
 
 const controlledMode = computed(() => {
@@ -54,32 +59,96 @@ const emits = defineEmits<PopupEvents>()
 
 const currentTrigger = shallowRef<null | SVGElement | HTMLElement>(null)
 
-const [wait, cancel] = useCancelableDelay()
+let rafId: number | null = null
 
-const getElFromVNode = (node: VNode) => {
-	if (inBrowser()) {
-		let triggerEl = null
-		if (node.el instanceof HTMLElement || node.el instanceof SVGElement) {
-			triggerEl = node.el
-		} else {
-			const getElFunc = node.component?.exposed?.[GET_ELEMENT_RENDERED]
-			if (isFunction(getElFunc)) {
-				const el = getElFunc()
-				if (el instanceof HTMLElement || el instanceof SVGElement) {
-					triggerEl = el
-				}
-			}
-			if (triggerEl === null) {
-				logWarn(
-					`Please ensure that the root node of the default slot passed to Tooltip, Popover, and similar components can be rendered as a DOM element, or expose a getElementRender function on the component to retrieve the DOM element for balloon attachment.`
-				)
-			}
-		}
-		return triggerEl
+const [wait, cancel] = useCancelableDelay(250)
+
+const id = useId()
+const popupContentGetterList = ref<PopupContentGetter[]>([])
+const popupProvider = props.cascade
+	? inject<PopupProvide | undefined>(POPUP_PROVIDE, undefined)
+	: undefined
+
+const collectPopup = (
+	itemId: string,
+	getter: () => InstanceType<typeof PopupContent> | undefined | null,
+	children?: PopupContentGetter[]
+) => {
+	const entry = popupContentGetterList.value.find((e) => e.id === itemId)
+	if (entry) {
+		entry.getter = getter
+		entry.children = children
 	} else {
-		return null
+		popupContentGetterList.value.push({
+			id: itemId,
+			children,
+			getter
+		})
 	}
 }
+const removePopup = (itemId: string) => {
+	const idx = popupContentGetterList.value.findIndex((e) => e.id === itemId)
+	if (idx >= 0) {
+		popupContentGetterList.value.splice(idx, 1)
+	}
+}
+
+onMounted(() => {
+	popupProvider?.collectPopup(id, () => contentRef.value, popupContentGetterList.value)
+})
+onBeforeUnmount(() => {
+	resizeObserver?.disconnect()
+	popupProvider?.removePopup(id)
+	if (rafId !== null) {
+		if (inBrowser()) {
+			cancelAnimationFrame(rafId)
+		}
+		rafId = null
+	}
+})
+
+const triggerUpdate = async () => {
+	if (props.trigger !== 'click') {
+		if (props.cascade && x && y) {
+			const contentEl = contentRef.value && contentRef.value.content
+			if (contentEl && checkMouseInsideElement(contentEl, x.value, y.value)) {
+				return
+			}
+			const flag = traversePopupContentGetters(popupContentGetterList.value, (content) => {
+				return !!(
+					content &&
+					content.content &&
+					checkMouseInsideElement(content.content, x?.value, y?.value)
+				)
+			})
+			if (flag) {
+				return
+			}
+		}
+	} else {
+		return
+	}
+
+	if (controlledMode.value) {
+		emits('update:visible', false)
+		await nextTick(() => {})
+		display.value = !!props.visible
+	} else {
+		display.value = false
+	}
+	emits('close')
+	popupProvider?.triggerUpdate()
+}
+
+if (props.cascade) {
+	provide<PopupProvide>(POPUP_PROVIDE, {
+		collectPopup,
+		removePopup,
+		triggerUpdate
+	})
+}
+
+const [x, y] = props.cascade ? useMousePosition() : [undefined, undefined]
 
 async function openHandler(node: VNode, e: MouseEvent) {
 	cancel()
@@ -109,10 +178,19 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 	}
 
 	if (props.trigger === 'click') {
-		const clickContent =
+		let clickContent =
 			contentRef.value &&
 			contentRef.value.content &&
 			contentRef.value.content.contains(e.target as HTMLElement)
+		if (props.cascade) {
+			clickContent ||= traversePopupContentGetters(popupContentGetterList.value, (content) => {
+				return !!(
+					content &&
+					content.content &&
+					content.content.contains(e.target as HTMLElement)
+				)
+			})
+		}
 		if (clickContent || !display.value) {
 			return
 		}
@@ -120,6 +198,22 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 		const next = await wait()
 		if (!next) {
 			return
+		}
+		if (props.cascade && x && y) {
+			const contentEl = contentRef.value && contentRef.value.content
+			if (contentEl && checkMouseInsideElement(contentEl, x.value, y.value)) {
+				return
+			}
+			const flag = traversePopupContentGetters(popupContentGetterList.value, (content) => {
+				return !!(
+					content &&
+					content.content &&
+					checkMouseInsideElement(content.content, x?.value, y?.value)
+				)
+			})
+			if (flag) {
+				return
+			}
 		}
 	}
 
@@ -131,6 +225,7 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 		display.value = false
 	}
 	emits('close', e)
+	popupProvider?.triggerUpdate()
 }
 
 const contentMouseenterHandler = () => {
@@ -173,6 +268,9 @@ const processVisible = (value: boolean) => {
 		}
 	} else {
 		display.value = false
+		if (props.cascade) {
+			popupProvider?.triggerUpdate()
+		}
 	}
 }
 
@@ -197,11 +295,25 @@ onMounted(() => {
 	})
 })
 
-const updateRenderState = () => {
+const updateRenderStateImmediate = () => {
 	preprocessCurrentTrigger()
 	if (inBrowser()) {
 		contentRef.value?.updateRenderState()
 	}
+}
+
+const updateRenderState = () => {
+	if (!inBrowser()) {
+		updateRenderStateImmediate()
+		return
+	}
+	if (rafId !== null) {
+		return
+	}
+	rafId = requestAnimationFrame(() => {
+		rafId = null
+		updateRenderStateImmediate()
+	})
 }
 
 defineExpose({
@@ -225,8 +337,20 @@ const dragHandler = throttle(() => {
 const dragStartHandler = () => {
 	dragging.value = true
 }
-const dragEndHandler = () => {
+const dragEndHandler = (e: MouseEvent | TouchEvent) => {
 	dragging.value = false
+	if (!currentTrigger.value) {
+		closeHandler(e)
+	} else {
+		const el = currentTrigger.value
+		if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) {
+			closeHandler(e)
+		} else {
+			if (!checkMouseInsideElementFromEvent(el, e)) {
+				closeHandler(e)
+			}
+		}
+	}
 }
 
 defineRender(() => {
@@ -254,7 +378,7 @@ defineRender(() => {
 				placement={props.placement}
 				arrow={props.arrow}
 				offset={props.offset}
-				borderRadius={pixelSize * 4}
+				borderRadius={props.borderRadius ?? pixelSize * 4}
 				root={props.root}
 				widthEqual={props.widthEqual}
 				target={checkCurrentTrigger(currentTrigger.value) ? currentTrigger.value : null}

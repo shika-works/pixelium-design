@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { computed, Fragment, useSlots } from 'vue'
+import { computed, Fragment, getCurrentInstance, useSlots, withScopeId } from 'vue'
 import type { SpaceProps } from './type'
 import { flattenVNodes } from '../share/util/render'
 import { isNumber } from 'parsnip-kit'
@@ -47,9 +47,12 @@ const marginComputed = computed(() => {
 	}
 })
 
+const instance = getCurrentInstance()
+
 defineRender(() => {
 	const children = flattenVNodes(slots.default?.() || [])
-	return (
+	const scopeId = instance?.vnode.scopeId
+	const render = () => (
 		<div
 			class={{
 				pixelium: true,
@@ -98,6 +101,7 @@ defineRender(() => {
 			</div>
 		</div>
 	)
+	return scopeId ? withScopeId(scopeId)(render)() : render()
 })
 </script>
 

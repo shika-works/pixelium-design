@@ -1,0 +1,35 @@
+@import url(../share/style/variable.less);
+
+.px-menu {
+	@prefix: px-menu;
+	display: flex;
+	background-color: var(--px-neutral-1);
+	font-size: @px-medium-font-size;
+	color: var(--px-neutral-10);
+	box-sizing: border-box;
+
+	transition: 0.25s;
+
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+
+	&__vertical.@{prefix}__collapsed {
+		width: 52px;
+	}
+	&__vertical {
+		flex-direction: column;
+	}
+	&__horizontal {
+		height: @px-menu-size;
+	}
+	&__dark {
+		color: var(--px-neutral-1);
+		background-color: var(--px-neutral-10);
+		&.@{prefix}__dark-theme {
+			color: var(--px-neutral-10);
+			background-color: var(--px-neutral-1);
+		}
+	}
+}
