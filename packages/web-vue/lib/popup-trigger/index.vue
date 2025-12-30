@@ -4,7 +4,6 @@ import { flattenVNodes, isTextVNode } from '../share/util/render'
 import type { PopupTriggerEmits, PopupTriggerProps } from './type'
 import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
 import { inBrowser } from '../share/util/env'
-import { checkMouseInsideElementFromEvent } from '../share/util/dom'
 import { GET_ELEMENT_RENDERED } from '../share/const'
 import { isFunction } from 'parsnip-kit'
 
@@ -75,18 +74,6 @@ function handleDrag(e: TouchEvent | MouseEvent) {
 
 function stopDrag(e: TouchEvent | MouseEvent) {
 	dragging.value = false
-	if (!currentTrigger.value) {
-		closeHandler(e)
-	} else {
-		const el = currentTrigger.value
-		if (!(el instanceof HTMLElement) && !(el instanceof SVGElement)) {
-			closeHandler(e)
-		} else {
-			if (!checkMouseInsideElementFromEvent(el, e)) {
-				closeHandler(e)
-			}
-		}
-	}
 	document.removeEventListener('mousemove', handleDrag)
 	document.removeEventListener('mouseup', stopDrag)
 	document.removeEventListener('touchmove', handleDrag)

@@ -64,6 +64,7 @@ import { inBrowser } from '../share/util/env'
 import PopupWrapper from '../popup-wrapper/index.vue'
 import PopupPortal from '../popup-portal/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { hasNoneDisplayAncestor } from '../share/util/dom'
 
 defineOptions({
 	name: 'PopupContent'
@@ -113,6 +114,12 @@ async function updatePosition(element: HTMLElement | SVGElement) {
 	if (!contentRef.value || !arrowRef.value || !canvasRef.value) return
 
 	const contentComputedStyle = getComputedStyle(contentRef.value)
+	const elementComputedStyle = getComputedStyle(element)
+
+	if (hasNoneDisplayAncestor(element)) {
+		return
+	}
+
 	const contentBorder =
 		parseFloat(contentComputedStyle.borderLeftWidth) +
 		parseFloat(contentComputedStyle.borderRightWidth)
@@ -126,7 +133,6 @@ async function updatePosition(element: HTMLElement | SVGElement) {
 		(popupRoughPlacement.value === 'top' || popupRoughPlacement.value === 'bottom') &&
 		props.widthEqual
 	) {
-		const elementComputedStyle = getComputedStyle(element)
 		const boxSizing = elementComputedStyle.boxSizing
 		const contentBoxSizing = contentComputedStyle.boxSizing
 		const padding =

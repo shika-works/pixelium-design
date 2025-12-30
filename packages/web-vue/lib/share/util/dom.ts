@@ -110,7 +110,6 @@ export const checkMouseInsideElementFromEvent = (
 	el: HTMLElement | SVGElement,
 	e: MouseEvent | TouchEvent
 ) => {
-	const rect = el.getBoundingClientRect()
 	let clientX: number, clientY: number
 	if (e instanceof MouseEvent) {
 		clientX = (e as MouseEvent).clientX
@@ -119,12 +118,13 @@ export const checkMouseInsideElementFromEvent = (
 		clientX = (e as TouchEvent).touches[0].clientX
 		clientY = (e as TouchEvent).touches[0].clientY
 	}
-	return (
-		clientX >= rect.left &&
-		clientX <= rect.right &&
-		clientY >= rect.top &&
-		clientY <= rect.bottom
-	)
+
+	return checkMouseInsideElement(el, clientX, clientY)
+}
+
+export const checkMouseInsideElement = (el: HTMLElement | SVGElement, x: number, y: number) => {
+	const rect = el.getBoundingClientRect()
+	return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
 }
 
 export function imageDataToDataURL(imageData: ImageData): string {
@@ -140,4 +140,16 @@ export function imageDataToDataURL(imageData: ImageData): string {
 	ctx.putImageData(imageData, 0, 0)
 
 	return canvas.toDataURL('image/png')
+}
+
+export function hasNoneDisplayAncestor(element: Element) {
+	let current = element as Element | null
+	while (current && current !== document.body) {
+		const style = window.getComputedStyle(current)
+		if (style.display === 'none') {
+			return true
+		}
+		current = current.parentElement
+	}
+	return false
 }
