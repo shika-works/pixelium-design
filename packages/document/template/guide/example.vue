@@ -31,19 +31,22 @@
 
 		<px-container class="main-layout">
 			<px-aside class="sidebar-container" bordered dark>
-				<div>
-					<px-link v-for="item in menuItems" :key="item.key" color="#FFF" class="menu-item">
+				<px-menu dark>
+					<px-menu-item v-for="item in menuItems" :key="item.key" :index="item.key">
 						<span>{{ item.label }}</span>
-						<px-tag v-if="item.badge" size="small">{{ item.badge }}</px-tag>
-					</px-link>
-				</div>
-
-				<px-divider style="margin-top: auto" />
-
-				<div>
-					<px-link color="#FFF" class="menu-item">Documentation</px-link>
-					<px-link color="#FFF" class="menu-item">Support</px-link>
-				</div>
+						<px-tag
+							v-if="item.badge"
+							style="margin-left: 16px"
+							size="small"
+							variant="primary"
+							>{{ item.badge }}</px-tag
+						>
+					</px-menu-item>
+					<px-menu-item index="Documentation" style="margin-top: auto"
+						>Documentation</px-menu-item
+					>
+					<px-menu-item index="Support">Support</px-menu-item>
+				</px-menu>
 			</px-aside>
 
 			<px-container>
@@ -267,20 +270,6 @@ const submitHandler = () => {
 		display: block;
 	}
 	cursor: pointer;
-}
-
-.menu-item {
-	font-size: 16px;
-	min-height: 32px;
-	padding-left: 16px;
-	display: flex !important;
-	align-items: center;
-	.px-tag {
-		margin-left: 4px;
-	}
-	.px-link {
-		text-decoration: none !important;
-	}
 }
 
 .footer-container {
