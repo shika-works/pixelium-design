@@ -5,17 +5,16 @@ import Popconfirm from '../index.vue'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 import { createMocks } from '../../share/util/test'
 
-const { pre, post } = createMocks()
-
-beforeEach(() => {
-	pre()
-})
-
-afterEach(() => {
-	post()
-})
-
 describe('Popconfirm Component', () => {
+	const { pre, post } = createMocks()
+
+	beforeEach(() => {
+		pre()
+	})
+
+	afterEach(() => {
+		post()
+	})
 	it('opens on click and shows content', async () => {
 		const wrapper = mount(Popconfirm as any, {
 			props: {
@@ -65,35 +64,34 @@ describe('Popconfirm Component', () => {
 	})
 
 	it('clicking cancel emits cancel and closes', async () => {
-		const okMock = vi.fn()
+		const cancelMock = vi.fn()
 
 		const wrapper = mount(Popconfirm as any, {
 			props: {
 				content: 'Confirm?',
-				onBeforeOk: () => Promise.resolve(true),
-				onOk: okMock
+				onCancel: cancelMock
 			},
 			attrs: {
-				onOk: okMock
+				onCancel: cancelMock
 			},
 			slots: {
-				default: '<button id="trigger-ok-async-true">Open</button>'
+				default: '<button id="trigger-cancel">Open</button>'
 			},
 			attachTo: 'body'
 		})
 
-		await wrapper.find('#trigger-ok-async-true').trigger('click')
+		await wrapper.find('#trigger-cancel').trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
 
 		const popupWrapperComp = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapperComp.element.getAttribute('style')).not.include('display: none;')
 
-		const okBtn = popupWrapperComp.find('.px-popconfirm-confirm-button')
+		const okBtn = popupWrapperComp.find('.px-popconfirm-cancel-button')
 		okBtn.trigger('click')
-		await new Promise((r) => setTimeout(r, 300))
+		await new Promise((r) => setTimeout(r, 600))
 
+		expect(cancelMock).toHaveBeenCalled()
 		expect(popupWrapperComp.element.getAttribute('style')).include('display: none;')
-		expect(okMock).toHaveBeenCalled()
 		wrapper.unmount()
 	})
 
@@ -215,7 +213,7 @@ describe('Popconfirm Component', () => {
 		const okBtn = popupWrapperComp.find('.px-popconfirm-confirm-button')
 		okBtn.trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
-		expect(popupWrapperComp.element.getAttribute('style')).not.includes('display: none;')
+		expect(popupWrapperComp.element.getAttribute('style')).not.include('display: none;')
 
 		expect(consoleSpy).toHaveBeenCalled()
 		expect(wrapper.emitted('ok')).toBeFalsy()
