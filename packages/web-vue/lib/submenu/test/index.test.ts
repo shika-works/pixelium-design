@@ -28,7 +28,7 @@ describe('Submenu Component', () => {
 			toggleOpenMenu: vi.fn(),
 			updateRender: vi.fn(),
 			dark: ref(false),
-			darkMode: ref(false),
+			darkMode: ref(false)
 		}
 
 		const wrapper = mount(Submenu, {
@@ -173,8 +173,8 @@ describe('Submenu Component', () => {
 				indent: ref(0),
 				selectMenu: vi.fn(),
 				toggleOpenMenu: vi.fn(),
-			dark: ref(false),
-			darkMode: ref(false),
+				dark: ref(false),
+				darkMode: ref(false),
 				updateRender: vi.fn()
 			}
 

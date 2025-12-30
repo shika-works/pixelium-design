@@ -107,9 +107,9 @@ describe('MenuGroup Component', () => {
 		expect(group.element).toBeTruthy()
 
 		const list = group.find('.px-menu-group-list')
-		
+
 		expect(list).toBeTruthy()
-		
+
 		expect((list.element as HTMLElement).style.display).toBe('block')
 		expect((list.element as HTMLElement).style.paddingLeft).toBe('16px')
 	})
