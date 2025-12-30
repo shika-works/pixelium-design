@@ -8,24 +8,59 @@
 [[[zh
 ## v0.1.0
 
+- 新增：
+  - 新增反馈组件：Dialog、Popconfirm、Badge、Alert、Progress。
+  - 新增菜单：Menu、MenuItem、Submenu、MenuGroup。
+  - 新增其他导航组件：BackTop。
+  - Tooltip 和 Popover 新增 `cascade` 属性，以维持嵌套浮窗的展示。
+  - 新增多语言国际化模块，可以通过入口文件导出的 `locale` 调整对话框和确认弹出框的文本语言。
+- 优化：
+  - 给传入内部组件 props 的属性提供了更详细的类型声明。
+  - 优化代码 & 完善测试用例。
+  - 为大部分含有 canvas 的组件增加 `pollSizeChange` 属性，用于轮询尺寸变化更新渲染。
+- 修复：
+  - 修复在微任务中快速切换按钮 `loading` 状态时 canvas 渲染异常。
+  - 修复输入组件在 FormItem 中横向延申异常的问题。
+]]]
+[[[en
+## v0.1.0
+
+- New Features:
+  - Added feedback components: Dialog, Popconfirm, Badge, Alert, Progress.
+  - Added menu components: Menu, MenuItem, Submenu, MenuGroup.
+  - Added additional navigation component: BackTop.
+  - Added the `cascade` property to Tooltip and Popover to maintain the display of nested floating windows.
+  - Added multi-language internationalization module; text language for dialogs and confirmation popups can be adjusted via the exported `locale` from the entry file.
+- Optimizations:
+  - Provided more detailed type declarations for properties passed as props to internal components.
+  - Optimized code & improved test coverage.
+  - Added the `pollSizeChange` property to most components containing canvas for polling size changes to update rendering.
+- Fixes:
+  - Fixed abnormal canvas rendering when toggling the button `loading` state rapidly within micro tasks.
+  - Fixed the abnormal horizontal extension of input components within a FormItem.
 ]]]
 
 [[[zh
 ## v0.0.4
+
 > hotfix
+
 - 修复：
   - 优化了输入控件错误触发键盘操作提示边框的问题，优化了相关样式，后续会使用更合理的机制处理这一逻辑。
 ]]]
 
 [[[en
 ## v0.0.4
+
 > hotfix
+
 - Fixes:
   - Optimized the issue where input controls incorrectly triggered keyboard operation hint borders. Related styles have been improved. A more reasonable mechanism will be used to handle this logic in the future.
 ]]]
 
 [[[zh
 ## v0.0.3
+
 - 新增：
   - 支持切换像素宽度，支持 2px 和 4px。
   - 完善表单组件：Form、FormItem、Switch、Slider、Radio、RadioGroup、Checkbox、CheckboxGroup。
@@ -55,6 +90,7 @@
 ]]]
 [[[en
 ## v0.0.3
+
 - New features:
   - Support switching pixel widths, supporting 2px and 4px.
   - Improve form components: Form, FormItem, Switch, Slider, Radio, RadioGroup, Checkbox, CheckboxGroup.
@@ -86,6 +122,7 @@
 
 [[[zh
 ## v0.0.2
+
 - 新增组件: Input、InputNumber、Textarea、InputGroup、Input、GroupLabel、Tag、InputTag、Tooltip、Popover、Empty、AutoComplete、Mask、Spin、Select。
 - 加入图标库 pixelarticons。
 - 优化代码。
@@ -93,6 +130,7 @@
 
 [[[en
 ## v0.0.2
+
 - New components added: Input, InputNumber, Textarea, InputGroup, Input, GroupLabel, Tag, InputTag, Tooltip, Popover, Empty, AutoComplete, Mask, Spin, Select.
 - Integrated the pixelarticons icon library.
 - Code optimization.
