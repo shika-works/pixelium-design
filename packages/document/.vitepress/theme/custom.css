@@ -30,16 +30,16 @@ img[alt='Static Badge'] {
 	}
 }
 
-.vp-doc ul {
+.vp-doc .vitepress-demo-preview-preview ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
-.vp-doc ul li {
+.vp-doc .vitepress-demo-preview-preview ul li {
 	margin: 0;
 }
-.vp-doc li > ol,
-.vp-doc li > ul {
+.vp-doc .vitepress-demo-preview-preview li > ol,
+.vp-doc .vitepress-demo-preview-preview li > ul {
 	margin: 0;
 }
 
