@@ -43,10 +43,18 @@
   &.@{prefix}__@{value} {
     @paddingVar: ~"px-@{value}-padding-x";
     &.@{prefix}__inner {
-      padding-right: calc(@@paddingVar + 1px + 1 * var(--px-bit));
+      padding-right: calc(@@paddingVar + 1px +  var(--px-bit));
       &:last-child {
         padding-right: @@paddingVar;
+				&.@{prefix}__circle,&.@{prefix}__square {
+					padding-right: 0;
+					width: var(--button-size);
+				}
       }
+			&.@{prefix}__circle,&.@{prefix}__square {
+				width: calc(var(--button-size) + 1px +  var(--px-bit));
+      	padding-right: calc(1px +  var(--px-bit));
+			}
     }
   }
 });
@@ -67,7 +75,7 @@
 		padding-left: @px-small-padding-x;
 		padding-right: @px-small-padding-x;
 		--button-size: var(--px-small-size);
-		font-size: @px-large-font-size;
+		font-size: @px-small-font-size;
 	}
 	&__loading {
 		cursor: auto;
