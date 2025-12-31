@@ -1,6 +1,6 @@
 <script setup lang="tsx">
-import { useSlots, shallowRef, ref } from 'vue'
-import Popup from '../popup/index.vue'
+import { useSlots, shallowRef, ref, mergeProps } from 'vue'
+import Popover from '../popup/index.vue'
 import Button from '../button/index.vue'
 import type { PopconfirmProps, PopconfirmEvents, PopconfirmExpose } from './type'
 import { forwardEmits } from '../share/util/reactivity'
@@ -37,7 +37,7 @@ const props = withDefaults(
 
 const emits = defineEmits<Omit<PopconfirmEvents, 'beforeOk'>>()
 
-const popupRef = shallowRef<InstanceType<typeof Popup> | null>(null)
+const popupRef = shallowRef<InstanceType<typeof Popover> | null>(null)
 
 defineExpose<PopconfirmExpose>({
 	get triggerContent() {
@@ -151,7 +151,7 @@ const contentRender = () => {
 
 defineRender(() => {
 	return (
-		<Popup
+		<Popover
 			ref={popupRef}
 			placement={props.placement}
 			trigger="click"
@@ -164,13 +164,13 @@ defineRender(() => {
 			destroyOnHide={props.destroyOnHide}
 			visible={visible.value}
 			onUpdate:visible={updateVisibleHandler}
-			{...{ ...forward, ...props.popoverProps }}
+			{...mergeProps(forward, props.popoverProps || {})}
 		>
 			{{
 				default: slots.default,
 				content: contentRender
 			}}
-		</Popup>
+		</Popover>
 	)
 })
 </script>
