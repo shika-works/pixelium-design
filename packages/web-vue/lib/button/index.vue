@@ -121,7 +121,7 @@ traverseParent(instance, (ins) => {
 		innerButtonGroup.value = true
 		return true
 	} else if (ins.type.name === 'InputGroup') {
-		innerButtonGroup.value = true
+		innerInputGroup.value = true
 		return true
 	}
 })
