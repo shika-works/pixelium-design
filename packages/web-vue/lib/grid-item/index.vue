@@ -11,11 +11,9 @@
 <script setup lang="ts">
 import {
 	computed,
-	getCurrentInstance,
 	inject,
 	onBeforeUnmount,
 	onMounted,
-	ref,
 	useId,
 	watch,
 	type ComputedRef,
@@ -33,26 +31,21 @@ defineOptions({
 	name: 'GridItem'
 })
 
-const instance = getCurrentInstance()
-const inner = ref(instance?.parent?.type.name === 'Grid')
-
-const provide = inner.value
-	? inject<
-			| {
-					column: ComputedRef<number>
-					gutter: ComputedRef<{ x: number; y: number }>
-					itemsStat: Ref<
-						{
-							id: string
-							index: number
-							offset: number
-							span: number
-						}[]
-					>
-			  }
-			| undefined
-		>(GRID_PROVIDE, undefined)
-	: undefined
+const provide = inject<
+	| {
+			column: ComputedRef<number>
+			gutter: ComputedRef<{ x: number; y: number }>
+			itemsStat: Ref<
+				{
+					id: string
+					index: number
+					offset: number
+					span: number
+				}[]
+			>
+	  }
+	| undefined
+>(GRID_PROVIDE, undefined)
 
 const props = withDefaults(defineProps<GridItemProps>(), {
 	offset: 0
