@@ -207,7 +207,7 @@ export interface Option<T = any> {
 
 export interface GroupOption<T = any> {
 	children: (Option<T> | string)[]
-	type: typeof GROUP_OPTION_TYPE
+	type: 'group'
 }
 
 export interface OptionListOption<T = any> extends Option<T> {
