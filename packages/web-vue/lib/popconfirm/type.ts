@@ -137,7 +137,7 @@ export type PopconfirmEvents = {
 	/**
 	 * @event update:visible
 	 * @param {boolean} value
-	 * @version 0.0.2
+	 * @version 0.1.0
 	 */
 	'update:visible': [value: boolean]
 	/**
@@ -160,13 +160,13 @@ export type PopconfirmEvents = {
 	/**
 	 * @event close
 	 * @param {MouseEvent} e
-	 * @version 0.0.2
+	 * @version 0.1.0
 	 */
 	close: [e: MouseEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e
-	 * @version 0.0.2
+	 * @version 0.1.0
 	 */
 	open: [e: MouseEvent]
 }
