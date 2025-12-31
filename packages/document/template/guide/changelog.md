@@ -11,7 +11,7 @@
 - 新增：
   - 新增反馈组件：Dialog、Popconfirm、Badge、Alert、Progress。
   - 新增菜单：Menu、MenuItem、Submenu、MenuGroup。
-  - 新增其他导航组件：BackTop。
+  - 新增其他导航组件：BackTop、DropDown。
   - Tooltip 和 Popover 新增 `cascade` 属性，以维持嵌套浮窗的展示。
   - 新增多语言国际化模块，可以通过入口文件导出的 `locale` 调整对话框和确认弹出框的文本语言。
 - 调整：
@@ -32,7 +32,7 @@
 - New Features:
   - Added feedback components: Dialog, Popconfirm, Badge, Alert, Progress.
   - Added menu components: Menu, MenuItem, Submenu, MenuGroup.
-  - Added additional navigation component: BackTop.
+  - Added additional navigation component: BackTop, DropDown.
   - Added the `cascade` property to Tooltip and Popover to maintain the display of nested floating windows.
   - Added multi-language internationalization module; text language for dialogs and confirmation popups can be adjusted via the exported `locale` from the entry file.
 - Adjustment:
