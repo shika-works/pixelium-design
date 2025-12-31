@@ -65,6 +65,7 @@ import Menu from './menu/index.vue'
 import MenuItem from './menu-item/index.vue'
 import MenuGroup from './menu-group/index.vue'
 import Submenu from './submenu/index.vue'
+import DropDown from './drop-down/index.vue'
 
 const components = [
 	Button,
@@ -118,7 +119,8 @@ const components = [
 	Menu,
 	MenuItem,
 	MenuGroup,
-	Submenu
+	Submenu,
+	DropDown
 ]
 
 const defaultPrefix = 'Px'
@@ -212,7 +214,8 @@ export {
 	Menu,
 	MenuItem,
 	MenuGroup,
-	Submenu
+	Submenu,
+	DropDown
 }
 export default {
 	install
@@ -243,3 +246,7 @@ export type {
 	FormValidateResult,
 	UseFormReturn
 } from './form/type.ts'
+
+export type { DropDownListOption, DropDownListGroupOption } from './drop-down-list/type.ts'
+export type { MenuOption, MenuGroupOption, SubmenuOption } from './menu/type.ts'
+export type { NavigationOption } from './share/type/index.ts'

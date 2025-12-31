@@ -56,7 +56,8 @@ const newItems: string[] = [
 	'back-top',
 	'progress',
 	'menu',
-	'i18n'
+	'i18n',
+	'drop-down'
 ]
 
 const order = [
