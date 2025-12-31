@@ -101,17 +101,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import {
-	computed,
-	getCurrentInstance,
-	inject,
-	nextTick,
-	onMounted,
-	ref,
-	shallowRef,
-	useSlots,
-	watch
-} from 'vue'
+import { computed, inject, nextTick, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
 import type { InputNumberEvents, InputNumberExpose, InputNumberProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
@@ -167,12 +157,12 @@ const props = withDefaults(defineProps<InputNumberProps>(), {
 
 const emits = defineEmits<InputNumberEvents>()
 
-const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+const innerInputGroup = ref(!!inputGroupProvide)
+
 const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE)
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const borderRadiusComputed = createProvideComputed('borderRadius', [

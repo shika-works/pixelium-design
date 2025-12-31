@@ -1,9 +1,7 @@
 <template>
-	<px-space>
-		<px-popconfirm content="Controlled confirm" v-model:visible="visible">
-			<px-button>Controlled {{ visible }}</px-button>
-		</px-popconfirm>
-	</px-space>
+	<px-popconfirm content="Controlled confirm" v-model:visible="visible">
+		<px-button>Controlled {{ visible }}</px-button>
+	</px-popconfirm>
 </template>
 
 <script setup lang="ts">

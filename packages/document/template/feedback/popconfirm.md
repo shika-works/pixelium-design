@@ -28,6 +28,18 @@ Use the `content` prop to set the message. By default Popconfirm shows an icon, 
 <preview path="./popconfirm-basic.vue"></preview>
 
 [[[zh
+## 弹出位置
+
+Popconfirm 弹出框提供 9 种展示位置。
+
+由 `placement` 属性决定弹出的位置。该属性值格式为：[方向]-[对齐位置]，分别是`'top'`、`'right'`、`'bottom'`、`'left'`、`'top-start'`、`'top-end'`、`'right-start'`、`'right-end'`、`'bottom-start'`、`'bottom-end'`、`'left-start'`、`'left-end'`，有四个展示方向，和三种对齐方式，默认的 `placement` 为 `top`。
+]]]
+[[[en
+
+]]]
+<preview path="./popconfirm-place.vue"></preview>
+
+[[[zh
 ## 受控模式
 
 传入 `visible` 属性进入受控模式；不传或传 `undefined` 则为非受控模式，可使用 `defaultVisible` 指定初始显示。组件会触发 `update:visible` 事件以配合 `v-model`。 
@@ -79,8 +91,6 @@ Set `disabled` to disable the component. Trigger actions will be ignored and the
 
 <preview path="./popconfirm-disabled.vue"></preview>
 
----
-
 ## API
 
 [[[api zh
@@ -89,8 +99,8 @@ visible: 是否显示（受控模式，支持 `v-model`）。
 defaultVisible: 非受控模式下默认的显示状态。
 placement: 弹出位置。
 trigger: 触发方式。
-offset: 弹出偏移距离（像素）。
-variant: 组件样式变体（light/dark）。
+offset: 弹出偏移距离（px）。
+variant: 组件样式变体。
 arrow: 是否展示箭头。
 disabled: 是否禁用。
 zIndex: 弹出层 `z-index`。

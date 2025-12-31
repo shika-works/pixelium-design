@@ -22,7 +22,6 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<ButtonGroupProps>(), {
-	shape: 'rect',
 	disabled: false
 })
 

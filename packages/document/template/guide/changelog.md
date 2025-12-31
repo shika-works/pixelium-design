@@ -11,15 +11,19 @@
 - 新增：
   - 新增反馈组件：Dialog、Popconfirm、Badge、Alert、Progress。
   - 新增菜单：Menu、MenuItem、Submenu、MenuGroup。
-  - 新增其他导航组件：BackTop。
+  - 新增其他导航组件：BackTop、DropDown。
   - Tooltip 和 Popover 新增 `cascade` 属性，以维持嵌套浮窗的展示。
   - 新增多语言国际化模块，可以通过入口文件导出的 `locale` 调整对话框和确认弹出框的文本语言。
+- 调整：
+  - ⚠️需要注意⚠️ 为更方便地使用高阶组件，受限于 Vue 的机制，Row 与 Col、Container 与 Aside、Grid 与 GridItem、ButtonGroup 与 Button、InputGroup 与各数据输入组件等配对组件，接收对应的 `provide` 数据时，现在对直接的亲代组件的类型不再做严格要求。
+  - ButtonGroup 的 `shape` 增加可选值 `square` 和 `circle`，并且移除默认值。`square` 和 `circle` 时，Button 子组件的在视觉上长和宽相等。此处变更不会影响旧代码，因为 ButtonGroup 的 `shape` 默认值不存在时，时，Button 子组件也会采取 `rect` 的默认值。
 - 优化：
   - 给传入内部组件 props 的属性提供了更详细的类型声明。
   - 优化代码 & 完善测试用例。
   - 为大部分含有 canvas 的组件增加 `pollSizeChange` 属性，用于轮询尺寸变化更新渲染。
 - 修复：
   - 修复在微任务中快速切换按钮 `loading` 状态时 canvas 渲染异常。
+  - 修复在按钮 `size="small"` 时字体大小异常的问题。
   - 修复输入组件在 FormItem 中横向延申异常的问题。
 ]]]
 [[[en
@@ -28,15 +32,19 @@
 - New Features:
   - Added feedback components: Dialog, Popconfirm, Badge, Alert, Progress.
   - Added menu components: Menu, MenuItem, Submenu, MenuGroup.
-  - Added additional navigation component: BackTop.
+  - Added additional navigation component: BackTop, DropDown.
   - Added the `cascade` property to Tooltip and Popover to maintain the display of nested floating windows.
   - Added multi-language internationalization module; text language for dialogs and confirmation popups can be adjusted via the exported `locale` from the entry file.
+- Adjustment:
+  - ⚠️ Note ⚠️ To facilitate the use of higher-order components and due to limitations in Vue's mechanism, paired components such as Row and Col, Container and Aside, Grid and GridItem, ButtonGroup and Button, InputGroup and various data input components, etc., when receiving corresponding `provide` data, will now no longer strictly require the type of the immediate parent component.
+  - The `shape` property of ButtonGroup now accepts two additional optional values: `square` and `circle`, and its default value has been removed. When set to `square` or `circle`, the child Button components will visually have equal height and width. This change will not affect existing code, as child Button components will default to using `rect` when no `shape` value is provided for the ButtonGroup.
 - Optimizations:
   - Provided more detailed type declarations for properties passed as props to internal components.
   - Optimized code & improved test coverage.
   - Added the `pollSizeChange` property to most components containing canvas for polling size changes to update rendering.
 - Fixes:
   - Fixed abnormal canvas rendering when toggling the button `loading` state rapidly within micro tasks.
+  - Fix the font size issue when button's size is `'small'`.
   - Fixed the abnormal horizontal extension of input components within a FormItem.
 ]]]
 

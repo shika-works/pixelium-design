@@ -66,6 +66,18 @@ Set the Menu `dark` attribute to `true` to enable high-contrast dark mode.
 
 <preview path="./menu-dark.vue"></preview>
 
+[[[zh
+## 选项属性
+
+Menu 的 `options` 属性用于直接传入选项，可以用于简单菜单的快速创建。
+]]]
+[[[en
+## Options Property
+
+The `options` property of Menu is used to directly pass in options, enabling quick creation of simple menu.
+]]]
+<preview path="./menu-options.vue"></preview>
+
 [[[en
 ## Controlled Menu
 
@@ -92,6 +104,7 @@ submenuTrigger: 子菜单浮窗的触发方式，若子菜单 `trigger` 未设�
 indent: 每级菜单的缩进。
 ellipsis: 横向菜单超出部分是否收纳到 ... 子菜单中。
 dark: 菜单是否为深色模式。
+options: 用于创建菜单子组件的选项，当未传入 `default` 插槽时生效。
 
 events.update:active: 更新 `active` 的回调。
 events.update:expanded: 更新 `expanded` 的回调。
@@ -114,6 +127,7 @@ submenuTrigger: Trigger method for submenu popups. This value will be used if th
 indent: Indentation for each menu level.
 ellipsis: Whether overflowing items in a horizontal menu are collapsed into a "..." submenu.
 dark: Whether the menu uses dark mode.
+options: Options for creating menu sub-components, effective when the `default` slot is not passed.
 
 events.update:active: Callback when `active` updates.
 events.update:expanded: Callback when `expanded` updates.
@@ -179,6 +193,35 @@ label: Text label.
 slots.default: Child components that make up the menu.
 slots.label: Text label.
 ]]]
+
+### MenuOption, MenuGroupOption, SubmenuOption
+
+```ts
+export interface MenuOption extends NavigationOption {
+	disabled?: boolean
+	href?: string
+	route?: string | object
+	icon?: () => ValidVNodeContent
+}
+
+export interface MenuGroupOption extends NavigationOption {
+	children: (MenuOption | MenuGroupOption | SubmenuOption)[]
+	type: 'group'
+}
+
+export interface SubmenuOption extends NavigationOption {
+	children: (MenuOption | MenuGroupOption | SubmenuOption)[]
+	disabled?: boolean
+	type: 'submenu'
+	icon?: () => ValidVNodeContent
+}
+
+export interface NavigationOption {
+	index: string | number | symbol
+	label?: string
+}
+export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
+```
 
 ### EmitEvent
 

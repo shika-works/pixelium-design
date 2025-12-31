@@ -1,9 +1,7 @@
 <template>
-	<px-space>
-		<px-popconfirm content="This will run an async check" :onBeforeOk="beforeOk">
-			<px-button>Async Confirm</px-button>
-		</px-popconfirm>
-	</px-space>
+	<px-popconfirm content="This will run an async check" :onBeforeOk="beforeOk">
+		<px-button>Async Confirm</px-button>
+	</px-popconfirm>
 </template>
 
 <script setup lang="ts">

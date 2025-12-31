@@ -9,10 +9,10 @@ export type ButtonGroupProps = {
 	 */
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	/**
-	 * @property {'rect' | 'round'} [shape='rect']
+	 * @property {'rect' | 'round' | 'square' | 'circle'} [shape]
 	 * @version 0.0.0-beta
 	 */
-	shape?: 'rect' | 'round' | 'default'
+	shape?: 'rect' | 'round' | 'default' | 'square' | 'circle'
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.3

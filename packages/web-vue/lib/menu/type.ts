@@ -1,4 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
+import type { GROUP_OPTION_TYPE, SUBMENU_OPTION_TYPE } from '../share/const'
+import type { NavigationOption, ValidVNodeContent } from '../share/type'
 
 export type MenuProps = {
 	/**
@@ -56,6 +58,11 @@ export type MenuProps = {
 	 * @version 0.1.0
 	 */
 	ellipsis?: boolean
+	/**
+	 * @property {(MenuOption | MenuGroupOption | SubmenuOption)[]} [options]
+	 * @version 0.1.0
+	 */
+	options?: (MenuOption | MenuGroupOption | SubmenuOption)[]
 }
 
 export type MenuEvents = {
@@ -122,4 +129,23 @@ export type MenuProvide = {
 	selectMenu: (key: number | string | symbol, event: MouseEvent) => any
 	toggleOpenMenu: (key: number | string | symbol, event: MouseEvent) => any
 	updateRender: () => void
+}
+
+export interface MenuOption extends NavigationOption {
+	disabled?: boolean
+	href?: string
+	route?: string | object
+	icon?: () => ValidVNodeContent
+}
+
+export interface MenuGroupOption extends NavigationOption {
+	children: (MenuOption | MenuGroupOption | SubmenuOption)[]
+	type: typeof GROUP_OPTION_TYPE
+}
+
+export interface SubmenuOption extends NavigationOption {
+	children: (MenuOption | MenuGroupOption | SubmenuOption)[]
+	disabled?: boolean
+	type: typeof SUBMENU_OPTION_TYPE
+	icon?: () => ValidVNodeContent
 }

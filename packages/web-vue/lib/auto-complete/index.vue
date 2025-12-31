@@ -84,13 +84,15 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+const innerInputGroup = ref(!!inputGroupProvide)
+
 const [index, first, last] = innerInputGroup.value
 	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
 			return instance?.vnode.el?.nextElementSibling
 		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
 const borderRadiusComputed = createProvideComputed('borderRadius', [

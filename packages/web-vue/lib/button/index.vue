@@ -98,6 +98,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
+import { traverseParent } from '../share/util/render'
 
 defineOptions({
 	name: 'Button'
@@ -112,8 +113,19 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 })
 
 const instance = getCurrentInstance()
-const innerButtonGroup = ref(instance?.parent?.type.name === 'ButtonGroup')
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
+const innerInputGroup = ref(false)
+const innerButtonGroup = ref(false)
+
+traverseParent(instance, (ins) => {
+	if (ins.type.name === 'ButtonGroup') {
+		innerButtonGroup.value = true
+		return true
+	} else if (ins.type.name === 'InputGroup') {
+		innerInputGroup.value = true
+		return true
+	}
+})
+
 const [index, first, last] = innerButtonGroup.value
 	? useIndexOfChildren(BUTTON_GROUP_UPDATE)
 	: innerInputGroup.value

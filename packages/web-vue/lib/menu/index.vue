@@ -15,7 +15,14 @@ import {
 	withScopeId,
 	type VNode
 } from 'vue'
-import type { MenuEvents, MenuProps, MenuProvide } from './type'
+import type {
+	MenuEvents,
+	MenuGroupOption,
+	MenuOption,
+	MenuProps,
+	MenuProvide,
+	SubmenuOption
+} from './type'
 import { MENU_PROVIDE } from '../share/const/provide-key'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { debounce, isArray, isNullish } from 'parsnip-kit'
@@ -24,6 +31,9 @@ import { useHiddenMeasure } from '../share/hook/use-hidden-measure'
 import Submenu from '../submenu/index.vue'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useDarkMode } from '../share/hook/use-dark-mode'
+import MenuItem from '../menu-item/index.vue'
+import MenuGroup from '../menu-group/index.vue'
+import { GROUP_OPTION_TYPE } from '../share/const'
 
 defineOptions({
 	name: 'Menu'
@@ -118,9 +128,72 @@ const visibleIndex = ref(-1)
 const id = useId()
 let childrenVNode = undefined as VNode[] | undefined
 
+const isMenuOption = (arg: MenuOption | MenuGroupOption | SubmenuOption): arg is MenuOption => {
+	return !(arg as any).type
+}
+const isMenuGroupOption = (
+	arg: MenuOption | MenuGroupOption | SubmenuOption
+): arg is MenuGroupOption => {
+	return (arg as any).type === GROUP_OPTION_TYPE
+}
+
+const renderOption = (option: MenuOption | MenuGroupOption | SubmenuOption) => {
+	if (isMenuOption(option)) {
+		return (
+			<MenuItem
+				index={option.index}
+				key={option.index}
+				label={option.label}
+				href={option.href}
+				route={option.route}
+				disabled={option.disabled}
+			>
+				{{
+					icon: option.icon
+				}}
+			</MenuItem>
+		)
+	} else if (isMenuGroupOption(option)) {
+		return (
+			<MenuGroup key={option.index} label={option.label}>
+				{{
+					default: () => renderOptions(option.children)
+				}}
+			</MenuGroup>
+		)
+	} else {
+		return (
+			<Submenu
+				index={option.index}
+				key={option.index}
+				label={option.label}
+				disabled={option.disabled}
+			>
+				{{
+					default: () => renderOptions(option.children),
+					icon: option.icon
+				}}
+			</Submenu>
+		)
+	}
+}
+
+const renderOptions = (options: (MenuOption | MenuGroupOption | SubmenuOption)[]) => {
+	return options.map((e) => renderOption(e))
+}
+
+const renderMenuChildren = () => {
+	const children = flattenVNodes(slots.default?.() || [])
+
+	if (!children.length && isArray(props.options)) {
+		return renderOptions(props.options)
+	}
+	return children
+}
+
 const hiddenMeasureGetter = useHiddenMeasure('menu-' + id)
 const latestMeasure = () => {
-	const children = flattenVNodes(slots.default?.() || [])
+	const children = renderMenuChildren()
 	children.push(<Submenu index={ELLIPSIS} label="..."></Submenu>)
 	const renderMeasure = () => {
 		return (
@@ -219,7 +292,7 @@ useResizeObserver(menuRef, () => {
 defineRender(() => {
 	const scopeId = instance?.vnode.scopeId
 	const renderMenu = () => {
-		const children = flattenVNodes(slots.default?.() || [])
+		const children = renderMenuChildren()
 		const visibleChildren =
 			props.direction === 'horizontal' && props.ellipsis
 				? visibleIndex.value === -1

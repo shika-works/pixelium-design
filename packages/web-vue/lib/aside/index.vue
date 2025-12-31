@@ -14,15 +14,7 @@
 	</aside>
 </template>
 <script setup lang="ts">
-import {
-	computed,
-	getCurrentInstance,
-	inject,
-	onBeforeUnmount,
-	onMounted,
-	ref,
-	type Ref
-} from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, type Ref } from 'vue'
 import type { AsideProps } from './type'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { isNullish, isNumber } from 'parsnip-kit'
@@ -30,11 +22,7 @@ import { CONTAINER_PROVIDE } from '../share/const/provide-key'
 
 defineOptions({ name: 'Aside' })
 
-const instance = getCurrentInstance()
-const inner = ref(instance?.parent?.type.name === 'Container')
-const asideCounter = inner.value
-	? inject<Ref<number> | undefined>(CONTAINER_PROVIDE, undefined)
-	: undefined
+const asideCounter = inject<Ref<number> | undefined>(CONTAINER_PROVIDE, undefined)
 
 onMounted(() => {
 	if (asideCounter) {

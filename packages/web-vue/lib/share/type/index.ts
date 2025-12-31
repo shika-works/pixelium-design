@@ -43,3 +43,7 @@ export type RestAttrs = {
 	class?: VueClassValue | null
 	[x: string]: any
 }
+export interface NavigationOption {
+	index: string | number | symbol
+	label?: string
+}
