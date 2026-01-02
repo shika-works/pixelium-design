@@ -1,6 +1,6 @@
 <template>
 	<px-menu :default-active="'Home'">
-		<px-menu-item index="Home" href="/pixelium-design">
+		<px-menu-item index="Home" href="/pixelium-design/">
 			Home
 			<template #icon>
 				<IconHome></IconHome>
@@ -30,7 +30,11 @@
 					<IconLink></IconLink>
 				</template>
 			</px-menu-item>
-			<px-menu-item index="Github">
+			<px-menu-item
+				index="Github"
+				href="https://github.com/shika-works/pixelium-design"
+				target="_blank"
+			>
 				Github
 				<template #icon>
 					<IconGithub></IconGithub>

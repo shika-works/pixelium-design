@@ -13,15 +13,15 @@ Must feed.
 ## Basic Usage
 Organize the menu structure through Menu, MenuItem, MenuGroup, and Submenu components.
 
-MenuItem accepts `href` or `route` parameters to render either an `<a>` tag or Vue Router's RouterLink component.
+When MenuItem receives the `href` or `route` parameter, it will be rendered as an `<a>` tag or as a Vue Router RouterLink component.
 
 ::: warning
-The `href` and `route` attributes will be directly rendered into the `<a>` tag. If values such as `javascript:alert(1)` or malicious URLs are passed, this may lead to XSS or open redirect vulnerabilities.
+The `href` and `route` properties will be directly rendered into the `<a>` tag. If values such as `javascript:alert(1)` or malicious URLs are passed, this may lead to XSS or open redirect vulnerabilities.
 :::
 ]]]
 [[[zh
 ## 基本用法
-通过 Menu、MenuItem、MenuGroup、Submenu 组织菜单结构。MenuItem 接收 `href` 或 `route` 参数渲染 `<a>` 标签或者 Vue Router 的 RouterLink 组件。
+通过 Menu、MenuItem、MenuGroup、Submenu 组织菜单结构。MenuItem 接收 `href` 或 `route` 参数的时候，渲染围为 `<a>` 标签或者 Vue Router 的 RouterLink 组件。
 
 ::: warning
 `href` 和 `route` 属性将直接渲染到 `<a>` 标签中，如果传递类似 `javascript:alert(1)` 这样的值或恶意 URL，可能会导致 XSS 或开放重定向漏洞。
@@ -78,12 +78,12 @@ Set the Menu `dark` attribute to `true` to enable high-contrast dark mode.
 [[[zh
 ## 选项属性
 
-Menu 的 `options` 属性用于直接传入选项，可以用于简单菜单的快速创建。
+Menu 的 `options` 属性用于直接传入选项，可以用于简单菜单的快速创建，选项的字符串值和 `index` 字段作为菜单子组件的唯一标识，推荐确保它们的唯一性。
 ]]]
 [[[en
 ## Options Property
 
-The `options` property of Menu is used to directly pass in options, enabling quick creation of simple menu.
+The `options` property of Menu is used to directly pass in options, which can be used for quick creation of simple menus. The string value of the option and the `index` field of the option serve as unique identifiers for the menu sub-components. It is recommended to ensure their uniqueness.
 ]]]
 <preview path="./menu-options.vue"></preview>
 
@@ -152,7 +152,7 @@ label: 文本标签。
 index: 唯一标识，MenuItem 和 Submenu 组件的 `index` 属性不可重复。
 disabled: 是否禁用。
 route: Vue Router 的 RouterLink 的 `to` 参数，传入后，将以 RouterLink 作为 `<a>` 渲染文本标签。如果使用该属性，请确保在全局的 Vue App 中注册 Vue Router。
-href: `<a>` 标签的 `href` 属性，没有传入 `route` 参数时，将以 `<a>` 标签渲染文本标签。
+href: `<a>` 标签的 `href` 属性，传入 `route` 参数时，将以 `<a>` 标签渲染文本标签。
 target: `<a>` 标签的 `target` 属性。
 
 slots.default: 文本标签。
@@ -162,6 +162,8 @@ slots.icon: 图标。
 label: Text label.
 index: Unique identifier. The `index` property of MenuItem and Submenu components must not be duplicated.
 disabled: Whether it is disabled.
+href: The `href` attribute of the `<a>` tag. When a `route` parameter is passed, it will render the text label as an `<a>` tag.
+target: The `target` attribute of the `<a>` tag.
 
 slots.default: Text label.
 slots.icon: Icon.
@@ -210,16 +212,17 @@ export interface MenuOption extends NavigationOption {
 	disabled?: boolean
 	href?: string
 	route?: string | object
+	target?: string
 	icon?: () => ValidVNodeContent
 }
 
 export interface MenuGroupOption extends NavigationOption {
-	children: (MenuOption | MenuGroupOption | SubmenuOption)[]
+	children: (string | MenuOption | MenuGroupOption | SubmenuOption)[]
 	type: 'group'
 }
 
 export interface SubmenuOption extends NavigationOption {
-	children: (MenuOption | MenuGroupOption | SubmenuOption)[]
+	children: (string | MenuOption | MenuGroupOption | SubmenuOption)[]
 	disabled?: boolean
 	type: 'submenu'
 	icon?: () => ValidVNodeContent

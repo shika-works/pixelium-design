@@ -15,6 +15,13 @@ A compact menu displayed via a dropdown.
 通过 `options` 属性设置菜单内容。选项中字符串值或者对象值的 `index` 字段会作为选项唯一标识，建议确保它们没有重复。
 
 通过 `select` 事件获取触发的选项。
+
+`options` 根据子元素的 `href` 或 `route` 字段决定把选项渲染 `<a>` 标签或者 Vue Router 的 RouterLink 组件。
+
+::: warning
+`href` 和 `route` 将直接渲染到 `<a>` 标签中，如果传递类似 `javascript:alert(1)` 这样的值或恶意 URL，可能会导致 XSS 或开放重定向漏洞。
+:::
+
 ]]]
 [[[en
 ## Basic Usage
@@ -22,6 +29,12 @@ A compact menu displayed via a dropdown.
 Set menu content using the `options` prop. When an option is a string or an object, its `index` field will be used as the option's unique identifier — make sure they are not duplicated.
 
 Use the `select` event to get the triggered option.
+
+`options` determines whether to render the options as `<a>` tags or Vue Router RouterLink components based on the `href` or `route` field of the child elements.
+
+::: warning
+The `href` and `route` will be directly rendered into the `<a>` tag. If values such as `javascript:alert(1)` or malicious URLs are passed, this may lead to XSS or open redirect vulnerabilities.
+:::
 ]]]
 
 <preview path="./drop-down-basic.vue"></preview>
@@ -176,6 +189,9 @@ export type RestAttrs = {
 export interface DropDownListOption extends NavigationOption {
 	divider?: boolean
 	disabled?: boolean
+	href?: string
+	route?: string | object
+	target?: string
 }
 
 export interface DropDownListGroupOption extends NavigationOption {

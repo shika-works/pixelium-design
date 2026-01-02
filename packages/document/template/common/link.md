@@ -28,7 +28,7 @@ Usually, we use it just like an `<a>` tag.
 The link offers six themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, and `'sakura'`.
 
 ::: warning
-The `href` attribute will be passed directly to the `<a>` tag. If a value like `javascript:alert(1)` or a malicious URL is passed, it may lead to XSS or open redirect vulnerabilities.
+The `href` property will be passed directly to the `<a>` tag. If a value like `javascript:alert(1)` or a malicious URL is passed, it may lead to XSS or open redirect vulnerabilities.
 :::
 ]]]
 [[[zh
