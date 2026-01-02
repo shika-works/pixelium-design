@@ -70,7 +70,8 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
-	name: 'Select'
+	name: 'Select',
+	inheritAttrs: false
 })
 
 const attrs = useAttrs()
