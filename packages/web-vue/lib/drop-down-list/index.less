@@ -19,27 +19,40 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		height: @item-size;
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		transition: background-color 0.25s;
-		padding-left: @px-padding-x;
-		padding-right: @px-padding-x;
-		background-color: var(--px-neutral-1);
 		&__child {
-			padding-left: @px-padding-group-x;
+			& .@{prefix}-item-link {
+				padding-left: @px-padding-group-x;
+			}
 		}
 		&:hover {
-			background-color: var(--px-primary-1);
+			& .@{prefix}-item-link {
+				background-color: var(--px-primary-1);
+			}
 		}
 		&__disabled {
-			background-color: var(--px-neutral-1);
-			color: var(--px-neutral-6);
-			cursor: not-allowed;
-			&:hover {
+			& .@{prefix}-item-link {
 				background-color: var(--px-neutral-1);
+				color: var(--px-neutral-6);
+				cursor: not-allowed;
+				&:hover {
+					background-color: var(--px-neutral-1);
+				}
 			}
+		}
+		&-link {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			height: @item-size;
+			display: flex;
+			align-items: center;
+			transition: background-color 0.25s;
+			cursor: pointer;
+			padding-left: @px-padding-x;
+			padding-right: @px-padding-x;
+			background-color: var(--px-neutral-1);
+
+			text-decoration: none;
 		}
 		&-group-label {
 			overflow: hidden;

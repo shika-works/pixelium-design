@@ -4,6 +4,9 @@ import type { NavigationOption } from '../share/type'
 export interface DropDownListOption extends NavigationOption {
 	divider?: boolean
 	disabled?: boolean
+	href?: string
+	route?: string | object
+	target?: string
 }
 
 export interface DropDownListGroupOption extends NavigationOption {
