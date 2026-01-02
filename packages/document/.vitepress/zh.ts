@@ -62,7 +62,8 @@ const additionMap = {
 	popconfirm: '确认弹出框',
 	badge: '角标',
 	'back-top': '回到顶部',
-	menu: '菜单'
+	menu: '菜单',
+	'drop-down': '下拉菜单'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
