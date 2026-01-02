@@ -15,6 +15,11 @@ export type LinkProps = {
 	 */
 	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
 	/**
+	 * @property {'normal' | 'underline'} [theme='underline']
+	 * @version 0.1.0
+	 */
+	variant?: 'normal' | 'underline'
+	/**
 	 * @property {string} [color]
 	 * @version 0.0.0-beta
 	 */

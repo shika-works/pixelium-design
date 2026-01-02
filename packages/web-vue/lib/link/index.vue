@@ -5,10 +5,12 @@
 			'px-link__loading': props.loading,
 			'px-link__disabled': props.disabled,
 			'px-link__custom': palette,
-			[`px-link__${props.theme || 'primary'}`]: true
+			[`px-link__${props.theme || 'primary'}`]: true,
+			[`px-link__${props.variant || 'underline'}`]: true
 		}"
 		:style="{
-			color: textColor
+			color: textColor,
+			outlineColor: textColor
 		}"
 		@mouseenter="toggleHover(true)"
 		@mouseleave="toggleHover(false)"
@@ -49,7 +51,10 @@ defineOptions({
 	name: 'Link'
 })
 
-const props = defineProps<LinkProps>()
+const props = withDefaults(defineProps<LinkProps>(), {
+	theme: 'primary',
+	variant: 'underline'
+})
 const slots = useSlots()
 
 const darkMode = useDarkMode()

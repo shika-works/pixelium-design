@@ -38,6 +38,18 @@ The `href` attribute will be passed directly to the `<a>` tag. If a value like `
 <preview path="./link-theme.vue"></preview>
 
 [[[en
+## Underline
+
+Links have two style variants: `'underline'` (default) and `'normal'`.
+]]]
+[[[zh
+## 下划线
+
+链接有 `'underline'`（默认）、`'normal'` 两种样式变体。
+]]]
+<preview path="./link-underline.vue"></preview>
+
+[[[en
 ## Disabled Status
 `disabled` indicates that the link is disabled; the browser's default click-to-navigate behavior will not be triggered.
 ]]]
