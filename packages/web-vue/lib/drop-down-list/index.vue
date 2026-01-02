@@ -9,6 +9,7 @@ import type {
 import { GROUP_OPTION_TYPE } from '../share/const'
 import { getCurrentInstance, useSlots, withScopeId } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'
+import { RouterLink } from 'vue-router'
 
 defineOptions({
 	name: 'DropDownList'
@@ -63,7 +64,9 @@ const renderItem = (
 				}}
 				onClick={(e: MouseEvent) => selectHandler(item, e)}
 			>
-				{slots.option ? slots.option({ option: item }) : item}
+				<span class="px-drown-list-item-link">
+					{slots.option ? slots.option({ option: item }) : item}
+				</span>
 			</li>
 		)
 	} else if (isOptionListOption(item)) {
@@ -78,7 +81,30 @@ const renderItem = (
 				}}
 				onClick={(e: MouseEvent) => selectObjectHandler(item, e)}
 			>
-				{slots.option ? slots.option({ option: item }) : item.label}
+				{item.route ? (
+					<RouterLink
+						class="px-drown-list-item-link"
+						to={item.route}
+						// @ts-ignore
+						target={item.target}
+						onClick={(e: MouseEvent) => linkClickHandler(item, e)}
+					>
+						{slots.option ? slots.option({ option: item }) : item.label}
+					</RouterLink>
+				) : item.href ? (
+					<a
+						class="px-drown-list-item-link"
+						href={item.href}
+						target={item.target}
+						onClick={(e) => linkClickHandler(item, e)}
+					>
+						{slots.option ? slots.option({ option: item }) : item.label}
+					</a>
+				) : (
+					<span class="px-drown-list-item-link">
+						{slots.option ? slots.option({ option: item }) : item.label}
+					</span>
+				)}
 			</li>
 		]
 		if (item.divider) {
@@ -88,14 +114,20 @@ const renderItem = (
 	} else {
 		return [
 			<li class="px-drown-list-item-group" key={key}>
-				<div class="px-drown-list-item-group-label">
+				<span class="px-drown-list-item-group-label">
 					{slots['group-label'] ? slots['group-label']({ option: item }) : item.label}
-				</div>
+				</span>
 			</li>,
 			...item.children.map(
 				(child: string | DropDownListOption) => renderItem(child, true) as JSX.Element
 			)
 		]
+	}
+}
+
+const linkClickHandler = (item: DropDownListOption, e: MouseEvent) => {
+	if (item.disabled) {
+		e.preventDefault()
 	}
 }
 

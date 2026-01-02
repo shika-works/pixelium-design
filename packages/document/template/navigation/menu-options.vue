@@ -17,7 +17,7 @@ const options = ref([
 	{
 		label: 'Home',
 		index: 'Home',
-		href: '/pixelium-design',
+		href: '/pixelium-design/',
 		icon: h(IconHome)
 	},
 	{
@@ -51,8 +51,11 @@ const options = ref([
 			{
 				label: 'Github',
 				index: 'Github',
+				href: 'https://github.com/shika-works/pixelium-design',
+				target: '_blank',
 				icon: h(IconGithub)
-			}
+			},
+			'Contact us'
 		]
 	}
 ])

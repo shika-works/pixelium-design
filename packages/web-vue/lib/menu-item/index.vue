@@ -11,10 +11,22 @@
 		@click="clickHandler"
 		:tabindex="disabledComputed ? -1 : 0"
 	>
+		<RouterLink
+			class="px-menu-item-link"
+			:to="props.route"
+			:target="props.target"
+			@click="linkClickHandler"
+			v-if="props.route"
+		>
+			<div class="px-menu-item-icon-wrapper" v-if="slots.icon">
+				<slot name="icon"> </slot>
+			</div>
+			<slot v-if="!collapsedComputed">{{ props.label }}</slot>
+		</RouterLink>
 		<a
 			class="px-menu-item-link"
 			:href="props.href"
-			v-if="!props.route"
+			v-else-if="props.href"
 			:target="props.target"
 			@click="linkClickHandler"
 		>
@@ -23,19 +35,12 @@
 			</div>
 			<slot v-if="!collapsedComputed">{{ props.label }}</slot>
 		</a>
-		<RouterLink
-			as="a"
-			class="px-menu-item-link"
-			:to="props.route"
-			:target="props.target"
-			@click="linkClickHandler"
-			v-else
-		>
+		<span class="px-menu-item-link" :href="props.href" v-else :target="props.target">
 			<div class="px-menu-item-icon-wrapper" v-if="slots.icon">
 				<slot name="icon"> </slot>
 			</div>
 			<slot v-if="!collapsedComputed">{{ props.label }}</slot>
-		</RouterLink>
+		</span>
 	</li>
 </template>
 

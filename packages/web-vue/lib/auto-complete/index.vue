@@ -54,7 +54,8 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
-	name: 'AutoComplete'
+	name: 'AutoComplete',
+	inheritAttrs: false
 })
 
 const attrs = useAttrs()
