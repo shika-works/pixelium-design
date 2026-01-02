@@ -25,7 +25,7 @@ import type {
 } from './type'
 import { MENU_PROVIDE } from '../share/const/provide-key'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
-import { debounce, isArray, isNullish } from 'parsnip-kit'
+import { debounce, isArray, isNullish, isObject, isString } from 'parsnip-kit'
 import { flattenVNodes } from '../share/util/render'
 import { useHiddenMeasure } from '../share/hook/use-hidden-measure'
 import Submenu from '../submenu/index.vue'
@@ -128,17 +128,21 @@ const visibleIndex = ref(-1)
 const id = useId()
 let childrenVNode = undefined as VNode[] | undefined
 
-const isMenuOption = (arg: MenuOption | MenuGroupOption | SubmenuOption): arg is MenuOption => {
-	return !(arg as any).type
+const isMenuOption = (
+	arg: string | MenuOption | MenuGroupOption | SubmenuOption
+): arg is MenuOption => {
+	return isObject(arg) && !(arg as any).type
 }
 const isMenuGroupOption = (
-	arg: MenuOption | MenuGroupOption | SubmenuOption
+	arg: string | MenuOption | MenuGroupOption | SubmenuOption
 ): arg is MenuGroupOption => {
-	return (arg as any).type === GROUP_OPTION_TYPE
+	return isObject(arg) && (arg as any).type === GROUP_OPTION_TYPE
 }
 
-const renderOption = (option: MenuOption | MenuGroupOption | SubmenuOption) => {
-	if (isMenuOption(option)) {
+const renderOption = (option: string | MenuOption | MenuGroupOption | SubmenuOption) => {
+	if (isString(option)) {
+		return <MenuItem index={option} key={option} label={option}></MenuItem>
+	} else if (isMenuOption(option)) {
 		return (
 			<MenuItem
 				index={option.index}
@@ -147,6 +151,7 @@ const renderOption = (option: MenuOption | MenuGroupOption | SubmenuOption) => {
 				href={option.href}
 				route={option.route}
 				disabled={option.disabled}
+				target={option.target}
 			>
 				{{
 					icon: option.icon
@@ -178,7 +183,7 @@ const renderOption = (option: MenuOption | MenuGroupOption | SubmenuOption) => {
 	}
 }
 
-const renderOptions = (options: (MenuOption | MenuGroupOption | SubmenuOption)[]) => {
+const renderOptions = (options: (string | MenuOption | MenuGroupOption | SubmenuOption)[]) => {
 	return options.map((e) => renderOption(e))
 }
 
