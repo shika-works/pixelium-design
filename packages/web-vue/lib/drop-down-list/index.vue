@@ -17,8 +17,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<DropDownListProps>(), {
 	options: () => [],
-	activeValues: () => [],
-	virtualScroll: false
 })
 
 const emits = defineEmits<DropDownListEvent>()
