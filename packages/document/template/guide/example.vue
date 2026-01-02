@@ -1,5 +1,5 @@
 <template>
-	<px-container class="dashboard-container">
+	<px-container class="dashboard-container example">
 		<px-header class="header-container" bordered>
 			<px-space>
 				LOGO
@@ -9,23 +9,18 @@
 			<px-space style="margin-left: auto">
 				<px-tooltip content="Notifications">
 					<div class="icon-button">
-						<IconBell :size="24"></IconBell>
+						<px-badge dot>
+							<IconBell :size="24"></IconBell>
+						</px-badge>
 					</div>
 				</px-tooltip>
 				<px-avatar size="medium" style="display: block" />
 				<span class="username">Admin User</span>
-				<px-popover trigger="click" placement="bottom-end">
-					<template #content>
-						<px-space direction="vertical">
-							<px-link>Coming soon</px-link>
-							<px-link>Profile Settings</px-link>
-							<px-link>Logout</px-link>
-						</px-space>
-					</template>
+				<px-drop-down :options="['Drop Down', 'Profile Settings', 'Logout']">
 					<div class="icon-button">
 						<IconAngleDown :size="24"></IconAngleDown>
 					</div>
-				</px-popover>
+				</px-drop-down>
 			</px-space>
 		</px-header>
 

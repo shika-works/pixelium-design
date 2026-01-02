@@ -9,8 +9,13 @@
 	color: var(--text-color);
 	cursor: pointer;
 	transition: 0.25s;
+	text-decoration: none;
 
-	outline-offset: var(--px-bit);
+	&__underline {
+		text-decoration: underline;
+		text-underline-offset: @px-interval-mini-1;
+		text-decoration-color: var(--text-color);
+	}
 
 	&-icon-wrapper {
 		margin-right: 4px;
@@ -62,10 +67,6 @@
 		&:focus-visible {
 			outline-color: var(--px-neutral-10);
 		}
-		&.@{prefix}__disabled {
-			--text-color: var(--px-neutral-6);
-		}
-		--text-color: var(--px-neutral-10);
 		&.@{prefix}__disabled {
 			--text-color: var(--px-neutral-6);
 		}

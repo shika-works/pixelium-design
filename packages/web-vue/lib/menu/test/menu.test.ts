@@ -5,7 +5,7 @@ import MenuItem from '../../menu-item/index.vue'
 import Submenu from '../../submenu/index.vue'
 import { GROUP_OPTION_TYPE, SUBMENU_OPTION_TYPE } from '../../share/const'
 import { createMocks } from '../../share/util/test'
-import { nextTick } from 'vue' 
+import { nextTick } from 'vue'
 
 describe('Menu Component', () => {
 	const { pre, post } = createMocks()
