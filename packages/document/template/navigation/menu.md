@@ -12,11 +12,20 @@ Must feed.
 [[[en
 ## Basic Usage
 Organize the menu structure through Menu, MenuItem, MenuGroup, and Submenu components.
+
 MenuItem accepts `href` or `route` parameters to render either an `<a>` tag or Vue Router's RouterLink component.
+
+::: warning
+The `href` and `route` attributes will be directly rendered into the `<a>` tag. If values such as `javascript:alert(1)` or malicious URLs are passed, this may lead to XSS or open redirect vulnerabilities.
+:::
 ]]]
 [[[zh
 ## 基本用法
 通过 Menu、MenuItem、MenuGroup、Submenu 组织菜单结构。MenuItem 接收 `href` 或 `route` 参数渲染 `<a>` 标签或者 Vue Router 的 RouterLink 组件。
+
+::: warning
+`href` 和 `route` 属性将直接渲染到 `<a>` 标签中，如果传递类似 `javascript:alert(1)` 这样的值或恶意 URL，可能会导致 XSS 或开放重定向漏洞。
+:::
 ]]]
 
 <preview path="./menu-basic.vue"></preview>
