@@ -4,7 +4,7 @@ import { h } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import DropDownList from '../index.vue'
 import { createMocks } from '../../share/util/test'
-import type { DropDownListGroupOption, DropDownListOption } from '../type'
+import type { DropDownGroupOption, DropDownOption } from '../type'
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -38,7 +38,7 @@ describe('DropDownList Component', () => {
 		})
 
 		it('renders object options', () => {
-			const options: DropDownListOption[] = [
+			const options: DropDownOption[] = [
 				{ index: '1', label: 'Edit' },
 				{ index: '2', label: 'Delete', disabled: true },
 				{ index: '3', label: 'Copy', divider: true }
@@ -60,7 +60,7 @@ describe('DropDownList Component', () => {
 		})
 
 		it('renders group options', () => {
-			const options: (string | DropDownListGroupOption)[] = [
+			const options: (string | DropDownGroupOption)[] = [
 				{
 					type: 'group',
 					index: 'group1',
@@ -83,7 +83,7 @@ describe('DropDownList Component', () => {
 		})
 
 		it('renders link options', async () => {
-			const options: DropDownListOption[] = [
+			const options: DropDownOption[] = [
 				{
 					index: '1',
 					label: 'External Link',
@@ -132,7 +132,7 @@ describe('DropDownList Component', () => {
 		})
 
 		it('renders group-label slot', () => {
-			const options: DropDownListGroupOption[] = [
+			const options: DropDownGroupOption[] = [
 				{
 					type: 'group',
 					index: 'group1',
@@ -169,7 +169,7 @@ describe('DropDownList Component', () => {
 		})
 
 		it('emits select event for object option', async () => {
-			const options: DropDownListOption[] = [
+			const options: DropDownOption[] = [
 				{ index: '1', label: 'Edit' },
 				{ index: '2', label: 'Delete', disabled: true }
 			]
@@ -184,7 +184,7 @@ describe('DropDownList Component', () => {
 			expect(wrapper.emitted('select')).toBeTruthy()
 			const event = wrapper.emitted('select')?.[0]
 			expect(event?.[0]).toBe('1')
-			expect((event?.[1] as DropDownListOption).label).toBe('Edit')
+			expect((event?.[1] as DropDownOption).label).toBe('Edit')
 
 			const disabledItem = wrapper.findAll('.px-drown-list-item')[1]
 			await disabledItem.trigger('click')
@@ -193,7 +193,7 @@ describe('DropDownList Component', () => {
 		})
 
 		it('handles disabled link clicks', async () => {
-			const options: DropDownListOption[] = [
+			const options: DropDownOption[] = [
 				{
 					index: '1',
 					label: 'Disabled Link',
