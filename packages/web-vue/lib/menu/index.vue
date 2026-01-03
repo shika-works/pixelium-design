@@ -13,7 +13,8 @@ import {
 	useSlots,
 	watch,
 	withScopeId,
-	type VNode
+	type VNode,
+	Comment
 } from 'vue'
 import type {
 	MenuEvents,
@@ -188,7 +189,7 @@ const renderOptions = (options: (string | MenuOption | MenuGroupOption | Submenu
 }
 
 const renderMenuChildren = () => {
-	const children = flattenVNodes(slots.default?.() || [])
+	const children = flattenVNodes(slots.default?.() || []).filter((e) => e.type !== Comment)
 
 	if (!children.length && isArray(props.options)) {
 		return renderOptions(props.options)

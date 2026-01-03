@@ -1,0 +1,56 @@
+@import url(../share/style/variable.less);
+
+.px-breadcrumb-item {
+	@prefix: px-breadcrumb-item;
+
+	margin: 0;
+
+	& > .@{prefix}-link {
+		display: flex;
+		align-items: center;
+		text-decoration: none;
+		color: var(--px-neutral-10);
+		cursor: pointer;
+		&:hover {
+			color: var(--px-neutral-8);
+		}
+		&:active {
+			color: var(--px-neutral-9);
+		}
+	}
+
+	&.@{prefix}__cannot-click {
+		& > .@{prefix}-link {
+			cursor: default;
+			&:active,
+			&:hover {
+				color: var(--px-neutral-10);
+			}
+		}
+	}
+
+	&.@{prefix}__disabled {
+		& > .@{prefix}-link {
+			color: var(--px-neutral-6);
+			cursor: not-allowed;
+			&:active,
+			&:hover {
+				color: var(--px-neutral-6);
+			}
+		}
+	}
+
+	&-icon-wrapper {
+		height: @px-medium-font-size;
+		width: @px-medium-font-size;
+
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+		flex-grow: 0;
+
+		margin-right: @px-interval-1;
+
+		font-size: @px-medium-font-size;
+	}
+}

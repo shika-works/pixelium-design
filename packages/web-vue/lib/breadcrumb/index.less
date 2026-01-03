@@ -1,0 +1,30 @@
+@import url(../share/style/variable.less);
+
+.px-breadcrumb {
+	@prefix: px-breadcrumb;
+
+	display: inline-block;
+	font-size: 0;
+
+	& > .@{prefix}-inner {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		list-style: none;
+
+		padding-left: 0;
+		margin-top: 0;
+		margin-bottom: 0;
+
+		margin: -(@px-interval-2);
+
+		font-size: @px-medium-font-size;
+
+		& > * {
+			margin: @px-interval-2;
+		}
+		& > .px-breadcrumb-item {
+			margin: @px-interval-2;
+		}
+	}
+}

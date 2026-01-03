@@ -63,7 +63,8 @@ const additionMap = {
 	badge: '角标',
 	'back-top': '回到顶部',
 	menu: '菜单',
-	'drop-down': '下拉菜单'
+	'drop-down': '下拉菜单',
+	breadcrumb: '面包屑'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)
