@@ -247,6 +247,6 @@ export type {
 	UseFormReturn
 } from './form/type.ts'
 
-export type { DropDownListOption, DropDownListGroupOption } from './drop-down-list/type.ts'
+export type { DropDownOption, DropDownGroupOption } from './drop-down-list/type.ts'
 export type { MenuOption, MenuGroupOption, SubmenuOption } from './menu/type.ts'
 export type { NavigationOption } from './share/type/index.ts'
