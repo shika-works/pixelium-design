@@ -152,7 +152,7 @@ label: 文本标签。
 index: 唯一标识，MenuItem 和 Submenu 组件的 `index` 属性不可重复。
 disabled: 是否禁用。
 route: Vue Router 的 RouterLink 的 `to` 参数，传入后，将以 RouterLink 作为 `<a>` 渲染文本标签。如果使用该属性，请确保在全局的 Vue App 中注册 Vue Router。
-href: `<a>` 标签的 `href` 属性，传入 `route` 参数时，将以 `<a>` 标签渲染文本标签。
+href: `<a>` 标签的 `href` 属性，传入 `href` 参数时，将以 `<a>` 标签渲染文本标签。
 target: `<a>` 标签的 `target` 属性。
 
 slots.default: 文本标签。
@@ -162,7 +162,7 @@ slots.icon: 图标。
 label: Text label.
 index: Unique identifier. The `index` property of MenuItem and Submenu components must not be duplicated.
 disabled: Whether it is disabled.
-href: The `href` attribute of the `<a>` tag. When a `route` parameter is passed, it will render the text label as an `<a>` tag.
+href: The `href` attribute of the `<a>` tag. When a `href` parameter is passed, it will render the text label as an `<a>` tag.
 target: The `target` attribute of the `<a>` tag.
 
 slots.default: Text label.
