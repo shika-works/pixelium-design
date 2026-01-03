@@ -1,13 +1,13 @@
-import type { DropDownListOption, DropDownListGroupOption } from '../drop-down-list/type'
+import type { DropDownOption, DropDownGroupOption } from '../drop-down-list/type'
 import type { PopoverEvents, PopoverProps } from '../popover/type'
 import type { EmitEvent, RestAttrs } from '../share/type'
 
 export type DropDownProps = {
 	/**
-	 * @property {DropDownListOption | DropDownListGroupOption} [options]
+	 * @property {DropDownOption | DropDownGroupOption} [options]
 	 * @version 0.1.0
 	 */
-	options?: (string | DropDownListOption | DropDownListGroupOption)[]
+	options?: (string | DropDownOption | DropDownGroupOption)[]
 	/**
 	 * @property {boolean | null} [visible]
 	 * @version 0.1.0
@@ -98,15 +98,11 @@ export type DropDownEvents = {
 	/**
 	 * @event select
 	 * @param {string | number | symbol} index
-	 * @param {DropDownListOption | string} option
+	 * @param {DropDownOption | string} option
 	 * @param {MouseEvent} event
 	 * @version 0.1.0
 	 */
-	select: [
-		index: string | number | symbol,
-		option: DropDownListOption | string,
-		event: MouseEvent
-	]
+	select: [index: string | number | symbol, option: DropDownOption | string, event: MouseEvent]
 }
 
 export type DropDownSlots = {

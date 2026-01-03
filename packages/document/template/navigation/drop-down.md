@@ -183,10 +183,10 @@ export type RestAttrs = {
 }
 ```
 
-### DropDownListOption, DropDownListGroupOption
+### DropDownOption, DropDownGroupOption
 
 ```ts
-export interface DropDownListOption extends NavigationOption {
+export interface DropDownOption extends NavigationOption {
 	divider?: boolean
 	disabled?: boolean
 	href?: string
@@ -194,8 +194,8 @@ export interface DropDownListOption extends NavigationOption {
 	target?: string
 }
 
-export interface DropDownListGroupOption extends NavigationOption {
-	children: (DropDownListOption | string)[]
+export interface DropDownGroupOption extends NavigationOption {
+	children: (DropDownOption | string)[]
 	type: 'group'
 }
 
