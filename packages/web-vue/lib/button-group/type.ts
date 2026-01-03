@@ -63,4 +63,5 @@ export type ButtonGroupProvide = ToRefs<LooseRequired<ButtonGroupProps>> & {
 	childrenInfo: Ref<ChildrenInfo[]>
 	collectChildrenInfo: (info: ChildrenInfo) => void
 	removeChildrenInfo: (id: string) => void
+	id: string
 }
