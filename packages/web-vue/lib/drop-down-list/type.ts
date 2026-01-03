@@ -1,7 +1,7 @@
 import type { GROUP_OPTION_TYPE } from '../share/const'
 import type { NavigationOption } from '../share/type'
 
-export interface DropDownListOption extends NavigationOption {
+export interface DropDownOption extends NavigationOption {
 	divider?: boolean
 	disabled?: boolean
 	href?: string
@@ -9,15 +9,15 @@ export interface DropDownListOption extends NavigationOption {
 	target?: string
 }
 
-export interface DropDownListGroupOption extends NavigationOption {
-	children: (DropDownListOption | string)[]
+export interface DropDownGroupOption extends NavigationOption {
+	children: (DropDownOption | string)[]
 	type: typeof GROUP_OPTION_TYPE
 }
 
 export type DropDownListProps = {
-	options?: (string | DropDownListOption | DropDownListGroupOption)[]
+	options?: (string | DropDownOption | DropDownGroupOption)[]
 }
 
 export type DropDownListEvent = {
-	select: [index: string | number | symbol, option: DropDownListOption | string, e: MouseEvent]
+	select: [index: string | number | symbol, option: DropDownOption | string, e: MouseEvent]
 }

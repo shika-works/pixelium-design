@@ -1,9 +1,9 @@
 <script setup lang="tsx">
 import { isString, isObject } from 'parsnip-kit'
 import type {
-	DropDownListGroupOption,
+	DropDownGroupOption,
 	DropDownListEvent,
-	DropDownListOption,
+	DropDownOption,
 	DropDownListProps
 } from './type'
 import { GROUP_OPTION_TYPE } from '../share/const'
@@ -16,9 +16,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<DropDownListProps>(), {
-	options: () => [],
-	activeValues: () => [],
-	virtualScroll: false
+	options: () => []
 })
 
 const emits = defineEmits<DropDownListEvent>()
@@ -27,18 +25,18 @@ const selectHandler = (value: any, e: MouseEvent) => {
 	emits('select', value, value, e)
 }
 
-const selectObjectHandler = (option: DropDownListOption, e: MouseEvent) => {
+const selectObjectHandler = (option: DropDownOption, e: MouseEvent) => {
 	if (option.disabled) {
 		return
 	}
 	emits('select', option.index, option, e)
 }
 
-const isOptionListOption = (item: any): item is DropDownListOption => {
+const isOptionListOption = (item: any): item is DropDownOption => {
 	return isObject(item) && !('type' in item && item.type === GROUP_OPTION_TYPE)
 }
 
-const getKey = (option: string | DropDownListOption | DropDownListGroupOption) => {
+const getKey = (option: string | DropDownOption | DropDownGroupOption) => {
 	if (isString(option)) {
 		return option
 	} else {
@@ -49,7 +47,7 @@ const getKey = (option: string | DropDownListOption | DropDownListGroupOption) =
 const slots = useSlots()
 
 const renderItem = (
-	item: string | DropDownListOption | DropDownListGroupOption,
+	item: string | DropDownOption | DropDownGroupOption,
 	child = false
 ): JSX.Element | JSX.Element[] => {
 	const key = getKey(item)
@@ -119,13 +117,13 @@ const renderItem = (
 				</span>
 			</li>,
 			...item.children.map(
-				(child: string | DropDownListOption) => renderItem(child, true) as JSX.Element
+				(child: string | DropDownOption) => renderItem(child, true) as JSX.Element
 			)
 		]
 	}
 }
 
-const linkClickHandler = (item: DropDownListOption, e: MouseEvent) => {
+const linkClickHandler = (item: DropDownOption, e: MouseEvent) => {
 	if (item.disabled) {
 		e.preventDefault()
 	}

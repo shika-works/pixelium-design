@@ -5,7 +5,7 @@ import type { DropDownEvents, DropDownExpose, DropDownProps } from './type'
 import { forwardEmits } from '../share/util/reactivity'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import DropDownList from '../drop-down-list/index.vue'
-import type { DropDownListOption } from '../drop-down-list/type'
+import type { DropDownOption } from '../drop-down-list/type'
 
 defineOptions({
 	name: 'DropDown'
@@ -52,7 +52,7 @@ const [visible, setVisible] = useControlledMode('visible', props, emits, {
 
 const selectHandler = async (
 	index: number | string | symbol,
-	option: string | DropDownListOption,
+	option: string | DropDownOption,
 	e: MouseEvent
 ) => {
 	await setVisible(false)
