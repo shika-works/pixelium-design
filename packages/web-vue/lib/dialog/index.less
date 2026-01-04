@@ -128,7 +128,6 @@
 
 .corner-gradient::after {
 	@border-width: var(--px-bit);
-	@border-width-minus-1: calc(var(--px-bit) - 1px);
 
 	width: calc(var(--px-bit) * 2 + 100%);
 	height: calc(var(--px-bit) * 2 + 100%);
@@ -146,40 +145,40 @@
 		linear-gradient(
 				to right,
 				transparent 0,
-				transparent @border-width-minus-1,
-				#000 @border-width,
-				#000 calc(100% - @border-width),
-				transparent calc(100% - @border-width-minus-1),
+				transparent @border-width,
+				var(--px-neutral-10) @border-width,
+				var(--px-neutral-10) calc(100% - @border-width),
+				transparent calc(100% - @border-width),
 				transparent 100%
 			)
 			top left / 100% @border-width no-repeat,
 		linear-gradient(
 				to right,
 				transparent 0,
-				transparent @border-width-minus-1,
-				#000 @border-width,
-				#000 calc(100% - @border-width),
-				transparent calc(100% - @border-width-minus-1),
+				transparent @border-width,
+				var(--px-neutral-10) @border-width,
+				var(--px-neutral-10) calc(100% - @border-width),
+				transparent calc(100% - @border-width),
 				transparent 100%
 			)
 			bottom left / 100% @border-width no-repeat,
 		linear-gradient(
 				to bottom,
 				transparent 0,
-				transparent @border-width-minus-1,
-				#000 @border-width,
-				#000 calc(100% - @border-width),
-				transparent calc(100% - @border-width-minus-1),
+				transparent @border-width,
+				var(--px-neutral-10) @border-width,
+				var(--px-neutral-10) calc(100% - @border-width),
+				transparent calc(100% - @border-width),
 				transparent 100%
 			)
 			top left / @border-width 100% no-repeat,
 		linear-gradient(
 				to bottom,
 				transparent 0,
-				transparent @border-width-minus-1,
-				#000 @border-width,
-				#000 calc(100% - @border-width),
-				transparent calc(100% - @border-width-minus-1),
+				transparent @border-width,
+				var(--px-neutral-10) @border-width,
+				var(--px-neutral-10) calc(100% - @border-width),
+				transparent calc(100% - @border-width),
 				transparent 100%
 			)
 			top right / @border-width 100% no-repeat;
