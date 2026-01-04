@@ -52,6 +52,7 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
+import { inVitest } from '../share/util/env'
 
 defineOptions({
 	name: 'AutoComplete',
@@ -87,56 +88,47 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 const instance = getCurrentInstance()
 
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
-const innerInputGroup = ref(!!inputGroupProvide)
 
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
+const [index, first, last] = !!inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`, (instance) => {
 			return instance?.vnode.el?.nextElementSibling
 		})
 	: [ref(0), ref(false), ref(false)]
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
+	[formItemProvide, inputGroupProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
+	[formItemProvide, inputGroupProvide, props],
 	'or'
 )
 const pollSizeChangeComputed = createProvideComputed(
 	'pollSizeChange',
-	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
+	[formItemProvide, inputGroupProvide, props],
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return !!inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -265,7 +257,7 @@ const optionsFiltered = computed(() => {
 	return defaultFilter(modelValue.value, props.options || [])
 })
 
-defineExpose<AutoCompleteExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | null }>({
+const expose: any = {
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -277,7 +269,14 @@ defineExpose<AutoCompleteExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement
 		inputRef.value?.select()
 	},
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
-})
+}
+if (inVitest()) {
+	expose.first = first
+	expose.last = last
+	expose.index = index
+}
+
+defineExpose<AutoCompleteExpose>(expose)
 
 const popoverVisible = ref(false)
 const popoverVisibleUpdateHandler = (value: boolean) => {
@@ -326,7 +325,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value || 'rect',
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -355,7 +354,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value
@@ -473,7 +472,7 @@ defineRender(() => {
 								'pixelium px-auto-complete',
 								sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
 								shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
-								{ 'px-auto-complete__inner': innerInputGroup.value },
+								{ 'px-auto-complete__inner': !!inputGroupProvide },
 								{ 'px-auto-complete__disabled': disabledComputed.value }
 							],
 							onClick: focusInputHandler,
