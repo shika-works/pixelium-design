@@ -83,7 +83,7 @@ const render = () => {
 				{currentChildren
 					.map((e, i) => {
 						if (i < currentChildren.length - 1) {
-							return [e, renderSplitter(!!(e.props?.disabled) || e.props?.disabled === '')]
+							return [e, renderSplitter(!!e.props?.disabled || e.props?.disabled === '')]
 						} else {
 							return [e]
 						}
