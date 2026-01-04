@@ -56,17 +56,21 @@
 		"@pixelium/locale": "workspace:*",
 		"@vitejs/plugin-vue": "^6.0.1",
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
+		"@vue/test-utils": "^2.4.6",
 		"less": "^4.4.0",
-		"pixelarticons": "^1.8.1",
-		"svgo": "^4.0.0",
-		"vite": "npm:rolldown-vite@latest",
-		"vue-macros": "3.0.0-beta.23"
-	},
-	"dependencies": {
-		"@floating-ui/dom": "^1.7.4",
 		"mitt": "^3.0.1",
 		"modern-normalize": "^3.0.1",
 		"nanoid": "^5.1.5",
+		"pixelarticons": "^1.8.1",
+		"svgo": "^4.0.0",
+		"vite": "npm:rolldown-vite@latest",
+		"vue-macros": "3.0.0-beta.23",
+		"vue-tsc": "^3.2.1"
+	},
+	"dependencies": {
+		"@floating-ui/dom": "^1.7.4",
+		"overlayscrollbars": "^2.13.0",
+		"overlayscrollbars-vue": "^0.5.9",
 		"parsnip-kit": "^0.0.6"
 	},
 	"repository": {
