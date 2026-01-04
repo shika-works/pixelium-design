@@ -22,3 +22,13 @@ export type VirtualListProps = {
 	 */
 	buffer?: number
 }
+
+export type VirtualListSlots = {
+	/**
+	 * @slot scroll-container
+	 * @param {JSX.Element} children
+	 * @param {(event: Event) => void} onScroll
+	 * @version 0.1.0
+	 */
+	'scroll-container': {}
+}
