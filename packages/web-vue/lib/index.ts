@@ -68,7 +68,7 @@ import Submenu from './submenu/index.vue'
 import DropDown from './drop-down/index.vue'
 import Breadcrumb from './breadcrumb/index.vue'
 import BreadcrumbItem from './breadcrumb-item/index.vue'
-import Scroll from './scroll/index.vue'
+import Scroll from './scroll-bar/index.vue'
 
 const components = [
 	Button,

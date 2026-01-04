@@ -12,6 +12,10 @@ import type { OverlayScrollbars } from 'overlayscrollbars'
 
 initScroll()
 
+defineOptions({
+	name: 'ScrollBar'
+})
+
 const props = defineProps<ScrollProps>()
 
 const osRef = shallowRef<OverlayScrollbarsComponentRef>()

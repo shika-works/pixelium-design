@@ -10,7 +10,7 @@ import { GROUP_OPTION_TYPE } from '../share/const'
 import { getCurrentInstance, useSlots, withScopeId } from 'vue'
 import VirtualList from '../virtual-list/index.vue'
 import type { JSX } from 'vue/jsx-runtime'
-import Scroll from '../scroll/index.vue'
+import Scroll from '../scroll-bar/index.vue'
 
 defineOptions({
 	name: 'OptionList'
