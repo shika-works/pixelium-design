@@ -5,7 +5,7 @@
 		:class="{
 			[`px-input-tag__${sizeComputed}`]: !!sizeComputed,
 			[`px-input-tag__${shapeComputed}`]: !!shapeComputed,
-			'px-input-tag__inner': innerInputGroup,
+			'px-input-tag__inner': !!inputGroupProvide,
 			'px-input-tag__disabled': !!disabledComputed
 		}"
 		@click="focusInputHandler"
@@ -183,47 +183,38 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
-const innerInputGroup = ref(!!inputGroupProvide)
 
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
+const [index, first, last] = !!inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`)
 	: [ref(0), ref(false), ref(false)]
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const pollSizeChangeComputed = createProvideComputed(
 	'pollSizeChange',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 
@@ -231,7 +222,7 @@ const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return !!inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -442,7 +433,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value,
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -471,7 +462,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value

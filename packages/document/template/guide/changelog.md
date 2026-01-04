@@ -25,6 +25,7 @@
   - 修复在微任务中快速切换按钮 `loading` 状态时 canvas 渲染异常。
   - 修复在按钮 `size="small"` 时字体大小异常的问题。
   - 修复输入组件在 FormItem 中横向延申异常的问题。
+  - 为 InputGroup 和 ButtonGroup 向子组件传递更新信息的 key 加上独特的 id，以防止影响其他组件下的子组件。另外，减少了检测子组件位置的频率。
 ]]]
 [[[en
 ## v0.1.0
@@ -46,6 +47,7 @@
   - Fixed abnormal canvas rendering when toggling the button `loading` state rapidly within micro tasks.
   - Fix the font size issue when button's size is `'small'`.
   - Fixed the abnormal horizontal extension of input components within a FormItem.
+  - Unique IDs have been added to the keys used by InputGroup and ButtonGroup to propagate updates to child components, preventing interference with child components in other groups. Additionally, the frequency of positional checks has been reduced.
 ]]]
 
 [[[zh

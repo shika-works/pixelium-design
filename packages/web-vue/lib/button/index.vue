@@ -126,17 +126,19 @@ traverseParent(instance, (ins) => {
 	}
 })
 
-const [index, first, last] = innerButtonGroup.value
-	? useIndexOfChildren(BUTTON_GROUP_UPDATE)
-	: innerInputGroup.value
-		? useIndexOfChildren(INPUT_GROUP_UPDATE)
-		: [ref(0), ref(false), ref(false)]
-
 const buttonGroupProvide = inject<undefined | ButtonGroupProvide>(
 	BUTTON_GROUP_PROVIDE,
 	undefined
 )
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] =
+	innerButtonGroup.value && buttonGroupProvide
+		? useIndexOfChildren(BUTTON_GROUP_UPDATE + `-${buttonGroupProvide.id}`)
+		: innerInputGroup.value && inputGroupProvide
+			? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`)
+			: [ref(0), ref(false), ref(false)]
+
 const formProps = inject<undefined | FormProvide>(FORM_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
@@ -326,7 +328,9 @@ watch(
 		hoverFlag,
 		activeFlag,
 		darkMode,
-		nextIsTextButton
+		nextIsTextButton,
+		first,
+		last
 	],
 	() => {
 		nextTick(() => {
@@ -334,9 +338,6 @@ watch(
 		})
 	}
 )
-watch([first, last], () => {
-	drawPixel()
-})
 const drawPixel = () => {
 	const preprocessData = canvasPreprocess(buttonRef, canvasRef)
 	if (!preprocessData) {

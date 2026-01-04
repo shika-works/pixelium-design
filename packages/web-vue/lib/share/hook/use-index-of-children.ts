@@ -44,10 +44,6 @@ export const useIndexOfChildren = (
 			})
 		})
 
-		onUpdated(() => {
-			callback()
-		})
-
 		onBeforeUnmount(() => {
 			EventBus.off(eventBusKey, callback)
 		})

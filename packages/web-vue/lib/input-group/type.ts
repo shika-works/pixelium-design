@@ -47,4 +47,5 @@ export type InputGroupProvide = ToRefs<LooseRequired<InputGroupProps>> & {
 	childrenInfo: Ref<ChildrenInfo[]>
 	collectChildrenInfo: (info: ChildrenInfo) => void
 	removeChildrenInfo: (id: string) => void
+	id: string
 }

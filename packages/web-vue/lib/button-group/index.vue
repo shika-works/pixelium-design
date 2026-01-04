@@ -4,7 +4,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { inject, provide, ref, toRefs } from 'vue'
+import { inject, provide, ref, toRefs, useId } from 'vue'
 import type { ButtonGroupProps, ButtonGroupProvide, ChildrenInfo } from './type'
 import { emitParentUpdate } from '../share/hook/use-index-of-children'
 import { BUTTON_GROUP_UPDATE } from '../share/const/event-bus-key'
@@ -48,6 +48,8 @@ const pollSizeChangeComputed = createProvideComputed(
 )
 const childrenInfo = ref<ChildrenInfo[]>([])
 
+const id = useId()
+
 provide<ButtonGroupProvide>(BUTTON_GROUP_PROVIDE, {
 	...toRefs(props),
 	size: sizeComputed,
@@ -64,10 +66,11 @@ provide<ButtonGroupProvide>(BUTTON_GROUP_PROVIDE, {
 	},
 	removeChildrenInfo: (id: string) => {
 		childrenInfo.value = childrenInfo.value.filter((e) => e.id != id)
-	}
+	},
+	id
 })
 
-emitParentUpdate(BUTTON_GROUP_UPDATE)
+emitParentUpdate(BUTTON_GROUP_UPDATE + `-${id}`)
 </script>
 <style lang="less" src="./index.less"></style>
 <style lang="less" src="../share/style/index.css" />

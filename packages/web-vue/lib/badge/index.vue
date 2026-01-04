@@ -115,7 +115,6 @@ const drawPixel = () => {
 	const { ctx, width, height, canvas } = preprocessData
 
 	const borderRadius = getBorderRadius(canvas, pixelSize, undefined, 'round')
-	console.log(borderRadius)
 
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE
