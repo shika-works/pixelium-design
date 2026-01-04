@@ -51,6 +51,16 @@ When the child elements of the virtual list have fixed heights, or the average h
 ]]]
 <preview path="./virtual-list-fix.vue"></preview>
 
+[[[zh
+## 滚动容器
+
+使用 `'scroll-container'` 插槽可自定义滚动容器。
+]]]
+[[[en
+## Scroll Container
+Use the `'scroll-container'` slot to customize the scroll container.
+]]]
+<preview path="./virtual-scroll.vue"></preview>
 
 ## API
 
@@ -59,6 +69,8 @@ list: 用于渲染的数据数组。
 fixedHeight: 是否为定高模式。
 estimatedHeight: 预估项高（用于初始化和测量前的估算），单位 px。
 buffer: 缓冲项数，控制视窗前后多渲染的项数以避免快速滚动时闪烁。
+
+slots:scroll-container: 自定义滚动容器。
 ]]]
 
 [[[api en
@@ -66,5 +78,7 @@ list: The data array to render.
 fixedHeight: Whether to use fixed-height mode.
 estimatedHeight: Estimated item height in px (used for initialization and before measurements complete).
 buffer: Number of buffer items to render before/after the visible window to reduce flicker during fast scrolls.
+
+slots:scroll-container: Use to customize the scroll container.
 ]]]
 
