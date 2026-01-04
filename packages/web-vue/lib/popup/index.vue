@@ -177,24 +177,25 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 		}
 	}
 
-	if (props.trigger === 'click') {
+	if (e.type === 'click') {
+		const contentEl = contentRef.value && contentRef.value.content
 		let clickContent =
-			contentRef.value &&
-			contentRef.value.content &&
-			contentRef.value.content.contains(e.target as HTMLElement)
-		if (props.cascade) {
+			contentEl &&
+			(contentEl.contains(e.target as Node) || checkMouseInsideElementFromEvent(contentEl, e))
+
+		if (props.cascade && !clickContent) {
 			clickContent ||= traversePopupContentGetters(popupContentGetterList.value, (content) => {
 				return !!(
 					content &&
 					content.content &&
-					content.content.contains(e.target as HTMLElement)
+					checkMouseInsideElementFromEvent(content.content, e)
 				)
 			})
 		}
-		if (clickContent || !display.value) {
+		if (clickContent) {
 			return
 		}
-	} else {
+	} else if (props.trigger === 'hover') {
 		const next = await wait()
 		if (!next) {
 			return
@@ -215,6 +216,10 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 				return
 			}
 		}
+	}
+
+	if (!display.value) {
+		return
 	}
 
 	if (controlledMode.value) {
@@ -388,6 +393,7 @@ defineRender(() => {
 				destroyOnHide={props.destroyOnHide}
 				// @ts-ignore
 				ref={(node: InstanceType<typeof PopupContent>) => (contentRef.value = node)}
+				{...props.contentProps}
 			>
 				{{
 					content: slots.content
