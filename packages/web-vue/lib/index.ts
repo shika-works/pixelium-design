@@ -68,6 +68,7 @@ import Submenu from './submenu/index.vue'
 import DropDown from './drop-down/index.vue'
 import Breadcrumb from './breadcrumb/index.vue'
 import BreadcrumbItem from './breadcrumb-item/index.vue'
+import Scroll from './scroll/index.vue'
 
 const components = [
 	Button,
@@ -124,7 +125,8 @@ const components = [
 	Submenu,
 	DropDown,
 	Breadcrumb,
-	BreadcrumbItem
+	BreadcrumbItem,
+	Scroll
 ]
 
 const defaultPrefix = 'Px'
@@ -221,7 +223,8 @@ export {
 	Submenu,
 	DropDown,
 	Breadcrumb,
-	BreadcrumbItem
+	BreadcrumbItem,
+	Scroll
 }
 export default {
 	install
