@@ -62,8 +62,17 @@ const renderChildren = () => {
 	return children
 }
 
-const renderSplitter = () => {
-	return slots.splitter ? slots.splitter() : props.splitter
+const renderSplitter = (disabled: boolean) => {
+	return (
+		<li
+			class={{
+				'px-breadcrumb-splitter': true,
+				'px-breadcrumb-splitter__disabled': disabled
+			}}
+		>
+			{slots.splitter ? slots.splitter() : props.splitter}
+		</li>
+	)
 }
 
 const render = () => {
@@ -74,7 +83,7 @@ const render = () => {
 				{currentChildren
 					.map((e, i) => {
 						if (i < currentChildren.length - 1) {
-							return [e, renderSplitter()]
+							return [e, renderSplitter(!!(e.props?.disabled) || e.props?.disabled === '')]
 						} else {
 							return [e]
 						}

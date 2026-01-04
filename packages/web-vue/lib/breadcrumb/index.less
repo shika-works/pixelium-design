@@ -27,4 +27,15 @@
 			margin: @px-interval-2;
 		}
 	}
+
+	& .@{prefix}-splitter {
+		margin: 0;
+		display: flex;
+		align-items: center;
+		color: var(--px-neutral-10);
+		&.@{prefix}-splitter__disabled {
+			color: var(--px-neutral-6);
+			cursor: not-allowed;
+		}
+	}
 }
