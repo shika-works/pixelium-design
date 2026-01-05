@@ -238,6 +238,13 @@ async function handleCssImports() {
 				css: `import '../../overlayscrollbars.css'\n`,
 				cssFileName: 'util/css-scroll.js'
 			}
+		],
+		'scroll-bar': [
+			{
+				js: 'use-body-scroll-bar.js',
+				css: `import './index.css'\n`,
+				cssFileName: 'css-use-body-scroll-bar.js'
+			}
 		]
 	}
 
