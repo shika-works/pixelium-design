@@ -1,6 +1,6 @@
 <script lang="ts">
 import { ref, h, defineComponent } from 'vue'
-import { VirtualList, Scroll } from '@pixelium/web-vue'
+import { VirtualList, ScrollBar } from '@pixelium/web-vue'
 import type { JSX } from 'vue/jsx-runtime'
 
 export default defineComponent({
@@ -30,7 +30,7 @@ export default defineComponent({
 						onScroll: (event: Event) => void
 					}) =>
 						h(
-							Scroll,
+							ScrollBar,
 							{ style: 'height: 500px', onScroll: onScroll },
 							{
 								default: () => children
