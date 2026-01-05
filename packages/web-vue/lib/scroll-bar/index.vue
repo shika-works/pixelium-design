@@ -62,7 +62,7 @@ const initializeHandler = (ins: OverlayScrollbars) => {
 		...transform(scrollOffset.value)
 	})
 
-	emits('initialize')
+	emits('initialize', ins)
 }
 
 const updateScrollOffsetDebounce = debounce(updateScrollOffset, 100)
