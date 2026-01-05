@@ -3,7 +3,7 @@ import DefaultTheme from 'vitepress/theme'
 import { nextTick, onMounted, watch, watchEffect } from 'vue'
 import { inBrowser, onContentUpdated, useData, useRoute } from 'vitepress'
 import { locale } from '@pixelium/web-vue'
-
+import { useScrollBar } from '@pixelium/web-vue'
 const base = 'pixelium-design'
 if (inBrowser) {
 	const lang = navigator.language
@@ -104,6 +104,12 @@ onMounted(() => {
 	setTimeout(() => {
 		scrollCallback()
 	})
+})
+
+const [init] = useScrollBar()
+
+init({
+	target: document.body
 })
 </script>
 

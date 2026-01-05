@@ -64,7 +64,8 @@ const additionMap = {
 	'back-top': '回到顶部',
 	menu: '菜单',
 	'drop-down': '下拉菜单',
-	breadcrumb: '面包屑'
+	breadcrumb: '面包屑',
+	'scroll-bar': '滚动条'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)

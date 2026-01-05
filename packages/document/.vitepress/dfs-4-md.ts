@@ -58,7 +58,8 @@ const newItems: string[] = [
 	'menu',
 	'i18n',
 	'drop-down',
-	'breadcrumb'
+	'breadcrumb',
+	'scroll-bar'
 ]
 
 const order = [
