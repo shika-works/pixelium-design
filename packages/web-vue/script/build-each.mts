@@ -36,11 +36,25 @@ async function buildLib() {
 				outDir: 'es',
 				minify: false,
 				rollupOptions: {
-					external: ['vue', '@floating-ui/dom'],
+					external: [
+						'vue',
+						'@floating-ui/dom',
+						'overlayscrollbars',
+						'overlayscrollbars-vue',
+						'parsnip-kit',
+						'vue-router'
+					],
 					preserveEntrySignatures: 'allow-extension',
 					output: {
 						exports: 'named',
-						globals: { vue: 'Vue' },
+						globals: {
+							vue: 'Vue',
+							'@floating-ui/dom': 'FloatingUI',
+							overlayscrollbars: 'OverlayScrollbarsGlobal',
+							'overlayscrollbars-vue': 'OverlayScrollbarsVue',
+							'parsnip-kit': 'parsnip-kit',
+							'vue-router': 'VueRouter'
+						},
 						entryFileNames: 'index.js',
 						chunkFileNames: '[name].js',
 						inlineDynamicImports: false,
@@ -55,7 +69,11 @@ async function buildLib() {
 							groups: [
 								{
 									name(id: string) {
-										if (id && id.includes('node_modules')) return 'vendor'
+										if (id && id.includes('pixelium-design/packages/locale'))
+											return 'public/locale'
+										if (id && id.endsWith('overlayscrollbars.css'))
+											return 'public/overlayscrollbars.css'
+										if (id && id.includes('node_modules')) return 'public/vendor'
 										if (
 											id.endsWith('.ts') ||
 											id.endsWith('.tsx') ||
@@ -212,6 +230,20 @@ async function handleCssImports() {
 				js: 'icon-pa.js',
 				css: `import './icon-pa.css'\n`,
 				cssFileName: 'css-pa.js'
+			}
+		],
+		share: [
+			{
+				js: 'util/scroll.js',
+				css: `import '../../overlayscrollbars.css'\n`,
+				cssFileName: 'util/css-scroll.js'
+			}
+		],
+		'scroll-bar': [
+			{
+				js: 'use-body-scroll-bar.js',
+				css: `import './index.css'\n`,
+				cssFileName: 'css-use-body-scroll-bar.js'
 			}
 		]
 	}

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'vue'
 import PopupContent from '../popup-content/index.vue'
+import type { RestAttrs } from '../share/type'
 
 export type PopupProps = {
 	/**
@@ -94,6 +95,12 @@ export type PopupProps = {
 	 * @version 0.1.0
 	 */
 	cascade?: boolean
+	/**
+	 * @property {RestAttrs} [contentProps]
+	 * @ignore
+	 * @version 0.1.0
+	 */
+	contentProps?: RestAttrs
 }
 
 export type PopupEvents = {

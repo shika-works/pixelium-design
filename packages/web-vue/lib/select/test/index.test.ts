@@ -7,7 +7,7 @@ import Tag from '../../tag/index.vue'
 import OptionList from '../../option-list/index.vue'
 import { vi, describe, afterEach, it, expect, beforeEach } from 'vitest'
 import { createMocks } from '../../share/util/test'
-import Popover from '../../popover/index.vue'
+import Popup from '../../popup/index.vue'
 
 describe('Select Component', () => {
 	const { pre, post } = createMocks()
@@ -33,7 +33,8 @@ describe('Select Component', () => {
 						options: baseOptions,
 						...props
 					})
-			}
+			},
+			attachTo: 'body'
 		})
 	}
 	const mountComponent = (props = {}, slots = {}) => {
@@ -213,9 +214,10 @@ describe('Select Component', () => {
 			const option = optionListComponent.findAll('.px-option-list-item')[1]
 			expect(option.exists()).toBe(true)
 			await option.trigger('click')
-			await nextTick()
+			await new Promise((res) => setTimeout(res, 50))
 			const label = wrapper.find('.px-select-label')
 			expect(label.exists()).toBe(true)
+			expect(label.attributes('style')).not.include('display: none')
 		})
 
 		it('Disabled option should not be selectable', async () => {
@@ -397,7 +399,7 @@ describe('Select Component', () => {
 
 			collapseTag.trigger('mouseenter')
 			const popupContent = wrapper
-				.findComponent(Popover)
+				.findComponent(Popup)
 				.findComponent(Transition)
 				.find('.px-popup-content')
 

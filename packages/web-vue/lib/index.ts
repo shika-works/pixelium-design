@@ -68,6 +68,8 @@ import Submenu from './submenu/index.vue'
 import DropDown from './drop-down/index.vue'
 import Breadcrumb from './breadcrumb/index.vue'
 import BreadcrumbItem from './breadcrumb-item/index.vue'
+import ScrollBar from './scroll-bar/index.vue'
+import { useScrollBar } from './scroll-bar/use-scroll-bar.ts'
 
 const components = [
 	Button,
@@ -124,7 +126,8 @@ const components = [
 	Submenu,
 	DropDown,
 	Breadcrumb,
-	BreadcrumbItem
+	BreadcrumbItem,
+	ScrollBar
 ]
 
 const defaultPrefix = 'Px'
@@ -221,7 +224,9 @@ export {
 	Submenu,
 	DropDown,
 	Breadcrumb,
-	BreadcrumbItem
+	BreadcrumbItem,
+	ScrollBar,
+	useScrollBar
 }
 export default {
 	install

@@ -41,7 +41,7 @@ import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
-import Popover from '../popover/index.vue'
+import Popup from '../popup/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
 import { defaultFilter } from '../share/util/common'
@@ -53,6 +53,7 @@ import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'AutoComplete',
@@ -125,6 +126,8 @@ const pollSizeChangeComputed = createProvideComputed(
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
+
+const [wait, cancel] = useCancelableDelay()
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
@@ -203,17 +206,28 @@ const changeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = (e: FocusEvent) => {
-	e.stopPropagation()
-	emits('blur', e)
+const closePopover = async () => {
+	popoverVisible.value = false
+}
+
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
 	focusMode.value = false
+	closePopover()
+	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
 const focusHandler = (e: FocusEvent) => {
-	e.stopPropagation()
-	emits('focus', e)
+	cancel()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
 }
 
 const focusInputHandler = () => {
@@ -283,6 +297,12 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 	if (!value) {
 		popoverVisible.value = value
 	}
+}
+
+const popupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+	}, 0)
 }
 
 const darkMode = useDarkMode()
@@ -422,6 +442,7 @@ defineRender(() => {
 							// @ts-ignore
 							class="px-auto-complete-icon"
 							onClick={clearHandler}
+							tabindex="0"
 						/>
 					) : (
 						<div class="px-auto-complete-icon-placeholder" />
@@ -451,7 +472,7 @@ defineRender(() => {
 	}
 	const pixelSize = calcPixelSize()
 	const Render = (
-		<Popover
+		<Popup
 			placement="bottom"
 			offset={0}
 			width-equal={true}
@@ -461,6 +482,9 @@ defineRender(() => {
 			trigger="click"
 			contentStyle={{ padding: `${pixelSize}px` }}
 			destroyOnHide={props.optionsDestroyOnHide}
+			contentProps={{
+				onMousedown: popupContentMousedownHandler
+			}}
 		>
 			{{
 				default: () =>
@@ -512,7 +536,7 @@ defineRender(() => {
 						</div>
 					)
 			}}
-		</Popover>
+		</Popup>
 	)
 	return Render
 })

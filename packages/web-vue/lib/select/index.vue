@@ -42,7 +42,7 @@ import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
-import Popover from '../popover/index.vue'
+import Popup from '../popup/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
 import { defaultFilter, findSameOption } from '../share/util/common'
@@ -264,7 +264,7 @@ const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const contentRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
-const popoverRef = shallowRef<InstanceType<typeof Popover> | null>(null)
+const popoverRef = shallowRef<InstanceType<typeof Popup> | null>(null)
 const closeRef = shallowRef<any>(null)
 
 watch(
@@ -333,13 +333,7 @@ const [wait, cancel] = useCancelableDelay()
 
 const focusMode = ref(false)
 
-const focusImpl = async (e: FocusEvent) => {
-	if (disabledComputed.value || readonlyComputed.value) {
-		return
-	}
-	cancel()
-
-	focusMode.value = true
+const setupSelect = () => {
 	nextTick(() => {
 		if (inputRef.value && props.filterable) {
 			inputRef.value.focus()
@@ -353,9 +347,29 @@ const focusImpl = async (e: FocusEvent) => {
 		}
 	})
 	triggerPopover()
-	emits('focus', e)
 }
-const focusInputHandler = async (e: MouseEvent) => {
+
+const focusHandler = async (e: FocusEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
+		return
+	}
+	cancel()
+	const currentFocusMode = focusMode.value
+	focusMode.value = true
+
+	const target = e.target
+	if (target instanceof HTMLElement || target instanceof SVGElement) {
+		if (!closeRef.value?.$el.contains(target)) {
+			setupSelect()
+		}
+	}
+
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
+}
+
+const clickHandler = async (e: MouseEvent) => {
 	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
@@ -364,6 +378,9 @@ const focusInputHandler = async (e: MouseEvent) => {
 		if (closeRef.value?.$el.contains(target)) {
 			return
 		}
+	}
+	if (focusMode.value && !popoverVisible.value) {
+		setupSelect()
 	}
 	contentRef.value?.focus()
 }
@@ -396,10 +413,13 @@ const blurSelect = async (e: FocusEvent) => {
 
 const focusoutHandler = (e: FocusEvent) => {
 	const relatedTarget = e.relatedTarget as Node
-	if (relatedTarget && popoverRef.value?.triggerContent?.content?.contains(relatedTarget)) {
+	const triggerEl = popoverRef.value?.triggerContent?.content
+	const containEl = popoverRef.value?.triggerContent?.content
+
+	if (relatedTarget && triggerEl?.contains(relatedTarget)) {
 		return
 	}
-	if (relatedTarget && wrapperRef.value?.contains(relatedTarget)) {
+	if (relatedTarget && containEl?.contains(relatedTarget)) {
 		return
 	}
 	blurSelect(e)
@@ -443,7 +463,6 @@ const selectHandler = async (value: any, option: string | SelectOption, e: Mouse
 	const nextInputValue = ''
 	await updateModelValue(nextValue)
 	if (!props.multiple) {
-		focusMode.value = false
 		closePopover()
 		emits('select', nextValue, option, e)
 		emits('change', nextValue)
@@ -715,6 +734,13 @@ usePolling(pollSizeChangeComputed, () => {
 	}
 })
 
+const popupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		contentRef.value?.focus()
+	}, 0)
+}
+
 const popoverProps = computed(() => {
 	return {
 		...props.popoverProps,
@@ -790,7 +816,7 @@ defineRender(() => {
 								}}
 							</Tag>
 						) : (
-							<Popover {...popoverProps.value}>
+							<Popup {...popoverProps.value}>
 								{{
 									default: () => (
 										<Tag
@@ -852,7 +878,7 @@ defineRender(() => {
 										</div>
 									)
 								}}
-							</Popover>
+							</Popup>
 						)}
 					</Fragment>
 				)}
@@ -904,6 +930,7 @@ defineRender(() => {
 							// @ts-ignore
 							class="px-select-icon"
 							onClick={clearHandler}
+							tabindex="0"
 							ref={(el: any) => {
 								closeRef.value = el
 							}}
@@ -936,7 +963,7 @@ defineRender(() => {
 	}
 	const pixelSize = calcPixelSize()
 	const Render = (
-		<Popover
+		<Popup
 			placement="bottom"
 			offset={0}
 			width-equal={true}
@@ -947,6 +974,9 @@ defineRender(() => {
 			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
 			destroyOnHide={props.optionsDestroyOnHide}
+			contentProps={{
+				onMousedown: popupContentMousedownHandler
+			}}
 		>
 			{{
 				default: () =>
@@ -962,9 +992,9 @@ defineRender(() => {
 									{ 'px-select__inner': !!inputGroupProvide },
 									{ 'px-select__disabled': disabledComputed.value }
 								],
-								onFocusin: focusImpl,
+								onFocusin: focusHandler,
 								onFocusout: focusoutHandler,
-								onClick: focusInputHandler,
+								onClick: clickHandler,
 								onMouseenter: mouseenterHandler,
 								onMouseleave: mouseleaveHandler,
 								...scopeObj
@@ -1001,7 +1031,7 @@ defineRender(() => {
 						</div>
 					)
 			}}
-		</Popover>
+		</Popup>
 	)
 	return Render
 })
@@ -1009,4 +1039,4 @@ defineRender(() => {
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

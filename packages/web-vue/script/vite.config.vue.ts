@@ -19,12 +19,23 @@ export default defineConfig({
 			formats: ['es', 'cjs', 'umd']
 		},
 		rollupOptions: {
-			external: ['vue', '@floating-ui/dom'],
+			external: [
+				'vue',
+				'@floating-ui/dom',
+				'overlayscrollbars',
+				'overlayscrollbars-vue',
+				'parsnip-kit',
+				'vue-router'
+			],
 			output: {
 				exports: 'named',
 				globals: {
 					vue: 'Vue',
-					'@floating-ui/dom': 'FloatingUI'
+					'@floating-ui/dom': 'FloatingUI',
+					overlayscrollbars: 'OverlayScrollbarsGlobal',
+					'overlayscrollbars-vue': 'OverlayScrollbarsVue',
+					'parsnip-kit': 'parsnip-kit',
+					'vue-router': 'VueRouter'
 				}
 			}
 		}

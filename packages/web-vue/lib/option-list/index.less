@@ -14,8 +14,16 @@
 	padding-left: 0;
 	margin-top: 0;
 	margin-bottom: 0;
+
+	&-scroll {
+		max-height: @item-size * 6;
+	}
+
 	&-virtual-list.px-virtual-list {
 		height: @item-size * 6;
+		& .@{prefix}-scroll {
+			height: @item-size * 6;
+		}
 	}
 	&-item {
 		overflow: hidden;

@@ -14,6 +14,7 @@
   - Tooltip 和 Popover 新增 `cascade` 属性，以维持嵌套浮窗的展示。
   - 新增多语言国际化模块，可以通过入口文件导出的 `locale` 调整对话框和确认弹出框的文本语言。
   - Link 新增属性 `variant` 取值为 `'normal'` 和 `'underline'`（默认），控制是否展示下划线。
+  - VirtualList 新增插槽 `'scroll-container'` 自定义滚动容器，建议配合 `h` 函数或者 JSX 食用。
 - 调整：
   - ⚠️需要注意⚠️ 为更方便地使用高阶组件，受限于 Vue 的机制，Row 与 Col、Container 与 Aside、Grid 与 GridItem、ButtonGroup 与 Button、InputGroup 与各数据输入组件等配对组件，接收对应的 `provide` 数据时，现在对直接的亲代组件的类型不再做严格要求。
   - ButtonGroup 的 `shape` 增加可选值 `square` 和 `circle`，并且移除默认值。`square` 和 `circle` 时，Button 子组件的在视觉上长和宽相等。此处变更不会影响旧代码，因为 ButtonGroup 的 `shape` 默认值不存在时，时，Button 子组件也会采取 `rect` 的默认值。
@@ -26,6 +27,7 @@
   - 修复在按钮 `size="small"` 时字体大小异常的问题。
   - 修复输入组件在 FormItem 中横向延申异常的问题。
   - 为 InputGroup 和 ButtonGroup 向子组件传递更新信息的 key 加上独特的 id，以防止影响其他组件下的子组件。另外，减少了检测子组件位置的频率。
+  - 修复 Select、AutoComplete 组件在内部点击时会触发 `focus` 和 `blur` 事件的问题。
 ]]]
 [[[en
 ## v0.1.0
@@ -36,6 +38,7 @@
   - Added the `cascade` property to Tooltip and Popover to maintain the display of nested floating windows.
   - Added multi-language internationalization module; text language for dialogs and confirmation popups can be adjusted via the exported `locale` from the entry file.
   - Added a new `variant` property to Link with values `'normal'` and `'underline'` (default), controlling whether to display the `'underline'`.
+  - VirtualList adds a new slot `'scroll-container'` for customizing the scroll container. It's recommended to use with the `h` function or JSX.
 - Adjustment:
   - ⚠️ Note ⚠️ To facilitate the use of higher-order components and due to limitations in Vue's mechanism, paired components such as Row and Col, Container and Aside, Grid and GridItem, ButtonGroup and Button, InputGroup and various data input components, etc., when receiving corresponding `provide` data, will now no longer strictly require the type of the immediate parent component.
   - The `shape` property of ButtonGroup now accepts two additional optional values: `square` and `circle`, and its default value has been removed. When set to `square` or `circle`, the child Button components will visually have equal height and width. This change will not affect existing code, as child Button components will default to using `rect` when no `shape` value is provided for the ButtonGroup.
@@ -48,6 +51,7 @@
   - Fix the font size issue when button's size is `'small'`.
   - Fixed the abnormal horizontal extension of input components within a FormItem.
   - Unique IDs have been added to the keys used by InputGroup and ButtonGroup to propagate updates to child components, preventing interference with child components in other groups. Additionally, the frequency of positional checks has been reduced.
+  - Fix issue where internal clicks in Select and AutoComplete components trigger `focus` and `blur` events.
 ]]]
 
 [[[zh

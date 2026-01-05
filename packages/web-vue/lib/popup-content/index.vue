@@ -30,6 +30,7 @@
 					v-bind="$attrs"
 					@mouseenter="contentMouseenterHandler"
 					@mouseleave="contentMouseleaveHandler"
+					@mousedown="contentMousedownHandler"
 				>
 					<slot name="content">
 						{{ props.content }}
@@ -67,7 +68,8 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { hasNoneDisplayAncestor } from '../share/util/dom'
 
 defineOptions({
-	name: 'PopupContent'
+	name: 'PopupContent',
+	inheritAttrs: false
 })
 
 const props = withDefaults(defineProps<PopupContentProps>(), {
@@ -270,6 +272,10 @@ const contentMouseleaveHandler = (e: MouseEvent) => {
 
 const updateRenderState = () => {
 	processVisible(!!props.visible)
+}
+
+const contentMousedownHandler = (e: MouseEvent) => {
+	emits('contentMousedown', e)
 }
 
 defineExpose({
