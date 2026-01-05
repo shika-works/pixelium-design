@@ -1,3 +1,5 @@
+import type { OverlayScrollbars } from 'overlayscrollbars'
+
 export type ScrollBarProps = {
 	/**
 	 * @property {{ left?: number; top?: number } | null} [scrollOffset]
@@ -20,9 +22,10 @@ export type ScrollBarEvents = {
 	'update:scrollOffset': [value: { left: number; top: number }]
 	/**
 	 * @event initialize
+	 * @param {OverlayScrollbars} instance
 	 * @version 0.1.0
 	 */
-	initialize: []
+	initialize: [instance: OverlayScrollbars]
 	/**
 	 * @event update
 	 * @version 0.1.0

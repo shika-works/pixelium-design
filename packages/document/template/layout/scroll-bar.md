@@ -88,28 +88,28 @@ The theme name for the pixel-style scrollbar is `'px-scroll-theme'`. After impor
 scrollOffset: 滚动的偏移量，受控模式，支持 `v-model`。
 defaultScrollOffset: 滚动的偏移量默认值，非受控模式。
 
-events:update:scrollOffset: 更新 `scrollOffset` 的回调。
-events:initialize: 滚动条初始化的回调。
-events:update: 滚动条触发更新的回调。
-events:scroll: 滚动时的回调。
+events.update:scrollOffset: 更新 `scrollOffset` 的回调。
+events.initialize: 滚动条初始化的回调。接收 OverlayScrollbars 实例作为入参，具体参数见 OverlayScrollbars 文档。
+events.update: 滚动条触发更新的回调。
+events.scroll: 滚动时的回调。
 
-slots:default: 滚动容器内容。
+slots.default: 滚动容器内容。
 
-scrollBarExpose:scrollTo: 效果同原生 `scrollTo`。
-scrollBarExpose:scrollBy: 效果同原生 `scrollBy`。
+scrollBarExpose.scrollTo: 效果同原生 `scrollTo`。
+scrollBarExpose.scrollBy: 效果同原生 `scrollBy`。
 ]]]
 
 [[[api en
 scrollOffset: Scroll offset, controlled mode, supports `v-model`.
 defaultScrollOffset: Default value for scroll offset, uncontrolled mode.
 
-events:update:scrollOffset: Callback when `scrollOffset` updates.
-events:initialize: Callback when the scrollbar initializes.
-events:update: Callback when the scrollbar updates.
-events:scroll: Callback when scrolling occurs.
+events.update:scrollOffset: Callback when `scrollOffset` updates.
+events.initialize: Callback when the scrollbar initializes. Receives an OverlayScrollbars instance as the parameter. For specific details, refer to the OverlayScrollbars documentation.
+events.update: Callback when the scrollbar updates.
+events.scroll: Callback when scrolling occurs.
 
-slots:default: Content of the scroll container.
+slots.default: Content of the scroll container.
 
-scrollBarExpose:scrollTo: Same behavior as native `scrollTo`.
-scrollBarExpose:scrollBy: Same behavior as native `scrollBy`.
+scrollBarExpose.scrollTo: Same behavior as native `scrollTo`.
+scrollBarExpose.scrollBy: Same behavior as native `scrollBy`.
 ]]]
