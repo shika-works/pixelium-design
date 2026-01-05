@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref, shallowRef, watch } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { initScroll } from '../share/util/scroll'
 
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
 import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
-import type { ScrollEvents, ScrollExpose, ScrollProps } from './type'
+import type { ScrollBarEvents, ScrollBarExpose, ScrollBarProps } from './type'
 import { debounce, isNullish, isNumber, isObject } from 'parsnip-kit'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { inBrowser, inVitest } from '../share/util/env'
@@ -16,43 +16,36 @@ defineOptions({
 	name: 'ScrollBar'
 })
 
-const props = defineProps<ScrollProps>()
+const props = defineProps<ScrollBarProps>()
 
 const osRef = shallowRef<OverlayScrollbarsComponentRef>()
 
-const emits = defineEmits<ScrollEvents>()
+const emits = defineEmits<ScrollBarEvents>()
 
+const transform = (nextValue: { left?: number; top?: number } | null | undefined) => {
+	if (isNullish(nextValue)) {
+		return { left: 0, top: 0 }
+	} else {
+		return {
+			left: nextValue.left || 0,
+			top: nextValue.top || 0
+		}
+	}
+}
 const [scrollOffset, updateScrollOffset] = useControlledMode<
 	{ left?: number; top?: number },
 	string,
 	string
 >('scrollOffset', props, emits, {
-	transform(nextValue: { left?: number; top?: number } | null | undefined) {
-		if (isNullish(nextValue)) {
-			return { left: 0, top: 0 }
-		} else {
-			return {
-				left: nextValue.left || 0,
-				top: nextValue.top || 0
-			}
-		}
-	},
+	transform,
 	defaultField: 'defaultScrollOffset'
 })
 
-onMounted(() => {
-	if (scrollOffset.value) {
-		scrollTo(scrollOffset.value)
-	}
-})
-
 watch(scrollOffset, () => {
-	if (scrollOffset.value) {
-		scrollTo({
-			behavior: 'smooth',
-			...scrollOffset.value
-		})
-	}
+	scrollTo({
+		behavior: 'smooth',
+		...transform(scrollOffset.value)
+	})
 })
 
 const showYScroll = ref(false)
@@ -63,6 +56,11 @@ const initializeHandler = (ins: OverlayScrollbars) => {
 
 	showXScroll.value = state.hasOverflow.x
 	showYScroll.value = state.hasOverflow.y
+
+	scrollTo({
+		behavior: 'smooth',
+		...transform(scrollOffset.value)
+	})
 
 	emits('initialize')
 }
@@ -124,7 +122,7 @@ const scrollBy: ScrollBy = (arg1?: ScrollToOptions | number, arg2?: number) => {
 	}
 }
 
-defineExpose<ScrollExpose>({
+defineExpose<ScrollBarExpose>({
 	scrollBy,
 	scrollTo
 })
