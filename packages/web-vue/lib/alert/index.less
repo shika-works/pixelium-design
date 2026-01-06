@@ -114,6 +114,9 @@
 	}
 	&-close-icon-wrapper > &-close-icon {
 		fill: var(--text-color);
+		&:focus {
+			outline: 0;
+		}
 	}
 
 	@theme: info, sakura, success, warning, error;
@@ -122,7 +125,7 @@
   
   &.@{prefix}__@{value} {
     & .@{prefix}-close-icon {
-      &:hover {
+      &:hover,&:focus {
         fill: var(~"--px-@{theme-type}-2");
       }
       &:active {
@@ -134,7 +137,7 @@
       --text-color: var(~"--px-@{theme-type}-6");
       
       & .@{prefix}-close-icon {
-        &:hover {
+        &:hover,&:focus {
           fill: var(~"--px-@{theme-type}-5");
         }
         &:active {
@@ -146,7 +149,8 @@
 })
 		&.@{prefix}__loading {
 		& .@{prefix}-close-icon {
-			&:hover {
+			&:hover,
+			&:focus {
 				fill: var(--px-neutral-6);
 			}
 			&:active {
@@ -156,7 +160,8 @@
 		&.@{prefix}__plain {
 			--text-color: var(--px-neutral-8);
 			& .@{prefix}-close-icon {
-				&:hover {
+				&:hover,
+				&:focus {
 					fill: var(--px-neutral-7);
 				}
 				&:active {
@@ -167,7 +172,8 @@
 	}
 	&.@{prefix}__normal {
 		& .@{prefix}-close-icon {
-			&:hover {
+			&:hover,
+			&:focus {
 				fill: var(--px-neutral-6);
 			}
 			&:active {
@@ -177,7 +183,8 @@
 		&.@{prefix}__plain {
 			--text-color: var(--px-neutral-10);
 			& .@{prefix}-close-icon {
-				&:hover {
+				&:hover,
+				&:focus {
 					fill: var(--px-neutral-8);
 				}
 				&:active {

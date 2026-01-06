@@ -4,6 +4,9 @@
 		ref="radioRef"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@mousedown="focusInputHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 		:class="{
 			'px-radio__disabled': disabledComputed,
 			'px-radio__readonly': readonlyComputed,
@@ -27,9 +30,8 @@
 				:checked="!!modelValue"
 				@input.stop="inputHandler"
 				@change.stop="handleChange"
-				@focus="focusHandler"
-				@blur="blurHandler"
 				:disabled="disabledComputed || readonlyComputed"
+				ref="checkboxRef"
 			/>
 			<canvas ref="canvasRef" class="px-radio-canvas"></canvas>
 		</div>
@@ -38,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, watch, ref, inject } from 'vue'
+import { onMounted, nextTick, watch, ref, inject, shallowRef } from 'vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { getGlobalThemeColorString, parseColor } from '../share/util/color'
@@ -65,6 +67,7 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Radio'
@@ -145,15 +148,32 @@ const mouseleaveHandler = () => {
 }
 
 const focusFlag = ref(false)
+const [wait, cancel] = useCancelableDelay()
+
 const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusFlag.value
 	focusFlag.value = true
-	emits('focus', e)
+	if (!currentFocus) {
+		emits('focus', e)
+	}
 }
 
-const blurHandler = (e: FocusEvent) => {
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
 	focusFlag.value = false
 	emits('blur', e)
 	formItemProvide?.blurHandler()
+}
+
+const checkboxRef = shallowRef<HTMLInputElement | null>(null)
+const focusInputHandler = () => {
+	setTimeout(() => {
+		checkboxRef.value?.focus()
+	}, 0)
 }
 
 const handleChange = (event: Event) => {

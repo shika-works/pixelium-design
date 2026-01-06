@@ -8,7 +8,7 @@
 			'px-input__inner': innerInputGroup,
 			'px-input__disabled': !!disabledComputed
 		}"
-		@click="focusInputHandler"
+		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -98,6 +98,7 @@ import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Input'
@@ -227,22 +228,30 @@ const changeHandler = (e: Event) => {
 	emits('change', target.value, e)
 	formItemProvide?.changeHandler()
 }
+const [wait, cancel] = useCancelableDelay()
 
 const focusMode = ref(false)
 
-const blurHandler = (e: FocusEvent) => {
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
 	focusMode.value = false
 	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
 	focusMode.value = true
 	emits('focus', e)
 }
 
 const focusInputHandler = () => {
-	inputRef.value?.focus()
+	setTimeout(() => {
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const hoverFlag = ref(false)

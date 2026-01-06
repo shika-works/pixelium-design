@@ -33,6 +33,9 @@
 
 	transition: 0.25s;
 
+	&:focus {
+		outline: none;
+	}
 	&__horizontal {
 		flex-grow: 1;
 		&.@{prefix}__reverse {
@@ -109,6 +112,10 @@
 		pointer-events: all;
 
 		min-height: @px-medium-base-size;
+
+		&:focus {
+			outline: none;
+		}
 	}
 
 	&-dot {
@@ -122,6 +129,10 @@
 		top: 50%;
 
 		pointer-events: all;
+
+		&:focus {
+			outline: none;
+		}
 	}
 
 	&-tooltip-content {
@@ -151,4 +162,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	&:focus {
+		outline: none;
+	}
 }

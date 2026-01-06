@@ -17,7 +17,12 @@
 
 		cursor: pointer;
 
-		&:hover {
+		&:focus {
+			outline: none;
+		}
+
+		&:hover,
+		&:focus {
 			background-color: var(--px-neutral-3);
 		}
 		& > .@{prefix}-icon-wrapper {

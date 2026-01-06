@@ -442,7 +442,6 @@ defineRender(() => {
 							// @ts-ignore
 							class="px-auto-complete-icon"
 							onClick={clearHandler}
-							tabindex="0"
 						/>
 					) : (
 						<div class="px-auto-complete-icon-placeholder" />

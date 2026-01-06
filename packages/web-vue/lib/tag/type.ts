@@ -46,6 +46,12 @@ export type TagProps = {
 	 * @version 0.1.0
 	 */
 	pollSizeChange?: boolean
+	/**
+	 * @property {number} [closeTabindex=0]
+	 * @ignore
+	 * @version 0.1.0
+	 */
+	closeTabindex?: number
 }
 
 export type TagEvents = {

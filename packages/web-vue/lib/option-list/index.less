@@ -40,14 +40,19 @@
 		&__child {
 			padding-left: @px-padding-group-x;
 		}
-		&:hover {
+		&:focus {
+			outline: none;
+		}
+		&:hover,
+		&:focus {
 			background-color: var(--px-primary-1);
 		}
 		&__disabled {
 			background-color: var(--px-neutral-1);
 			color: var(--px-neutral-6);
 			cursor: not-allowed;
-			&:hover {
+			&:hover,
+			&:focus {
 				background-color: var(--px-neutral-1);
 			}
 			&.@{prefix}-item__active {
