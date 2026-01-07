@@ -11,25 +11,29 @@ const DEFAULT_CONFIG: Record<string, NamespaceConfig> = {
 
 type ZIndexState = {
 	initial: number
+	usedZIndex: Set<number>
 }
 
-const stateMap: Record<string, ZIndexState> = {}
+export const stateMap: Record<string, ZIndexState> = {}
 
 function ensureNamespace(ns: string, cfg: NamespaceConfig): ZIndexState {
 	if (!stateMap[ns]) {
-		stateMap[ns] = { initial: cfg.start }
+		stateMap[ns] = { initial: cfg.start, usedZIndex: new Set<number>() }
 	}
 	return stateMap[ns]
 }
 
-const usedZIndex = new Set<number>()
-
 const allocate = (ns: ZIndexState): number => {
-	const maxUsed = usedZIndex.size > 0 ? Math.max(...usedZIndex) : ns.initial
+	const curUsedZIndex = ns.usedZIndex
+	const maxUsed = curUsedZIndex.size > 0 ? Math.max(...curUsedZIndex) : ns.initial
 	const nextZIndex = maxUsed + 1
 
-	usedZIndex.add(nextZIndex)
+	curUsedZIndex.add(nextZIndex)
 	return nextZIndex
+}
+
+export const cleanState = () => {
+	Object.keys(stateMap).forEach((key) => delete stateMap[key])
 }
 
 export function useZIndex(namespace: keyof typeof DEFAULT_CONFIG = 'popup') {
@@ -46,7 +50,7 @@ export function useZIndex(namespace: keyof typeof DEFAULT_CONFIG = 'popup') {
 	}
 
 	const release = () => {
-		usedZIndex.delete(localZIndex.value)
+		ns.usedZIndex.delete(localZIndex.value)
 	}
 
 	onUnmounted(release)
