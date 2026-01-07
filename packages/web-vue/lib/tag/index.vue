@@ -23,6 +23,7 @@
 				@mouseenter="toggleHover(true)"
 				@mouseleave="toggleHover(false)"
 				@click="closeHandler"
+				:tabindex="props.disabled ? -1 : props.closeTabindex"
 				class="px-tag-icon"
 				:style="{
 					fill: textColor
@@ -61,7 +62,8 @@ const props = withDefaults(defineProps<TagProps>(), {
 	size: 'medium',
 	disabled: false,
 	variant: 'primary',
-	theme: 'primary'
+	theme: 'primary',
+	closeTabindex: 0
 })
 
 const emits = defineEmits<TagEvents>()

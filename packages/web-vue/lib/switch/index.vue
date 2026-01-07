@@ -9,6 +9,9 @@
 			[`px-switch__inactive`]: progress <= MID_PROGRESS
 		}"
 		ref="switchRef"
+		@mousedown="mousedownHandler"
+		@focusin="focusinHandler"
+		@focusout="focusoutHandler"
 	>
 		<div
 			class="px-switch-prefix-wrapper"
@@ -65,8 +68,7 @@
 			class="px-switch-inner"
 			:disabled="disabledComputed || readonlyComputed"
 			:checked="!!modelValue"
-			@focus="focusHandler"
-			@blur="blurHandler"
+			ref="checkboxRef"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
 		/>
@@ -100,6 +102,7 @@ import { inBrowser } from '../share/util/env'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
 import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 const MID_PROGRESS = 0.5
 
@@ -172,13 +175,33 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
-const blurHandler = (e: FocusEvent) => {
+const [wait, cancel] = useCancelableDelay()
+const focusState = ref(false)
+const checkboxRef = shallowRef<HTMLInputElement | null>(null)
+
+const mousedownHandler = () => {
+	setTimeout(() => {
+		checkboxRef.value?.focus()
+	}, 0)
+}
+
+const focusoutHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
+
 	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
-const focusHandler = (e: FocusEvent) => {
-	emits('focus', e)
+const focusinHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusState.value
+	focusState.value = true
+	if (!currentFocus) {
+		emits('focus', e)
+	}
 }
 
 onMounted(() => {

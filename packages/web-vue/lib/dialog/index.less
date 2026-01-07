@@ -70,7 +70,11 @@
 		transition: 0.25s;
 		cursor: pointer;
 		fill: var(--px-neutral-8);
-		&:hover {
+		&:focus {
+			outline: none;
+		}
+		&:hover,
+		&:focus {
 			fill: var(--px-neutral-7);
 		}
 		&:active {

@@ -349,6 +349,8 @@ const setupSelect = () => {
 	triggerPopover()
 }
 
+let clickTagPopupContentFlag = false
+
 const focusHandler = async (e: FocusEvent) => {
 	if (disabledComputed.value || readonlyComputed.value) {
 		return
@@ -359,8 +361,11 @@ const focusHandler = async (e: FocusEvent) => {
 
 	const target = e.target
 	if (target instanceof HTMLElement || target instanceof SVGElement) {
-		if (!closeRef.value?.$el.contains(target)) {
+		if (!closeRef.value?.$el.contains(target) && !clickTagPopupContentFlag) {
 			setupSelect()
+		}
+		if (clickTagPopupContentFlag) {
+			clickTagPopupContentFlag = false
 		}
 	}
 
@@ -369,7 +374,7 @@ const focusHandler = async (e: FocusEvent) => {
 	}
 }
 
-const clickHandler = async (e: MouseEvent) => {
+const mousedownHandler = async (e: MouseEvent) => {
 	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
@@ -382,7 +387,9 @@ const clickHandler = async (e: MouseEvent) => {
 	if (focusMode.value && !popoverVisible.value) {
 		setupSelect()
 	}
-	contentRef.value?.focus()
+	setTimeout(() => {
+		contentRef.value?.focus()
+	}, 0)
 }
 
 const blurSelectImpl = async () => {
@@ -741,6 +748,14 @@ const popupContentMousedownHandler = () => {
 	}, 0)
 }
 
+const tagPopupContentMousedownHandler = () => {
+	setTimeout(() => {
+		clickTagPopupContentFlag = true
+		cancel()
+		contentRef.value?.focus()
+	}, 0)
+}
+
 const popoverProps = computed(() => {
 	return {
 		...props.popoverProps,
@@ -773,6 +788,7 @@ defineRender(() => {
 								color={props.tagColor}
 								pollSizeChange={pollSizeChangeComputed.value}
 								{...props.tagProps}
+								closeTabindex={-1}
 								onClose={(event) => tagCloseHandler(e, event)}
 							>
 								{{
@@ -816,7 +832,12 @@ defineRender(() => {
 								}}
 							</Tag>
 						) : (
-							<Popup {...popoverProps.value}>
+							<Popup
+								{...popoverProps.value}
+								contentProps={{
+									onMousedown: tagPopupContentMousedownHandler
+								}}
+							>
 								{{
 									default: () => (
 										<Tag
@@ -856,6 +877,7 @@ defineRender(() => {
 														closable={tagCanClose.value}
 														pollSizeChange={pollSizeChangeComputed.value}
 														{...props.tagProps}
+														closeTabindex={-1}
 														onClose={(event) => tagCloseHandler(e, event)}
 													>
 														{{
@@ -930,7 +952,6 @@ defineRender(() => {
 							// @ts-ignore
 							class="px-select-icon"
 							onClick={clearHandler}
-							tabindex="0"
 							ref={(el: any) => {
 								closeRef.value = el
 							}}
@@ -994,7 +1015,7 @@ defineRender(() => {
 								],
 								onFocusin: focusHandler,
 								onFocusout: focusoutHandler,
-								onClick: clickHandler,
+								onMousedown: mousedownHandler,
 								onMouseenter: mouseenterHandler,
 								onMouseleave: mouseleaveHandler,
 								...scopeObj

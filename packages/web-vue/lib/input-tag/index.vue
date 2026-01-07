@@ -8,7 +8,7 @@
 			'px-input-tag__inner': !!inputGroupProvide,
 			'px-input-tag__disabled': !!disabledComputed
 		}"
-		@click="focusInputHandler"
+		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -29,6 +29,7 @@
 				:color="props.tagColor"
 				:poll-size-change="pollSizeChangeComputed"
 				v-bind="props.tagProps"
+				:close-tabindex="-1"
 				@close="(e: MouseEvent) => tagCloseHandler(index, e)"
 			>
 				<slot name="tag" :tag="tag" :index="index">{{ tag }}</slot>
@@ -48,7 +49,13 @@
 						>+{{ tagsCollapsed.length }}</slot
 					>
 				</Tag>
-				<Popover v-else v-bind="popoverProps">
+				<Popup
+					v-else
+					v-bind="popoverProps"
+					:content-props="{
+						onMousedown: tagPopupContentMousedownHandler
+					}"
+				>
 					<Tag
 						:size="tagSize"
 						:variant="props.tagVariant"
@@ -75,6 +82,7 @@
 								:color="props.tagColor"
 								:poll-size-change="pollSizeChangeComputed"
 								v-bind="props.tagProps"
+								:close-tabindex="-1"
 								@close="
 									(e: MouseEvent) =>
 										tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)
@@ -89,7 +97,7 @@
 							</Tag>
 						</div>
 					</template>
-				</Popover>
+				</Popup>
 			</template>
 			<input
 				class="px-input-tag-inner"
@@ -148,13 +156,14 @@ import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Tag from '../tag/index.vue'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
-import Popover from '../popover/index.vue'
 import { BORDER_CORNER_RAD_RANGE, POPUP_CONTENT_DEFAULT_MAX_WIDTH } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import Popup from '../popup/index.vue'
 
 defineOptions({
 	name: 'InputTag'
@@ -299,8 +308,13 @@ const inputChangeHandler = (e: Event) => {
 }
 
 const focusMode = ref(false)
+const [wait, cancel] = useCancelableDelay()
 
 const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
 	focusMode.value = false
 	await updateInputValue('')
 	emits('inputChange', '')
@@ -309,8 +323,19 @@ const blurHandler = async (e: FocusEvent) => {
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
-	emits('focus', e)
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
+}
+
+const tagPopupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const enterDownHandler = async (e: KeyboardEvent) => {
@@ -334,7 +359,9 @@ const enterDownHandler = async (e: KeyboardEvent) => {
 }
 
 const focusInputHandler = () => {
-	inputRef.value?.focus()
+	setTimeout(() => {
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const hoverFlag = ref(false)

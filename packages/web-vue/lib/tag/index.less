@@ -74,6 +74,9 @@ span.px-tag {
 	&-icon-wrapper &-icon {
 		fill: var(--text-color);
 		cursor: pointer;
+		&:focus {
+			outline: none;
+		}
 	}
 	@theme: primary, sakura, success, warning, danger;
 	each(@theme, {
@@ -153,7 +156,8 @@ span.px-tag {
 			outline-offset: var(--px-bit);
 		}
 		& .@{prefix}-icon {
-			&:hover {
+			&:hover,
+			&:focus {
 				fill: var(--px-neutral-6);
 			}
 			&:active {
@@ -162,7 +166,8 @@ span.px-tag {
 		}
 		&.@{prefix}__disabled {
 			& .@{prefix}-icon {
-				&:hover {
+				&:hover,
+				&:focus {
 					fill: var(--px-neutral-1);
 				}
 				&:active {
@@ -173,7 +178,8 @@ span.px-tag {
 		&.@{prefix}__plain {
 			--text-color: var(--px-neutral-9);
 			& .@{prefix}-icon {
-				&:hover {
+				&:hover,
+				&:focus {
 					fill: var(--px-neutral-8);
 				}
 				&:active {
@@ -183,7 +189,8 @@ span.px-tag {
 			&.@{prefix}__disabled {
 				--text-color: var(--px-neutral-7);
 				& .@{prefix}-icon {
-					&:hover {
+					&:hover,
+					&:focus {
 						fill: var(--px-neutral-7);
 					}
 					&:active {
@@ -195,7 +202,8 @@ span.px-tag {
 		&.@{prefix}__outline {
 			--text-color: var(--px-neutral-10);
 			& .@{prefix}-icon {
-				&:hover {
+				&:hover,
+				&:focus {
 					fill: var(--px-neutral-9);
 				}
 				&:active {
@@ -205,7 +213,8 @@ span.px-tag {
 			&.@{prefix}__disabled {
 				--text-color: var(--px-neutral-7);
 				& .@{prefix}-icon {
-					&:hover {
+					&:hover,
+					&:focus {
 						fill: var(--px-neutral-7);
 					}
 					&:active {

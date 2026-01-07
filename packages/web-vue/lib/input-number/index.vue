@@ -8,7 +8,7 @@
 			'px-input-number__inner': !!inputGroupProvide,
 			'px-input-number__disabled': !!disabledComputed
 		}"
-		@click="focusInputHandler"
+		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -30,7 +30,6 @@
 				@click="increaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showPlusPrefix"
-				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
 				ref="plusRef"
 			></Plus>
@@ -39,7 +38,6 @@
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusPrefix"
-				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
 				ref="minusRef"
 			></Minus>
@@ -77,7 +75,6 @@
 				@click="increaseHandler"
 				v-if="showPlusSuffix"
 				@mousedown="subButtonMousedownHandler"
-				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
 				ref="plusRef"
 			></Plus>
@@ -86,7 +83,6 @@
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusSuffix"
-				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
 				ref="minusRef"
 			></Minus>
@@ -137,6 +133,7 @@ import type { VueComponent } from '../share/type'
 import { fixedNumber } from '../share/util/common'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'InputNumber'
@@ -346,9 +343,14 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
+const [wait, cancel] = useCancelableDelay()
 const focusMode = ref(false)
 
-const blurHandler = (e: FocusEvent) => {
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
 	setInputValue(formatNumberValue(modelValue.value))
 	focusMode.value = false
 	emits('blur', e)
@@ -356,8 +358,12 @@ const blurHandler = (e: FocusEvent) => {
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
-	emits('focus', e)
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
 }
 
 const showClose = computed(() => {
@@ -489,7 +495,9 @@ const focusInputHandler = (e: MouseEvent) => {
 	) {
 		return
 	}
-	inputRef.value?.focus()
+	setTimeout(() => {
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const hoverFlag = ref(false)

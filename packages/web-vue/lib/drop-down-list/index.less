@@ -24,7 +24,11 @@
 				padding-left: @px-padding-group-x;
 			}
 		}
-		&:hover {
+		&:focus {
+			outline: none;
+		}
+		&:hover,
+		&:focus {
 			& .@{prefix}-item-link {
 				background-color: var(--px-primary-1);
 			}

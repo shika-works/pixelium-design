@@ -27,7 +27,10 @@
   - 修复在按钮 `size="small"` 时字体大小异常的问题。
   - 修复输入组件在 FormItem 中横向延申异常的问题。
   - 为 InputGroup 和 ButtonGroup 向子组件传递更新信息的 key 加上独特的 id，以防止影响其他组件下的子组件。另外，减少了检测子组件位置的频率。
-  - 修复 Select、AutoComplete 组件在内部点击时会触发 `focus` 和 `blur` 事件的问题。
+  - 修复 Radio、Checkbox、Switch、Select、AutoComplete、Input、InputNumber、InputTag、Textarea、Slider 组件在内部点击时会触发 `focus` 和 `blur` 事件的问题。
+  - 修复了输入控件的图标被聚焦时会出现焦点环的问题。
+  - 修复了 Textarea 组件内部图标没有正常显示的问题。
+  - 修复了 Slider 没有 emit `focus` 和 `blur` 事件的问题。
 ]]]
 [[[en
 ## v0.1.0
@@ -51,7 +54,10 @@
   - Fix the font size issue when button's size is `'small'`.
   - Fixed the abnormal horizontal extension of input components within a FormItem.
   - Unique IDs have been added to the keys used by InputGroup and ButtonGroup to propagate updates to child components, preventing interference with child components in other groups. Additionally, the frequency of positional checks has been reduced.
-  - Fix issue where internal clicks in Select and AutoComplete components trigger `focus` and `blur` events.
+  - Fix the issue where components such as Radio, Checkbox, Switch, Select, AutoComplete, Input, InputNumber, InputTag, Textarea, and Slider trigger `focus` and `blur` events when clicked internally.
+  - Fixed an issue where a focus ring would appear when the icon inside an input control was focused.
+  - Fixed an issue where icons inside the Textarea component were not displayed correctly.
+  - Fixed the issue where Slider did not emit `focus` and `blur` events.
 ]]]
 
 [[[zh

@@ -21,7 +21,11 @@
 		width: 100%;
 		text-decoration: none;
 	}
-	&:hover {
+	&:focus {
+		outline: none;
+	}
+	&:hover,
+	&:focus {
 		background-color: var(--px-neutral-3);
 		&.@{prefix}__active {
 			background-color: var(--px-primary-1);
@@ -54,7 +58,8 @@
 			cursor: not-allowed;
 		}
 		cursor: not-allowed;
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--px-neutral-1);
 		}
 		&.@{prefix}__active {
@@ -75,7 +80,8 @@
 		& > .@{prefix}-link {
 			color: var(--px-neutral-1);
 		}
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--px-neutral-9);
 			&.@{prefix}__active {
 				background-color: var(--px-primary-5);
@@ -92,12 +98,14 @@
 				color: var(--px-neutral-8);
 			}
 			background-color: var(--px-neutral-10);
-			&:hover {
+			&:hover,
+			&:focus {
 				background-color: var(--px-neutral-10);
 			}
 			&.@{prefix}__active {
 				background-color: var(--px-primary-8);
-				&:hover {
+				&:hover,
+				&:focus {
 					background-color: var(--px-primary-8);
 				}
 				& > .@{prefix}-link {
@@ -110,7 +118,8 @@
 			& > .@{prefix}-link {
 				color: var(--px-neutral-10);
 			}
-			&:hover {
+			&:hover,
+			&:focus {
 				background-color: var(--px-neutral-3);
 				&.@{prefix}__active {
 					background-color: var(--px-primary-5);
@@ -127,12 +136,14 @@
 					color: var(--px-neutral-4);
 				}
 				background-color: var(--px-neutral-1);
-				&:hover {
+				&:hover,
+				&:focus {
 					background-color: var(--px-neutral-1);
 				}
 				&.@{prefix}__active {
 					background-color: var(--px-primary-3);
-					&:hover {
+					&:hover,
+					&:focus {
 						background-color: var(--px-primary-3);
 					}
 					& > .@{prefix}-link {
