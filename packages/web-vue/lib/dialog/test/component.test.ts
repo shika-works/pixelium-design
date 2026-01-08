@@ -3,6 +3,7 @@ import { createMocks } from '../../share/util/test'
 import { mount } from '@vue/test-utils'
 import Dialog from '../index.ts'
 import { nextTick } from 'vue'
+import { cleanState } from '../../popup-wrapper/use-popup-wrapper-manager.ts'
 
 describe('Dialog (wrapped component)', () => {
 	const { pre, post } = createMocks()
@@ -85,6 +86,7 @@ describe('Dialog (wrapped component)', () => {
 		await nextTick()
 		const container = wrapper.find('.px-dialog-wrapper')
 		expect(container.element).toBeTruthy()
+		expect(container.element.getAttribute('style')).toBe(null)
 
 		// call close exposed method
 		;(wrapper.vm as any).close()
@@ -97,6 +99,46 @@ describe('Dialog (wrapped component)', () => {
 		;(wrapper.vm as any).open()
 		await nextTick()
 		expect(container.element.getAttribute('style')).toBe('')
+
+		wrapper.unmount()
+	})
+	it('press esc to close', async () => {
+		const wrapper = mount(Dialog, {
+			props: { defaultVisible: true },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const container = wrapper.find('.px-dialog-wrapper')
+		expect(container.element).toBeTruthy()
+		expect(container.element.getAttribute('style')).toBe(null)
+
+		window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+		await nextTick()
+		expect(container.element.getAttribute('style')).include('display: none')
+
+		wrapper.unmount()
+	})
+	it('press esc to close dialog with max z-index', async () => {
+		cleanState()
+		const wrapper = mount({
+			components: { Dialog },
+			template: `<Dialog default-visible :z-index="5000"></Dialog><Dialog default-visible :z-index="2000"></Dialog>`
+		})
+
+		await nextTick()
+		const [wrapper1, wrapper2] = wrapper.findAllComponents(Dialog)
+		const container1 = wrapper1.find('.px-dialog-wrapper')
+		const container2 = wrapper2.find('.px-dialog-wrapper')
+		expect(container2.element).toBeTruthy()
+		expect(container1.element.getAttribute('style')).toBe(null)
+		expect(container2.element.getAttribute('style')).toBe(null)
+
+		window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+		await nextTick()
+
+		expect(container1.element.getAttribute('style')).include('display: none')
+		expect(container2.element.getAttribute('style')).toBe(null)
 
 		wrapper.unmount()
 	})

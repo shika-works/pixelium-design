@@ -6,6 +6,8 @@
 		position="fixed"
 		:visible="props.visible"
 		prevent-document-scroll
+		esc-to-close
+		@esc-keydown="escKeydownHandler"
 	>
 		<Transition
 			:name="'px-dialog-fade'"
@@ -16,9 +18,7 @@
 		>
 			<div
 				class="px-dialog px-dialog-wrapper pixelium"
-				@keydown.esc="escKeydownHandler"
 				tabindex="-1"
-				autofocus
 				v-show="props.visible"
 				ref="dialogWrapper"
 			>
