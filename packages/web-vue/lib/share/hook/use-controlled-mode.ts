@@ -5,7 +5,7 @@ export const useControlledMode = <
 	T extends any,
 	K extends string = string,
 	D extends string | undefined = undefined,
-	const P extends { [key in (K | D) & string]: T | Nullish } = {
+	P extends { [key in (K | D) & string]: T | Nullish } = {
 		[key in (K | D) & string]: T | Nullish
 	},
 	const V extends P[K] = P[K]
