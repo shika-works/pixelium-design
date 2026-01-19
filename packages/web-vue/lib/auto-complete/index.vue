@@ -90,7 +90,7 @@ const instance = getCurrentInstance()
 
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
 
-const [index, first, last] = !!inputGroupProvide
+const [index, first, last] = inputGroupProvide
 	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`, (instance) => {
 			return instance?.vnode.el?.nextElementSibling
 		})
@@ -131,7 +131,7 @@ const [wait, cancel] = useCancelableDelay()
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return !!inputGroupProvide
+		return inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
