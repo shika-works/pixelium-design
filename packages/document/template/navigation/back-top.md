@@ -78,20 +78,5 @@ slots.icon: Custom internal icon (effective when the `trigger` slot is not used)
 slots.trigger: Custom content for the entire back-to-top button.
 ]]]
 
-### RestAttrs, EmitEvent
-
-```ts
-import type { StyleValue } from 'vue'
-
-export type EmitEvent<T extends Record<string, any>> = {
-	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
-}
-
-export type VueClassValue = string | Record<string, any> | VueClassValue[]
-
-export type RestAttrs = {
-	style?: StyleValue | null
-	class?: VueClassValue | null
-	[x: string]: any
-}
-```
+[[[slice rest-attrs]]]
+[[[slice emit-event]]]

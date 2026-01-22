@@ -97,16 +97,4 @@ slots.icon: Icon for Spin.
 slots.description: Description during Spin loading.
 ]]]
 
-### RestAttrs
-
-```ts
-import type { StyleValue } from 'vue'
-
-export type VueClassValue = string | Record<string, any> | VueClassValue[]
-
-export type RestAttrs = {
-	style?: StyleValue | null
-	class?: VueClassValue | null
-	[x: string]: any
-}
-```
+[[[slice rest-attrs]]]

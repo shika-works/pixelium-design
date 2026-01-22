@@ -229,14 +229,4 @@ export interface AutoCompleteGroupOption extends OptionListGroupOption {
 }
 ```
 
-### RestAttrs
-
-```ts
-export type VueClassValue = string | Record<string, any> | VueClassValue[]
-
-export type RestAttrs = {
-	style?: StyleValue | null
-	class?: VueClassValue | null
-	[x: string]: any
-}
-```
+[[[slice rest-attrs]]]
