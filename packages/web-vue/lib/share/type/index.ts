@@ -7,7 +7,9 @@ export type NumberOrPercentage = number | `${number}%`
 export type RgbaColor = { r: number; g: number; b: number; a: number }
 export type RgbColor = { r: number; g: number; b: number }
 
-export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element)
+export type ValidContent =
+	| string
+	| ((...args: any[]) => VNode | string | JSX.Element | null | void)
 export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
 
 export type ValueWithDeviceWidth<T> = Record<SCREEN_SIZE_TYPE, T>

@@ -236,7 +236,7 @@ dialogExpose.open: Open the dialog.
 
 ### ValidContent, ValidVNodeContent
 ```ts
-export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element)
+export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element | null | void)
 export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
 ```
 
