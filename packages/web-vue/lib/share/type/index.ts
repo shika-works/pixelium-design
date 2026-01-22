@@ -39,9 +39,9 @@ export type EmitEvent<T extends Record<string, any>> = {
 }
 
 export type VueClassValue = string | Record<string, any> | VueClassValue[]
-
+export type VueStyleValue = StyleValue
 export type RestAttrs = {
-	style?: StyleValue | null
+	style?: VueStyleValue | null
 	class?: VueClassValue | null
 	[x: string]: any
 }

@@ -241,6 +241,8 @@ export type {
 	ValueWithDeviceWidth
 } from './share/type/index.ts'
 
+export type { RestAttrs, VueStyleValue, VueClassValue, EmitEvent } from './share/type/index.ts'
+
 export type { MessageOptions, MessageReturn } from './message-box/type.ts'
 
 export type { AutoCompleteOption, AutoCompleteGroupOption } from './auto-complete/type.ts'
