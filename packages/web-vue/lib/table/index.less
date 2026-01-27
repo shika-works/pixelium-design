@@ -22,6 +22,8 @@
 
 	box-sizing: border-box;
 
+	color: var(--px-neutral-10);
+
 	&-head {
 		box-sizing: border-box;
 		position: relative;
@@ -81,6 +83,7 @@
 	}
 
 	&-inner {
+		display: table;
 		width: 100%;
 		box-sizing: border-box;
 		border-width: 0;
@@ -241,7 +244,7 @@
 			}
 		}
 	}
-	&__checker {
+	&__checkered {
 		& .@{prefix}-body {
 			& .@{prefix}-row.@{prefix}-row__even {
 				& > .@{prefix}-td__odd {
@@ -297,16 +300,19 @@
 		height: 100%;
 		border-color: transparent;
 		border-style: solid;
-		border-top-width: @border-width;
-		border-bottom-width: @border-width;
-		border-left-width: 0;
-		border-right-width: 0;
+		border-width: 0;
 		box-sizing: border-box;
 	}
-	&__side-bordered {
+	&__bordered {
 		& .@{prefix}-clip {
-			border-left-width: @border-width;
-			border-right-width: @border-width;
+			border-top-width: @border-width;
+			border-bottom-width: @border-width;
+		}
+		&.@{prefix}__side-bordered {
+			& .@{prefix}-clip {
+				border-left-width: @border-width;
+				border-right-width: @border-width;
+			}
 		}
 	}
 

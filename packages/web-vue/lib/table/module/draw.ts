@@ -79,12 +79,11 @@ export const drawBorder = (
 	}
 }
 
-const padding = ref([0, 0, 0, 0])
-const polygon = ref('')
-
 const drawTableBorder = (
 	wrapperRef: ShallowRef<HTMLDivElement | null>,
 	canvasRef: ShallowRef<HTMLCanvasElement | null>,
+	padding: Ref<number[]>,
+	polygon: Ref<string>,
 	pixelSize: number,
 	bordered: {
 		table: boolean
@@ -173,8 +172,18 @@ export const useDrawPixel = (
 	}>,
 	props: LooseRequired<TableProps>
 ) => {
+	const padding = ref([0, 0, 0, 0])
+	const polygon = ref('')
 	const drawPixel = () => {
-		drawTableBorder(wrapperRef, canvasRef, pixelSize.value, bordered.value, props.borderRadius)
+		drawTableBorder(
+			wrapperRef,
+			canvasRef,
+			padding,
+			polygon,
+			pixelSize.value,
+			bordered.value,
+			props.borderRadius
+		)
 	}
 	const debounceDraw = debounce(drawPixel, 0, { maxWait: 50, immediate: true })
 	onMounted(() => {
