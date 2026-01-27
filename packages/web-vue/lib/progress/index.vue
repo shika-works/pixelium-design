@@ -232,7 +232,7 @@ const drawPixel = () => {
 		)
 	}
 
-	if (props.variant === 'checker' && gradientColor) {
+	if (props.variant === 'checkered' && gradientColor) {
 		drawChecker(
 			ctx,
 			width,

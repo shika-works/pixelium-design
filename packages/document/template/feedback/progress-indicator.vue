@@ -5,7 +5,7 @@
 				<span>{{ percentage }}%</span>
 			</template>
 		</px-progress>
-		<px-progress :percentage="70" variant="checker" indicator-placement="outside">
+		<px-progress :percentage="70" variant="checkered" indicator-placement="outside">
 			<template #indicator="{ percentage }">
 				<px-text-outline :outline-width="2" color="var(--px-primary-6)"
 					>{{ percentage }}%</px-text-outline

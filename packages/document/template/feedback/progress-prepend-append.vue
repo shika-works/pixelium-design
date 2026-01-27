@@ -9,13 +9,7 @@
 			</template>
 		</px-progress>
 		<px-progress :percentage="100" theme="success">
-			<template #prepend>
-				<px-icon color="#526AFD" :size="24"><IconEnvelope></IconEnvelope></px-icon>
-			</template>
+			<template #prepend> Message </template>
 		</px-progress>
 	</px-space>
 </template>
-
-<script setup lang="ts">
-import { IconEnvelope } from '@pixelium/web-vue/icon-hn/es'
-</script>
