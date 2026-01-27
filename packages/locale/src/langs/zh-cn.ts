@@ -11,5 +11,9 @@ export default {
 	popconfirm: {
 		confirm: '确认',
 		cancel: '取消'
+	},
+	table: {
+		filterReset: '重置',
+		filterConfirm: '确认'
 	}
 }
