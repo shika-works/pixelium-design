@@ -53,7 +53,6 @@ export const useExpandable = (
 	}
 
 	const foldHandler = async (key: any, record: TableData, e: MouseEvent) => {
-		console.log(key, 'foldHandler')
 		const currentValue = [...(expandedKeys.value || [])]
 		const idx = currentValue.findIndex((e) => e === key)
 		if (idx >= 0) {
