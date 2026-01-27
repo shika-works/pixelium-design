@@ -8,7 +8,7 @@ export type TableProps = {
 	data?: TableData[]
 	columns?: TableColumn[]
 	bordered?: boolean | TableBordered
-	variant?: 'normal' | 'striped' | 'checker'
+	variant?: 'normal' | 'striped' | 'checkered'
 	fixedHead?: boolean
 	spanMethod?: (options: TableOptionsArg) => void | {
 		colspan?: number

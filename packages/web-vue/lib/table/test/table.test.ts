@@ -135,15 +135,15 @@ describe('Table Component', () => {
 			expect(wrapper.element.className).include('px-table__striped')
 
 			wrapper.setProps({
-				variant: 'checker'
+				variant: 'checkered'
 			})
 			await nextTick()
-			expect(wrapper.element.className).include('px-table__checker')
+			expect(wrapper.element.className).include('px-table__checkered')
 
 			wrapper.setProps({
 				variant: 'normal'
 			})
-			expect(wrapper.element.className).not.include('px-table__checker')
+			expect(wrapper.element.className).not.include('px-table__checkered')
 			expect(wrapper.element.className).not.include('px-table__striped')
 		})
 
