@@ -468,7 +468,7 @@ const render = () => {
 				pixelium: true,
 				'px-table': true,
 				'px-table__striped': props.variant === 'striped',
-				'px-table__checker': props.variant === 'checker',
+				'px-table__checkered': props.variant === 'checkered',
 				'px-table__col-bordered': bordered.value.col,
 				'px-table__row-bordered': bordered.value.row,
 				'px-table__bordered': bordered.value.table,
