@@ -356,7 +356,7 @@ describe('Slider Component', () => {
 		const thumb = wrapper.find('.px-slider-thumb')
 		thumb.trigger('focusin')
 		thumb.trigger('focusout')
-		await new Promise((res) => setTimeout(res))
+		await new Promise((res) => setTimeout(res, 300))
 		expect(focus).toBeCalledTimes(1)
 		expect(blur).toBeCalledTimes(1)
 
