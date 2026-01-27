@@ -70,6 +70,7 @@ import Breadcrumb from './breadcrumb/index.vue'
 import BreadcrumbItem from './breadcrumb-item/index.vue'
 import ScrollBar from './scroll-bar/index.vue'
 import { useScrollBar } from './scroll-bar/use-scroll-bar.ts'
+import Table from './table/index.vue'
 
 const components = [
 	Button,
@@ -127,7 +128,8 @@ const components = [
 	DropDown,
 	Breadcrumb,
 	BreadcrumbItem,
-	ScrollBar
+	ScrollBar,
+	Table
 ]
 
 const defaultPrefix = 'Px'
@@ -226,7 +228,8 @@ export {
 	Breadcrumb,
 	BreadcrumbItem,
 	ScrollBar,
-	useScrollBar
+	useScrollBar,
+	Table
 }
 export default {
 	install
@@ -264,3 +267,18 @@ export type { DropDownOption, DropDownGroupOption } from './drop-down-list/type.
 export type { MenuOption, MenuGroupOption, SubmenuOption } from './menu/type.ts'
 export type { NavigationOption } from './share/type/index.ts'
 export type { BreadcrumbOption } from './breadcrumb/type.ts'
+
+export type {
+	TableData,
+	TableColumn,
+	TableBordered,
+	TableSelection,
+	TableExpandable,
+	TableSummary,
+	TableFilterOptions,
+	TableFilterable,
+	TableSortable,
+	TableOptionsArg,
+	SortOrder,
+	FilterValue
+} from './table/type.ts'
