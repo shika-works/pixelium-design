@@ -143,6 +143,7 @@ describe('Table Component', () => {
 			wrapper.setProps({
 				variant: 'normal'
 			})
+			await nextTick()
 			expect(wrapper.element.className).not.include('px-table__checkered')
 			expect(wrapper.element.className).not.include('px-table__striped')
 		})
@@ -158,6 +159,31 @@ describe('Table Component', () => {
 			wrapper.setProps({ fixedHead: false })
 			await nextTick()
 			expect(wrapper.element.className).not.include('px-table__head-sticky')
+		})
+		it('should accept numeric scroll.x and set wrapper width in px', () => {
+			const wrapper = mount(Table, {
+				props: {
+					data: mockData,
+					columns: mockColumns,
+					scroll: { x: 500 }
+				}
+			})
+			const wrapperDiv = wrapper.find('.px-table-wrapper')
+			expect(wrapperDiv.exists()).toBe(true)
+			expect(wrapperDiv.attributes('style') || '').toContain('width: 500px')
+		})
+
+		it('should accept string scroll.x (e.g., vw) and set wrapper width accordingly', () => {
+			const wrapper = mount(Table, {
+				props: {
+					data: mockData,
+					columns: mockColumns,
+					scroll: { x: '50vw' }
+				}
+			})
+			const wrapperDiv = wrapper.find('.px-table-wrapper')
+			expect(wrapperDiv.exists()).toBe(true)
+			expect(wrapperDiv.attributes('style') || '').toContain('width: 50vw')
 		})
 	})
 
@@ -206,6 +232,8 @@ describe('Table Component', () => {
 				}
 			})
 			const headerCell = wrapper.find('thead th')
+			console.log(headerCell.html())
+
 			expect(headerCell.attributes('style') || '').toContain('min-width: 100px')
 		})
 
@@ -332,7 +360,7 @@ describe('Table Component', () => {
 
 			await wrapper.setProps({ columns: newColumns })
 			await flushPromises()
-			const leafHeaders = wrapper.findAll('thead th[data-leaf]')
+			const leafHeaders = wrapper.findAll('thead .px-table-last-head-row th')
 			expect(leafHeaders.length).toBe(1)
 		})
 	})

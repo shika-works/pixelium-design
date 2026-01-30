@@ -12,7 +12,6 @@ import { getGlobalThemeColorString, getGlobalThemeColor } from '../../share/util
 import { fillArr, offsetOutward } from '../../share/util/common'
 import {
 	calcBorderCornerCenter,
-	calcWhenLeaveBaseline,
 	canvasPreprocess,
 	drawCircle,
 	floodFill,
@@ -82,7 +81,6 @@ export const drawBorder = (
 const drawTableBorder = (
 	wrapperRef: ShallowRef<HTMLDivElement | null>,
 	canvasRef: ShallowRef<HTMLCanvasElement | null>,
-	padding: Ref<number[]>,
 	polygon: Ref<string>,
 	pixelSize: number,
 	bordered: {
@@ -102,18 +100,9 @@ const drawTableBorder = (
 	const { ctx, width, height } = preprocessData
 
 	const r = borderRadiusValue ?? pixelSizeValue * 4
-	const borderRadius = [r, r, 0, 0]
-
-	if (!bordered.table || !bordered.side) {
-		padding.value = fillArr(0, 4)
-	} else {
-		padding.value = borderRadius.map((e) => e - calcWhenLeaveBaseline(pixelSizeValue, e))
-	}
 
 	if (bordered.table) {
 		const borderRadius = fillArr(r, 4)
-
-		padding.value = borderRadius.map((e) => e - calcWhenLeaveBaseline(pixelSizeValue, e))
 
 		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSizeValue)
 		const rad = BORDER_CORNER_RAD_RANGE
@@ -172,13 +161,11 @@ export const useDrawPixel = (
 	}>,
 	props: LooseRequired<TableProps>
 ) => {
-	const padding = ref([0, 0, 0, 0])
 	const polygon = ref('')
 	const drawPixel = () => {
 		drawTableBorder(
 			wrapperRef,
 			canvasRef,
-			padding,
 			polygon,
 			pixelSize.value,
 			bordered.value,
@@ -234,5 +221,5 @@ export const useDrawPixel = (
 			}
 		}
 	)
-	return [padding, polygon] as const
+	return [polygon] as const
 }

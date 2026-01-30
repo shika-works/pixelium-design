@@ -51,7 +51,10 @@
 	}
 	&__head-bordered {
 		& .@{prefix}-head {
-			&::after {
+			& .@{prefix}-last-head-row {
+				position: relative;
+			}
+			& .@{prefix}-last-head-row::after {
 				content: '';
 				background: @head-border-color;
 				height: @border-width;
@@ -59,6 +62,7 @@
 				width: 100%;
 				position: absolute;
 				bottom: 0;
+				left: 0;
 				z-index: 2;
 			}
 			& > tr {
@@ -164,23 +168,23 @@
 	}
 
 	&__bordered {
-		& .@{prefix}-row:last-of-type {
-			& > td {
-				border-bottom-width: 0;
+		& .@{prefix}-body,
+		& .@{prefix}-foot {
+			.@{prefix}-row:last-of-type {
+				& > td {
+					border-bottom-width: 0;
+				}
+			}
+			.@{prefix}-expand-row:last-of-type {
+				& > td {
+					border-bottom-width: 0;
+				}
 			}
 		}
 	}
 
 	&-row {
 		box-sizing: border-box;
-		&__sticky-top {
-			position: sticky;
-			z-index: 2;
-		}
-		&__sticky-bottom {
-			position: sticky;
-			z-index: 1;
-		}
 	}
 	&-expand-row {
 		> td {
@@ -220,8 +224,20 @@
 		}
 	}
 
-	&-body {
+	&-foot__fixed {
+		position: sticky;
+		bottom: 0;
+		z-index: 2;
+	}
+
+	&-body,
+	&-foot {
 		background-color: @background-color;
+	}
+
+	&-body,
+	&-foot,
+	&-head {
 		& .@{prefix}-row {
 			&:hover {
 				& > td {
@@ -231,7 +247,9 @@
 		}
 	}
 	&__striped {
-		& .@{prefix}-body {
+		& .@{prefix}-body,
+		& .@{prefix}-foot,
+		& .@{prefix}-head {
 			& .@{prefix}-row.@{prefix}-row__even {
 				& > td {
 					background: var(--px-neutral-3);
@@ -245,7 +263,9 @@
 		}
 	}
 	&__checkered {
-		& .@{prefix}-body {
+		& .@{prefix}-body,
+		& .@{prefix}-foot,
+		& .@{prefix}-head {
 			& .@{prefix}-row.@{prefix}-row__even {
 				& > .@{prefix}-td__odd {
 					background: var(--px-neutral-3);
@@ -287,21 +307,15 @@
 		pointer-events: none;
 	}
 	&-scroll-area {
+		border: var(--px-bit) transparent solid;
 		width: 100%;
 		height: 100%;
+		max-height: inherit;
 	}
 
 	&-wrapper {
 		border: 0 transparent solid;
 		position: relative;
-	}
-
-	&-clip {
-		height: 100%;
-		border-color: transparent;
-		border-style: solid;
-		border-width: 0;
-		box-sizing: border-box;
 	}
 	&__bordered {
 		& .@{prefix}-clip {

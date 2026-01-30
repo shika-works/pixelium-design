@@ -7,16 +7,23 @@ import {
 	useSlots,
 	withScopeId
 } from 'vue'
-import type { TableData, TableEvents, TableOptionsArg, TableProps } from './type'
+import type { TableData, TableEvents, TableProps } from './type'
 import { isBoolean, isFunction, isNullish, isNumber } from 'parsnip-kit'
 import Empty from '../empty/index.vue'
 import { useDrawPixel } from './module/draw'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import ScrollBar from '../scroll-bar/index.vue'
-import { buildHeaderRows, EMPTY_COL, type BodyCell, type HeaderCell } from './module/column'
+import {
+	buildHeaderRows,
+	EMPTY_COL,
+	getMinWidthOfTable,
+	buildCommonRows,
+	type BodyCell,
+	type BodyCellWrapper,
+	type HeaderCell
+} from './module/column'
 import { SpanCollector } from './module/cell-span'
 import { useSelection } from './module/selection'
-import { useMeasure } from './module/measure'
 import { useExpandable } from './module/expandable'
 import { useSummary } from './module/summary'
 import {
@@ -76,15 +83,16 @@ const slots = useSlots()
 const columnsInfo = computed(() => {
 	const cols = [...props.columns]
 	const selection = props.selection
-	if (selection) {
-		cols.unshift(genSelectionCol(selection, cols))
-	}
-	const expandable = props.expandable
-	if (expandable) {
-		cols.unshift(genExpandableCol(expandable, cols))
-	}
 	if (!cols.length) {
 		cols.push(EMPTY_COL)
+	} else {
+		if (selection) {
+			cols.unshift(genSelectionCol(selection, cols))
+		}
+		const expandable = props.expandable
+		if (expandable) {
+			cols.unshift(genExpandableCol(expandable, cols))
+		}
 	}
 	return buildHeaderRows(cols)
 })
@@ -106,48 +114,23 @@ const summaryRows = computed(() => {
 
 const data = computed(() => {
 	let rows = [...props.data]
-
 	rows = filterData(rows)
-
 	rows = sortData(rows)
 
-	const summary = props.summary
-	if (summary) {
-		if (summary.placement === 'start') {
-			rows.unshift(...summaryRows.value)
-		} else {
-			rows.push(...summaryRows.value)
-		}
-	}
 	return rows
 })
 
+const hasCols = computed(() => {
+	return (
+		columnsInfo.value.leafColumns.length > 0 &&
+		columnsInfo.value.leafColumns[0].original.key !== TABLE_EMPTY_COL_SYMBOL
+	)
+})
+
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
-const tableHeadRef = shallowRef<HTMLTableSectionElement | null>(null)
-const tableBodyRef = shallowRef<HTMLTableSectionElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 
-const [headInset, bodyInset, summaryInset] = useMeasure(
-	wrapperRef,
-	tableHeadRef,
-	tableBodyRef,
-	columnsInfo,
-	props
-)
-
-const [padding, polygon] = useDrawPixel(wrapperRef, canvasRef, pixelSize, bordered, props)
-
-const spanMethod = ({ rowIndex, colIndex, record, column }: TableOptionsArg) => {
-	const spanData = props.spanMethod
-		? props.spanMethod({
-				rowIndex,
-				colIndex,
-				record,
-				column
-			})
-		: null
-	return spanData
-}
+const [polygon] = useDrawPixel(wrapperRef, canvasRef, pixelSize, bordered, props)
 
 const calcLabelContentProps = (cellData: HeaderCell) => {
 	const hasIcon = !!cellData.original.filterable || !!cellData.original.sortable
@@ -172,8 +155,10 @@ const calcLabelContentProps = (cellData: HeaderCell) => {
 	)
 	return contentProps
 }
-const calcLabelCellProps = (cellData: HeaderCell) => {
-	const dataHead = cellData.indexPath.join('-')
+const calcLabelCellProps = (cellData: HeaderCell, colIndex: number, cellRow: HeaderCell[]) => {
+	const nextFixed = cellData.fixed !== 'right' && cellRow[colIndex + 1]?.fixed === 'right'
+	const firstFixed =
+		cellData.fixed === 'right' && (colIndex === 0 || cellRow[colIndex - 1].fixed !== 'right')
 	const cellProps = mergeProps(
 		{
 			colspan: cellData.colspan,
@@ -182,28 +167,18 @@ const calcLabelCellProps = (cellData: HeaderCell) => {
 				'px-table-th__leaf': cellData.isLeaf,
 				'px-table-th__left-fixed': cellData.fixed === 'left',
 				'px-table-th__right-fixed': cellData.fixed === 'right',
-				'px-table-th__right-edge': cellData.isRightEdge,
-				'px-table-th__next-fixed': cellData.nextRightFixed,
-				'px-table-th__first-fixed': cellData.firstRightFixed
+				'px-table-th__right-edge': colIndex === cellRow.length - 1,
+				'px-table-th__next-fixed': nextFixed,
+				'px-table-th__first-fixed': firstFixed
 			},
 			style: {
-				paddingLeft: cellData.isLeftEdge ? `${padding.value[0]}px` : undefined,
-				paddingRight: cellData.isRightEdge ? `${padding.value[1]}px` : undefined,
-				width: isNumber(cellData.original.width) ? `${cellData.original.width}px` : undefined,
-				minWidth: isNumber(cellData.original.minWidth)
-					? `${cellData.original.minWidth}px`
+				width: isNumber(cellData.presetWidth) ? `${cellData.presetWidth}px` : undefined,
+				minWidth: isNumber(cellData.presetMinWidth)
+					? `${cellData.presetMinWidth}px`
 					: undefined,
-				left:
-					headInset.value[dataHead]?.type === 'left'
-						? headInset.value[dataHead].value + 'px'
-						: undefined,
-				right:
-					headInset.value[dataHead]?.type === 'right'
-						? headInset.value[dataHead].value + 'px'
-						: undefined
-			},
-			'data-head': dataHead,
-			'data-leaf': cellData.leafIndex >= 0 ? cellData.leafIndex : undefined
+				left: isNumber(cellData.left) ? `${cellData.left}px` : undefined,
+				right: isNumber(cellData.right) ? `${cellData.right}px` : undefined
+			}
 		},
 		cellData.original.labelCellProps || {}
 	)
@@ -213,12 +188,21 @@ const calcLabelCellProps = (cellData: HeaderCell) => {
 const renderHeader = () => {
 	const headerRows = columnsInfo.value.headerRows
 	return headerRows.map((row, rowIndex) => (
-		<tr key={rowIndex}>
+		<tr
+			key={rowIndex}
+			class={{
+				'px-table-last-head-row': rowIndex === headerRows.length - 1
+			}}
+		>
 			{row.map((cell, cellIndex) => {
+				if (cell.depth !== rowIndex) {
+					return null
+				}
+
 				const labelSlotName = cell.original.labelSlotName
 
 				const contentProps = calcLabelContentProps(cell)
-				const cellProps = calcLabelCellProps(cell)
+				const cellProps = calcLabelCellProps(cell, cellIndex, row)
 
 				const filterControl =
 					cell.isLeaf &&
@@ -257,11 +241,12 @@ const renderHeader = () => {
 
 const renderCell = (
 	record: TableData,
-	columns: BodyCell[],
+	columns: BodyCellWrapper[],
 	colIndex: number,
 	rowIndex: number
 ) => {
-	const column = columns[colIndex].original
+	const column = columns[colIndex].cell.original
+
 	const isSelectionCol = column.key === TABLE_SELECTION_COL_SYMBOL
 	const isExpandableCol = column.key === TABLE_EXPANDABLE_COL_SYMBOL
 	const isSummaryRow = (record as any)[TABLE_SUMMARY_ROW_SYMBOL]
@@ -273,8 +258,8 @@ const renderCell = (
 		!isSelectionCol &&
 		!isExpandableCol &&
 		(colIndex === 0 ||
-			columns[colIndex - 1].original.key === TABLE_SELECTION_COL_SYMBOL ||
-			columns[colIndex - 1].original.key === TABLE_EXPANDABLE_COL_SYMBOL)
+			columns[colIndex - 1].cell.original.key === TABLE_SELECTION_COL_SYMBOL ||
+			columns[colIndex - 1].cell.original.key === TABLE_EXPANDABLE_COL_SYMBOL)
 
 	if (isSummaryRow && isFirstCol && !isNullish(props.summary?.summaryText)) {
 		return props.summary.summaryText
@@ -304,71 +289,59 @@ const calcContentProps = (cellData: BodyCell) => {
 	return contentProps
 }
 const calcCellProps = (
-	cellData: BodyCell,
-	spanData: ReturnType<typeof spanMethod>,
+	cellWrapper: BodyCellWrapper,
 	colIndex: number,
-	columns: BodyCell[]
+	cellWrapperArr: BodyCellWrapper[]
 ) => {
-	const nextRightFixed = spanData
-		? colIndex + (spanData.colspan || 1) - 1 < columns.length &&
-			columns[colIndex + (spanData.colspan || 1) - 1].nextRightFixed
-		: cellData.nextRightFixed
+	const cellData = cellWrapper.cell
+
+	const nextRightFixed =
+		cellData.fixed !== 'right' &&
+		(colIndex < cellWrapperArr.length - 1
+			? cellWrapperArr[colIndex + 1].cell.fixed === 'right'
+			: false)
+
+	const firstRightFixed =
+		cellData.fixed === 'right' &&
+		(colIndex === 0 || cellWrapperArr[colIndex - 1].cell.fixed !== 'right')
+
 	return mergeProps(
 		{
 			class: {
-				'px-table-td__odd': (colIndex & 1) === 0,
-				'px-table-td__even': colIndex & 1,
+				'px-table-td__odd': (cellWrapper.originColIndex & 1) === 0,
+				'px-table-td__even': cellWrapper.originColIndex & 1,
 				'px-table-td__left-fixed': cellData.fixed === 'left',
 				'px-table-td__right-fixed': cellData.fixed === 'right',
 				'px-table-td__next-fixed': nextRightFixed,
-				'px-table-td__first-fixed': cellData.firstRightFixed
+				'px-table-td__first-fixed': firstRightFixed
 			},
 			style: {
-				paddingLeft: colIndex === 0 ? `${padding.value[0]}px` : undefined,
-				paddingRight: colIndex === columns.length - 1 ? `${padding.value[1]}px` : undefined,
-				width: isNumber(cellData.original.width) ? `${cellData.original.width}px` : undefined,
-				minWidth: isNumber(cellData.original.minWidth)
-					? `${cellData.original.minWidth}px`
+				width: isNumber(cellWrapper.presetWidth) ? `${cellWrapper.presetWidth}px` : undefined,
+				minWidth: isNumber(cellWrapper.presetMinWidth)
+					? `${cellWrapper.presetMinWidth}px`
 					: undefined,
-				left:
-					bodyInset.value[colIndex]?.type === 'left'
-						? bodyInset.value[colIndex].value + 'px'
-						: undefined,
-				right:
-					bodyInset.value[colIndex]?.type === 'right'
-						? bodyInset.value[colIndex].value + 'px'
-						: undefined
+				left: isNumber(cellWrapper.left) ? `${cellWrapper.left}px` : undefined,
+				right: isNumber(cellWrapper.right) ? `${cellWrapper.right}px` : undefined
 			},
-			colspan: spanData ? spanData.colspan : undefined,
-			rowspan: spanData ? spanData.rowspan : undefined
+			colspan: cellWrapper.spanData.colspan,
+			rowspan: cellWrapper.spanData.rowspan
 		},
 		cellData.original.cellProps || {}
 	)
 }
 
-const renderCol = (record: TableData, rowIndex: number, spanCollector: SpanCollector) => {
-	const columns = columnsInfo.value.leafColumns
+const renderCol = (record: TableData, rowIndex: number, cellRow: BodyCellWrapper[]) => {
+	const columns = cellRow
 	const row = columns.length
 		? columns.map((e, i) => {
-				const spanCovered = spanCollector.isInSpan(rowIndex, i)
-				if (spanCovered) {
+				if (e.originColIndex !== i || e.originRowIndex !== rowIndex) {
 					return null
 				}
-				const spanData = spanMethod({
-					rowIndex,
-					colIndex: i,
-					record,
-					column: e.original
-				})
-				if (spanData) {
-					spanCollector.addSpan(rowIndex, i, spanData?.colspan || 1, spanData?.rowspan || 1)
-				}
-
-				const contentProps = calcContentProps(e)
+				const contentProps = calcContentProps(e.cell)
 
 				const cellContent = renderCell(record, columns, i, rowIndex)
 
-				const cellProps = calcCellProps(e, spanData, i, columns)
+				const cellProps = calcCellProps(e, i, columns)
 				return (
 					<td key={`${rowIndex}-${i}`} {...cellProps}>
 						<div {...contentProps}>{cellContent}</div>
@@ -384,67 +357,52 @@ const renderBody = () => {
 		data.value.length,
 		columnsInfo.value.leafColumns.length
 	)
-	const hasCols =
-		columnsInfo.value.leafColumns.length > 0 &&
-		columnsInfo.value.leafColumns[0].original.key !== TABLE_EMPTY_COL_SYMBOL
+	const cells = buildCommonRows(
+		columnsInfo.value.leafColumns,
+		data.value,
+		spanCollector,
+		props.spanMethod
+	)
 
-	return data.value.length && hasCols ? (
+	return data.value.length && hasCols.value ? (
 		data.value.map((e, i) => {
 			const rowKey = e[props.rowKey]
 			const hasExpand = expandedKeys.value?.includes(rowKey)
-			const isSummaryRow = (e as any)[TABLE_SUMMARY_ROW_SYMBOL]
-			const isBottomFixed =
-				isSummaryRow && props.summary?.placement !== 'start' && props.summary?.fixed
-			const isFirstBottomFixed =
-				isBottomFixed &&
-				(i === 0 ||
-					(data.value[i - 1] && !(data.value[i - 1] as any)[TABLE_SUMMARY_ROW_SYMBOL]))
 			const isNextBottomFixed =
-				!isSummaryRow &&
+				summaryRows.value.length &&
 				props.summary?.placement !== 'start' &&
-				props.summary?.fixed &&
-				i < data.value.length - 1 &&
-				data.value[i + 1] &&
-				(data.value[i + 1] as any)[TABLE_SUMMARY_ROW_SYMBOL]
+				i === data.value.length - 1
 
-			const expandRow = isSummaryRow ? null : hasExpand && !isNullish(e.expand) ? (
-				<tr
-					class={{
-						'px-table-expand-row': true,
-						'px-table-expand-row__next-fixed': isNextBottomFixed
-					}}
-				>
-					<td colspan={columnsInfo.value.leafColumns.length}>
-						{isFunction(e.expand) ? e.expand({ record: e, rowIndex: i }) : (e.expand ?? '')}
-					</td>
-				</tr>
-			) : null
+			const expandRow =
+				hasExpand && !isNullish(e.expand) ? (
+					<tr
+						class={{
+							'px-table-expand-row': true,
+							'px-table-expand-row__next-fixed': isNextBottomFixed
+						}}
+					>
+						<td colspan={columnsInfo.value.leafColumns.length}>
+							{isFunction(e.expand) ? e.expand({ record: e, rowIndex: i }) : (e.expand ?? '')}
+						</td>
+					</tr>
+				) : null
+
+			const rowIndex4Style =
+				summaryRows.value.length && props.summary?.placement === 'start'
+					? i + summaryRows.value.length
+					: i
 
 			const rows = [
 				<tr
 					key={i}
 					class={{
 						'px-table-row': true,
-						'px-table-row__even': i & 1,
-						'px-table-row__odd': (i & 1) === 0,
-						'px-table-row__sticky-top': isSummaryRow && props.summary?.placement === 'start',
-						'px-table-row__sticky-bottom': isBottomFixed,
-						'px-table-row__first-fixed': isFirstBottomFixed,
+						'px-table-row__even': rowIndex4Style & 1,
+						'px-table-row__odd': (rowIndex4Style & 1) === 0,
 						'px-table-row__next-fixed': expandRow ? false : isNextBottomFixed
 					}}
-					data-summary={isSummaryRow ? i : undefined}
-					style={{
-						top:
-							summaryInset.value[i]?.type === 'top'
-								? `${summaryInset.value[i].value}px`
-								: undefined,
-						bottom:
-							summaryInset.value[i]?.type === 'bottom'
-								? `${summaryInset.value[i].value}px`
-								: undefined
-					}}
 				>
-					{renderCol(e, i, spanCollector)}
+					{renderCol(e, i, cells[i])}
 				</tr>
 			]
 			if (expandRow) {
@@ -460,6 +418,55 @@ const renderBody = () => {
 		</tr>
 	)
 }
+
+const renderSummary = () => {
+	if (!summaryRows.value.length || !hasCols.value) {
+		return null
+	}
+	const spanCollector = new SpanCollector(
+		summaryRows.value.length,
+		columnsInfo.value.leafColumns.length
+	)
+	const cells = buildCommonRows(
+		columnsInfo.value.leafColumns,
+		data.value,
+		spanCollector,
+		props.summary?.spanMethod
+	)
+
+	return summaryRows.value.map((e, i) => {
+		const rowIndex4Style = props.summary?.placement !== 'start' ? i + data.value.length : i
+
+		return (
+			<tr
+				key={i}
+				class={{
+					'px-table-row': true,
+					'px-table-row__even': rowIndex4Style & 1,
+					'px-table-row__odd': (rowIndex4Style & 1) === 0,
+					'px-table-row__first-fixed': i === 0 && props.summary?.placement !== 'start'
+				}}
+			>
+				{renderCol(e, i, cells[i])}
+			</tr>
+		)
+	})
+}
+
+const scrollWidth = computed(() => {
+	const value = props.scroll?.x
+	if (isNullish(value)) {
+		return undefined
+	}
+	if (isNumber(value)) {
+		return `${value}px`
+	}
+	return value
+})
+
+const contentMinWidth = computed(() => {
+	return getMinWidthOfTable(columnsInfo.value.leafColumns)
+})
 
 const render = () => {
 	return (
@@ -479,8 +486,10 @@ const render = () => {
 			}}
 			ref={wrapperRef}
 		>
-			<div
-				class="px-table-clip"
+			<ScrollBar
+				class="px-table-scroll-area"
+				showScrollPadding={false}
+				variant="simple"
 				style={{
 					clipPath:
 						bordered.value.table && bordered.value.side && polygon.value
@@ -488,19 +497,47 @@ const render = () => {
 							: undefined
 				}}
 			>
-				<ScrollBar class="px-table-scroll-area" showScrollPadding={false} variant="simple">
-					<div class="px-table-wrapper">
-						<table class="px-table-inner">
-							<thead ref={tableHeadRef} class="px-table-head">
-								{renderHeader()}
-							</thead>
-							<tbody ref={tableBodyRef} class="px-table-body">
-								{renderBody()}
-							</tbody>
-						</table>
-					</div>
-				</ScrollBar>
-			</div>
+				<div
+					class="px-table-wrapper"
+					style={{
+						width: scrollWidth.value,
+						minWidth: `${contentMinWidth.value}px`
+					}}
+				>
+					<table class="px-table-inner">
+						<thead class="px-table-head">
+							{renderHeader()}
+							{hasCols.value &&
+								!!summaryRows.value.length &&
+								props.summary &&
+								props.summary.placement === 'start' &&
+								props.summary.fixed !== false &&
+								renderSummary()}
+						</thead>
+						<tbody class="px-table-body">
+							{hasCols.value &&
+								!!summaryRows.value.length &&
+								props.summary &&
+								props.summary.placement === 'start' &&
+								props.summary.fixed === false &&
+								renderSummary()}
+							{renderBody()}
+						</tbody>
+						{hasCols.value &&
+							!!summaryRows.value.length &&
+							props.summary?.placement !== 'start' && (
+								<tfoot
+									class={{
+										'px-table-foot': true,
+										'px-table-foot__fixed': props.summary?.fixed !== false
+									}}
+								>
+									{renderSummary()}
+								</tfoot>
+							)}
+					</table>
+				</div>
+			</ScrollBar>
 			<canvas class="px-table-canvas" ref={canvasRef}></canvas>
 		</div>
 	)

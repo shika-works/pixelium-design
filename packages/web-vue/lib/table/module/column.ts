@@ -1,6 +1,10 @@
-import { isUndefined } from 'parsnip-kit'
-import type { TableColumn } from '../type'
+import type { TableColumn, TableData, TableOptionsArg } from '../type'
 import { TABLE_EMPTY_COL_SYMBOL } from './share'
+import type { SpanCollector } from './cell-span'
+import { isFunction, isNumber } from 'parsnip-kit'
+
+const DEFAULT_WIDTH = 80
+const DEFAULT_MIN_WIDTH = 0
 
 export type HeaderCell = {
 	colspan: number
@@ -8,20 +12,16 @@ export type HeaderCell = {
 	depth: number
 	isLeaf: boolean
 	original: TableColumn
-	isLeftEdge: boolean
-	isRightEdge: boolean
 	fixed: 'none' | 'left' | 'right'
-	indexPath: number[]
-	leafIndex: number
-	nextRightFixed: boolean
-	firstRightFixed: boolean
+	presetWidth?: number
+	presetMinWidth?: number
+	left?: number
+	right?: number
 }
 
 export type BodyCell = {
 	original: TableColumn
 	fixed: 'none' | 'left' | 'right'
-	nextRightFixed: boolean
-	firstRightFixed: boolean
 }
 
 function getHeaderDepth(columns: TableColumn[]): number {
@@ -37,7 +37,7 @@ function getHeaderDepth(columns: TableColumn[]): number {
 	return maxDepth
 }
 
-export function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
+function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 	const leafColumns: BodyCell[] = []
 	const stack = [...columns]
 	const parentMap = new WeakMap<TableColumn, TableColumn>()
@@ -49,28 +49,19 @@ export function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 				parentMap.set(e, col)
 			})
 		} else {
+			let root = col
+			while (root && parentMap.has(root)) {
+				root = parentMap.get(root)!
+			}
+			const fixed = root.fixed || 'none'
 			leafColumns.push({
 				original: col,
-				fixed: parentMap.get(col)?.fixed || col.fixed || 'none',
-				nextRightFixed: false,
-				firstRightFixed: false
+				fixed: fixed
 			})
 		}
 	}
 
 	leafColumns.reverse()
-	leafColumns.forEach((e, i) => {
-		if (
-			e.fixed !== 'right' &&
-			i < leafColumns.length - 1 &&
-			leafColumns[i + 1].fixed === 'right'
-		) {
-			e.nextRightFixed = true
-		}
-		if (e.fixed === 'right' && (i === 0 || leafColumns[i - 1].fixed !== 'right')) {
-			e.firstRightFixed = true
-		}
-	})
 
 	const leafIndexMap = new WeakMap<TableColumn, number>()
 
@@ -83,97 +74,105 @@ export function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 	function buildCells(
 		cols: TableColumn[],
 		depth: number,
-		parentIndexPath: number[],
-		parentFixed?: 'left' | 'right' | 'none',
-		parentNextFixed?: boolean,
-		parentFirstRightFixed?: boolean,
-		parentIsLeftEdge = true,
-		parentIsRightEdge = true
-	): number {
+		parentFixed?: 'left' | 'right' | 'none'
+	) {
 		let spanCount = 0
+		let presetWidth = 0
+		let presetMinWidth = 0
 
 		for (let i = 0; i < cols.length; i++) {
 			const col = cols[i]
 			if (col.children && col.children.length > 0) {
-				const isLeftEdge = parentIsLeftEdge && i === 0
-				const isRightEdge = parentIsRightEdge && i === cols.length - 1
 				const fixed = parentFixed || col.fixed || 'none'
-				const indexPath = [...parentIndexPath, i]
-				const nextRightFixed = isUndefined(parentNextFixed)
-					? col.fixed !== 'right' && i + 1 < cols.length && cols[i + 1].fixed === 'right'
-					: parentNextFixed
-						? parentNextFixed && i === cols.length - 1
-						: false
-				const firstRightFixed = isUndefined(parentFirstRightFixed)
-					? col.fixed === 'right' && (i === 0 || cols[i - 1].fixed !== 'right')
-					: parentFirstRightFixed
-						? parentFirstRightFixed && i === 0
-						: false
-				const childSpan = buildCells(
-					col.children,
-					depth + 1,
-					indexPath,
-					fixed,
-					nextRightFixed,
-					firstRightFixed,
-					isLeftEdge,
-					isRightEdge
-				)
+				const {
+					spanCount: childSpan,
+					presetMinWidth: childMinWidth,
+					presetWidth: childWidth
+				} = buildCells(col.children, depth + 1, fixed)
 
-				headerRows[depth].push({
+				const width = Math.max(col.width ?? DEFAULT_WIDTH, childWidth)
+				const minWidth = Math.max(col.minWidth ?? DEFAULT_MIN_WIDTH, childMinWidth)
+
+				const headerCell = {
 					colspan: childSpan,
 					rowspan: 1,
 					isLeaf: false,
 					depth,
 					original: col,
-					isLeftEdge,
-					isRightEdge,
 					fixed,
-					indexPath,
-					leafIndex: leafIndexMap.get(col) ?? -1,
-					nextRightFixed,
-					firstRightFixed
-				})
+					presetMinWidth: minWidth,
+					presetWidth: fixed !== 'none' ? width : col.width ? width : undefined
+				}
+				headerRows[depth].push(headerCell)
 
 				spanCount += childSpan
+				presetWidth += width
+				presetMinWidth += minWidth
 			} else {
-				const isLeftEdge = parentIsLeftEdge && i === 0
-				const isRightEdge = parentIsRightEdge && i === cols.length - 1
 				const fixed = parentFixed || col.fixed || 'none'
-				const indexPath = [...parentIndexPath, i]
-				const nextRightFixed = isUndefined(parentNextFixed)
-					? col.fixed !== 'right' && i + 1 < cols.length && cols[i + 1].fixed === 'right'
-					: parentNextFixed
-						? parentNextFixed && i === cols.length - 1
-						: false
-				const firstRightFixed = isUndefined(parentFirstRightFixed)
-					? col.fixed === 'right' && (i === 0 || cols[i - 1].fixed !== 'right')
-					: parentFirstRightFixed
-						? parentFirstRightFixed && i === 0
-						: false
-				headerRows[depth].push({
+
+				const width = col.width ?? DEFAULT_WIDTH
+				const minWidth = col.minWidth ?? DEFAULT_MIN_WIDTH
+
+				const rowspan = maxDepth - depth
+
+				const headerCell = {
 					colspan: 1,
-					rowspan: maxDepth - depth,
+					rowspan,
 					isLeaf: true,
 					depth,
 					original: col,
-					isLeftEdge,
-					isRightEdge,
 					fixed,
-					indexPath,
-					leafIndex: leafIndexMap.get(col) ?? -1,
-					nextRightFixed,
-					firstRightFixed
-				})
+					presetMinWidth: minWidth,
+					presetWidth: fixed !== 'none' ? width : col.width ? width : undefined
+				}
+
+				for (let i = depth; i <= depth + rowspan - 1; i++) {
+					headerRows[i].push(headerCell)
+				}
 
 				spanCount += 1
+				presetWidth += width
+				presetMinWidth += minWidth
 			}
 		}
-
-		return spanCount
+		return {
+			spanCount,
+			presetWidth,
+			presetMinWidth
+		}
 	}
 
-	buildCells(columns, 0, [])
+	buildCells(columns, 0)
+	for (let i = 0; i < headerRows.length; i++) {
+		const row = headerRows[i]
+		for (let j = row.length - 1; j >= 0; j--) {
+			const cell = row[j]
+			if (cell.fixed === 'right') {
+				const pre = row[j + 1]
+				if (pre) {
+					cell.right = (pre.right || 0) + Math.max(pre.presetMinWidth!, pre.presetWidth!)
+				} else {
+					cell.right = 0
+				}
+			} else {
+				break
+			}
+		}
+		for (let j = 0; j < row.length; j++) {
+			const cell = row[j]
+			if (cell.fixed === 'left') {
+				const pre = row[j - 1]
+				if (pre) {
+					cell.left = (pre.left || 0) + Math.max(pre.presetMinWidth!, pre.presetWidth!)
+				} else {
+					cell.left = 0
+				}
+			} else {
+				break
+			}
+		}
+	}
 	return {
 		headerRows,
 		leafColumns
@@ -203,4 +202,148 @@ export function buildHeaderRows(columns: TableColumn[]) {
 
 export const EMPTY_COL = {
 	key: TABLE_EMPTY_COL_SYMBOL
+}
+
+export type BodyCellWrapper = {
+	cell: BodyCell
+	spanData: {
+		colspan?: number
+		rowspan?: number
+	}
+	originColIndex: number
+	originRowIndex: number
+	presetWidth?: number
+	presetMinWidth?: number
+	left?: number
+	right?: number
+}
+
+export const buildCommonRows = (
+	cellDataArr: BodyCell[],
+	data: TableData[],
+	spanCollector: SpanCollector,
+	spanMethod?: ({ rowIndex, colIndex, record, column }: TableOptionsArg) => void | {
+		colspan?: number
+		rowspan?: number
+	} | null
+) => {
+	const renderCells: BodyCellWrapper[][] = []
+	data.forEach((record, rowIndex) => {
+		cellDataArr.forEach((cell, colIndex) => {
+			const spanCovered = spanCollector.isInSpan(rowIndex, colIndex)
+			if (spanCovered) {
+				return
+			}
+			let spanData = isFunction(spanMethod)
+				? spanMethod({
+						rowIndex,
+						colIndex,
+						record,
+						column: cell.original
+					})
+				: null
+			if (spanData) {
+				spanData = {
+					colspan: spanData.colspan || 1,
+					rowspan: Math.min(spanData.rowspan || 1, data.length - rowIndex)
+				}
+				spanCollector.addSpan(
+					rowIndex,
+					colIndex,
+					spanData?.colspan || 1,
+					spanData?.rowspan || 1
+				)
+			} else {
+				spanData = {
+					colspan: 1,
+					rowspan: 1
+				}
+			}
+			const colspan = spanData.colspan!
+			let presetMinWidth = 0
+			let presetWidth = 0
+			for (let offset = 0; offset < colspan; offset++) {
+				const current = cellDataArr[offset + colIndex]
+				if (!current) {
+					break
+				}
+				presetMinWidth += current.original.minWidth ?? DEFAULT_MIN_WIDTH
+				presetWidth += current.original.width ?? DEFAULT_WIDTH
+			}
+			const cellWrapper = {
+				cell,
+				spanData,
+				presetMinWidth:
+					cell.fixed !== 'none'
+						? presetMinWidth
+						: isNumber(cell.original.minWidth)
+							? presetMinWidth
+							: undefined,
+				presetWidth:
+					cell.fixed !== 'none'
+						? presetWidth
+						: isNumber(cell.original.width)
+							? presetWidth
+							: undefined,
+				originColIndex: colIndex,
+				originRowIndex: rowIndex
+			}
+			const rowspan = spanData.rowspan!
+			for (let i = 0; i < rowspan; i++) {
+				for (let j = 0; j < colspan; j++) {
+					const row = renderCells[i + rowIndex] ?? (renderCells[i + rowIndex] = [])
+					row[j + colIndex] = cellWrapper
+				}
+			}
+		})
+	})
+
+	for (let i = 0; i < renderCells.length; i++) {
+		const row = renderCells[i]
+		for (let j = 0; j < row.length; j++) {
+			const cellWrapper = row[j]
+			const fixed = cellWrapper.cell.fixed === 'left'
+			if (!fixed) {
+				break
+			}
+			const pre = row[j - 1]
+			if (pre && pre !== cellWrapper) {
+				cellWrapper.left = (pre.left || 0) + Math.max(pre.presetWidth!, pre.presetMinWidth!)
+			} else {
+				cellWrapper.left = 0
+			}
+		}
+		for (let j = row.length - 1; j >= 0; j--) {
+			const cellWrapper = row[j]
+			const fixed = cellWrapper.cell.fixed === 'right'
+			if (!fixed) {
+				break
+			}
+			const pre = row[j - 1]
+			if ((pre && pre !== cellWrapper) || !pre) {
+				let k = j
+				while (row[k] === cellWrapper) {
+					k++
+				}
+				const post = row[k]
+				if (post) {
+					cellWrapper.right =
+						(post.right || 0) + Math.max(post.presetWidth!, post.presetMinWidth!)
+				} else {
+					cellWrapper.right = 0
+				}
+			}
+		}
+	}
+
+	return renderCells
+}
+
+export const getMinWidthOfTable = (cellRow: BodyCell[]) => {
+	return cellRow.reduce((pre, cur) => {
+		return (
+			pre +
+			Math.max(cur.original.width ?? DEFAULT_WIDTH, cur.original.minWidth ?? DEFAULT_MIN_WIDTH)
+		)
+	}, 0)
 }

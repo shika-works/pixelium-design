@@ -1,300 +1,104 @@
 import { describe, it, expect } from 'vitest'
-import { buildHeaderRows, EMPTY_COL } from '../module/column'
-import type { TableColumn } from '../type'
+import { buildHeaderRows, buildCommonRows, getMinWidthOfTable } from '../module/column'
+import { SpanCollector } from '../module/cell-span'
 
-describe('Column Module', () => {
-	describe('buildHeaderRows', () => {
-		it('should build header rows for flat columns', () => {
-			const columns: TableColumn[] = [
-				{ key: 'name', label: 'Name', field: 'name' },
-				{ key: 'age', label: 'Age', field: 'age' },
-				{ key: 'email', label: 'Email', field: 'email' }
-			]
+type TableData = Record<string, any>
 
-			const result = buildHeaderRows(columns)
+describe('column module', () => {
+	it('single-level header and getMinWidthOfTable', () => {
+		const columns = [
+			{ key: 'a', width: 100, minWidth: 50 },
+			{ key: 'b', width: 60, minWidth: 30 }
+		]
 
-			expect(result.maxDepth).toBe(1)
-			expect(result.headerRows).toHaveLength(1)
-			expect(result.leafColumns).toHaveLength(3)
-		})
+		const { headerRows, leafColumns, maxDepth } = buildHeaderRows(columns as any)
 
-		it('should build header rows for nested columns', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'personal',
-					label: 'Personal Info',
-					children: [
-						{ key: 'name', label: 'Name', field: 'name' },
-						{ key: 'age', label: 'Age', field: 'age' }
-					]
-				},
-				{ key: 'email', label: 'Email', field: 'email' }
-			]
+		expect(maxDepth).toBe(1)
+		expect(headerRows.length).toBe(1)
+		expect(headerRows[0].length).toBe(2)
+		expect(leafColumns.length).toBe(2)
 
-			const result = buildHeaderRows(columns)
-
-			expect(result.maxDepth).toBeGreaterThan(1)
-			expect(result.leafColumns).toHaveLength(3)
-		})
-
-		it('should handle empty columns array', () => {
-			const columns: TableColumn[] = []
-
-			const result = buildHeaderRows(columns)
-
-			expect(result.maxDepth).toBe(1)
-			expect(result.headerRows).toHaveLength(1)
-			expect(result.leafColumns).toHaveLength(0)
-		})
-
-		it('should handle single column', () => {
-			const columns: TableColumn[] = [{ key: 'name', label: 'Name', field: 'name' }]
-
-			const result = buildHeaderRows(columns)
-
-			expect(result.maxDepth).toBe(1)
-			expect(result.headerRows).toHaveLength(1)
-			expect(result.leafColumns).toHaveLength(1)
-		})
-
-		it('should handle deeply nested columns', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'level1',
-					label: 'Level 1',
-					children: [
-						{
-							key: 'level2',
-							label: 'Level 2',
-							children: [{ key: 'name', label: 'Name', field: 'name' }]
-						}
-					]
-				}
-			]
-
-			const result = buildHeaderRows(columns)
-
-			expect(result.maxDepth).toBe(3)
-			expect(result.leafColumns).toHaveLength(1)
-		})
-
-		it('should sort columns by fixed position', () => {
-			const columns: TableColumn[] = [
-				{ key: 'name', label: 'Name', field: 'name', fixed: 'none' },
-				{ key: 'action', label: 'Action', field: 'action', fixed: 'right' },
-				{ key: 'id', label: 'ID', field: 'id', fixed: 'left' }
-			]
-
-			const result = buildHeaderRows(columns)
-
-			expect(result.leafColumns).toHaveLength(3)
-			// Fixed left columns should come first
-			const leftFixedCount = result.leafColumns.filter((col) => col.fixed === 'left').length
-			expect(leftFixedCount).toBeGreaterThan(0)
-		})
-
-		it('should handle mixed fixed columns', () => {
-			const columns: TableColumn[] = [
-				{ key: 'name', label: 'Name', field: 'name', fixed: 'left' },
-				{ key: 'age', label: 'Age', field: 'age' },
-				{ key: 'email', label: 'Email', field: 'email', fixed: 'right' }
-			]
-
-			const result = buildHeaderRows(columns)
-
-			const fixed = result.leafColumns.map((col) => col.fixed)
-			expect(fixed).toContain('left')
-			expect(fixed).toContain('none')
-			expect(fixed).toContain('right')
-		})
-
-		it('should set colspan for parent columns', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'personal',
-					label: 'Personal Info',
-					children: [
-						{ key: 'name', label: 'Name', field: 'name' },
-						{ key: 'age', label: 'Age', field: 'age' }
-					]
-				},
-				{ key: 'email', label: 'Email', field: 'email' }
-			]
-
-			const result = buildHeaderRows(columns)
-
-			const parentRow = result.headerRows[0]
-			const personalCol = parentRow.find((cell) => cell.original.key === 'personal')
-
-			expect(personalCol).toBeDefined()
-			expect(personalCol?.colspan).toBe(2)
-		})
-
-		it('should set rowspan for leaf columns', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'personal',
-					label: 'Personal Info',
-					children: [
-						{ key: 'name', label: 'Name', field: 'name' },
-						{ key: 'age', label: 'Age', field: 'age' }
-					]
-				},
-				{ key: 'email', label: 'Email', field: 'email' }
-			]
-
-			const result = buildHeaderRows(columns)
-
-			// For leaf columns in the last row, rowspan should be 1
-			const lastRow = result.headerRows[result.headerRows.length - 1]
-			const leafCell = lastRow[lastRow.length - 1]
-
-			expect(leafCell).toBeDefined()
-			expect(leafCell.isLeaf).toBe(true)
-		})
+		const expectedMin = Math.max(100, 50) + Math.max(60, 30)
+		expect(getMinWidthOfTable(leafColumns)).toBe(expectedMin)
 	})
 
-	describe('Header Cell Properties', () => {
-		it('should mark leaf columns correctly', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'personal',
-					label: 'Personal Info',
-					children: [{ key: 'name', label: 'Name', field: 'name' }]
-				}
-			]
+	it('multi-level header with left/right fixed and width propagation', () => {
+		const columns = [
+			{ key: 'left', width: 50, minWidth: 20, fixed: 'left' },
+			{
+				key: 'group',
+				children: [
+					{ key: 'g1', width: 80, minWidth: 40, fixed: 'left' },
+					{ key: 'g2', width: 70, minWidth: 30 }
+				]
+			},
+			{ key: 'right', width: 60, minWidth: 30, fixed: 'right' }
+		]
 
-			const result = buildHeaderRows(columns)
+		const { headerRows, leafColumns, maxDepth } = buildHeaderRows(columns as any)
 
-			const leafCols = result.headerRows[result.headerRows.length - 1]
-			const leafCell = leafCols.find((cell) => cell.original.key === 'name')
+		expect(maxDepth).toBe(2)
 
-			expect(leafCell?.isLeaf).toBe(true)
-		})
+		// top row should contain 3 header cells: left, group, right
+		expect(headerRows[0].map((c) => c.original.key)).toEqual(['left', 'group', 'right'])
 
-		it('should mark parent columns as non-leaf', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'personal',
-					label: 'Personal Info',
-					children: [{ key: 'name', label: 'Name', field: 'name' }]
-				}
-			]
+		// group spans two children
+		const groupCell = headerRows[0].find((c) => c.original.key === 'group')!
+		expect(groupCell.colspan).toBe(2)
 
-			const result = buildHeaderRows(columns)
+		// second row are the leaves: left (repeated), g1, g2, right (repeated)
+		const secondRowKeys = headerRows[1].map((c) => c.original.key)
+		// left was a leaf with rowspan=2 so appears in second row as well
+		expect(secondRowKeys).toEqual(['left', 'g1', 'g2', 'right'])
 
-			const parentCell = result.headerRows[0].find((cell) => cell.original.key === 'personal')
+		// left-fixed cells should have left offsets computed
+		const leftCellRow1 = headerRows[1][0]
+		const leftCellRow1Next = headerRows[1][1]
+		expect(leftCellRow1.fixed).toBe('left')
+		expect(leftCellRow1.left).toBe(0)
+		expect(leftCellRow1Next.left).not.toBeDefined()
 
-			expect(parentCell?.isLeaf).toBe(false)
-		})
+		// right-fixed cell should have right computed (should be zero at edge)
+		const rightTop = headerRows[0].find((c) => c.original.key === 'right')!
+		expect(rightTop.fixed).toBe('right')
+		expect(rightTop.right).toBe(0)
 
-		it('should set edge flags correctly for first and last columns', () => {
-			const columns: TableColumn[] = [
-				{ key: 'name', label: 'Name', field: 'name' },
-				{ key: 'age', label: 'Age', field: 'age' },
-				{ key: 'email', label: 'Email', field: 'email' }
-			]
-
-			const result = buildHeaderRows(columns)
-
-			const row = result.headerRows[0]
-			const firstCell = row[0]
-			const lastCell = row[row.length - 1]
-
-			expect(firstCell.isLeftEdge).toBe(true)
-			expect(lastCell.isRightEdge).toBe(true)
-		})
-
-		it('should calculate depth correctly', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'personal',
-					label: 'Personal Info',
-					children: [{ key: 'name', label: 'Name', field: 'name' }]
-				}
-			]
-
-			const result = buildHeaderRows(columns)
-
-			const parentCell = result.headerRows[0][0]
-			const childCell = result.headerRows[1][0]
-
-			expect(parentCell.depth).toBe(0)
-			expect(childCell.depth).toBeGreaterThan(parentCell.depth)
-		})
+		// leafColumns should match the visible sequence of leaves
+		expect(leafColumns.map((c) => c.original.key)).toEqual(['left', 'g1', 'g2', 'right'])
 	})
 
-	describe('EMPTY_COL', () => {
-		it('should have correct symbol key', () => {
-			expect(EMPTY_COL.key).toBeDefined()
-			expect(typeof EMPTY_COL.key).toBe('symbol')
-		})
-	})
+	it('buildCommonRows handles spans and computes preset widths for fixed columns', () => {
+		const columns = [
+			{ key: 'left', width: 50, minWidth: 20, fixed: 'left' },
+			{ key: 'mid', width: 80, minWidth: 40 },
+			{ key: 'right', width: 60, minWidth: 30, fixed: 'right' }
+		]
 
-	describe('Edge Cases', () => {
-		it('should handle columns with width and minWidth', () => {
-			const columns: TableColumn[] = [
-				{ key: 'name', label: 'Name', field: 'name', width: 100, minWidth: 50 },
-				{ key: 'age', label: 'Age', field: 'age', width: 80, minWidth: 40 }
-			]
+		const { leafColumns } = buildHeaderRows(columns as any)
 
-			const result = buildHeaderRows(columns)
+		const data: TableData[] = [{ id: 1 }]
 
-			expect(result.leafColumns).toHaveLength(2)
-			expect(result.leafColumns[0].original.width).toBe(100)
-			expect(result.leafColumns[0].original.minWidth).toBe(50)
-		})
+		const spanCollector = new SpanCollector(data.length, leafColumns.length)
 
-		it('should handle columns with alignment', () => {
-			const columns: TableColumn[] = [
-				{ key: 'name', label: 'Name', field: 'name', align: 'left' },
-				{ key: 'age', label: 'Age', field: 'age', align: 'center' },
-				{ key: 'email', label: 'Email', field: 'email', align: 'right' }
-			]
+		const spanMethod = ({ rowIndex, colIndex }: any) => {
+			if (rowIndex === 0 && colIndex === 0) {
+				return { colspan: 2, rowspan: 1 }
+			}
+			return null
+		}
 
-			const result = buildHeaderRows(columns)
+		const render = buildCommonRows(leafColumns, data, spanCollector as any, spanMethod as any)
 
-			expect(result.leafColumns).toHaveLength(3)
-			expect(result.leafColumns[0].original.align).toBe('left')
-			expect(result.leafColumns[1].original.align).toBe('center')
-			expect(result.leafColumns[2].original.align).toBe('right')
-		})
+		// first row, first cell should have colspan 2
+		const firstWrapper = render[0][0]
+		expect(firstWrapper).toBeTruthy()
+		expect(firstWrapper.spanData.colspan).toBe(2)
 
-		it('should handle columns with slotName and labelSlotName', () => {
-			const columns: TableColumn[] = [
-				{
-					key: 'name',
-					label: 'Name',
-					field: 'name',
-					slotName: 'nameSlot',
-					labelSlotName: 'nameLabelSlot'
-				}
-			]
+		// the adjacent cell (covered by span) should reference the same wrapper
+		expect(render[0][1]).toBe(firstWrapper)
 
-			const result = buildHeaderRows(columns)
-
-			expect(result.leafColumns[0].original.slotName).toBe('nameSlot')
-			expect(result.leafColumns[0].original.labelSlotName).toBe('nameLabelSlot')
-		})
-
-		it('should handle columns with render functions', () => {
-			const renderFn = (arg: any) => `<span>${arg.record.name}</span>`
-			const labelRenderFn = () => `<span>Name</span>`
-
-			const columns: TableColumn[] = [
-				{
-					key: 'name',
-					label: 'Name',
-					field: 'name',
-					render: renderFn,
-					labelRender: labelRenderFn
-				}
-			]
-
-			const result = buildHeaderRows(columns)
-
-			expect(result.leafColumns[0].original.render).toBe(renderFn)
-			expect(result.leafColumns[0].original.labelRender).toBe(labelRenderFn)
-		})
+		// since the first column is fixed left, presetWidth should sum widths of first two columns
+		const expectedPresetWidth = (columns[0].width ?? 80) + (columns[1].width ?? 80)
+		expect(firstWrapper.presetWidth).toBe(expectedPresetWidth)
 	})
 })

@@ -15,6 +15,7 @@ export type TableProps = {
 		rowspan?: number
 	}
 	rowKey?: string
+	scroll?: { x?: number | string }
 	selection?: TableSelection
 	selectedKeys?: any[] | null
 	defaultSelectedKeys?: any[] | null
@@ -119,6 +120,10 @@ export type TableSummary = {
 	placement?: 'end' | 'start'
 	summaryText?: string
 	fixed?: boolean
+	spanMethod?: (options: TableOptionsArg) => void | {
+		colspan?: number
+		rowspan?: number
+	}
 }
 
 export interface TableFilterOptions<T = any> extends Option<T> {
