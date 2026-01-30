@@ -290,7 +290,7 @@
 	}
 	&-cell {
 		padding: @px-interval-1 @px-interval-2;
-		min-height: 32px;
+		min-height: @px-interval-6;
 		box-sizing: border-box;
 		&.@{prefix}-cell__icon {
 			display: flex;
@@ -307,7 +307,10 @@
 		pointer-events: none;
 	}
 	&-scroll-area {
-		border: var(--px-bit) transparent solid;
+		border-style: solid;
+		border-color: transparent;
+		border-width: 0;
+
 		width: 100%;
 		height: 100%;
 		max-height: inherit;
@@ -318,12 +321,12 @@
 		position: relative;
 	}
 	&__bordered {
-		& .@{prefix}-clip {
+		& .@{prefix}-scroll-area {
 			border-top-width: @border-width;
 			border-bottom-width: @border-width;
 		}
 		&.@{prefix}__side-bordered {
-			& .@{prefix}-clip {
+			& .@{prefix}-scroll-area {
 				border-left-width: @border-width;
 				border-right-width: @border-width;
 			}
