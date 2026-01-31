@@ -149,6 +149,56 @@ describe('Selection Module', () => {
 
 			expect(Array.isArray(selectedKeys.value)).toBe(true)
 		})
+
+		it('should generate selectionConfig correctly for boolean selection', () => {
+			const props = getProps({
+				data: mockData,
+				columns: [],
+				selection: true,
+				rowKey: 'key'
+			})
+
+			const emits = vi.fn()
+
+			const [, , selectionConfig] = useSelection(props, emits as any)
+
+			expect(selectionConfig.value.multiple).toBe(false)
+			expect(selectionConfig.value.showSelectAll).toBe(true)
+			expect(selectionConfig.value.label).toBeUndefined()
+			expect(selectionConfig.value.width).toBeUndefined()
+			expect(selectionConfig.value.minWidth).toBeUndefined()
+			expect(selectionConfig.value.fixed).toBe(false)
+			expect(selectionConfig.value.onlyCurrent).toBe(false)
+		})
+
+		it('should generate selectionConfig correctly for object selection', () => {
+			const props = getProps({
+				data: mockData,
+				columns: [],
+				selection: {
+					multiple: false,
+					showSelectAll: true,
+					label: 'Sel',
+					width: 60,
+					minWidth: 20,
+					fixed: true,
+					onlyCurrent: true
+				},
+				rowKey: 'key'
+			})
+
+			const emits = vi.fn()
+
+			const [, , selectionConfig] = useSelection(props, emits as any)
+
+			expect(selectionConfig.value.multiple).toBe(false)
+			expect(selectionConfig.value.showSelectAll).toBe(true)
+			expect(selectionConfig.value.label).toBe('Sel')
+			expect(selectionConfig.value.width).toBe(60)
+			expect(selectionConfig.value.minWidth).toBe(20)
+			expect(selectionConfig.value.fixed).toBe(true)
+			expect(selectionConfig.value.onlyCurrent).toBe(true)
+		})
 	})
 
 	describe('genSelectionCol', () => {

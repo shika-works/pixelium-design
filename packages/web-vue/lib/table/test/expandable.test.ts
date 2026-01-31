@@ -47,7 +47,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [expandedKeys, genExpandableCol] = useExpandable(props, emits as any)
+			const [expandedKeys, genExpandableCol] = useExpandable(props, emits as any, {})
 
 			expect(expandedKeys).toBeDefined()
 			expect(typeof genExpandableCol).toBe('function')
@@ -63,9 +63,53 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [expandedKeys] = useExpandable(props, emits as any)
+			const [expandedKeys] = useExpandable(props, emits as any, {})
 
 			expect(expandedKeys.value).toEqual([])
+		})
+
+		it('should generate expandableConfig correctly for boolean expandable', () => {
+			const props = getProps({
+				data: mockData,
+				columns: [],
+				expandable: true,
+				rowKey: 'key'
+			})
+
+			const emits = vi.fn()
+
+			const [, , expandableConfig] = useExpandable(props, emits as any, {})
+
+			expect(expandableConfig.value.defaultExpandAllRows).toBe(false)
+			expect(expandableConfig.value.label).toBeUndefined()
+			expect(expandableConfig.value.width).toBeUndefined()
+			expect(expandableConfig.value.minWidth).toBeUndefined()
+			expect(expandableConfig.value.fixed).toBe(false)
+		})
+
+		it('should generate expandableConfig correctly for object expandable', () => {
+			const props = getProps({
+				data: mockData,
+				columns: [],
+				expandable: {
+					defaultExpandAllRows: true,
+					label: 'Exp',
+					width: 50,
+					minWidth: 30,
+					fixed: true
+				},
+				rowKey: 'key'
+			})
+
+			const emits = vi.fn()
+
+			const [, , expandableConfig] = useExpandable(props, emits as any, {})
+
+			expect(expandableConfig.value.defaultExpandAllRows).toBe(true)
+			expect(expandableConfig.value.label).toBe('Exp')
+			expect(expandableConfig.value.width).toBe(50)
+			expect(expandableConfig.value.minWidth).toBe(30)
+			expect(expandableConfig.value.fixed).toBe(true)
 		})
 
 		it('should initialize with defaultExpandedKeys', () => {
@@ -79,7 +123,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [expandedKeys] = useExpandable(props, emits as any)
+			const [expandedKeys] = useExpandable(props, emits as any, {})
 
 			expect(expandedKeys.value).toContain(1)
 			expect(expandedKeys.value).toContain(2)
@@ -96,7 +140,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [expandedKeys] = useExpandable(props, emits as any)
+			const [expandedKeys] = useExpandable(props, emits as any, {})
 
 			expect(expandedKeys.value).toEqual([])
 		})
@@ -111,7 +155,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [expandedKeys] = useExpandable(props, emits as any)
+			const [expandedKeys] = useExpandable(props, emits as any, {})
 
 			// Should expand rows with expand property
 			const rowsWithExpand = mockData.filter((d) => d.expand !== undefined)
@@ -132,7 +176,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genExpandableCol] = useExpandable(props, emits as any)
+			const [, genExpandableCol] = useExpandable(props, emits as any, {})
 			const expandableCol = genExpandableCol({ width: 40 }, props.columns)
 
 			expect(expandableCol).toBeDefined()
@@ -150,7 +194,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genExpandableCol] = useExpandable(props, emits as any)
+			const [, genExpandableCol] = useExpandable(props, emits as any, {})
 			const expandableCol = genExpandableCol({}, props.columns)
 
 			expect(expandableCol.width).toBeDefined()
@@ -167,7 +211,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genExpandableCol] = useExpandable(props, emits as any)
+			const [, genExpandableCol] = useExpandable(props, emits as any, {})
 			const expandableCol = genExpandableCol({ width: 40 }, props.columns)
 
 			expect(['left', 'right', 'none']).toContain(expandableCol.fixed)
@@ -183,7 +227,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genExpandableCol] = useExpandable(props, emits as any)
+			const [, genExpandableCol] = useExpandable(props, emits as any, {})
 			const expandableCol = genExpandableCol({ width: 40 }, props.columns)
 
 			expect(expandableCol.fixed).toBe('left')
@@ -199,7 +243,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genExpandableCol] = useExpandable(props, emits as any)
+			const [, genExpandableCol] = useExpandable(props, emits as any, {})
 			const expandableCol = genExpandableCol({ width: 40, minWidth: 35 }, props.columns!)
 
 			expect(expandableCol.width).toBe(40)
@@ -220,7 +264,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [expandedKeys] = useExpandable(props as any, emits as any)
+			const [expandedKeys] = useExpandable(props as any, emits as any, {})
 
 			expect(expandedKeys.value).toContain(1)
 
@@ -246,7 +290,7 @@ describe('Expandable Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genExpandableCol] = useExpandable(props, emits as any)
+			const [, genExpandableCol] = useExpandable(props, emits as any, {})
 			const expandableCol = genExpandableCol({ width: 40 }, props.columns)
 
 			expect(expandableCol.fixed).toBe('none')
