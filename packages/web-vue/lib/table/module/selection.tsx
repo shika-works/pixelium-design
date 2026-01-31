@@ -1,4 +1,11 @@
-import { difference, intersection, isNullish, symmetricDifference, union } from 'parsnip-kit'
+import {
+	difference,
+	intersection,
+	isNullish,
+	isObject,
+	symmetricDifference,
+	union
+} from 'parsnip-kit'
 import { useControlledMode } from '../../share/hook/use-controlled-mode'
 import type { LooseRequired } from '../../share/type'
 import type { TableColumn, TableData, TableProps, TableSelection } from '../type'
@@ -25,13 +32,26 @@ export const useSelection = (
 		((evt: 'update:selectedKeys', value: any[]) => void) &
 		((evt: 'selectedChange', value: any[]) => void)
 ) => {
+	const selectionConfig = computed<TableSelection>(() => {
+		const selection = props.selection
+		const objectType = isObject(selection)
+		return {
+			multiple: (objectType && selection.multiple) || false,
+			showSelectAll: objectType ? (selection.showSelectAll !== false ? true : false) : true,
+			label: objectType ? selection.label : undefined,
+			width: objectType ? selection.width : undefined,
+			minWidth: objectType ? selection.minWidth : undefined,
+			fixed: objectType ? !!selection.fixed : false,
+			onlyCurrent: objectType ? !!selection.onlyCurrent : false
+		}
+	})
 	const [selectedKeys, updateSelectedKeys] = useControlledMode('selectedKeys', props, emits, {
 		defaultField: 'defaultSelectedKeys',
 		transform: (arg: null | undefined | any[]) => {
 			if (isNullish(arg)) {
 				return []
 			}
-			if (props.selection?.multiple) {
+			if (selectionConfig.value.multiple) {
 				return [...arg]
 			} else {
 				return arg.slice(0, 1)
@@ -39,7 +59,7 @@ export const useSelection = (
 		}
 	})
 	const selectionType = computed(() => {
-		return props.selection?.multiple
+		return selectionConfig.value.multiple
 	})
 	watch(selectionType, (val, old) => {
 		if (old === true && val !== true && props.selection) {
@@ -49,7 +69,7 @@ export const useSelection = (
 	watch(
 		() => props.data,
 		() => {
-			if (!props.selection?.onlyCurrent) {
+			if (!selectionConfig.value.onlyCurrent) {
 				return
 			}
 			const rowKeys = (props.data || []).map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
@@ -103,18 +123,11 @@ export const useSelection = (
 			.filter((e) => !e.disabled)
 			.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
 		let curSelectedKeys = [...(selectedKeys.value || [])]
+		// ignore disabled rows
 		if (!value) {
-			if (props.selection?.onlyCurrent) {
-				curSelectedKeys.length = 0
-			} else {
-				curSelectedKeys = difference(curSelectedKeys, rowKeys)
-			}
+			curSelectedKeys = difference(curSelectedKeys, rowKeys)
 		} else {
-			if (props.selection?.onlyCurrent) {
-				curSelectedKeys = rowKeys
-			} else {
-				curSelectedKeys = union(curSelectedKeys, rowKeys)
-			}
+			curSelectedKeys = union(curSelectedKeys, rowKeys)
 		}
 		await updateSelectedKeys(curSelectedKeys)
 		emits('selectAll', value, event)
@@ -156,14 +169,15 @@ export const useSelection = (
 			},
 			labelRender: () => {
 				const curSelectedKeys = selectedKeys.value || []
-				const rowKeys = (props.data || []).map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
-				const selected = intersection(curSelectedKeys, rowKeys).length > 0
+				const rowKeys = (props.data || [])
+					.filter((e) => !e.disabled)
+					.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
 				const selectedAll = symmetricDifference(curSelectedKeys, rowKeys).length === 0
-				return selection.multiple ? (
+				return selection.multiple && selection.showSelectAll ? (
 					<Fragment>
 						{
 							<Checkbox
-								modelValue={selected}
+								modelValue={selectedAll}
 								indeterminate={!selectedAll && !!curSelectedKeys.length}
 								size="small"
 								onInput={(value, event) => selectAllHandler(value, event)}
@@ -180,5 +194,5 @@ export const useSelection = (
 			}
 		}
 	}
-	return [selectedKeys, genSelectionCol] as const
+	return [selectedKeys, genSelectionCol, selectionConfig] as const
 }

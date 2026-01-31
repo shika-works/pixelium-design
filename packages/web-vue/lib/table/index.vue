@@ -8,7 +8,7 @@ import {
 	withScopeId
 } from 'vue'
 import type { TableData, TableEvents, TableProps } from './type'
-import { isBoolean, isFunction, isNullish, isNumber } from 'parsnip-kit'
+import { isBoolean, isFunction, isNullish, isNumber, isString } from 'parsnip-kit'
 import Empty from '../empty/index.vue'
 import { useDrawPixel } from './module/draw'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -51,8 +51,10 @@ const props = withDefaults(defineProps<TableProps>(), {
 })
 
 const emits = defineEmits<TableEvents>()
-const [_, genSelectionCol] = useSelection(props, emits)
-const [expandedKeys, genExpandableCol] = useExpandable(props, emits)
+const slots = useSlots()
+
+const [_, genSelectionCol, selectionConfig] = useSelection(props, emits)
+const [expandedKeys, genExpandableCol, expandableConfig] = useExpandable(props, emits, slots)
 const genSummaryRow = useSummary()
 
 const bordered = computed(() => {
@@ -78,7 +80,6 @@ const bordered = computed(() => {
 const pixelSize = usePixelSize()
 
 const instance = getCurrentInstance()
-const slots = useSlots()
 
 const columnsInfo = computed(() => {
 	const cols = [...props.columns]
@@ -87,11 +88,11 @@ const columnsInfo = computed(() => {
 		cols.push(EMPTY_COL)
 	} else {
 		if (selection) {
-			cols.unshift(genSelectionCol(selection, cols))
+			cols.unshift(genSelectionCol(selectionConfig.value, cols))
 		}
 		const expandable = props.expandable
 		if (expandable) {
-			cols.unshift(genExpandableCol(expandable, cols))
+			cols.unshift(genExpandableCol(expandableConfig.value, cols))
 		}
 	}
 	return buildHeaderRows(cols)
@@ -373,8 +374,8 @@ const renderBody = () => {
 				props.summary?.placement !== 'start' &&
 				i === data.value.length - 1
 
-			const expandRow =
-				hasExpand && !isNullish(e.expand) ? (
+			const expandRow = hasExpand ? (
+				isString(e.expand) || isFunction(e.expand) ? (
 					<tr
 						class={{
 							'px-table-expand-row': true,
@@ -385,7 +386,19 @@ const renderBody = () => {
 							{isFunction(e.expand) ? e.expand({ record: e, rowIndex: i }) : (e.expand ?? '')}
 						</td>
 					</tr>
+				) : slots.expand && e.expand !== false ? (
+					<tr
+						class={{
+							'px-table-expand-row': true,
+							'px-table-expand-row__next-fixed': isNextBottomFixed
+						}}
+					>
+						<td colspan={columnsInfo.value.leafColumns.length}>
+							{slots.expand({ record: e, rowIndex: i })}
+						</td>
+					</tr>
 				) : null
+			) : null
 
 			const rowIndex4Style =
 				summaryRows.value.length && props.summary?.placement === 'start'

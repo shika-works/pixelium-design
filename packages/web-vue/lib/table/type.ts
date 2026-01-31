@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import type { EmitEvent, RestAttrs, ValidContent } from '../share/type'
+import type { EmitEvent, RestAttrs } from '../share/type'
 import type { JSX } from 'vue/jsx-runtime'
 import type { Option } from '../share/type'
 import type { PopoverEvents, PopoverProps } from '../popover/type'
@@ -16,10 +16,10 @@ export type TableProps = {
 	}
 	rowKey?: string
 	scroll?: { x?: number | string }
-	selection?: TableSelection
+	selection?: boolean | TableSelection
 	selectedKeys?: any[] | null
 	defaultSelectedKeys?: any[] | null
-	expandable?: TableExpandable
+	expandable?: boolean | TableExpandable
 	expandedKeys?: any[] | null
 	defaultExpandedKeys?: any[] | null
 	summary?: TableSummary
@@ -61,7 +61,12 @@ export type TableEvents = {
 }
 
 export type TableData = {
-	expand?: ValidContent
+	expand?:
+		| boolean
+		| string
+		| ((
+				arg: Pick<TableOptionsArg, 'record' | 'rowIndex'>
+		  ) => VNode | string | JSX.Element | null | void)
 	disabled?: boolean
 	[x: string | number | symbol]: any
 }

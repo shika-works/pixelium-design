@@ -1,4 +1,4 @@
-import { isNullish } from 'parsnip-kit'
+import { isFunction, isNullish, isObject, isString } from 'parsnip-kit'
 import { useControlledMode } from '../../share/hook/use-controlled-mode'
 import type { LooseRequired } from '../../share/type'
 import type { TableColumn, TableData, TableExpandable, TableProps } from '../type'
@@ -10,6 +10,7 @@ import {
 
 import MinusIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/minus.svg'
 import PlusIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/plus.svg'
+import { computed } from 'vue'
 
 const Minus = MinusIcon as any
 const Plus = PlusIcon as any
@@ -24,8 +25,20 @@ export const useExpandable = (
 		event: MouseEvent
 	) => void) &
 		((evt: 'expandedChange', value: any[]) => void) &
-		((evt: 'update:expandedKeys', value: any[]) => void)
+		((evt: 'update:expandedKeys', value: any[]) => void),
+	slots: Record<string, Function | undefined>
 ) => {
+	const expandableConfig = computed<TableExpandable>(() => {
+		const expandable = props.expandable
+		const objectType = isObject(expandable)
+		return {
+			defaultExpandAllRows: (objectType && expandable.defaultExpandAllRows) || false,
+			label: objectType ? expandable.label : undefined,
+			width: objectType ? expandable.width : undefined,
+			minWidth: objectType ? expandable.minWidth : undefined,
+			fixed: objectType ? !!expandable.fixed : false
+		}
+	})
 	const [expandedKeys, updateExpandedKeys] = useControlledMode('expandedKeys', props, emits, {
 		transform(arg: undefined | null | any[]) {
 			return arg ? [...arg] : []
@@ -33,7 +46,7 @@ export const useExpandable = (
 		defaultField: 'defaultExpandedKeys'
 	})
 
-	if (props.expandable?.defaultExpandAllRows) {
+	if (expandableConfig.value.defaultExpandAllRows) {
 		updateExpandedKeys(
 			(props.data || [])
 				.filter((e) => !isNullish(e.expand))
@@ -78,7 +91,10 @@ export const useExpandable = (
 			},
 			render: ({ record }: { record: TableData }) => {
 				const key = record[props.rowKey || DEFAULT_ROW_KEY]
-				const hasExpand = !isNullish(record.expand)
+				const hasExpand =
+					isString(record.expand) ||
+					isFunction(record.expand) ||
+					(slots.expand && record.expand !== false)
 				const included = expandedKeys.value?.includes(key)
 				return hasExpand ? (
 					<div
@@ -99,5 +115,5 @@ export const useExpandable = (
 			label: expandable.label ?? ''
 		}
 	}
-	return [expandedKeys, genExpandableCol] as const
+	return [expandedKeys, genExpandableCol, expandableConfig] as const
 }
