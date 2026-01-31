@@ -103,7 +103,7 @@ export const useSelection = (
 		}
 		await updateSelectedKeys(curSelectedKeys)
 		emits('select', value, key, record, event)
-		emits('selectedChange', [...(selectedKeys.value || [])])
+		emits('selectedChange', curSelectedKeys)
 	}
 
 	const radioSelectHandler = async (
@@ -115,7 +115,7 @@ export const useSelection = (
 		const curSelectedKeys = [key]
 		await updateSelectedKeys(curSelectedKeys)
 		emits('select', value, key, record, event)
-		emits('selectedChange', [...(selectedKeys.value || [])])
+		emits('selectedChange', curSelectedKeys)
 	}
 
 	const selectAllHandler = async (value: boolean, event: InputEvent) => {
@@ -131,7 +131,7 @@ export const useSelection = (
 		}
 		await updateSelectedKeys(curSelectedKeys)
 		emits('selectAll', value, event)
-		emits('selectedChange', [...(selectedKeys.value || [])])
+		emits('selectedChange', curSelectedKeys)
 	}
 
 	const genSelectionCol = (selection: TableSelection, columns: TableColumn[]) => {
