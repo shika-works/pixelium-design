@@ -728,7 +728,6 @@ describe('Table Component Example', () => {
 		await nextTick()
 		const expandRow1 = wrapper.findAll('.px-table-expand-row')
 		expect(expandRow1.length).toBe(1)
-		console.log(expandRow1[0].html())
 
 		expect(expandRow1[0].text().trim()).toBe(
 			'email: emma.johnson@example.comcity: New Yorkaddress: 123 Main Street, Apt 4B'
