@@ -232,7 +232,6 @@ describe('Table Component', () => {
 				}
 			})
 			const headerCell = wrapper.find('thead th')
-			console.log(headerCell.html())
 
 			expect(headerCell.attributes('style') || '').toContain('min-width: 100px')
 		})
