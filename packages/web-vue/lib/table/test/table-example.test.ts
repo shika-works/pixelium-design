@@ -1,13 +1,24 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import Table from '../index.vue'
 import { h, nextTick, ref } from 'vue'
 import Radio from '../../radio/index.vue'
 import Checkbox from '../../checkbox/index.vue'
 import { DEFAULT_ADDITION_COL_WIDTH } from '../module/share'
-import type { TableData } from '../type'
+import type { FilterValue, SortOrder, TableData } from '../type'
+import PopupWrapper from '../../popup-wrapper/index.vue'
+import { createMocks } from '../../share/util/test'
 
 describe('Table Component Example', () => {
+	const { pre, post } = createMocks()
+
+	beforeEach(() => {
+		pre()
+	})
+
+	afterEach(() => {
+		post()
+	})
 	test('hierarchical head', () => {
 		const columns = [
 			{
@@ -293,6 +304,14 @@ describe('Table Component Example', () => {
 		expect(radios[0].emitted('input')?.[0]?.[0]).toBe(true)
 		expect(selectedKeys.value).toEqual([1001])
 
+		// test event
+		await nextTick()
+		expect(wrapper.emitted('select')?.[0]?.[0]).toEqual(true)
+		expect(wrapper.emitted('select')?.[0]?.[1]).toEqual(1001)
+		expect(wrapper.emitted('select')?.[0]?.[2]).toEqual(data[0])
+		expect(wrapper.emitted('select')?.[0]?.[3]).instanceOf(Event)
+		expect(wrapper.emitted('selectedChange')?.[0]?.[0]).toEqual([1001])
+
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
 		expect(radios.map((e) => e.vm.modelValue)).toEqual([true, false])
@@ -360,6 +379,14 @@ describe('Table Component Example', () => {
 		expect(checkboxes[1].emitted('input')?.[0]?.[0]).toBe(true)
 		expect(selectedKeys.value).toEqual([1001])
 
+		// test event
+		await nextTick()
+		expect(wrapper.emitted('select')?.[0]?.[0]).toEqual(true)
+		expect(wrapper.emitted('select')?.[0]?.[1]).toEqual(1001)
+		expect(wrapper.emitted('select')?.[0]?.[2]).toEqual(data[0])
+		expect(wrapper.emitted('select')?.[0]?.[3]).instanceOf(Event)
+		expect(wrapper.emitted('selectedChange')?.[0]?.[0]).toEqual([1001])
+
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
 		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, true, false])
@@ -379,6 +406,11 @@ describe('Table Component Example', () => {
 		await nextTick()
 		expect(checkboxes[0].emitted('input')?.[0]?.[0]).toBe(false)
 		expect(selectedKeys.value).toEqual([])
+
+		// test event
+		await nextTick()
+		expect(wrapper.emitted('selectAll')?.[0]?.[0]).toEqual(false)
+		expect(wrapper.emitted('selectAll')?.[0]?.[1]).instanceOf(Event)
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
@@ -593,6 +625,14 @@ describe('Table Component Example', () => {
 			'email: emma.johnson@example.comcity: New Yorkaddress: 123 Main Street, Apt 4B'
 		)
 
+		// test event
+		await nextTick()
+		expect(wrapper.emitted('expand')?.[0]?.[0]).toEqual(true)
+		expect(wrapper.emitted('expand')?.[0]?.[1]).toEqual(1001)
+		expect(wrapper.emitted('expand')?.[0]?.[2]).toEqual(data[0])
+		expect(wrapper.emitted('expand')?.[0]?.[3]).instanceOf(Event)
+		expect(wrapper.emitted('expandedChange')?.[0]?.[0]).toEqual([1001])
+
 		buttons[0].trigger('click')
 		await nextTick()
 		expect(expandedKeys.value).toEqual([])
@@ -741,5 +781,606 @@ describe('Table Component Example', () => {
 		await nextTick()
 		const expandRow2 = wrapper.findAll('.px-table-expand-row')
 		expect(expandRow2.length).toBe(0)
+	})
+	test('sort', async () => {
+		const data = [
+			{ key: 1, name: 'Olivia', age: 28, email: 'olivia@example.com' },
+			{ key: 2, name: 'James', age: 32, email: 'james@example.com' },
+			{ key: 3, name: 'Sophia', age: 24, email: 'sophia@example.com' },
+			{ key: 4, name: 'William', age: 29, email: 'william@example.com' },
+			{ key: 5, name: 'Emma', age: 31, email: 'emma@example.com' }
+		]
+
+		const columns = [
+			{
+				key: 'name',
+				label: 'Name',
+				field: 'name',
+				sortable: {
+					orders: ['asc', 'desc'] as const,
+					sortMethod: (a: TableData, b: TableData, order: 'asc' | 'desc') => {
+						const res = a.name.length - b.name.length
+						return order === 'desc' ? -res : res
+					},
+					defaultSortOrder: 'asc' as const
+				}
+			},
+			{
+				key: 'age',
+				label: 'Age',
+				field: 'age',
+				sortable: {
+					orders: ['asc'] as const
+				}
+			},
+			{
+				key: 'email',
+				label: 'Email',
+				field: 'email',
+				sortable: {
+					orders: ['asc', 'desc'] as const
+				}
+			}
+		]
+
+		const sortOrder = ref<SortOrder>({})
+
+		const wrapper = mount(Table, {
+			props: {
+				data,
+				columns,
+				sortOrder: sortOrder.value,
+				'onUpdate:sortOrder': (e) => (sortOrder.value = e)
+			}
+		})
+
+		const buttons = wrapper.findAll('.px-table-sort-icon-wrapper')
+
+		expect(buttons.length).toBe(3)
+		expect(wrapper.findAll('.px-table-sort-icon-wrapper__single').length).toBe(1)
+
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'asc' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData0 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData0).toBe(
+			'Emma,31,emma@example.com;James,32,james@example.com;Olivia,28,olivia@example.com;Sophia,24,sophia@example.com;William,29,william@example.com'
+		)
+
+		// sort by 1st col
+		buttons[0].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'desc' })
+
+		// test event
+		await nextTick()
+		expect(wrapper.emitted('sortOrderChange')?.[0]?.[0]).toEqual({
+			name: 'desc'
+		})
+		expect(wrapper.emitted('sortSelect')?.[0]?.[0]).toBe('desc')
+		expect(wrapper.emitted('sortSelect')?.[0]?.[1]).toBe('name')
+		expect(wrapper.emitted('sortSelect')?.[0]?.[2]).toEqual(columns[0])
+		expect(wrapper.emitted('sortSelect')?.[0]?.[3]).instanceOf(Event)
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData1 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData1).toBe(
+			'William,29,william@example.com;Olivia,28,olivia@example.com;Sophia,24,sophia@example.com;James,32,james@example.com;Emma,31,emma@example.com'
+		)
+
+		// sort by 1st col
+		buttons[0].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'none' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData2 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData2).toBe(
+			'Olivia,28,olivia@example.com;James,32,james@example.com;Sophia,24,sophia@example.com;William,29,william@example.com;Emma,31,emma@example.com'
+		)
+
+		// sort by 1st col
+		buttons[0].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'asc' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData3 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData3).toBe(curData0)
+
+		// sort by 2nd col
+		buttons[1].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'none', age: 'asc' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData4 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData4).toBe(
+			'Sophia,24,sophia@example.com;Olivia,28,olivia@example.com;William,29,william@example.com;Emma,31,emma@example.com;James,32,james@example.com'
+		)
+
+		// sort by 2nd col
+		buttons[1].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'none', age: 'none' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData5 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData5).toBe(curData2)
+	})
+	test('multiple sort', async () => {
+		const data = [
+			{ key: 1, name: 'Olivia', age: 28, email: 'olivia@example.com' },
+			{ key: 2, name: 'James', age: 32, email: 'james@example.com' },
+			{ key: 3, name: 'Sophia', age: 24, email: 'sophia@example.com' },
+			{ key: 4, name: 'William', age: 29, email: 'william@example.com' },
+			{ key: 5, name: 'Emma', age: 31, email: 'emma@example.com' }
+		]
+		const columns = [
+			{
+				key: 'name',
+				label: 'Name',
+				field: 'name',
+				sortable: {
+					orders: ['asc', 'desc'] as const,
+					sortMethod: (a: TableData, b: TableData, order: 'asc' | 'desc') => {
+						const res = a.name.length - b.name.length
+						return order === 'desc' ? -res : res
+					},
+					defaultSortOrder: 'asc' as const,
+					multiple: true,
+					priority: 2
+				}
+			},
+			{
+				key: 'age',
+				label: 'Age',
+				field: 'age',
+				sortable: {
+					orders: ['asc'] as const,
+					multiple: true
+				}
+			},
+			{
+				key: 'email',
+				label: 'Email',
+				field: 'email',
+				sortable: {
+					orders: ['asc', 'desc'] as const,
+					multiple: true,
+					priority: 1
+				}
+			}
+		]
+		const sortOrder = ref<SortOrder>({})
+		const wrapper = mount(Table, {
+			props: {
+				data,
+				columns,
+				sortOrder: sortOrder.value,
+				'onUpdate:sortOrder': (e) => (sortOrder.value = e)
+			}
+		})
+
+		const buttons = wrapper.findAll('.px-table-sort-icon-wrapper')
+
+		expect(buttons.length).toBe(3)
+		expect(wrapper.findAll('.px-table-sort-icon-wrapper__single').length).toBe(1)
+
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'asc' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData0 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData0).toBe(
+			'Emma,31,emma@example.com;James,32,james@example.com;Olivia,28,olivia@example.com;Sophia,24,sophia@example.com;William,29,william@example.com'
+		)
+
+		// sort by 1st col
+		buttons[0].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'desc' })
+
+		// test event
+		await nextTick()
+		expect(wrapper.emitted('sortOrderChange')?.[0]?.[0]).toEqual({
+			name: 'desc'
+		})
+		expect(wrapper.emitted('sortSelect')?.[0]?.[0]).toBe('desc')
+		expect(wrapper.emitted('sortSelect')?.[0]?.[1]).toBe('name')
+		expect(wrapper.emitted('sortSelect')?.[0]?.[2]).toEqual(columns[0])
+		expect(wrapper.emitted('sortSelect')?.[0]?.[3]).instanceOf(Event)
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData1 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData1).toBe(
+			'William,29,william@example.com;Olivia,28,olivia@example.com;Sophia,24,sophia@example.com;James,32,james@example.com;Emma,31,emma@example.com'
+		)
+
+		// sort by 2nd col
+		buttons[1].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ name: 'desc', age: 'asc' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData2 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData2).toBe(
+			'William,29,william@example.com;Sophia,24,sophia@example.com;Olivia,28,olivia@example.com;James,32,james@example.com;Emma,31,emma@example.com'
+		)
+
+		// sort by 3rd col
+		buttons[2].trigger('click')
+		await nextTick()
+		expect(sortOrder.value).toEqual({ age: 'asc', email: 'asc', name: 'desc' })
+
+		wrapper.setProps({ sortOrder: sortOrder.value })
+		await nextTick()
+
+		const curData3 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData3).toBe(
+			'William,29,william@example.com;Olivia,28,olivia@example.com;Sophia,24,sophia@example.com;James,32,james@example.com;Emma,31,emma@example.com'
+		)
+	})
+	test('filter', async () => {
+		const columns = [
+			{
+				label: 'Name',
+				field: 'name',
+				key: 'name'
+			},
+			{
+				label: 'Base Salary',
+				field: 'baseSalary',
+				key: 'baseSalary',
+				filterable: {
+					filterOptions: [{ label: '>7000', value: 7000 }],
+					filterMethod: (value: number[], record: TableData) => {
+						return value[0] ? record.baseSalary > value[0] : true
+					}
+				}
+			},
+			{
+				label: 'Bonus',
+				field: 'bonus',
+				key: 'bonus',
+				filterable: {
+					filterOptions: [{ label: '>500', value: 500 }],
+					filterMethod: (value: number[], record: TableData) => {
+						return value[0] ? record.bonus > value[0] : true
+					}
+				}
+			},
+			{
+				label: 'Status',
+				field: 'status',
+				key: 'status',
+				filterable: {
+					multiple: true,
+					filterOptions: [
+						{ label: 'Active', value: 'active' },
+						{ label: 'Inactive', value: 'inactive' }
+					],
+					defaultFilterValue: ['active']
+				}
+			}
+		]
+
+		const data = [
+			{
+				name: 'James Wilson',
+				baseSalary: 8500,
+				bonus: 420,
+				status: 'active'
+			},
+			{
+				name: 'Sarah Johnson',
+				baseSalary: 5200,
+				bonus: 780,
+				status: 'inactive'
+			},
+			{
+				name: 'Michael Brown',
+				baseSalary: 11200,
+				bonus: 150,
+				status: 'active'
+			},
+			{
+				name: 'Emily Davis',
+				baseSalary: 3400,
+				bonus: 0,
+				status: 'inactive'
+			},
+			{
+				name: 'Robert Taylor',
+				baseSalary: 9800,
+				bonus: 920,
+				status: 'active'
+			},
+			{
+				name: 'Jennifer Miller',
+				baseSalary: 6300,
+				bonus: 310,
+				status: 'active'
+			},
+			{
+				name: 'David Anderson',
+				baseSalary: 7600,
+				bonus: 650,
+				status: 'inactive'
+			},
+			{
+				name: 'Lisa Martinez',
+				baseSalary: 4500,
+				bonus: 230,
+				status: 'active'
+			},
+			{
+				name: 'William Thomas',
+				baseSalary: 10500,
+				bonus: 870,
+				status: 'inactive'
+			},
+			{
+				name: 'Amanda Clark',
+				baseSalary: 2900,
+				bonus: 0,
+				status: 'active'
+			}
+		]
+
+		const filterValue = ref<FilterValue>({})
+
+		const wrapper = mount(Table, {
+			props: {
+				data,
+				columns,
+				filterValue: filterValue.value,
+				'onUpdate:filterValue': (e) => (filterValue.value = e)
+			},
+			attachTo: 'body'
+		})
+
+		const filterControl = wrapper.findAll('.px-table-filter-icon-wrapper')
+		expect(filterControl.length).toBe(3)
+
+		await nextTick()
+		expect(filterValue.value).toEqual({
+			status: ['active']
+		})
+
+		wrapper.setProps({ filterValue: filterValue.value })
+		await nextTick()
+		const curData0 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData0).toBe(
+			'James Wilson,8500,420,active;Michael Brown,11200,150,active;Robert Taylor,9800,920,active;Jennifer Miller,6300,310,active;Lisa Martinez,4500,230,active;Amanda Clark,2900,0,active'
+		)
+
+		// select 4th col's inactive
+		const filterPopupWrapper0 = wrapper.findAllComponents(PopupWrapper)[2]
+		filterControl[2].trigger('mouseenter')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper0.element.style.display).not.toBe('none')
+		filterPopupWrapper0.findAllComponents(Checkbox)[1].trigger('click')
+		filterPopupWrapper0.findAll('.px-button')[1].trigger('click')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper0.element.style.display).toBe('none')
+		expect(filterValue.value).toEqual({ status: ['active', 'inactive'] })
+
+		wrapper.setProps({ filterValue: filterValue.value })
+		await nextTick()
+
+		const curData1 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData1).toBe(
+			'James Wilson,8500,420,active;Sarah Johnson,5200,780,inactive;Michael Brown,11200,150,active;Emily Davis,3400,0,inactive;Robert Taylor,9800,920,active;Jennifer Miller,6300,310,active;David Anderson,7600,650,inactive;Lisa Martinez,4500,230,active;William Thomas,10500,870,inactive;Amanda Clark,2900,0,active'
+		)
+
+		// select 3rd col's >500
+		await new Promise((r) => setTimeout(r, 100))
+
+		const filterPopupWrapper1 = wrapper.findAllComponents(PopupWrapper)[1]
+		filterControl[1].trigger('mouseenter')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper1.element.style.display).not.toBe('none')
+		filterPopupWrapper1.findAllComponents(Radio)[0].trigger('click')
+		filterPopupWrapper1.findAll('.px-button')[1].trigger('click')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper1.element.style.display).toBe('none')
+		expect(filterValue.value).toEqual({
+			bonus: [500],
+			status: ['active', 'inactive']
+		})
+
+		wrapper.setProps({ filterValue: filterValue.value })
+		await nextTick()
+
+		const curData2 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData2).toBe(
+			'Sarah Johnson,5200,780,inactive;Robert Taylor,9800,920,active;David Anderson,7600,650,inactive;William Thomas,10500,870,inactive'
+		)
+
+		// select 2nd col's >7000
+		await new Promise((r) => setTimeout(r, 100))
+
+		const filterPopupWrapper2 = wrapper.findAllComponents(PopupWrapper)[0]
+		filterControl[0].trigger('mouseenter')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper2.element.style.display).not.toBe('none')
+		filterPopupWrapper2.findAllComponents(Radio)[0].trigger('click')
+		filterPopupWrapper2.findAll('.px-button')[1].trigger('click')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper2.element.style.display).toBe('none')
+		expect(filterValue.value).toEqual({
+			baseSalary: [7000],
+			bonus: [500],
+			status: ['active', 'inactive']
+		})
+
+		wrapper.setProps({ filterValue: filterValue.value })
+		await nextTick()
+
+		const curData3 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData3).toBe(
+			'Robert Taylor,9800,920,active;David Anderson,7600,650,inactive;William Thomas,10500,870,inactive'
+		)
+
+		// cleat 2nd col's filter
+		await new Promise((r) => setTimeout(r, 100))
+
+		filterControl[0].trigger('mouseenter')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper2.element.style.display).not.toBe('none')
+		filterPopupWrapper2.findAll('.px-button')[0].trigger('click')
+		await new Promise((r) => setTimeout(r, 300))
+		expect(filterPopupWrapper2.element.style.display).toBe('none')
+		expect(filterValue.value).toEqual({
+			baseSalary: [],
+			bonus: [500],
+			status: ['active', 'inactive']
+		})
+
+		wrapper.setProps({ filterValue: filterValue.value })
+		await nextTick()
+
+		const curData4 = wrapper
+			.findAll('tbody tr')
+			.map((tr) => {
+				return tr
+					.findAll('td')
+					.map((td) => td.text())
+					.join(',')
+			})
+			.join(';')
+		expect(curData4).toBe(curData2)
 	})
 })
