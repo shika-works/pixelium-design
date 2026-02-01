@@ -3,7 +3,7 @@ import type { LooseRequired } from '../../share/type'
 import type { SortOrder, TableColumn, TableData, TableProps, TableSortable } from '../type'
 import type { BodyCell, HeaderCell } from './column'
 import { useControlledMode } from '../../share/hook/use-controlled-mode'
-import { isFunction } from 'parsnip-kit'
+import { difference, isFunction } from 'parsnip-kit'
 import { getEnumerableKeys } from '../../share/util/common'
 
 import ChevronDownIcon from '@hackernoon/pixel-icon-library/icons/SVG/solid/chevron-down-solid.svg'
@@ -47,7 +47,7 @@ export const useSortable = (
 
 	const formatSortOrder = (arg: SortOrder) => {
 		let res = { ...arg }
-		const keys = Reflect.ownKeys(res)
+		const keys = getEnumerableKeys(res)
 		let hasChange = false
 		keys.forEach((key) => {
 			if (!sortableInfo.value[key]) {
@@ -70,11 +70,17 @@ export const useSortable = (
 			}
 		})
 
-		const firstSingleSortKey = keys.find(
+		const singleSortKey = keys.filter(
 			(key) => !sortableInfo.value[key]?.sortable.multiple && (!res[key] || res[key] !== 'none')
 		)
-		if (firstSingleSortKey && keys.length > 1) {
-			res = { firstSingleSortKey: res[firstSingleSortKey] }
+		if (singleSortKey.length > 1) {
+			const restKeys = difference(keys, singleSortKey)
+			restKeys.push(singleSortKey[0])
+			const tempRes = {} as any
+			restKeys.forEach((key) => {
+				tempRes[key] = res[key]
+			})
+			res = tempRes
 			hasChange = true
 		}
 		return [res, hasChange] as const
@@ -97,15 +103,21 @@ export const useSortable = (
 		},
 		initial: (arg: undefined | null | SortOrder) => {
 			arg = arg || {}
-			const keys = Reflect.ownKeys(sortableInfo.value)
+			const keys = getEnumerableKeys(sortableInfo.value)
+			let hasChange = false
 			keys.forEach((key) => {
 				if (!sortableInfo.value[key]) {
 					return
 				}
 				if (sortableInfo.value[key].sortable.defaultSortOrder) {
+					hasChange = true
 					arg[key] = sortableInfo.value[key].sortable.defaultSortOrder
 				}
 			})
+
+			if (hasChange) {
+				emits('update:sortOrder', { ...arg })
+			}
 			return arg
 		}
 	})
@@ -127,8 +139,8 @@ export const useSortable = (
 		column: TableColumn,
 		e: MouseEvent
 	) => {
-		const key = column.key
-		const sortableOfKey = sortableInfo.value[key]?.sortable
+		const currentKey = column.key
+		const sortableOfKey = sortableInfo.value[currentKey]?.sortable
 		if (!sortableOfKey) {
 			return
 		}
@@ -148,20 +160,21 @@ export const useSortable = (
 				nextValue = 'desc'
 			}
 		}
-		let nextSortOrder: SortOrder
-		if (!sortableOfKey.multiple) {
-			nextSortOrder = { [key]: nextValue }
-		} else {
-			nextSortOrder = { ...sortOrder.value }
-			const keys = getEnumerableKeys(nextSortOrder)
-			keys.forEach((key) => {
-				if (!sortableInfo.value[key]?.sortable.multiple) {
-					delete nextSortOrder[key]
+		let nextSortOrder: SortOrder = { ...sortOrder.value }
+		nextSortOrder[currentKey] = nextValue
+		const keys = getEnumerableKeys(nextSortOrder)
+		keys.forEach((key) => {
+			const removeFlag = sortableOfKey.multiple
+				? !sortableInfo.value[key]?.sortable.multiple
+				: key !== currentKey
+			if (removeFlag) {
+				if (nextSortOrder[key] && nextSortOrder[key] !== 'none') {
+					nextSortOrder[key] = 'none'
 				}
-			})
-		}
+			}
+		})
 		await updateSortOrder(nextSortOrder)
-		emits('sortSelect', nextValue, key, column, e)
+		emits('sortSelect', nextValue, currentKey, column, e)
 		emits('sortOrderChange', nextSortOrder)
 	}
 
@@ -226,6 +239,9 @@ export const useSortable = (
 			rows.sort((a, b) => {
 				for (const key of validKeys) {
 					if (!sortableInfo.value[key]) {
+						continue
+					}
+					if (sortableInfo.value[key].sortable.sortMethod === 'custom') {
 						continue
 					}
 					const sortMethod =

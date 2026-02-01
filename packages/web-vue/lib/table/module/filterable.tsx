@@ -94,14 +94,20 @@ export const useFilterable = (
 		initial: (arg: undefined | null | FilterValue) => {
 			arg = arg || {}
 			const keys = getEnumerableKeys(filterableInfo.value)
+			let hasChange = false
 			keys.forEach((key) => {
 				if (!filterableInfo.value[key]) {
 					return
 				}
 				if (filterableInfo.value[key].filterable.defaultFilterValue) {
+					hasChange = true
 					arg[key] = filterableInfo.value[key].filterable.defaultFilterValue
 				}
 			})
+
+			if (hasChange) {
+				emits('update:filterValue', { ...arg })
+			}
 			return arg
 		}
 	})
@@ -131,7 +137,6 @@ export const useFilterable = (
 		}
 	})
 
-	const popupVisible = ref(false)
 	const checkboxSelectHandler = async (
 		checked: boolean,
 		option: string | TableFilterOptions,
@@ -140,7 +145,7 @@ export const useFilterable = (
 	) => {
 		const key = column.key
 		const currentFilterValue = innerFilterValue.value
-		const valuesOfCol = currentFilterValue[key] || []
+		const valuesOfCol = currentFilterValue[key] || (currentFilterValue[key] = [])
 		const value = isString(option) ? option : option.value
 		const idx = valuesOfCol?.findIndex((e) => e === value)
 		if (checked) {
@@ -172,23 +177,27 @@ export const useFilterable = (
 		emits('filterSelect', valuesOfCol, key, option, column, event)
 	}
 
+	const popupVisible = ref<Record<number | string | symbol, undefined | boolean>>({})
+
 	const confirmClickHandler = async (column: TableColumn, event: MouseEvent) => {
 		const currentFilterValue = cloneFilterValue(innerFilterValue.value)
 		await updateFilterValue(currentFilterValue)
 		const key = column.key
 		emits('filterConfirm', key, event)
 		emits('filterChange', currentFilterValue)
-		popupVisible.value = false
+		popupVisible.value[key] = false
 	}
 
 	const resetClickHandler = async (column: TableColumn, event: MouseEvent) => {
-		innerFilterValue.value = {}
-		const currentFilterValue = {}
-		await updateFilterValue(currentFilterValue)
 		const key = column.key
+		const nextFilterValue = { ...innerFilterValue.value }
+		nextFilterValue[key] = []
+
+		await updateFilterValue(nextFilterValue)
 		emits('filterReset', key, event)
-		emits('filterChange', currentFilterValue)
-		popupVisible.value = false
+		emits('filterChange', nextFilterValue)
+		innerFilterValue.value[key] = filterValue.value?.[key] || []
+		popupVisible.value[key] = false
 	}
 
 	const renderOption = (
@@ -268,8 +277,12 @@ export const useFilterable = (
 			<hr class="px-table-filter-divider" />,
 			<div class="px-table-filter-footer">
 				{
-					// @ts-ignore
-					<Button theme="info" onClick={(e) => resetClickHandler(column, e)} size="small">
+					<Button
+						theme="info"
+						// @ts-ignore
+						onClick={(e) => resetClickHandler(column, e)}
+						size="small"
+					>
 						{t('table.filterReset')}
 					</Button>
 				}
@@ -290,12 +303,13 @@ export const useFilterable = (
 		}
 		const key = column.key
 		const active = !isEmpty((filterValue.value || {})[key])
+
 		return (
 			<Popup
 				placement="bottom"
 				{...(filterable.popoverProps || {})}
-				visible={popupVisible.value}
-				onUpdate:visible={(val) => (popupVisible.value = val)}
+				visible={popupVisible.value[key]}
+				onUpdate:visible={(val) => (popupVisible.value[key] = val)}
 			>
 				{{
 					content: () => renderPopupContent(filterable, column),

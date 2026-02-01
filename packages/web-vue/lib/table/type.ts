@@ -138,15 +138,17 @@ export interface TableFilterOptions<T = any> extends Option<T> {
 
 export type TableFilterable = {
 	filterOptions?: (string | TableFilterOptions)[]
-	filterMethod?: (filteredValue: string[], record: TableData) => boolean
+	filterMethod?: (filteredValue: any[], record: TableData, field?: string) => boolean
 	defaultFilterValue?: any[] | null
 	multiple?: boolean
 	popoverProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
 }
 
 export type TableSortable = {
-	orders?: ('asc' | 'desc')[]
-	sortMethod?: (a: TableData, b: TableData, order: 'asc' | 'desc', field?: string) => number
+	orders?: ('asc' | 'desc')[] | Readonly<('asc' | 'desc')[]>
+	sortMethod?:
+		| 'custom'
+		| ((a: TableData, b: TableData, order: 'asc' | 'desc', field?: string) => number)
 	defaultSortOrder?: 'asc' | 'desc' | 'none' | null
 	multiple?: boolean
 	priority?: number
