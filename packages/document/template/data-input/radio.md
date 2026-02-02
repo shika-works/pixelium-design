@@ -167,13 +167,10 @@ events.change: Callback when the selection in the radio group changes.
 slots.default: Child radio button components.
 ]]]
 
+[[[slice option]]]
+
 ### RadioGroupOption
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
 export interface RadioGroupOption<T = any> extends Option<T> {
 	disabled?: boolean
 	key?: string | number | symbol

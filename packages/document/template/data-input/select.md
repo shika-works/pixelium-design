@@ -256,30 +256,11 @@ selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
 ]]]
 
+[[[slice group-option]]]
+[[[slice option-list]]]
 ### SelectOption, SelectGroupOption
 
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
-export interface GroupOption<T = any> {
-	children: (Option<T> | string)[]
-	type: 'group'
-}
-
-export interface OptionListOption<T = any> extends Option<T> {
-	disabled?: boolean
-	key?: string | number | symbol
-}
-
-export interface OptionListGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
-	children: (OptionListOption | string)[]
-}
-
 export interface SelectOption extends OptionListOption<any> {
 }
 
