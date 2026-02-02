@@ -5,7 +5,7 @@ import { h, nextTick, ref } from 'vue'
 import Radio from '../../radio/index.vue'
 import Checkbox from '../../checkbox/index.vue'
 import { DEFAULT_ADDITION_COL_WIDTH } from '../module/share'
-import type { FilterValue, SortOrder, TableData } from '../type'
+import type { FilterValue, SortOrder, TableData, TableOptionsArg, TableSummary } from '../type'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 import { createMocks } from '../../share/util/test'
 
@@ -1382,5 +1382,183 @@ describe('Table Component Example', () => {
 			})
 			.join(';')
 		expect(curData4).toBe(curData2)
+	})
+	test('summary', async () => {
+		const columns = [
+			{
+				label: 'Name',
+				field: 'name',
+				key: 'name'
+			},
+			{
+				label: 'Base Salary',
+				field: 'baseSalary',
+				key: 'baseSalary'
+			},
+			{
+				label: 'Bonus',
+				field: 'bonus',
+				key: 'bonus'
+			},
+			{
+				label: 'Total',
+				field: 'total',
+				key: 'total'
+			},
+			{
+				label: 'Status',
+				field: 'status',
+				key: 'status'
+			}
+		]
+		const data = [
+			{
+				name: 'Emma Johnson',
+				baseSalary: 8500,
+				bonus: 420,
+				total: 8920,
+				status: 'active'
+			},
+			{
+				name: 'David Smith',
+				baseSalary: 6500,
+				bonus: 780,
+				total: 7280,
+				status: 'inactive'
+			},
+			{
+				name: 'Sophia Williams',
+				baseSalary: 11200,
+				bonus: 150,
+				total: 11350,
+				status: 'active'
+			},
+			{
+				name: 'Michael Brown',
+				baseSalary: 4200,
+				bonus: 0,
+				total: 4200,
+				status: 'inactive'
+			},
+			{
+				name: 'Olivia Davis',
+				baseSalary: 9800,
+				bonus: 920,
+				total: 10720,
+				status: 'active'
+			},
+			{
+				name: 'James Wilson',
+				baseSalary: 7300,
+				bonus: 310,
+				total: 7610,
+				status: 'active'
+			},
+			{
+				name: 'Sarah Miller',
+				baseSalary: 10500,
+				bonus: 850,
+				total: 11350,
+				status: 'inactive'
+			},
+			{
+				name: 'Robert Taylor',
+				baseSalary: 4200,
+				bonus: 190,
+				total: 4390,
+				status: 'active'
+			},
+			{
+				name: 'Jennifer Anderson',
+				baseSalary: 8900,
+				bonus: 0,
+				total: 8900,
+				status: 'inactive'
+			},
+			{
+				name: 'Thomas Clark',
+				baseSalary: 11500,
+				bonus: 970,
+				total: 12470,
+				status: 'active'
+			}
+		]
+		const summaryData = [
+			{
+				baseSalary: 0,
+				bonus: 0,
+				total: 0
+			},
+			{
+				baseSalary: 0,
+				bonus: 0,
+				total: 0
+			}
+		]
+		data.forEach((record) => {
+			summaryData[0].baseSalary += record.baseSalary
+			summaryData[0].bonus += record.bonus
+			summaryData[0].total += record.total
+		})
+		summaryData[1].baseSalary = parseFloat((summaryData[0].baseSalary / data.length).toFixed(4))
+		summaryData[1].bonus = parseFloat((summaryData[0].bonus / data.length).toFixed(4))
+		summaryData[1].total = parseFloat((summaryData[0].total / data.length).toFixed(4))
+
+		const summary = {
+			data: summaryData,
+			summaryText: ['Sum', 'Average'],
+			spanMethod: ({ colIndex }: TableOptionsArg) => {
+				if (colIndex === 3) {
+					return {
+						colspan: 2
+					}
+				}
+			}
+		} as TableSummary
+		const wrapper = mount(Table, {
+			props: {
+				summary,
+				columns,
+				data
+			}
+		})
+
+		const summaryRows = wrapper.findAll('tfoot tr.px-table-row__summary')
+		expect(summaryRows.length).toBe(2)
+
+		expect(wrapper.find('.px-table-foot').exists()).toBeTruthy()
+		expect(wrapper.find('.px-table-foot__fixed').exists()).toBeTruthy()
+		expect(summaryRows.map((tr) => tr.find('td').text())).toEqual(['Sum', 'Average'])
+		expect(
+			summaryRows
+				.map((tr) =>
+					tr
+						.findAll('td')
+						.map((td) => `rowspan:${td.element.rowSpan} colspan:${td.element.colSpan}`)
+						.join(',')
+				)
+				.join(';')
+		).toBe(
+			'rowspan:1 colspan:1,rowspan:1 colspan:1,rowspan:1 colspan:1,rowspan:1 colspan:2;rowspan:1 colspan:1,rowspan:1 colspan:1,rowspan:1 colspan:1,rowspan:1 colspan:2'
+		)
+
+		summary.fixed = false
+		wrapper.setProps({ summary: { ...summary } })
+		await nextTick()
+		expect(wrapper.find('.px-table-foot').exists()).toBeTruthy()
+		expect(wrapper.find('.px-table-foot__fixed').exists()).toBeFalsy()
+
+		summary.placement = 'start'
+		wrapper.setProps({ summary: { ...summary } })
+		await nextTick()
+		expect(wrapper.find('.px-table-foot').exists()).toBeFalsy()
+		expect(wrapper.find('tbody .px-table-row__summary').exists()).toBeTruthy()
+
+		summary.fixed = true
+		wrapper.setProps({ summary: { ...summary } })
+		await nextTick()
+		expect(wrapper.find('.px-table-foot').exists()).toBeFalsy()
+		expect(wrapper.find('thead .px-table-row__summary').exists()).toBeTruthy()
+		expect(wrapper.find('tbody .px-table-row__summary').exists()).toBeFalsy()
 	})
 })
