@@ -6,7 +6,31 @@ import { resolve } from './resolve-api.mts'
 const BLOCK_RE = /\[\[\[\s*([a-zA-Z-]+)([\s\S]*?)\]\]\]/g
 const API_BLOCK_RE = /\[\[\[\s*api(?: +([a-zA-Z-]+))? +([a-zA-Z-]+)(\s*[\s\S]*?\]\]\])/g
 const SLICE_BLOCK_RE = /\[\[\[\s*slice\s+([a-zA-Z_-]+)\s*[\s\S]*?\]\]\]/g
+
 const collapseNewlines = (s: string): string => s.trim().replace(/\n{3,}/g, '\n\n')
+
+function processSliceMarkdownFrontMatter(mdString: string) {
+	const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n?/
+	const sliceTitleRegex = /slice-title:\s*(.+)/i
+	let sliceTitle = ''
+	let processedContent = mdString
+
+	const frontMatterMatch = mdString.match(frontMatterRegex)
+	if (frontMatterMatch) {
+		const frontMatter = frontMatterMatch[1]
+		const titleMatch = frontMatter.match(sliceTitleRegex)
+
+		if (titleMatch) {
+			sliceTitle = titleMatch[1].trim()
+		}
+		processedContent = mdString.replace(frontMatterRegex, '')
+	}
+
+	return {
+		content: processedContent.trim(),
+		sliceTitle: sliceTitle
+	}
+}
 
 function getValidLineNumber(mdContent: string): number {
 	const lines = mdContent.split(/\r?\n/)
@@ -72,10 +96,10 @@ async function processMd(src: string, dst: string, lang: string): Promise<void> 
 	)
 	newText = newText.replace(SLICE_BLOCK_RE, (_: any, curType: string) => {
 		const fileName = kebabCase(curType)
-		return `### ${pascalCase(curType)}\n\n${readFileSync(
-			`./slice/${fileName}.md`,
-			'utf-8'
-		).trim()}`
+		const { content, sliceTitle } = processSliceMarkdownFrontMatter(
+			readFileSync(`./slice/${fileName}.md`, 'utf-8')
+		)
+		return `### ${sliceTitle || pascalCase(curType)}\n\n${content}`
 	})
 	newText = collapseNewlines(newText)
 	await fs.mkdir(path.dirname(dst), { recursive: true })
