@@ -275,7 +275,7 @@ export type {
 	TableSelection,
 	TableExpandable,
 	TableSummary,
-	TableFilterOptions,
+	TableFilterOption,
 	TableFilterable,
 	TableSortable,
 	TableOptionsArg,

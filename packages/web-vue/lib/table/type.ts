@@ -43,7 +43,7 @@ export type TableEvents = {
 	filterSelect: [
 		value: any,
 		key: string | number | symbol,
-		option: TableFilterOptions | string,
+		option: TableFilterOption | string,
 		column: TableColumn,
 		event: InputEvent
 	]
@@ -135,13 +135,13 @@ export type TableSummary = {
 	}
 }
 
-export interface TableFilterOptions<T = any> extends Option<T> {
+export interface TableFilterOption<T = any> extends Option<T> {
 	disabled?: boolean
 	key?: string | number | symbol
 }
 
 export type TableFilterable = {
-	filterOptions?: (string | TableFilterOptions)[]
+	filterOptions?: (string | TableFilterOption)[]
 	filterMethod?: (filteredValue: any[], record: TableData, field?: string) => boolean
 	defaultFilterValue?: any[] | null
 	multiple?: boolean

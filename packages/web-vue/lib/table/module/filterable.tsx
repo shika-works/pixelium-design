@@ -6,7 +6,7 @@ import type {
 	TableColumn,
 	TableData,
 	TableFilterable,
-	TableFilterOptions,
+	TableFilterOption,
 	TableProps
 } from '../type'
 import type { HeaderCell, BodyCell } from './column'
@@ -42,7 +42,7 @@ export const useFilterable = (
 			evt: 'filterSelect',
 			value: any,
 			key: string | number | symbol,
-			option: TableFilterOptions | string,
+			option: TableFilterOption | string,
 			column: TableColumn,
 			event: InputEvent
 		) => void) &
@@ -139,7 +139,7 @@ export const useFilterable = (
 
 	const checkboxSelectHandler = async (
 		checked: boolean,
-		option: string | TableFilterOptions,
+		option: string | TableFilterOption,
 		column: TableColumn,
 		event: InputEvent
 	) => {
@@ -163,7 +163,7 @@ export const useFilterable = (
 
 	const radioSelectHandler = async (
 		_: boolean,
-		option: string | TableFilterOptions,
+		option: string | TableFilterOption,
 		column: TableColumn,
 		event: InputEvent
 	) => {
@@ -201,7 +201,7 @@ export const useFilterable = (
 	}
 
 	const renderOption = (
-		option: string | TableFilterOptions,
+		option: string | TableFilterOption,
 		multiple: boolean,
 		column: TableColumn
 	) => {
