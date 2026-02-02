@@ -157,6 +157,7 @@ export const useSelection = (
 						size="small"
 						onInput={(value, event) => checkboxSelectHandler(value, event, key, record)}
 						disabled={!!record.disabled}
+						pollSizeChange={props.pollSizeChange}
 					></Checkbox>
 				) : (
 					<Radio
@@ -164,6 +165,7 @@ export const useSelection = (
 						onInput={(value, event) => radioSelectHandler(value, event, key, record)}
 						size="small"
 						disabled={!!record.disabled}
+						pollSizeChange={props.pollSizeChange}
 					></Radio>
 				)
 			},
@@ -184,6 +186,7 @@ export const useSelection = (
 								style={{
 									marginRight: selection.label ? `8px` : undefined
 								}}
+								pollSizeChange={props.pollSizeChange}
 							></Checkbox>
 						}
 						{selection.label}
