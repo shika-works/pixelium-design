@@ -7,7 +7,7 @@ import {
 	useSlots,
 	withScopeId
 } from 'vue'
-import type { TableData, TableEvents, TableProps } from './type'
+import type { TableData, TableEvents, TableExpose, TableProps } from './type'
 import { isBoolean, isFunction, isNullish, isNumber, isString } from 'parsnip-kit'
 import Empty from '../empty/index.vue'
 import { useDrawPixel } from './module/draw'
@@ -132,6 +132,10 @@ const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 
 const [polygon] = useDrawPixel(wrapperRef, canvasRef, pixelSize, bordered, props)
+
+defineExpose<TableExpose>({
+	getCurrentData: () => data.value
+})
 
 const calcLabelContentProps = (cellData: HeaderCell) => {
 	const hasIcon = !!cellData.original.filterable || !!cellData.original.sortable
@@ -263,7 +267,11 @@ const renderCell = (
 			columns[colIndex - 1].cell.original.key === TABLE_EXPANDABLE_COL_SYMBOL)
 
 	if (isSummaryRow && isFirstCol && !isNullish(props.summary?.summaryText)) {
-		return props.summary.summaryText
+		if (isString(props.summary.summaryText)) {
+			return props.summary.summaryText ?? ''
+		} else {
+			return props.summary.summaryText[rowIndex] ?? ''
+		}
 	}
 	const slotName = column.slotName
 	const cellContent =
@@ -400,18 +408,13 @@ const renderBody = () => {
 				) : null
 			) : null
 
-			const rowIndex4Style =
-				summaryRows.value.length && props.summary?.placement === 'start'
-					? i + summaryRows.value.length
-					: i
-
 			const rows = [
 				<tr
 					key={i}
 					class={{
 						'px-table-row': true,
-						'px-table-row__even': rowIndex4Style & 1,
-						'px-table-row__odd': (rowIndex4Style & 1) === 0,
+						'px-table-row__even': i & 1,
+						'px-table-row__odd': (i & 1) === 0,
 						'px-table-row__next-fixed': expandRow ? false : isNextBottomFixed
 					}}
 				>
@@ -425,7 +428,7 @@ const renderBody = () => {
 		})
 	) : (
 		<tr class="px-table-row">
-			<td colspan={columnsInfo.value.leafColumns.length}>
+			<td class="px-table-td__empty" colspan={columnsInfo.value.leafColumns.length}>
 				<Empty class="px-table-empty"></Empty>
 			</td>
 		</tr>
@@ -440,23 +443,21 @@ const renderSummary = () => {
 		summaryRows.value.length,
 		columnsInfo.value.leafColumns.length
 	)
+
 	const cells = buildCommonRows(
 		columnsInfo.value.leafColumns,
-		data.value,
+		summaryRows.value,
 		spanCollector,
 		props.summary?.spanMethod
 	)
 
 	return summaryRows.value.map((e, i) => {
-		const rowIndex4Style = props.summary?.placement !== 'start' ? i + data.value.length : i
-
 		return (
 			<tr
-				key={i}
+				key={`'summary'${i}`}
 				class={{
 					'px-table-row': true,
-					'px-table-row__even': rowIndex4Style & 1,
-					'px-table-row__odd': (rowIndex4Style & 1) === 0,
+					'px-table-row__summary': true,
 					'px-table-row__first-fixed': i === 0 && props.summary?.placement !== 'start'
 				}}
 			>

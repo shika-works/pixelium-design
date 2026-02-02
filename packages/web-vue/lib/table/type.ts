@@ -60,6 +60,10 @@ export type TableEvents = {
 	]
 }
 
+export type TableExpose = {
+	getCurrentData: () => TableData[]
+}
+
 export type TableData = {
 	expand?:
 		| boolean
@@ -123,7 +127,7 @@ export type TableExpandable = {
 export type TableSummary = {
 	data?: TableData | TableData[]
 	placement?: 'end' | 'start'
-	summaryText?: string
+	summaryText?: string | string[]
 	fixed?: boolean
 	spanMethod?: (options: TableOptionsArg) => void | {
 		colspan?: number

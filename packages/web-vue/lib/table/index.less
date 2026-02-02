@@ -240,10 +240,15 @@
 	&-head {
 		& .@{prefix}-row {
 			&:hover {
-				& > td {
+				& > td:not(.px-table-td__empty) {
 					background: var(--px-neutral-4);
 				}
 			}
+		}
+	}
+	&-row__summary {
+		& > td {
+			background: var(--px-neutral-4);
 		}
 	}
 	&__striped {
@@ -251,11 +256,11 @@
 		& .@{prefix}-foot,
 		& .@{prefix}-head {
 			& .@{prefix}-row.@{prefix}-row__even {
-				& > td {
+				& > td:not(.px-table-td__empty) {
 					background: var(--px-neutral-3);
 				}
 				&:hover {
-					& > td {
+					& > td:not(.px-table-td__empty) {
 						background: var(--px-neutral-4);
 					}
 				}
@@ -271,7 +276,7 @@
 					background: var(--px-neutral-3);
 				}
 				&:hover {
-					& > td {
+					& > td:not(.px-table-td__empty) {
 						background: var(--px-neutral-4);
 					}
 				}
@@ -281,7 +286,7 @@
 					background: var(--px-neutral-3);
 				}
 				&:hover {
-					& > td {
+					& > td:not(.px-table-td__empty) {
 						background: var(--px-neutral-4);
 					}
 				}
