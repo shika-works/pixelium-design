@@ -47,7 +47,9 @@ const props = withDefaults(defineProps<TableProps>(), {
 	fixedHead: true,
 	striped: false,
 	rowKey: 'key',
-	variant: 'normal'
+	variant: 'normal',
+	selection: false,
+	expandable: false
 })
 
 const emits = defineEmits<TableEvents>()
