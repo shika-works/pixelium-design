@@ -172,7 +172,7 @@ export const useDrawPixel = (
 			props.borderRadius
 		)
 	}
-	const debounceDraw = debounce(drawPixel, 0, { maxWait: 50, immediate: true })
+	const debounceDraw = debounce(drawPixel, 20, { maxWait: 50, immediate: true })
 	onMounted(() => {
 		nextTick(() => {
 			drawPixel()
@@ -195,12 +195,7 @@ export const useDrawPixel = (
 
 	useWatchGlobalCssVal(debounceDraw)
 
-	useTransitionEnd(wrapperRef, (e) => {
-		if (e.propertyName === 'background-color') {
-			return
-		}
-		debounceDraw()
-	})
+	useTransitionEnd(wrapperRef, debounceDraw, (e) => e.propertyName === 'background-color')
 	let wrapperSize = {
 		width: 0,
 		height: 0
