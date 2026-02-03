@@ -362,7 +362,7 @@ describe('Slider Component', () => {
 
 		wrapper.trigger('focus')
 		wrapper.trigger('blur')
-		await new Promise((res) => setTimeout(res))
+		await new Promise((res) => setTimeout(res, 250))
 		expect(focus).toBeCalledTimes(2)
 		expect(blur).toBeCalledTimes(2)
 	})

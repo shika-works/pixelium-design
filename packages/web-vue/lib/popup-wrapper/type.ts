@@ -5,4 +5,9 @@ export type PopupWrapperProps = {
 	position?: 'absolute' | 'fixed'
 	destroyOnHide?: boolean
 	preventDocumentScroll?: boolean
+	escToClose?: boolean
+}
+
+export type PopupWrapperEvents = {
+	escKeydown: [event: KeyboardEvent]
 }

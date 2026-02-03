@@ -10,7 +10,6 @@
 		:style="{
 			zIndex: props.zIndex ?? currentZIndex
 		}"
-		v-bind="$attrs"
 	>
 		<slot> </slot>
 	</div>
@@ -19,7 +18,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, useId, watch } from 'vue'
 import { useZIndex } from '../share/hook/use-z-index'
-import type { PopupWrapperProps } from './type'
+import type { PopupWrapperEvents, PopupWrapperProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { usePopupWrapperManager } from './use-popup-wrapper-manager'
 
@@ -30,18 +29,37 @@ defineOptions({
 const props = withDefaults(defineProps<PopupWrapperProps>(), {
 	root: 'body',
 	destroyOnHide: false,
-	preventDocumentScroll: false
+	preventDocumentScroll: false,
+	escToClose: false
 })
 
-const id = useId()
+const emits = defineEmits<PopupWrapperEvents>()
 
-const [activate, hide] = usePopupWrapperManager(id)
+const id = useId()
 
 const [currentZIndex, next, release] = useZIndex('popup')
 
 const innerVisible = ref(!!props.visible)
 
 let timer: any
+
+const popupWrapperInfo = {
+	id,
+	escKeydownHandler: (e: KeyboardEvent) => {
+		if (!props.escToClose) {
+			return
+		}
+		emits('escKeydown', e)
+	},
+	needPreventDocumentScroll: () => {
+		return props.preventDocumentScroll
+	},
+	getZIndex: () => {
+		return props.zIndex ?? currentZIndex.value
+	}
+}
+
+const [activate, hide] = usePopupWrapperManager(popupWrapperInfo)
 
 const processVisible = (value: boolean) => {
 	if (timer) {
@@ -50,15 +68,11 @@ const processVisible = (value: boolean) => {
 	}
 	if (value) {
 		innerVisible.value = true
-		if (props.preventDocumentScroll) {
-			activate()
-		}
 		next()
+		activate()
 	} else {
 		release()
-		if (props.preventDocumentScroll) {
-			hide()
-		}
+		hide()
 		if (isNumber(props.closeDelay)) {
 			timer = setTimeout(() => {
 				innerVisible.value = false
