@@ -10,7 +10,7 @@ import {
 
 import MinusIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/minus.svg'
 import PlusIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/plus.svg'
-import { computed } from 'vue'
+import { computed, mergeProps } from 'vue'
 
 const Minus = MinusIcon as any
 const Plus = PlusIcon as any
@@ -83,12 +83,20 @@ export const useExpandable = (
 			width: expandable.width || DEFAULT_ADDITION_COL_WIDTH,
 			minWidth: expandable.minWidth || undefined,
 			fixed: hasLeftFixed ? 'left' : expandable.fixed ? ('left' as const) : ('none' as const),
-			contentProps: {
-				class: 'px-table-addition'
-			},
-			labelContentProps: {
-				class: 'px-table-addition'
-			},
+			contentProps: mergeProps(
+				{
+					class: 'px-table-addition'
+				},
+				expandable.contentProps || {}
+			),
+			labelContentProps: mergeProps(
+				{
+					class: 'px-table-addition'
+				},
+				expandable.labelContentProps || {}
+			),
+			cellProps: expandable.cellProps,
+			labelCellProps: expandable.labelCellProps,
 			render: ({ record }: { record: TableData }) => {
 				const key = record[props.rowKey || DEFAULT_ROW_KEY]
 				const hasExpand =

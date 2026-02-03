@@ -9,7 +9,7 @@ import {
 import { useControlledMode } from '../../share/hook/use-controlled-mode'
 import type { LooseRequired } from '../../share/type'
 import type { TableColumn, TableData, TableProps, TableSelection } from '../type'
-import { computed, Fragment, watch } from 'vue'
+import { computed, Fragment, mergeProps, watch } from 'vue'
 
 import Radio from '../../radio/index.vue'
 import Checkbox from '../../checkbox/index.vue'
@@ -141,12 +141,20 @@ export const useSelection = (
 			width: selection.width || DEFAULT_ADDITION_COL_WIDTH,
 			minWidth: selection.minWidth || undefined,
 			fixed: hasLeftFixed ? 'left' : selection.fixed ? ('left' as const) : ('none' as const),
-			contentProps: {
-				class: 'px-table-addition'
-			},
-			labelContentProps: {
-				class: 'px-table-addition'
-			},
+			contentProps: mergeProps(
+				{
+					class: 'px-table-addition'
+				},
+				selection.contentProps || {}
+			),
+			labelContentProps: mergeProps(
+				{
+					class: 'px-table-addition'
+				},
+				selection.labelContentProps || {}
+			),
+			cellProps: selection.cellProps,
+			labelCellProps: selection.labelCellProps,
 			render: ({ record }: { record: TableData }) => {
 				const curSelectedKeys = selectedKeys.value || []
 				const key = record[props.rowKey || DEFAULT_ROW_KEY]
