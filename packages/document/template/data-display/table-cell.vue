@@ -73,7 +73,8 @@ const columns = [
 		field: 'email',
 		cellProps: {
 			style: {
-				backgroundColor: 'wheat'
+				backgroundColor: 'wheat',
+				color: 'var(--px-neutral-10)'
 			}
 		}
 	},
