@@ -100,16 +100,27 @@ watch(
 	}
 )
 
-onMounted(() => {
-	setTimeout(() => {
-		scrollCallback()
-	})
+const [initBody] = useScrollBar()
+const [initSidebar] = useScrollBar()
+
+initBody({
+	target: document.body
 })
 
-const [init] = useScrollBar()
+onMounted(() => {
+	nextTick(() => {
+		const sidebar = document.querySelector('.VPSidebar') as HTMLElement | null
+		if (!sidebar) {
+			return
+		}
+		initSidebar({
+			target: sidebar
+		})
 
-init({
-	target: document.body
+		setTimeout(() => {
+			scrollCallback()
+		}, 1000)
+	})
 })
 </script>
 
