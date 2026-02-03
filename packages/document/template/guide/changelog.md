@@ -6,6 +6,33 @@
 ]]]
 
 [[[zh
+## v0.0.5
+> hotfix
+- 修复：
+  - 修复 Tag 组件 line-height 没有正确设置导致 `size="small"` 的 Tag 被撑高
+]]]
+[[[en
+## v0.0.5
+> hotfix
+- Fixes:
+  - Fixed an issue where the Tag component's line-height was not set correctly, causing Tags with `size="small"` to be taller than intended
+]]]
+
+[[[zh
+## v0.0.4
+> hotfix
+- 修复：
+  - 优化了输入控件错误触发键盘操作提示边框的问题，优化了相关样式，后续会使用更合理的机制处理这一逻辑。
+]]]
+
+[[[en
+## v0.0.4
+> hotfix
+- Fixes:
+  - Optimized the issue where input controls incorrectly triggered keyboard operation hint borders. Related styles have been improved. A more reasonable mechanism will be used to handle this logic in the future.
+]]]
+
+[[[zh
 ## v0.0.3
 - 新增：
   - 支持切换像素宽度，支持 2px 和 4px。
