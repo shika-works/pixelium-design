@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, watch } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 import { initScroll } from '../share/util/scroll'
 
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
@@ -16,7 +16,10 @@ defineOptions({
 	name: 'ScrollBar'
 })
 
-const props = defineProps<ScrollBarProps>()
+const props = withDefaults(defineProps<ScrollBarProps>(), {
+	showScrollPadding: true,
+	variant: 'pixel'
+})
 
 const osRef = shallowRef<OverlayScrollbarsComponentRef>()
 
@@ -34,8 +37,9 @@ const transform = (nextValue: { left?: number; top?: number } | null | undefined
 }
 const [scrollOffset, updateScrollOffset] = useControlledMode<
 	{ left?: number; top?: number },
-	string,
-	string
+	'scrollOffset',
+	'defaultScrollOffset',
+	typeof props
 >('scrollOffset', props, emits, {
 	transform,
 	defaultField: 'defaultScrollOffset'
@@ -134,13 +138,21 @@ const updateHandler = (ins: OverlayScrollbars) => {
 
 	const { scrollOffsetElement } = ins.elements()
 	const { scrollLeft, scrollTop } = scrollOffsetElement
+
 	updateScrollOffset({
 		left: scrollLeft,
 		top: scrollTop
 	})
 
-	emits('update')
+	emits('update', {
+		left: scrollLeft,
+		top: scrollTop
+	})
 }
+
+const theme = computed(() => {
+	return props.variant === 'simple' ? 'px-scroll-simple-theme' : 'px-scroll-theme'
+})
 </script>
 
 <template>
@@ -148,7 +160,7 @@ const updateHandler = (ins: OverlayScrollbars) => {
 		ref="osRef"
 		:options="{
 			scrollbars: {
-				theme: 'px-scroll-theme',
+				theme: theme,
 				clickScroll: true
 			}
 		}"
@@ -160,8 +172,9 @@ const updateHandler = (ins: OverlayScrollbars) => {
 		defer
 		:class="{
 			'px-scroll': true,
-			'px-scroll__x': showXScroll,
-			'px-scroll__y': showYScroll
+			'px-scroll__simple': props.variant === 'simple',
+			'px-scroll__x': props.showScrollPadding && showXScroll,
+			'px-scroll__y': props.showScrollPadding && showYScroll
 		}"
 	>
 		<slot></slot>

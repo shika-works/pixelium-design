@@ -5,10 +5,10 @@ export type ProgressProps = {
 	 */
 	percentage?: number
 	/**
-	 * @property {'solid' | 'checker'} [variant='solid']
+	 * @property {'solid' | 'checkered'} [variant='solid']
 	 * @version 0.1.0
 	 */
-	variant?: 'solid' | 'checker'
+	variant?: 'solid' | 'checkered'
 	/**
 	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger'} [theme='primary']
 	 * @version 0.1.0

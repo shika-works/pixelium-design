@@ -202,3 +202,49 @@
 		padding-bottom: calc(2 * var(--px-bit) + @px-interval-2);
 	}
 }
+
+.px-scroll-simple-theme .os-scrollbar-handle {
+	border-radius: 0;
+	box-sizing: border-box;
+
+	border-width: 0;
+	background-color: var(--px-neutral-7);
+
+	transition: background 0.25s;
+
+	&:hover {
+		background-color: var(--px-neutral-8);
+	}
+	&:active {
+		background-color: var(--px-neutral-8);
+	}
+}
+
+.px-scroll-simple-theme.os-scrollbar-vertical {
+	width: @px-interval-1;
+	box-sizing: border-box;
+	max-height: calc(100% - @px-interval-1);
+}
+
+.px-scroll-simple-theme.os-scrollbar-horizontal {
+	height: @px-interval-1;
+	box-sizing: border-box;
+	max-height: calc(100% - @px-interval-1);
+}
+
+.px-scroll-simple-theme.os-scrollbar-cornerless {
+	max-width: none;
+	max-height: none;
+}
+
+.px-scroll__simple {
+	&.px-scroll {
+		box-sizing: border-box;
+		&__y {
+			padding-right: @px-interval-1;
+		}
+		&__x {
+			padding-bottom: @px-interval-1;
+		}
+	}
+}

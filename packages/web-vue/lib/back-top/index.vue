@@ -28,6 +28,7 @@ import { FIXED_Z_INDEX } from '../share/const'
 import type { BackTopProps } from './type'
 import { isString } from 'parsnip-kit'
 import ArrowBarUp from 'pixelarticons/svg/arrow-bar-up.svg'
+import { inBrowser } from '../share/util/env'
 
 defineOptions({
 	name: 'BackTop',
@@ -42,9 +43,15 @@ const props = withDefaults(defineProps<BackTopProps>(), {
 })
 
 const visible = ref(false)
-let scrollContainer: HTMLElement | Window = window
+let scrollContainer: HTMLElement | Window | null = inBrowser() ? window : null
 
-const getScrollContainer = (root?: HTMLElement | string | Window): HTMLElement | Window => {
+const getScrollContainer = (
+	root?: HTMLElement | string | Window
+): HTMLElement | Window | null => {
+	if (!inBrowser()) {
+		return null
+	}
+
 	if (!root) {
 		return window
 	}
@@ -58,13 +65,16 @@ const getScrollContainer = (root?: HTMLElement | string | Window): HTMLElement |
 }
 
 const setScrollContainer = (root?: HTMLElement | string | Window) => {
-	scrollContainer.removeEventListener('scroll', handleScroll)
+	scrollContainer?.removeEventListener('scroll', handleScroll)
 	scrollContainer = getScrollContainer(root)
-	scrollContainer.addEventListener('scroll', handleScroll)
+	scrollContainer?.addEventListener('scroll', handleScroll)
 	handleScroll()
 }
 
 const handleScroll = () => {
+	if (!inBrowser()) {
+		return
+	}
 	let scrollTop = 0
 	if (scrollContainer === window) {
 		scrollTop =
@@ -114,7 +124,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-	scrollContainer.removeEventListener('scroll', handleScroll)
+	scrollContainer?.removeEventListener('scroll', handleScroll)
 })
 </script>
 

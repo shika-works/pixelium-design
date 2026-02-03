@@ -40,7 +40,7 @@
 				class="px-switch-button"
 				ref="switchButtonRef"
 				:style="{
-					left: `${iconLeft}px`,
+					transform: `translateY(-50%) translateX(${iconLeft}px)`,
 					fill: iconColor,
 					color: iconColor
 				}"
@@ -103,6 +103,7 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
 import { usePolling } from '../share/hook/use-polling'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { debounce, isNullish } from 'parsnip-kit'
 
 const MID_PROGRESS = 0.5
 
@@ -269,19 +270,20 @@ watch(
 	}
 )
 
+watch(progress, (val, old) => {
+	if (!isNullish(old) && (val - MID_PROGRESS) * (old - MID_PROGRESS) < 0) nextTick(drawPixel)
+})
 watch(
 	[
 		darkMode,
-		progress,
 		sizeComputed,
 		() => props.shape,
 		disabledComputed,
 		() => props.activeColor,
-		() => props.inactiveColor,
-		iconLeft
+		() => props.inactiveColor
 	],
 	() => {
-		drawPixel()
+		debounceDrawPixel()
 	}
 )
 
@@ -356,8 +358,10 @@ const drawPixel = () => {
 	drawButton()
 }
 
+const debounceDrawPixel = debounce(drawPixel, 0, { maxWait: 50 })
+
 const refresh = () => {
-	drawPixel()
+	debounceDrawPixel()
 	updateSize()
 }
 

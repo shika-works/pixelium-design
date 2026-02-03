@@ -34,7 +34,6 @@ class DialogManager {
 			visible: true,
 			loading: false
 		})
-		this.state.visible
 
 		const footerRender = options.footer
 		const contentRender = options.content

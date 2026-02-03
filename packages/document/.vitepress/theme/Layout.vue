@@ -70,19 +70,21 @@ const checkUrlChange = () => {
 	}
 }
 
-window.addEventListener('popstate', checkUrlChange)
-;['pushState', 'replaceState'].forEach((method) => {
-	// @ts-ignore
-	const original = window.history[method]
-	// @ts-ignore
-	window.history[method] = function (...args) {
-		const result = original.apply(this, args)
-		checkUrlChange()
-		return result
-	}
-})
+if (typeof window !== 'undefined') {
+	window.addEventListener('popstate', checkUrlChange)
+	;['pushState', 'replaceState'].forEach((method) => {
+		// @ts-ignore
+		const original = window.history[method]
+		// @ts-ignore
+		window.history[method] = function (...args) {
+			const result = original.apply(this, args)
+			checkUrlChange()
+			return result
+		}
+	})
 
-checkUrlChange()
+	checkUrlChange()
+}
 
 const route = useRoute()
 const scrollCallback = () => {
@@ -100,16 +102,31 @@ watch(
 	}
 )
 
-onMounted(() => {
-	setTimeout(() => {
-		scrollCallback()
+const [initBody] = useScrollBar()
+const [initSidebar] = useScrollBar('simple')
+
+if (typeof document !== 'undefined') {
+	initBody({
+		target: document.body
 	})
-})
+}
 
-const [init] = useScrollBar()
+onMounted(() => {
+	nextTick(() => {
+		const sidebar = document.querySelector('.VPSidebar') as HTMLElement | null
+		if (!sidebar) {
+			return
+		}
+		sidebar.setAttribute('data-overlayscrollbars-initialize', '')
 
-init({
-	target: document.body
+		initSidebar({
+			target: sidebar
+		})
+
+		setTimeout(() => {
+			scrollCallback()
+		}, 1000)
+	})
 })
 </script>
 

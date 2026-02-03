@@ -71,7 +71,7 @@
 		"@floating-ui/dom": "^1.7.4",
 		"overlayscrollbars": "^2.13.0",
 		"overlayscrollbars-vue": "^0.5.9",
-		"parsnip-kit": "^0.0.6"
+		"parsnip-kit": "^0.0.7"
 	},
 	"repository": {
 		"type": "git",

@@ -582,12 +582,12 @@ describe('FormItem Component Tests', () => {
 					}
 				},
 				attachTo: 'body'
-			})
+			})    
 
 			await nextTick()
 			const inputWrapper = wrapper.find('.px-input input')
 			inputWrapper.trigger('focusout')
-			await new Promise((r) => setTimeout(r, 250))
+			await new Promise((r) => setTimeout(r, 300))
 
 			expect(wrapper.vm.tipMessage).toEqual({
 				message: 'field is required',

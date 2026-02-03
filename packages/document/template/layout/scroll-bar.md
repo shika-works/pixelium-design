@@ -35,6 +35,18 @@ For the ScrollBar component, after obtaining its DOM element, you can access pro
 <preview path="./scroll-bar-basic.vue"></preview>
 
 [[[zh
+## 滚动条样式
+
+滚动条目前有 2 种样式变体，像素风格（`'pixel'`，默认）和简单模式（`'simple'`），通过 `variant` 设置。
+]]]
+[[[en
+## Scrollbar Styles
+
+The scrollbar currently has two style variants: pixel-style (`'pixel'`, default) and simple mode (`'simple'`), set via `variant`.
+]]]
+<preview path="./scroll-bar-variant.vue"></preview>
+
+[[[zh
 ## 函数式
 
 使用 useScrollBar 钩子，手动为某个区域加上像素风滚动条。为需要加上滚动条的元素添加属性 `data-overlayscrollbars-initialize` 防止滚动条闪烁问题的出现。
@@ -76,17 +88,19 @@ init({
 [[[zh
 如果不能满足你的需求，可以前往 [OverlayScrollbars](https://kingsora.github.io/OverlayScrollbars/) 文档查看使用方法。
 
-像素风滚动条的主题名为 `'px-scroll-theme'`。导入全量的样式，或者手动导入 `@pixelium/web-vue/es/scroll-bar/index.css` 后，你就可以在 OverlayScrollbars 上使用它。
+像素风滚动条的主题名为 `'px-scroll-theme'`（对应`variant="pixel"`）和 `'px-scroll-simple-theme'`（对应`variant="simple"`）。导入全量的样式，或者手动导入 `@pixelium/web-vue/es/scroll-bar/index.css` 后，你就可以在 OverlayScrollbars 上使用它。
 ]]]
 [[[en
 If it doesn't meet your needs, you can refer to the [OverlayScrollbars](https://kingsora.github.io/OverlayScrollbars/) documentation for usage details.
 
-The theme name for the pixel-style scrollbar is `'px-scroll-theme'`. After importing the full styles or manually importing `@pixelium/web-vue/es/scroll-bar/index.css`, you can use it with OverlayScrollbars.
+The pixel-style scrollbar themes are named `'pixel-scrollbar-theme'` (corresponding to `theme="pixel"`) and `'simple-scrollbar-theme'` (corresponding to `theme="simple"`). After importing the full styles or manually importing `@pixelium/web-vue/es/scroll-bar/index.css`, you can use it with OverlayScrollbars.
 ]]]
 
 [[[api zh
 scrollOffset: 滚动的偏移量，受控模式，支持 `v-model`。
 defaultScrollOffset: 滚动的偏移量默认值，非受控模式。
+variant: 滚动的样式变体。
+showScrollPadding: 是否在滚动条出现一侧增加 padding。
 
 events.update:scrollOffset: 更新 `scrollOffset` 的回调。
 events.initialize: 滚动条初始化的回调。接收 OverlayScrollbars 实例作为入参，具体参数见 OverlayScrollbars 文档。
@@ -102,6 +116,8 @@ scrollBarExpose.scrollBy: 效果同原生 `scrollBy`。
 [[[api en
 scrollOffset: Scroll offset, controlled mode, supports `v-model`.
 defaultScrollOffset: Default value for scroll offset, uncontrolled mode.
+variant: The style variant of the scrollbar.
+showScrollPadding: Whether to add padding on the side where the scrollbar appears.
 
 events.update:scrollOffset: Callback when `scrollOffset` updates.
 events.initialize: Callback when the scrollbar initializes. Receives an OverlayScrollbars instance as the parameter. For specific details, refer to the OverlayScrollbars documentation.
@@ -113,3 +129,11 @@ slots.default: Content of the scroll container.
 scrollBarExpose.scrollTo: Same behavior as native `scrollTo`.
 scrollBarExpose.scrollBy: Same behavior as native `scrollBy`.
 ]]]
+
+### useScrollBar
+
+```ts
+import { type UseOverlayScrollbarsInitialization, type UseOverlayScrollbarsInstance } from 'overlayscrollbars-vue'
+
+const useScrollBar: (variant?: "pixel" | "simple") => readonly [UseOverlayScrollbarsInitialization, UseOverlayScrollbarsInstance, Ref<boolean, boolean>]
+```

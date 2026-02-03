@@ -23,11 +23,11 @@ The progress offers 5 themes: `'primary'` (default), `'success'`, `'warning'`, `
 
 [[[en
 ## Progress Variants
-There are two visual variants: `'solid'` (default) and `'checker'`.
+There are two visual variants: `'solid'` (default) and `'checkered'`.
 ]]]
 [[[zh
 ## 样式变体
-支持两种样式：`'solid'`（默认）和 `'checker'`（棋盘格）。
+支持两种样式：`'solid'`（默认）和 `'checkered'`（棋盘格）。
 ]]]
 <preview path="./progress-variant.vue"></preview>
 

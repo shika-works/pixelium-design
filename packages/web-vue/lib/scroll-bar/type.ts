@@ -11,6 +11,16 @@ export type ScrollBarProps = {
 	 * @version 0.1.0
 	 */
 	defaultScrollOffset?: { left?: number; top?: number } | null
+	/**
+	 * @property {'pixel' | 'simple'} [variant='pixel']
+	 * @version 0.1.0
+	 */
+	variant?: 'pixel' | 'simple'
+	/**
+	 * @property {boolean} [showScrollPadding=true]
+	 * @version 0.1.0
+	 */
+	showScrollPadding?: boolean
 }
 
 export type ScrollBarEvents = {
@@ -30,7 +40,7 @@ export type ScrollBarEvents = {
 	 * @event update
 	 * @version 0.1.0
 	 */
-	update: []
+	update: [offset: { left: number; top: number }]
 	/**
 	 * @event scroll
 	 * @param {Event} event

@@ -180,13 +180,10 @@ events.change: Callback for when the checkbox group selection changes.
 slots.default: Child checkbox components.
 ]]]
 
+[[[slice option]]]
+
 ### CheckboxGroupOption
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
 export interface CheckboxGroupOption<T = any> extends Option<T> {
 	disabled?: boolean
 	key?: string | number | symbol

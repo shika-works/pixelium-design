@@ -1,3 +1,5 @@
 template/**/*.md
 index.md
 .vitepress/dist
+.vitepress/cache
+.vitepress/.temp

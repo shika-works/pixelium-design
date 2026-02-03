@@ -10,9 +10,7 @@
 	--vp-home-hero-name-background: linear-gradient(120deg, rgba(0, 168, 145, 1));
 	--vp-home-hero-image-background-image: linear-gradient(-45deg, rgba(77, 172, 133, 1));
 }
-img[alt='Static Badge'] {
-	display: inline-block;
-}
+
 .table-of-contents ul {
 	list-style-type: none;
 	padding-left: 14px;
@@ -30,6 +28,33 @@ img[alt='Static Badge'] {
 	}
 }
 
+/* img start */
+img[alt='Static Badge'] {
+	display: inline-block;
+}
+/* img end */
+
+/* table start */
+.vp-doc .vitepress-demo-preview-preview .px-table table {
+	display: table;
+	border-collapse: separate;
+	margin: 0 0;
+	overflow-x: auto;
+	box-sizing: border-box;
+	border-spacing: 0;
+	border-width: 0;
+	width: 100%;
+	border-color: transparent;
+	border-width: 0;
+}
+.px-table-head > tr > th,
+.px-table-head > tr > td {
+	color: inherit;
+}
+
+/* table end */
+
+/* ul start */
 .vp-doc .vitepress-demo-preview-preview ul {
 	list-style: none;
 	padding: 0;
@@ -52,6 +77,8 @@ img[alt='Static Badge'] {
 .vp-doc .example li {
 	margin: 0;
 }
+
+/* ul end */
 
 html.dark {
 	.VPSidebarItem.is-active {

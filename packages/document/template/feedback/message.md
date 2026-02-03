@@ -109,7 +109,7 @@ declare const message: MessageFunction
 ```
 ### ValidContent, ValidVNodeContent
 ```ts
-export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element)
+export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element | null | void)
 export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
 ```
 [[[api message-box en

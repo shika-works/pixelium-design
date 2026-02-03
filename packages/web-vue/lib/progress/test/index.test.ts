@@ -77,12 +77,12 @@ describe('Progress Component', () => {
 		expect(wrapper.find('.append-slot').exists()).toBe(true)
 	})
 
-	it('should add variant class for checker', () => {
+	it('should add variant class for checkered', () => {
 		const wrapper = mount(Progress as any, {
-			props: { variant: 'checker' }
+			props: { variant: 'checkered' }
 		})
 
-		expect(wrapper.find('.px-progress__checker').exists()).toBe(true)
+		expect(wrapper.find('.px-progress__checkered').exists()).toBe(true)
 	})
 
 	it('indicator element should have computed right style when sizes are available', async () => {

@@ -197,30 +197,11 @@ autoCompleteExpose.clear: Clear the current input.
 autoCompleteExpose.select: Select all text in the input.
 ]]]
 
+[[[slice group-option]]]
+[[[slice option-list]]]
 ### AutoCompleteOption, AutoCompleteGroupOption
 
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
-export interface GroupOption<T = any> {
-	children: (Option<T> | string)[]
-	type: 'group'
-}
-
-export interface OptionListOption<T = any> extends Option<T> {
-	disabled?: boolean
-	key?: string | number | symbol
-}
-
-export interface OptionListGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
-	children: (OptionListOption | string)[]
-}
-
 export interface AutoCompleteOption extends OptionListOption<string> {
 }
 
@@ -229,14 +210,4 @@ export interface AutoCompleteGroupOption extends OptionListGroupOption {
 }
 ```
 
-### RestAttrs
-
-```ts
-export type VueClassValue = string | Record<string, any> | VueClassValue[]
-
-export type RestAttrs = {
-	style?: StyleValue | null
-	class?: VueClassValue | null
-	[x: string]: any
-}
-```
+[[[slice rest-attrs]]]

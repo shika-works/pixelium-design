@@ -7,18 +7,17 @@ import PopupWrapper from '../../popup-wrapper/index.vue'
 import AutoComplete from '../../auto-complete/index.vue'
 import { createMocks } from '../../share/util/test'
 
-const { pre, post } = createMocks()
-
-beforeEach(() => {
-	pre()
-})
-
-afterEach(() => {
-	post()
-	vi.restoreAllMocks()
-})
-
 describe('Popup Component', () => {
+	const { pre, post } = createMocks()
+
+	beforeEach(() => {
+		pre()
+	})
+
+	afterEach(() => {
+		post()
+		vi.restoreAllMocks()
+	})
 	it('opens on hover and closes on mouseleave (uncontrolled)', async () => {
 		const wrapper = mount(Popup, {
 			props: {

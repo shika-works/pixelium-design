@@ -227,6 +227,7 @@ export type SelectEvents = {
 	/**
 	 * @event select
 	 * @param {any} value
+	 * @param {string | SelectOption} option
 	 * @param {MouseEvent} e
 	 * @version 0.0.2
 	 */

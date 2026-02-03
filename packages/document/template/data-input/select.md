@@ -256,30 +256,11 @@ selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
 ]]]
 
+[[[slice group-option]]]
+[[[slice option-list]]]
 ### SelectOption, SelectGroupOption
 
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
-export interface GroupOption<T = any> {
-	children: (Option<T> | string)[]
-	type: 'group'
-}
-
-export interface OptionListOption<T = any> extends Option<T> {
-	disabled?: boolean
-	key?: string | number | symbol
-}
-
-export interface OptionListGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
-	children: (OptionListOption | string)[]
-}
-
 export interface SelectOption extends OptionListOption<any> {
 }
 
@@ -288,20 +269,5 @@ export interface SelectGroupOption extends OptionListGroupOption {
 }
 ```
 
-### RestAttrs, EmitEvent
-
-```ts
-import type { StyleValue } from 'vue'
-
-export type EmitEvent<T extends Record<string, any>> = {
-	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
-}
-
-export type VueClassValue = string | Record<string, any> | VueClassValue[]
-
-export type RestAttrs = {
-	style?: StyleValue | null
-	class?: VueClassValue | null
-	[x: string]: any
-}
-```
+[[[slice rest-attrs]]]
+[[[slice emit-event]]]
