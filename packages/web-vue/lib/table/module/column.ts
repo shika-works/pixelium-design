@@ -13,6 +13,7 @@ export type HeaderCell = {
 	isLeaf: boolean
 	original: TableColumn
 	fixed: 'none' | 'left' | 'right'
+	indexPath: number[]
 	presetWidth?: number
 	presetMinWidth?: number
 	left?: number
@@ -74,6 +75,7 @@ function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 	function buildCells(
 		cols: TableColumn[],
 		depth: number,
+		parentIndexPath: number[],
 		parentFixed?: 'left' | 'right' | 'none'
 	) {
 		let spanCount = 0
@@ -84,11 +86,13 @@ function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 			const col = cols[i]
 			if (col.children && col.children.length > 0) {
 				const fixed = parentFixed || col.fixed || 'none'
+				const indexPath = parentIndexPath.slice()
+				indexPath.push(i)
 				const {
 					spanCount: childSpan,
 					presetMinWidth: childMinWidth,
 					presetWidth: childWidth
-				} = buildCells(col.children, depth + 1, fixed)
+				} = buildCells(col.children, depth + 1, indexPath, fixed)
 
 				const width = Math.max(col.width ?? DEFAULT_WIDTH, childWidth)
 				const minWidth = Math.max(col.minWidth ?? DEFAULT_MIN_WIDTH, childMinWidth)
@@ -100,6 +104,7 @@ function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 					depth,
 					original: col,
 					fixed,
+					indexPath,
 					presetMinWidth: minWidth,
 					presetWidth: fixed !== 'none' ? width : col.width ? width : undefined
 				}
@@ -109,6 +114,9 @@ function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 				presetWidth += width
 				presetMinWidth += minWidth
 			} else {
+				const indexPath = parentIndexPath.slice()
+				indexPath.push(i)
+
 				const fixed = parentFixed || col.fixed || 'none'
 
 				const width = col.width ?? DEFAULT_WIDTH
@@ -123,6 +131,7 @@ function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 					depth,
 					original: col,
 					fixed,
+					indexPath,
 					presetMinWidth: minWidth,
 					presetWidth: fixed !== 'none' ? width : col.width ? width : undefined
 				}
@@ -143,7 +152,7 @@ function buildHeaderRowsImpl(columns: TableColumn[], maxDepth: number) {
 		}
 	}
 
-	buildCells(columns, 0)
+	buildCells(columns, 0, [])
 	for (let i = 0; i < headerRows.length; i++) {
 		const row = headerRows[i]
 		for (let j = row.length - 1; j >= 0; j--) {
@@ -196,6 +205,7 @@ export function buildHeaderRows(columns: TableColumn[]) {
 	})
 	return {
 		...buildHeaderRowsImpl(columns, maxDepth),
+		columns,
 		maxDepth
 	}
 }

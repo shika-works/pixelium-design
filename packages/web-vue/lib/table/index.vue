@@ -34,6 +34,7 @@ import {
 } from './module/share'
 import { useFilterable } from './module/filterable'
 import { useSortable } from './module/sortable'
+import { useCellEvent } from './module/event'
 
 defineOptions({
 	name: 'Table'
@@ -132,7 +133,10 @@ const hasCols = computed(() => {
 
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
+const tableRef = shallowRef<HTMLTableElement | null>(null)
 
+const [mouseoverHandler, mouseoutHandler, clickHandler, dblclickHandler, contextmenuHandler] =
+	useCellEvent(tableRef, columnsInfo, data, summaryRows, emits)
 const [polygon] = useDrawPixel(wrapperRef, canvasRef, pixelSize, bordered, props)
 
 defineExpose<TableExpose>({
@@ -163,6 +167,7 @@ const calcLabelContentProps = (cellData: HeaderCell) => {
 	return contentProps
 }
 const calcLabelCellProps = (cellData: HeaderCell, colIndex: number, cellRow: HeaderCell[]) => {
+	const indexPath = cellData.indexPath
 	const nextFixed = cellData.fixed !== 'right' && cellRow[colIndex + 1]?.fixed === 'right'
 	const firstFixed =
 		cellData.fixed === 'right' && (colIndex === 0 || cellRow[colIndex - 1].fixed !== 'right')
@@ -170,7 +175,9 @@ const calcLabelCellProps = (cellData: HeaderCell, colIndex: number, cellRow: Hea
 		{
 			colspan: cellData.colspan,
 			rowspan: cellData.rowspan,
+			'data-head-index': indexPath.join('-'),
 			class: {
+				'px-table-th': true,
 				'px-table-th__leaf': cellData.isLeaf,
 				'px-table-th__left-fixed': cellData.fixed === 'left',
 				'px-table-th__right-fixed': cellData.fixed === 'right',
@@ -300,9 +307,11 @@ const calcContentProps = (cellData: BodyCell) => {
 	return contentProps
 }
 const calcCellProps = (
-	cellWrapper: BodyCellWrapper,
+	rowIndex: number,
 	colIndex: number,
-	cellWrapperArr: BodyCellWrapper[]
+	cellWrapper: BodyCellWrapper,
+	cellWrapperArr: BodyCellWrapper[],
+	inSummary: boolean
 ) => {
 	const cellData = cellWrapper.cell
 
@@ -318,7 +327,11 @@ const calcCellProps = (
 
 	return mergeProps(
 		{
+			'data-row': rowIndex,
+			'data-col': colIndex,
+			'data-source': inSummary ? 'summary' : 'data',
 			class: {
+				'px-table-td': true,
 				'px-table-td__odd': (cellWrapper.originColIndex & 1) === 0,
 				'px-table-td__even': cellWrapper.originColIndex & 1,
 				'px-table-td__left-fixed': cellData.fixed === 'left',
@@ -341,7 +354,12 @@ const calcCellProps = (
 	)
 }
 
-const renderCol = (record: TableData, rowIndex: number, cellRow: BodyCellWrapper[]) => {
+const renderCol = (
+	record: TableData,
+	rowIndex: number,
+	cellRow: BodyCellWrapper[],
+	inSummary: boolean
+) => {
 	const columns = cellRow
 	const row = columns.length
 		? columns.map((e, i) => {
@@ -352,7 +370,7 @@ const renderCol = (record: TableData, rowIndex: number, cellRow: BodyCellWrapper
 
 				const cellContent = renderCell(record, columns, i, rowIndex)
 
-				const cellProps = calcCellProps(e, i, columns)
+				const cellProps = calcCellProps(rowIndex, i, e, columns, inSummary)
 				return (
 					<td key={`${rowIndex}-${i}`} {...cellProps}>
 						<div {...contentProps}>{cellContent}</div>
@@ -361,6 +379,34 @@ const renderCol = (record: TableData, rowIndex: number, cellRow: BodyCellWrapper
 			})
 		: null
 	return row
+}
+
+const renderExpand = (record: TableData, rowIndex: number, isNextBottomFixed: boolean) => {
+	const slotExpand = slots.expand
+	const hasRowExpand = isString(record.expand) || isFunction(record.expand)
+	const hasSlotExpand = isFunction(slotExpand) && record.expand !== false
+	return hasRowExpand || hasSlotExpand ? (
+		<tr
+			class={{
+				'px-table-expand-row': true,
+				'px-table-expand-row__next-fixed': isNextBottomFixed
+			}}
+		>
+			<td
+				class="px-table-td px-table-td__expand"
+				data-row={rowIndex}
+				colspan={columnsInfo.value.leafColumns.length}
+			>
+				{hasRowExpand
+					? isFunction(record.expand)
+						? record.expand({ record, rowIndex })
+						: (record.expand ?? '')
+					: hasSlotExpand
+						? slotExpand({ record, rowIndex })
+						: null}
+			</td>
+		</tr>
+	) : null
 }
 
 const renderBody = () => {
@@ -379,36 +425,13 @@ const renderBody = () => {
 		data.value.map((e, i) => {
 			const rowKey = e[props.rowKey]
 			const hasExpand = expandedKeys.value?.includes(rowKey)
-			const isNextBottomFixed =
+			const isNextBottomFixed = !!(
 				summaryRows.value.length &&
 				props.summary?.placement !== 'start' &&
 				i === data.value.length - 1
+			)
 
-			const expandRow = hasExpand ? (
-				isString(e.expand) || isFunction(e.expand) ? (
-					<tr
-						class={{
-							'px-table-expand-row': true,
-							'px-table-expand-row__next-fixed': isNextBottomFixed
-						}}
-					>
-						<td colspan={columnsInfo.value.leafColumns.length}>
-							{isFunction(e.expand) ? e.expand({ record: e, rowIndex: i }) : (e.expand ?? '')}
-						</td>
-					</tr>
-				) : slots.expand && e.expand !== false ? (
-					<tr
-						class={{
-							'px-table-expand-row': true,
-							'px-table-expand-row__next-fixed': isNextBottomFixed
-						}}
-					>
-						<td colspan={columnsInfo.value.leafColumns.length}>
-							{slots.expand({ record: e, rowIndex: i })}
-						</td>
-					</tr>
-				) : null
-			) : null
+			const expandRow = hasExpand ? renderExpand(e, i, isNextBottomFixed) : null
 
 			const rows = [
 				<tr
@@ -420,7 +443,7 @@ const renderBody = () => {
 						'px-table-row__next-fixed': expandRow ? false : isNextBottomFixed
 					}}
 				>
-					{renderCol(e, i, cells[i])}
+					{renderCol(e, i, cells[i], false)}
 				</tr>
 			]
 			if (expandRow) {
@@ -463,7 +486,7 @@ const renderSummary = () => {
 					'px-table-row__first-fixed': i === 0 && props.summary?.placement !== 'start'
 				}}
 			>
-				{renderCol(e, i, cells[i])}
+				{renderCol(e, i, cells[i], true)}
 			</tr>
 		)
 	})
@@ -520,7 +543,15 @@ const render = () => {
 						minWidth: `${contentMinWidth.value}px`
 					}}
 				>
-					<table class="px-table-inner">
+					<table
+						class="px-table-inner"
+						ref={tableRef}
+						onClick={clickHandler}
+						onDblclick={dblclickHandler}
+						onContextmenu={contextmenuHandler}
+						onMouseover={mouseoverHandler}
+						onMouseout={mouseoutHandler}
+					>
 						<thead class="px-table-head">
 							{renderHeader()}
 							{hasCols.value &&
