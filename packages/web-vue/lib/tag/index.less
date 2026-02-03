@@ -8,9 +8,6 @@
 	z-index: -1;
 	pointer-events: none;
 }
-span.px-tag {
-	line-height: var(--px-medium-sub-base-size);
-}
 .px-tag {
 	@prefix: px-tag;
 	@px-medium-padding-x: @px-interval-2;
@@ -42,10 +39,12 @@ span.px-tag {
 		&.@{prefix}__@{value} {
 			@paddingVar: ~"px-@{value}-padding-x";
 			@fontVar: ~"px-@{value}-font-size";
+			@lineHeight: ~"var(--px-@{value}-sub-base-size)";
 
 			padding-right: @@paddingVar;
 			padding-left: @@paddingVar;
 			font-size: @@fontVar;
+			line-height: @lineHeight;
 
 			.@{prefix}-icon-wrapper {
 				height: @@fontVar - @px-interval-1;
