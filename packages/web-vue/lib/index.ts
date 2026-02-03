@@ -16,12 +16,7 @@ import Main from './main/index.vue'
 import Aside from './aside/index.vue'
 import Header from './header/index.vue'
 import Footer from './footer/index.vue'
-import {
-	setThemeColor,
-	resetThemeColor,
-	setPixelSize,
-	resetPixelSize
-} from './share/util/theme.ts'
+import { setThemeColor, resetThemeColor, setPixelSize, resetPixelSize } from './theme/theme.ts'
 import { useThemeMode } from './share/hook/use-theme-mode.ts'
 import Icon from './icon/index.vue'
 import { inBrowser } from './share/util/env.ts'

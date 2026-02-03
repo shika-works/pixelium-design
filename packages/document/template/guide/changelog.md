@@ -66,7 +66,8 @@
 ## v0.0.5
 > hotfix
 - 修复：
-  - 修复 Tag 组件 line-height 没有正确设置的问题，这会导致 `size="small"` 的 Tag 被撑高。
+  - 修复 `setPixelSize` 函数设置 CSS 变量异常的问题。
+  - 修复 Tag 组件 `line-height` 没有正确设置的问题，这会导致 `size="small"` 的 Tag 被撑高。
   - 修复 Select `size="small"` 时高度没有正确设置的问题。
   - 修复 InputTag 组件高度相关 CSS 没有被正确设置（虽然视觉上看起来是没有问题的）。
 ]]]
@@ -74,7 +75,8 @@
 ## v0.0.5
 > hotfix
 - Fixes:
-  - Fixed an issue where the Tag component's line-height was not set correctly, causing Tags with `size="small"` to be taller than intended.
+  - Fix the issue where the `setPixelSize` function incorrectly set CSS custom properties.
+  - Fixed an issue where the Tag component's `line-height` was not set correctly, causing Tags with `size="small"` to be taller than intended.
   - Fix the issue where the height is not correctly set when using Select `size="small"`.
   - Fix the problem where the CSS related to the height of the InputTag component is not properly configured (even though it appears visually correct).
 ]]]
