@@ -101,7 +101,7 @@ watch(
 )
 
 const [initBody] = useScrollBar()
-const [initSidebar] = useScrollBar()
+const [initSidebar] = useScrollBar('simple')
 
 initBody({
 	target: document.body
@@ -113,6 +113,8 @@ onMounted(() => {
 		if (!sidebar) {
 			return
 		}
+		sidebar.setAttribute('data-overlayscrollbars-initialize', '')
+
 		initSidebar({
 			target: sidebar
 		})

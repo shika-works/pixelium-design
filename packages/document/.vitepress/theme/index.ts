@@ -14,11 +14,12 @@ import IconExampleHn from '../../template/common/icon-example-hn.vue'
 import IconExamplePa from '../../template/common/icon-example-pa.vue'
 
 import { defineClientComponentConfig } from '@vitepress-demo-preview/core'
+import type { App } from 'vue'
 
 export default {
 	extends: DefaultTheme,
 	Layout,
-	enhanceApp({ app }) {
+	enhanceApp({ app }: { app: App }) {
 		defineClientComponentConfig({
 			copySuccessText: 'Code copied to clipboard!',
 			vueApp: app,
@@ -44,5 +45,8 @@ export default {
 		app.component('demo-preview', AntDesignContainer)
 		app.component('IconExamplePa', IconExamplePa)
 		app.component('IconExampleHn', IconExampleHn)
+
+		document.body.setAttribute('data-overlayscrollbars-initialize', '')
+		document.documentElement.setAttribute('data-overlayscrollbars-initialize', '')
 	}
 }
