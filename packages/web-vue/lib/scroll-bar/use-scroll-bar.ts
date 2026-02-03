@@ -2,7 +2,7 @@ import { useOverlayScrollbars } from 'overlayscrollbars-vue'
 import { ref } from 'vue'
 import { initScroll } from '../share/util/scroll'
 
-export const useScrollBar = () => {
+export const useScrollBar = (variant: 'pixel' | 'simple' = 'pixel') => {
 	initScroll()
 	const initialized = ref(false)
 	const [init, getInstance] = useOverlayScrollbars({
@@ -17,7 +17,7 @@ export const useScrollBar = () => {
 		},
 		options: {
 			scrollbars: {
-				theme: 'px-scroll-theme',
+				theme: variant === 'pixel' ? 'px-scroll-theme' : 'px-scroll-simple-theme',
 				clickScroll: true
 			}
 		}
