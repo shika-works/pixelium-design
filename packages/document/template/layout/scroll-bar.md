@@ -129,3 +129,11 @@ slots.default: Content of the scroll container.
 scrollBarExpose.scrollTo: Same behavior as native `scrollTo`.
 scrollBarExpose.scrollBy: Same behavior as native `scrollBy`.
 ]]]
+
+### useScrollBar
+
+```ts
+import { type UseOverlayScrollbarsInitialization, type UseOverlayScrollbarsInstance } from 'overlayscrollbars-vue'
+
+const useScrollBar: (variant?: "pixel" | "simple") => readonly [UseOverlayScrollbarsInitialization, UseOverlayScrollbarsInstance, Ref<boolean, boolean>]
+```
