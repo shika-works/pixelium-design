@@ -1270,9 +1270,14 @@ describe('Table Component Example', () => {
 		filterPopupWrapper0.findAllComponents(Checkbox)[1].trigger('click')
 		filterPopupWrapper0.findAll('.px-button')[1].trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
-		expect(filterPopupWrapper0.element.style.display).toBe('none')
+		await expect
+			.poll(() => filterPopupWrapper0.element.style.display, {
+				timeout: 400
+			})
+			.toBe('none')
 		expect(filterValue.value).toEqual({ status: ['active', 'inactive'] })
 
+		await new Promise((r) => setTimeout(r, 500))
 		wrapper.setProps({ filterValue: filterValue.value })
 		await nextTick()
 
@@ -1299,12 +1304,15 @@ describe('Table Component Example', () => {
 		filterPopupWrapper1.findAllComponents(Radio)[0].trigger('click')
 		filterPopupWrapper1.findAll('.px-button')[1].trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
-		expect(filterPopupWrapper1.element.style.display).toBe('none')
+		await expect
+			.poll(() => filterPopupWrapper1.element.style.display, { timeout: 400 })
+			.toBe('none')
 		expect(filterValue.value).toEqual({
 			bonus: [500],
 			status: ['active', 'inactive']
 		})
 
+		await new Promise((r) => setTimeout(r, 500))
 		wrapper.setProps({ filterValue: filterValue.value })
 		await nextTick()
 
@@ -1382,6 +1390,23 @@ describe('Table Component Example', () => {
 			})
 			.join(';')
 		expect(curData4).toBe(curData2)
+
+		// test event
+		expect(wrapper.emitted('filterSelect')?.[0]?.[0]).toEqual(['active', 'inactive'])
+		expect(wrapper.emitted('filterSelect')?.[0]?.[1]).toEqual('status')
+		expect(wrapper.emitted('filterSelect')?.[0]?.[2]).toEqual({
+			value: 'inactive',
+			label: 'Inactive'
+		})
+		expect(wrapper.emitted('filterSelect')?.[0]?.[3]).toEqual(columns[3])
+		expect(wrapper.emitted('filterSelect')?.[0]?.[4]).instanceOf(Event)
+		expect(wrapper.emitted('filterChange')?.[0]?.[0]).toEqual({
+			status: ['active', 'inactive']
+		})
+		expect(wrapper.emitted('filterConfirm')?.[0]?.[0]).toEqual('status')
+		expect(wrapper.emitted('filterConfirm')?.[0]?.[1]).instanceOf(Event)
+		expect(wrapper.emitted('filterReset')?.[0]?.[0]).toEqual('baseSalary')
+		expect(wrapper.emitted('filterReset')?.[0]?.[1]).instanceOf(Event)
 	})
 	test('summary', async () => {
 		const columns = [
