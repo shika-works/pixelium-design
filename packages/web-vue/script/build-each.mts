@@ -204,62 +204,71 @@ async function handleJsCss(
 	sub: string,
 	jsFile: string,
 	cssContent: string,
-	cssFileName?: string
+	cssFileName?: string,
+	cssFilePath?: string
 ) {
 	const jsPath = join(sub, jsFile)
-	const cssPath = join(sub, cssFileName || 'css.js')
+	const cssPath = join(sub, cssFilePath || cssFileName || 'css.js')
 	const shouldHandle = await exists(jsPath)
 	if (!shouldHandle) return
 	await prependImport(jsPath, `import './${cssFileName || 'css.js'}'`)
 	await fs.writeFile(cssPath, cssContent)
 }
 
-async function handleCssImports() {
-	const configs: Record<
-		string,
-		| { js: string; css: string; cssFileName?: string }
-		| { js: string; css: string; cssFileName?: string }[]
-	> = {
-		icons: [
-			{
-				js: 'icon-hn.js',
-				css: `import './icon-hn.css'\n`,
-				cssFileName: 'css-hn.js'
-			},
-			{
-				js: 'icon-pa.js',
-				css: `import './icon-pa.css'\n`,
-				cssFileName: 'css-pa.js'
-			}
-		],
-		share: [
-			{
-				js: 'util/scroll.js',
-				css: `import '../../overlayscrollbars.css'\n`,
-				cssFileName: 'util/css-scroll.js'
-			}
-		],
-		'scroll-bar': [
-			{
-				js: 'use-body-scroll-bar.js',
-				css: `import './index.css'\n`,
-				cssFileName: 'css-use-body-scroll-bar.js'
-			}
-		]
-	}
+type CssConfig = Record<
+	string,
+	| { js: string; css: string; cssFileName?: string; cssFilePath?: string }
+	| { js: string; css: string; cssFileName?: string; cssFilePath?: string }[]
+>
 
+const cssConfigs: CssConfig = {
+	icons: [
+		{
+			js: 'icon-hn.js',
+			css: `import './icon-hn.css'\n`,
+			cssFileName: 'css-hn.js'
+		},
+		{
+			js: 'icon-pa.js',
+			css: `import './icon-pa.css'\n`,
+			cssFileName: 'css-pa.js'
+		}
+	],
+	share: [
+		{
+			js: 'util/scroll.js',
+			css: `import '../../public/overlayscrollbars.css'\n`,
+			cssFileName: 'css-scroll.js',
+			cssFilePath: 'util/css-scroll.js'
+		}
+	],
+	'scroll-bar': [
+		{
+			js: 'use-scroll-bar.js',
+			css: `import './index.css'\n`,
+			cssFileName: 'css-hook.js'
+		},
+		{
+			js: 'index.js',
+			css: `import './index.css'\n`,
+			cssFileName: 'css.js'
+		}
+	]
+}
+
+async function handleCssImports() {
 	for await (const dirent of await fs.opendir(esDir)) {
 		if (!dirent.isDirectory()) continue
 		const sub = join(esDir, dirent.name)
-		const config = configs[dirent.name]
+		const config = cssConfigs[dirent.name]
 
 		if (config) {
 			if (isArray(config)) {
 				for (const item of config) {
-					await handleJsCss(sub, item.js, item.css, item.cssFileName)
+					await handleJsCss(sub, item.js, item.css, item.cssFileName, item.cssFilePath)
 				}
 			} else {
-				await handleJsCss(sub, config.js, config.css, config.cssFileName)
+				await handleJsCss(sub, config.js, config.css, config.cssFileName, config.cssFilePath)
 			}
 		} else {
 			const jsFile = 'index.js'
