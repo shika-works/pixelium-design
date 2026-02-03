@@ -46,7 +46,9 @@ export default {
 		app.component('IconExamplePa', IconExamplePa)
 		app.component('IconExampleHn', IconExampleHn)
 
-		document.body.setAttribute('data-overlayscrollbars-initialize', '')
-		document.documentElement.setAttribute('data-overlayscrollbars-initialize', '')
+		if (typeof document !== 'undefined') {
+			document.body.setAttribute('data-overlayscrollbars-initialize', '')
+			document.documentElement.setAttribute('data-overlayscrollbars-initialize', '')
+		}
 	}
 }

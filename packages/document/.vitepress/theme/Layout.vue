@@ -70,19 +70,21 @@ const checkUrlChange = () => {
 	}
 }
 
-window.addEventListener('popstate', checkUrlChange)
-;['pushState', 'replaceState'].forEach((method) => {
-	// @ts-ignore
-	const original = window.history[method]
-	// @ts-ignore
-	window.history[method] = function (...args) {
-		const result = original.apply(this, args)
-		checkUrlChange()
-		return result
-	}
-})
+if (typeof window !== 'undefined') {
+	window.addEventListener('popstate', checkUrlChange)
+	;['pushState', 'replaceState'].forEach((method) => {
+		// @ts-ignore
+		const original = window.history[method]
+		// @ts-ignore
+		window.history[method] = function (...args) {
+			const result = original.apply(this, args)
+			checkUrlChange()
+			return result
+		}
+	})
 
-checkUrlChange()
+	checkUrlChange()
+}
 
 const route = useRoute()
 const scrollCallback = () => {
@@ -103,9 +105,11 @@ watch(
 const [initBody] = useScrollBar()
 const [initSidebar] = useScrollBar('simple')
 
-initBody({
-	target: document.body
-})
+if (typeof document !== 'undefined') {
+	initBody({
+		target: document.body
+	})
+}
 
 onMounted(() => {
 	nextTick(() => {
