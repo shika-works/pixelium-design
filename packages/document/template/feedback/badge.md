@@ -23,7 +23,7 @@ Use Badge to attach a small indicator to other elements.
 ## 最大值
 `max` 设置角标的最大值，超过时以 `${max}+` 展示。
 ]]]
-[[[zh
+[[[en
 ## Maximum
 `max` sets the maximum value for the badge. When exceeded, it will be displayed as `${max}+`.
 ]]]
