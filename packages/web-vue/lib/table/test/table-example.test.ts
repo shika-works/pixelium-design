@@ -1586,4 +1586,193 @@ describe('Table Component Example', () => {
 		expect(wrapper.find('thead .px-table-row__summary').exists()).toBeTruthy()
 		expect(wrapper.find('tbody .px-table-row__summary').exists()).toBeFalsy()
 	})
+	test('cell events', async () => {
+		const columns = [
+			{
+				label: 'Basic Information',
+				key: 'base-info',
+				children: [
+					{
+						label: 'ID',
+						field: 'id',
+						key: 'id'
+					},
+					{
+						label: 'Name',
+						field: 'name',
+						key: 'name'
+					}
+				]
+			},
+			{
+				label: 'Contact Information',
+				key: 'contactInformation',
+				children: [
+					{
+						label: 'Contact Details',
+						key: 'contactDetails',
+						children: [
+							{
+								key: 'phone',
+								label: 'Phone',
+								field: 'phone'
+							},
+							{
+								key: 'email',
+								label: 'Email',
+								field: 'email'
+							}
+						]
+					},
+					{
+						label: 'Address',
+						field: 'address',
+						key: 'address'
+					}
+				]
+			},
+			{
+				label: 'Work Information',
+				key: 'workInformation',
+				children: [
+					{
+						label: 'Department',
+						field: 'department',
+						key: 'department'
+					},
+					{
+						label: 'Salary Information',
+						key: 'salaryInformation',
+						children: [
+							{
+								label: 'Base Salary',
+								field: 'baseSalary',
+								key: 'baseSalary'
+							},
+							{
+								label: 'Bonus',
+								field: 'bonus',
+								key: 'bonus'
+							},
+							{
+								label: 'Total',
+								field: 'totalSalary',
+								key: 'totalSalary'
+							}
+						]
+					}
+				]
+			},
+			{
+				label: 'Status',
+				field: 'status',
+				key: 'status'
+			}
+		]
+
+		const data = [
+			{
+				id: 1,
+				name: 'John Smith',
+				phone: '+1 (212) 555-0198',
+				email: 'john.smith@example.com',
+				address: '123 Main St, New York, NY',
+				department: 'Sales',
+				baseSalary: 5000,
+				bonus: 1000,
+				totalSalary: 6000,
+				status: 'Active'
+			},
+			{
+				id: 2,
+				name: 'Emily Johnson',
+				phone: '+44 20 7946 0958',
+				email: 'emily.j@example.com',
+				address: '456 Park Ave, Los Angeles, CA',
+				department: 'Marketing',
+				baseSalary: 4500,
+				bonus: 800,
+				totalSalary: 5300,
+				status: 'Active'
+			}
+		]
+		const wrapper = mount(Table, {
+			props: {
+				columns,
+				data
+			}
+		})
+
+		const thSample = wrapper.find('thead tr:last-of-type').find('th')
+		thSample.trigger('click')
+		thSample.trigger('contextmenu')
+		thSample.trigger('dblclick')
+
+		expect(wrapper.emitted('headCellClick')?.[0]?.[0]).toEqual(
+			columns[1].children![0].children![0]
+		)
+		expect(wrapper.emitted('headCellClick')?.[0]?.[1]).toEqual([1, 0, 0])
+		expect(wrapper.emitted('headCellClick')?.[0]?.[2]).instanceof(Event)
+
+		expect(wrapper.emitted('headCellDblclick')?.[0]?.[0]).toEqual(
+			columns[1].children![0].children![0]
+		)
+		expect(wrapper.emitted('headCellDblclick')?.[0]?.[1]).toEqual([1, 0, 0])
+		expect(wrapper.emitted('headCellDblclick')?.[0]?.[2]).instanceof(Event)
+
+		expect(wrapper.emitted('headCellContextmenu')?.[0]?.[0]).toEqual(
+			columns[1].children![0].children![0]
+		)
+		expect(wrapper.emitted('headCellContextmenu')?.[0]?.[1]).toEqual([1, 0, 0])
+		expect(wrapper.emitted('headCellContextmenu')?.[0]?.[2]).instanceof(Event)
+
+		const tdSample = wrapper.find('tbody tr td')
+		tdSample.trigger('click')
+		tdSample.trigger('contextmenu')
+		tdSample.trigger('dblclick')
+		tdSample.trigger('mouseover')
+		tdSample.trigger('mouseout')
+
+		expect(wrapper.emitted('cellMouseenter')?.[0]?.[0]).toEqual(columns[0].children![0])
+		expect(wrapper.emitted('cellMouseenter')?.[0]?.[1]).toEqual(data[0])
+		expect(wrapper.emitted('cellMouseenter')?.[0]?.[2]).toEqual(0)
+		expect(wrapper.emitted('cellMouseenter')?.[0]?.[3]).toEqual(0)
+		expect(wrapper.emitted('cellMouseenter')?.[0]?.[4]).instanceof(Event)
+
+		expect(wrapper.emitted('cellMouseleave')?.[0]?.[0]).toEqual(columns[0].children![0])
+		expect(wrapper.emitted('cellMouseleave')?.[0]?.[1]).toEqual(data[0])
+		expect(wrapper.emitted('cellMouseleave')?.[0]?.[2]).toEqual(0)
+		expect(wrapper.emitted('cellMouseleave')?.[0]?.[3]).toEqual(0)
+		expect(wrapper.emitted('cellMouseleave')?.[0]?.[4]).instanceof(Event)
+
+		expect(wrapper.emitted('cellClick')?.[0]?.[0]).toEqual(columns[0].children![0])
+		expect(wrapper.emitted('cellClick')?.[0]?.[1]).toEqual(data[0])
+		expect(wrapper.emitted('cellClick')?.[0]?.[2]).toEqual(0)
+		expect(wrapper.emitted('cellClick')?.[0]?.[3]).toEqual(0)
+		expect(wrapper.emitted('cellClick')?.[0]?.[4]).instanceof(Event)
+
+		expect(wrapper.emitted('cellDblclick')?.[0]?.[0]).toEqual(columns[0].children![0])
+		expect(wrapper.emitted('cellDblclick')?.[0]?.[1]).toEqual(data[0])
+		expect(wrapper.emitted('cellDblclick')?.[0]?.[2]).toEqual(0)
+		expect(wrapper.emitted('cellDblclick')?.[0]?.[3]).toEqual(0)
+		expect(wrapper.emitted('cellDblclick')?.[0]?.[4]).instanceof(Event)
+
+		expect(wrapper.emitted('cellContextmenu')?.[0]?.[0]).toEqual(columns[0].children![0])
+		expect(wrapper.emitted('cellContextmenu')?.[0]?.[1]).toEqual(data[0])
+		expect(wrapper.emitted('cellContextmenu')?.[0]?.[2]).toEqual(0)
+		expect(wrapper.emitted('cellContextmenu')?.[0]?.[3]).toEqual(0)
+		expect(wrapper.emitted('cellContextmenu')?.[0]?.[4]).instanceof(Event)
+
+		expect(wrapper.emitted('rowClick')?.[0]?.[0]).toEqual(data[0])
+		expect(wrapper.emitted('rowClick')?.[0]?.[1]).toEqual(0)
+		expect(wrapper.emitted('rowClick')?.[0]?.[2]).instanceof(Event)
+
+		expect(wrapper.emitted('rowDblclick')?.[0]?.[0]).toEqual(data[0])
+		expect(wrapper.emitted('rowDblclick')?.[0]?.[1]).toEqual(0)
+		expect(wrapper.emitted('rowDblclick')?.[0]?.[2]).instanceof(Event)
+
+		expect(wrapper.emitted('rowContextmenu')?.[0]?.[0]).toEqual(data[0])
+		expect(wrapper.emitted('rowContextmenu')?.[0]?.[1]).toEqual(0)
+		expect(wrapper.emitted('rowContextmenu')?.[0]?.[2]).instanceof(Event)
+	})
 })
