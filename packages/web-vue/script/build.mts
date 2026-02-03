@@ -20,6 +20,17 @@ try {
 	log('Cleaning output...')
 	await rimraf.sync(join(root, 'dist'))
 	await rimraf.sync(join(root, 'es'))
+	await rimraf.sync(join(root, 'lib'), {
+		filter(path) {
+			if (!path.endsWith('.d.ts')) {
+				return false
+			}
+			if (path.endsWith('share/type/shim.d.ts') || path.endsWith('share\\type\\shim.d.ts')) {
+				return false
+			}
+			return true
+		}
+	})
 
 	log('Running vue-tsc...')
 	await $('npx vue-tsc -b')
