@@ -582,7 +582,7 @@ describe('FormItem Component Tests', () => {
 					}
 				},
 				attachTo: 'body'
-			})    
+			})
 
 			await nextTick()
 			const inputWrapper = wrapper.find('.px-input input')
