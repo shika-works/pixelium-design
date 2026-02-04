@@ -106,12 +106,12 @@ const calcSizes = (pixelSize: number) => {
 	}
 }
 
-export const setPixelSize = (size: number): void => {
+export const setPixelSize = (size: number, dynamicComponentSize: boolean = false): void => {
 	if (!inBrowser()) {
 		return
 	}
 	document.documentElement.style.setProperty(`--px-bit`, size + 'px')
-	const sizes = calcSizes(size)
+	const sizes = calcSizes(dynamicComponentSize ? size : DEFAULT_PIXEL_SIZE)
 	Object.keys(sizes).forEach((key) => {
 		document.documentElement.style.setProperty(key, ((sizes as any)[key] as number) + 'px')
 	})
