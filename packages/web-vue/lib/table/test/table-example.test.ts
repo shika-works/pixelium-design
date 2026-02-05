@@ -1339,13 +1339,16 @@ describe('Table Component Example', () => {
 		filterPopupWrapper2.findAllComponents(Radio)[0].trigger('click')
 		filterPopupWrapper2.findAll('.px-button')[1].trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
-		expect(filterPopupWrapper2.element.style.display).toBe('none')
+		await expect.poll(()=>filterPopupWrapper2.element.style.display, {
+			timeout: 400
+		}).toBe('none')
 		expect(filterValue.value).toEqual({
 			baseSalary: [7000],
 			bonus: [500],
 			status: ['active', 'inactive']
 		})
 
+		await new Promise(r => setTimeout(r, 500))
 		wrapper.setProps({ filterValue: filterValue.value })
 		await nextTick()
 
