@@ -6,6 +6,39 @@
 ]]]
 
 [[[zh
+## v0.0.5
+> hotfix
+- 修复：
+  - ⚠️需要注意⚠️ 修复 `setPixelSize` 函数设置 CSS 变量异常的问题，并且增加 `dynamicComponentSize` 参数控制像素尺寸对绝大部分组件尺寸计算的影响，避免引起修复前后组件尺寸变化的问题。
+  - 修复 Tag 组件 `line-height` 没有正确设置的问题，这会导致 `size="small"` 的 Tag 被撑高。
+  - 修复 Select `size="small"` 时高度没有正确设置的问题。
+  - 修复 InputTag 组件高度相关 CSS 没有被正确设置（虽然视觉上看起来是没有问题的）。
+]]]
+[[[en
+## v0.0.5
+> hotfix
+- Fixes:
+  - ⚠️ Note ⚠️ Fix the issue where the `setPixelSize` function incorrectly set CSS custom properties, and add a `dynamicComponentSize` parameter to control how pixel size affects size calculations for most components, preventing size differences before and after the fix.
+  - Fixed an issue where the Tag component's `line-height` was not set correctly, causing Tags with `size="small"` to be taller than intended.
+  - Fix the issue where the height is not correctly set when using Select `size="small"`.
+  - Fix the problem where the CSS related to the height of the InputTag component is not properly configured (even though it appears visually correct).
+]]]
+
+[[[zh
+## v0.0.4
+> hotfix
+- 修复：
+  - 优化了输入控件错误触发键盘操作提示边框的问题，优化了相关样式，后续会使用更合理的机制处理这一逻辑。
+]]]
+
+[[[en
+## v0.0.4
+> hotfix
+- Fixes:
+  - Optimized the issue where input controls incorrectly triggered keyboard operation hint borders. Related styles have been improved. A more reasonable mechanism will be used to handle this logic in the future.
+]]]
+
+[[[zh
 ## v0.0.3
 - 新增：
   - 支持切换像素宽度，支持 2px 和 4px。
