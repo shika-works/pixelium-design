@@ -83,7 +83,7 @@ export const resetThemeColor = (
 	EventBus.emit(GLOBAL_CSS_VAR_CHANGE)
 }
 
-const calcSizes = (pixelSize: number) => {
+export const calcSizes = (pixelSize: number, borderSize: number) => {
 	const mediumSize = MEDIUM_BASE_SIZE + pixelSize * 2
 	const smallSize = SMALL_BASE_SIZE + pixelSize * 2
 	const largeSubSize = mediumSize
@@ -97,9 +97,9 @@ const calcSizes = (pixelSize: number) => {
 		'--px-large-sub-size': largeSubSize,
 		'--px-medium-sub-size': mediumSubSize,
 		'--px-small-sub-size': smallSubSize,
-		'--px-large-sub-base-size': largeSubSize - 2 * pixelSize,
-		'--px-medium-sub-base-size': mediumSubSize - 2 * pixelSize,
-		'--px-small-sub-base-size': smallSubSize - 2 * pixelSize,
+		'--px-large-sub-base-size': largeSubSize - 2 * borderSize,
+		'--px-medium-sub-base-size': mediumSubSize - 2 * borderSize,
+		'--px-small-sub-base-size': smallSubSize - 2 * borderSize,
 		'--px-large-compat-size': mediumSize - INTERVAL,
 		'--px-medium-compat-size': mediumSize - INTERVAL * 2,
 		'--px-small-compat-size': smallSize - INTERVAL
@@ -111,7 +111,7 @@ export const setPixelSize = (size: number, dynamicComponentSize: boolean = false
 		return
 	}
 	document.documentElement.style.setProperty(`--px-bit`, size + 'px')
-	const sizes = calcSizes(dynamicComponentSize ? size : DEFAULT_PIXEL_SIZE)
+	const sizes = calcSizes(dynamicComponentSize ? size : DEFAULT_PIXEL_SIZE, size)
 	Object.keys(sizes).forEach((key) => {
 		document.documentElement.style.setProperty(key, ((sizes as any)[key] as number) + 'px')
 	})
