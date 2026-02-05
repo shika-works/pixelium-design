@@ -14,11 +14,11 @@ export function useLocale() {
 		emitter.off('lang-change', handleLangChange)
 	})
 	const tComputed = computed(() => {
-		return (path: string, fallback: string) => locale.t(path, fallback)
+		return <T>(path: string, fallback: string) => locale.t<T>(path, fallback)
 	})
 
 	return [
-		(path: string, fallback: string = path) => tComputed.value(path, fallback),
+		<T>(path: string, fallback: string = path) => tComputed.value<T>(path, fallback),
 		setLocale,
 		currentLang
 	] as const
