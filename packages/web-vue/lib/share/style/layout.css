@@ -19,6 +19,9 @@
 	--px-large-compat-size: 32px;
 	--px-medium-compat-size: 28px;
 	--px-small-compat-size: 24px;
+	--px-large-compat-base-size: 24px;
+	--px-medium-compat-base-size: 20px;
+	--px-small-compat-base-size: 16px;
 
 	--px-line-height: 1.5;
 
