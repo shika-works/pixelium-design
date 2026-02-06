@@ -24,6 +24,7 @@
   - 优化代码 & 完善测试用例。
   - 为大部分含有 canvas 的组件增加 `pollSizeChange` 属性，用于轮询尺寸变化更新渲染。
 - 修复：
+  - 修复基于 OptionList 的下拉选项中，数据字体和字号 CSS 缺失的问题。
   - 修复在微任务中快速切换按钮 `loading` 状态时 canvas 渲染异常。
   - 修复在按钮 `size="small"` 时字体大小异常的问题。
   - 修复输入组件在 FormItem 中横向延申异常的问题。
@@ -52,6 +53,7 @@
   - Optimized code & improved test coverage.
   - Added the `pollSizeChange` property to most components containing canvas for polling size changes to update rendering.
 - Fixes:
+  - Fix the issue of missing CSS for data font and font size in OptionList-based dropdown options.
   - Fixed abnormal canvas rendering when toggling the button `loading` state rapidly within micro tasks.
   - Fix the font size issue when button's size is `'small'`.
   - Fixed the abnormal horizontal extension of input components within a FormItem.
