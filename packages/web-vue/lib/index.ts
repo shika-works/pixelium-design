@@ -66,6 +66,7 @@ import BreadcrumbItem from './breadcrumb-item/index.vue'
 import ScrollBar from './scroll-bar/index.vue'
 import { useScrollBar } from './scroll-bar/use-scroll-bar.ts'
 import Table from './table/index.vue'
+import Pagination from './pagination/index.vue'
 
 const components = [
 	Button,
@@ -124,7 +125,8 @@ const components = [
 	Breadcrumb,
 	BreadcrumbItem,
 	ScrollBar,
-	Table
+	Table,
+	Pagination
 ]
 
 const defaultPrefix = 'Px'
@@ -224,7 +226,8 @@ export {
 	BreadcrumbItem,
 	ScrollBar,
 	useScrollBar,
-	Table
+	Table,
+	Pagination
 }
 export default {
 	install
@@ -277,3 +280,5 @@ export type {
 	SortOrder,
 	FilterValue
 } from './table/type.ts'
+
+export type { PaginationOption } from './pagination/type.ts'
