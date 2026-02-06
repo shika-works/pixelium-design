@@ -10,7 +10,7 @@
 
 - 新增：
   - 新增反馈组件：Dialog、Popconfirm、Badge、Alert、Progress。
-  - 新增导航组件：Menu、MenuItem、Submenu、MenuGroup、BackTop、DropDown、Breadcrumb、BreadcrumbItem。
+  - 新增导航组件：Menu、MenuItem、Submenu、MenuGroup、BackTop、DropDown、Breadcrumb、BreadcrumbItem、Pagination。
   - Tooltip 和 Popover 新增 `cascade` 属性，以维持嵌套浮窗的展示。
   - 新增多语言国际化模块，可以通过入口文件导出的 `locale` 调整对话框和确认弹出框的文本语言。
   - Link 新增属性 `variant` 取值为 `'normal'` 和 `'underline'`（默认），控制是否展示下划线。
@@ -24,6 +24,7 @@
   - 优化代码 & 完善测试用例。
   - 为大部分含有 canvas 的组件增加 `pollSizeChange` 属性，用于轮询尺寸变化更新渲染。
 - 修复：
+  - 修复基于 OptionList 的下拉选项中，数据字体和字号 CSS 缺失的问题。
   - 修复在微任务中快速切换按钮 `loading` 状态时 canvas 渲染异常。
   - 修复在按钮 `size="small"` 时字体大小异常的问题。
   - 修复输入组件在 FormItem 中横向延申异常的问题。
@@ -38,7 +39,7 @@
 
 - New Features:
   - Added feedback components: Dialog, Popconfirm, Badge, Alert, Progress.
-  - Added navigation component: Menu, MenuItem, Submenu, MenuGroup, BackTop, DropDown, Breadcrumb, BreadcrumbItem.
+  - Added navigation component: Menu, MenuItem, Submenu, MenuGroup, BackTop, DropDown, Breadcrumb, BreadcrumbItem, Pagination.
   - Added the `cascade` property to Tooltip and Popover to maintain the display of nested floating windows.
   - Added multi-language internationalization module; text language for dialogs and confirmation popups can be adjusted via the exported `locale` from the entry file.
   - Added a new `variant` property to Link with values `'normal'` and `'underline'` (default), controlling whether to display the `'underline'`.
@@ -52,6 +53,7 @@
   - Optimized code & improved test coverage.
   - Added the `pollSizeChange` property to most components containing canvas for polling size changes to update rendering.
 - Fixes:
+  - Fix the issue of missing CSS for data font and font size in OptionList-based dropdown options.
   - Fixed abnormal canvas rendering when toggling the button `loading` state rapidly within micro tasks.
   - Fix the font size issue when button's size is `'small'`.
   - Fixed the abnormal horizontal extension of input components within a FormItem.

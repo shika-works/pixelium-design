@@ -102,7 +102,10 @@ export const calcSizes = (pixelSize: number, borderSize: number) => {
 		'--px-small-sub-base-size': smallSubSize - 2 * borderSize,
 		'--px-large-compat-size': mediumSize - INTERVAL,
 		'--px-medium-compat-size': mediumSize - INTERVAL * 2,
-		'--px-small-compat-size': smallSize - INTERVAL
+		'--px-small-compat-size': smallSize - INTERVAL,
+		'--px-large-compat-base-size': largeSubSize - 2 * borderSize,
+		'--px-medium-compat-base-size': mediumSubSize - 2 * borderSize,
+		'--px-small-compat-base-size': smallSubSize - 2 * borderSize
 	}
 }
 

@@ -15,5 +15,10 @@ export default {
 	table: {
 		filterReset: 'Reset',
 		filterConfirm: 'Confirm'
+	},
+	pagination: {
+		total: (total: number) => `Total ${total}`,
+		goto: 'Go to',
+		perPage: ' / Page'
 	}
 }

@@ -60,7 +60,8 @@ const newItems: string[] = [
 	'drop-down',
 	'breadcrumb',
 	'scroll-bar',
-	'table'
+	'table',
+	'pagination'
 ]
 
 const order = [

@@ -361,6 +361,9 @@
 		color: var(--px-neutral-8);
 		font-size: @px-interval-3;
 		& > svg {
+			height: 1em;
+			width: 1em;
+			fill: currentColor;
 			&:focus {
 				outline: none;
 			}
@@ -383,6 +386,8 @@
 			transition: 0.25s;
 			color: var(--px-neutral-8);
 			font-size: @px-medium-font-size;
+			height: 1em;
+			width: 1em;
 		}
 		&:focus {
 			outline: none;
@@ -393,6 +398,7 @@
 		}
 		&__active {
 			& svg {
+				fill: currentColor;
 				color: var(--px-primary-6);
 			}
 		}
@@ -461,7 +467,10 @@
 		transition: 0.25s;
 		color: var(--px-neutral-8);
 		font-size: @px-medium-font-size;
+		height: 1em;
+		width: 1em;
 		&__active {
+			fill: currentColor;
 			color: var(--px-primary-6);
 		}
 	}

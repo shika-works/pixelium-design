@@ -15,5 +15,10 @@ export default {
 	table: {
 		filterReset: '重置',
 		filterConfirm: '确认'
+	},
+	pagination: {
+		total: (total: number) => `共 ${total} 条`,
+		goto: '前往',
+		perPage: ' 条 / 页'
 	}
 }
