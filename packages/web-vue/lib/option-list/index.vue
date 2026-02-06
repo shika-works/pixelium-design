@@ -135,7 +135,7 @@ const renderList = () => {
 			}
 		})
 	return (
-		<ul class="px-option-list">
+		<ul class="px-option-list pixelium">
 			<Scroll class="px-option-list-scroll">
 				{!props.virtualScroll ? (
 					list.map((item) => item.el)
