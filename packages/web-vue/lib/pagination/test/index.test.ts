@@ -84,7 +84,6 @@ describe('Pagination Component', () => {
 		const wrapper = mount(Pagination, {
 			props: {
 				showJumper: true,
-				showSize: true, // jumper is gated by showSize in current implementation
 				defaultPage: 1,
 				total: 100
 			}
@@ -254,7 +253,7 @@ describe('Pagination Component', () => {
 		const wrapper = mount(Pagination, {
 			props: { disabled: true, total: 100, showTotal: true, showJumper: true, showSize: true }
 		})
-		expect(wrapper.findAll('.px-pagination-page-item__disabled').length).toBe(9)
+		expect(wrapper.findAll('.px-pagination-page-item__disabled').length).toBe(11)
 		expect(wrapper.findComponent(Select).props('disabled')).toBe(true)
 		expect(wrapper.findComponent(Input).props('disabled')).toBe(true)
 
@@ -272,5 +271,14 @@ describe('Pagination Component', () => {
 		expect(wrapperSimple.findComponent(Select).props('disabled')).toBe(true)
 		expect(wrapperSimple.findComponent(Input).props('disabled')).toBe(true)
 		expect(wrapperSimple.findAllComponents(Input)[1].props('disabled')).toBe(true)
+	})
+	it('renders with prop of hideWhenSinglePage', async () => {
+		const wrapper = mount(Pagination, {
+			props: {
+				total: 5,
+				hideWhenSinglePage: true
+			}
+		})
+		expect(wrapper.findAll('.px-pagination').length).toEqual(0)
 	})
 })
