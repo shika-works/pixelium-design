@@ -1,14 +1,15 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import Table from '../index.vue'
-import { h, nextTick, ref } from 'vue'
+import { h, nextTick, ref, watch } from 'vue'
 import Radio from '../../radio/index.vue'
 import Checkbox from '../../checkbox/index.vue'
 import { DEFAULT_ADDITION_COL_WIDTH } from '../module/share'
 import type { FilterValue, SortOrder, TableData, TableOptionsArg, TableSummary } from '../type'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 import { createMocks } from '../../share/util/test'
-
+import Spin from '../../spin/index.vue'
+import Select from '../../select/index.vue'
 describe('Table Component Example', () => {
 	const { pre, post } = createMocks()
 
@@ -137,7 +138,7 @@ describe('Table Component Example', () => {
 			}
 		})
 
-		expect(wrapper.classes()).include('px-table__hierarchical-head')
+		expect(wrapper.find('.px-table__hierarchical-head.px-table-area').exists()).toBeTruthy()
 
 		const htr = wrapper.findAll('thead tr')
 		const expectData = [
@@ -1339,16 +1340,18 @@ describe('Table Component Example', () => {
 		filterPopupWrapper2.findAllComponents(Radio)[0].trigger('click')
 		filterPopupWrapper2.findAll('.px-button')[1].trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
-		await expect.poll(()=>filterPopupWrapper2.element.style.display, {
-			timeout: 400
-		}).toBe('none')
+		await expect
+			.poll(() => filterPopupWrapper2.element.style.display, {
+				timeout: 400
+			})
+			.toBe('none')
 		expect(filterValue.value).toEqual({
 			baseSalary: [7000],
 			bonus: [500],
 			status: ['active', 'inactive']
 		})
 
-		await new Promise(r => setTimeout(r, 500))
+		await new Promise((r) => setTimeout(r, 500))
 		wrapper.setProps({ filterValue: filterValue.value })
 		await nextTick()
 
@@ -1777,5 +1780,240 @@ describe('Table Component Example', () => {
 		expect(wrapper.emitted('rowContextmenu')?.[0]?.[0]).toEqual(data[0])
 		expect(wrapper.emitted('rowContextmenu')?.[0]?.[1]).toEqual(0)
 		expect(wrapper.emitted('rowContextmenu')?.[0]?.[2]).instanceof(Event)
+	})
+
+	const firstNames = [
+		'John',
+		'Emma',
+		'Michael',
+		'Sarah',
+		'David',
+		'Lisa',
+		'Robert',
+		'Jennifer',
+		'William',
+		'Jessica',
+		'James',
+		'Amanda',
+		'Christopher',
+		'Melissa',
+		'Daniel',
+		'Stephanie',
+		'Matthew',
+		'Laura',
+		'Joshua',
+		'Michelle'
+	]
+
+	const lastNames = [
+		'Smith',
+		'Johnson',
+		'Williams',
+		'Brown',
+		'Jones',
+		'Miller',
+		'Davis',
+		'Garcia',
+		'Rodriguez',
+		'Wilson',
+		'Martinez',
+		'Anderson',
+		'Taylor',
+		'Thomas',
+		'Jackson',
+		'White',
+		'Harris',
+		'Martin',
+		'Thompson',
+		'Moore'
+	]
+	function generateRandomData(count: number, startId: number) {
+		const data: any[] = []
+		const currentDate = new Date()
+
+		for (let i = 1; i <= count; i++) {
+			const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+			const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+			const fullName = `${firstName} ${lastName}`
+
+			const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`
+
+			const randomDaysAgo = Math.floor(Math.random() * 365)
+			const registerDate = new Date(currentDate)
+			registerDate.setDate(registerDate.getDate() - randomDaysAgo)
+			const registerDateStr = registerDate.toISOString().split('T')[0]
+
+			data.push({
+				id: i + startId,
+				user: fullName,
+				email: email,
+				register: registerDateStr
+			})
+		}
+
+		return data
+	}
+
+	test('async pagination', async () => {
+		const columns = [
+			{
+				key: 'id',
+				label: 'ID',
+				field: 'id'
+			},
+			{
+				key: 'user',
+				label: 'User',
+				field: 'user'
+			},
+			{
+				key: 'email',
+				label: 'Email',
+				field: 'email'
+			},
+			{
+				key: 'register',
+				label: 'Register',
+				field: 'register'
+			}
+		]
+
+		const wrapper = mount({
+			setup(_: any, { expose }: any) {
+				const pageSize = ref(10)
+				const page = ref(1)
+
+				const loading = ref(false)
+
+				const data = ref(generateRandomData(pageSize.value, pageSize.value * (page.value - 1)))
+
+				watch([page, pageSize], () => {
+					loading.value = true
+					setTimeout(() => {
+						data.value = generateRandomData(pageSize.value, pageSize.value * (page.value - 1))
+						loading.value = false
+					}, 400)
+				})
+				expose({
+					page,
+					pageSize
+				})
+
+				return () => {
+					return h(Table, {
+						data: data.value,
+						columns,
+						pagination: {
+							showTotal: true,
+							showJumper: true,
+							showSize: true,
+							total: 1000,
+							paginateMethod: 'custom'
+						},
+						pageSize: pageSize.value,
+						'onUpdate:pageSize': (e) => (pageSize.value = e),
+						page: page.value,
+						'onUpdate:page': (e) => (page.value = e),
+						loading: loading.value
+					})
+				}
+			}
+		})
+
+		const curData0 = wrapper.findAll('tbody tr').map((tr) => {
+			return tr.findAll('td').map((td) => td.text())
+		})
+		wrapper.findAll('.px-pagination .px-pagination-page-item')[2].trigger('click')
+		await nextTick()
+		expect(wrapper.vm.page).toBe(2)
+		await nextTick()
+		expect(wrapper.findComponent(Spin).props('loading')).toBe(true)
+		await new Promise((r) => setTimeout(r, 500))
+		expect(wrapper.findComponent(Spin).props('loading')).toBe(false)
+
+		const curData1 = wrapper.findAll('tbody tr').map((tr) => {
+			return tr.findAll('td').map((td) => td.text())
+		})
+		expect(curData0).not.toEqual(curData1)
+		expect(curData0.length).toEqual(curData1.length)
+
+		const selectControlled = wrapper.findComponent(Select)
+		await selectControlled.vm.$emit('select', 50)
+		await new Promise((r) => setTimeout(r))
+		expect(wrapper.vm.pageSize).toBe(50)
+		await nextTick()
+		expect(wrapper.findComponent(Spin).props('loading')).toBe(true)
+		await new Promise((r) => setTimeout(r, 500))
+		expect(wrapper.findComponent(Spin).props('loading')).toBe(false)
+
+		const curData2 = wrapper.findAll('tbody tr').map((tr) => {
+			return tr.findAll('td').map((td) => td.text())
+		})
+		expect(curData2.length).greaterThan(curData1.length)
+	})
+
+	test('pagination', async () => {
+		const columns = [
+			{
+				key: 'id',
+				label: 'ID',
+				field: 'id'
+			},
+			{
+				key: 'user',
+				label: 'User',
+				field: 'user'
+			},
+			{
+				key: 'email',
+				label: 'Email',
+				field: 'email'
+			},
+			{
+				key: 'register',
+				label: 'Register',
+				field: 'register'
+			}
+		]
+
+		const wrapper = mount({
+			setup(_: any) {
+				const data = ref(generateRandomData(500, 0))
+
+				return () => {
+					return h(Table, {
+						data: data.value,
+						columns,
+						pagination: {
+							showTotal: true,
+							showJumper: true,
+							showSize: true,
+							total: 1000
+						}
+					})
+				}
+			}
+		})
+
+		const curData0 = wrapper.findAll('tbody tr').map((tr) => {
+			return tr.findAll('td').map((td) => td.text())
+		})
+		wrapper.findAll('.px-pagination .px-pagination-page-item')[2].trigger('click')
+		await nextTick()
+
+		const curData1 = wrapper.findAll('tbody tr').map((tr) => {
+			return tr.findAll('td').map((td) => td.text())
+		})
+		expect(curData0).not.toEqual(curData1)
+		expect(curData0.length).toEqual(curData1.length)
+
+		const selectControlled = wrapper.findComponent(Select)
+		await selectControlled.vm.$emit('select', 50)
+		await new Promise((r) => setTimeout(r))
+
+		const curData2 = wrapper.findAll('tbody tr').map((tr) => {
+			return tr.findAll('td').map((td) => td.text())
+		})
+		expect(curData2.length).greaterThan(curData1.length)
 	})
 })

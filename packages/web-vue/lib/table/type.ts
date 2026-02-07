@@ -3,6 +3,7 @@ import type { EmitEvent, RestAttrs } from '../share/type'
 import type { JSX } from 'vue/jsx-runtime'
 import type { Option } from '../share/type'
 import type { PopoverEvents, PopoverProps } from '../popover/type'
+import type { PaginationEvents, PaginationProps } from '../pagination/type'
 
 export type TableProps = {
 	/**
@@ -103,6 +104,41 @@ export type TableProps = {
 	 * @version 0.1.0
 	 */
 	defaultSortOrder?: SortOrder | null
+	/**
+	 * @property {boolean} [loading=false]
+	 * @version 0.1.0
+	 */
+	loading?: boolean
+	/**
+	 * @property {TablePagination} [pagination=true]
+	 * @version 0.1.0
+	 */
+	pagination?: boolean | TablePagination
+	/**
+	 * @property {number | null} [page]
+	 * @version 0.1.0
+	 */
+	page?: number | null
+	/**
+	 * @property {number | null} [defaultPage=1]
+	 * @version 0.1.0
+	 */
+	defaultPage?: number | null
+	/**
+	 * @property {number | null} [pageSize]
+	 * @version 0.1.0
+	 */
+	pageSize?: number | null
+	/**
+	 * @property {number | null} [defaultPageSize=10]
+	 * @version 0.1.0
+	 */
+	defaultPageSize?: number | null
+	/**
+	 * @property {RestAttrs} [tableAreaProps]
+	 * @version 0.1.0
+	 */
+	tableAreaProps?: RestAttrs
 	/**
 	 * @property {number} [borderRadius]
 	 * @version 0.1.0
@@ -361,6 +397,18 @@ export type TableEvents = {
 	 * @param {MouseEvent} event
 	 */
 	rowContextmenu: [record: TableData, rowIndex: number, event: MouseEvent]
+	/**
+	 * @event update:page
+	 * @param {number} value
+	 * @version 0.1.0
+	 */
+	'update:page': [value: number]
+	/**
+	 * @event update:pageSize
+	 * @param {number} value
+	 * @version 0.1.0
+	 */
+	'update:pageSize': [value: number]
 }
 
 export type TableSlots = {
@@ -739,6 +787,12 @@ export type TableSortable = {
 	 */
 	priority?: number
 }
+
+export type TablePagination = {
+	paginateMethod?: 'custom' | 'auto'
+} & PaginationProps &
+	EmitEvent<PaginationEvents> &
+	RestAttrs
 
 export type TableOptionsArg = {
 	rowIndex: number

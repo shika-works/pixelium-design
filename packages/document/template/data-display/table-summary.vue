@@ -18,7 +18,8 @@
 		:data="data"
 		:columns="columns"
 		:summary="summary"
-		style="margin-top: 16px; max-height: 300px"
+		style="margin-top: 16px"
+		:table-area-props="{ style: 'max-height: 300px' }"
 	></px-table>
 </template>
 

@@ -96,11 +96,15 @@ describe('Table Component', () => {
 					bordered: true
 				}
 			})
-			expect(wrapper.element.className).include('px-table__col-bordered')
-			expect(wrapper.element.className).include('px-table__row-bordered')
-			expect(wrapper.element.className).include('px-table__bordered')
-			expect(wrapper.element.className).include('px-table__head-bordered')
-			expect(wrapper.element.className).include('px-table__side-bordered')
+			expect(wrapper.find('.px-table-area').element.className).include('px-table__col-bordered')
+			expect(wrapper.find('.px-table-area').element.className).include('px-table__row-bordered')
+			expect(wrapper.find('.px-table-area').element.className).include('px-table__bordered')
+			expect(wrapper.find('.px-table-area').element.className).include(
+				'px-table__head-bordered'
+			)
+			expect(wrapper.find('.px-table-area').element.className).include(
+				'px-table__side-bordered'
+			)
 		})
 
 		it('should accept bordered object prop', () => {
@@ -117,11 +121,11 @@ describe('Table Component', () => {
 					}
 				}
 			})
-			expect(wrapper.element.className).include('px-table__col-bordered')
-			expect(wrapper.element.className).not.include('px-table__row-bordered')
-			expect(wrapper.element.className).include('px-table__bordered')
-			expect(wrapper.element.className).not.include('px-table__side-bordered')
-			expect(wrapper.element.className).include('px-table__head-bordered')
+			expect(wrapper.find('.px-table-area.px-table__col-bordered').exists()).toBeTruthy()
+			expect(wrapper.find('.px-table-area.px-table__row-bordered').exists()).not.toBeTruthy()
+			expect(wrapper.find('.px-table-area.px-table__bordered').exists()).toBeTruthy()
+			expect(wrapper.find('.px-table-area.px-table__side-bordered').exists()).not.toBeTruthy()
+			expect(wrapper.find('.px-table-area.px-table__head-bordered').exists()).toBeTruthy()
 		})
 
 		it('should accept variant prop', async () => {
@@ -132,20 +136,20 @@ describe('Table Component', () => {
 					variant: 'striped'
 				}
 			})
-			expect(wrapper.element.className).include('px-table__striped')
+			expect(wrapper.find('.px-table__striped').exists()).toBeTruthy()
 
 			wrapper.setProps({
 				variant: 'checkered'
 			})
 			await nextTick()
-			expect(wrapper.element.className).include('px-table__checkered')
+			expect(wrapper.find('.px-table__checkered').exists()).toBeTruthy()
 
 			wrapper.setProps({
 				variant: 'normal'
 			})
 			await nextTick()
-			expect(wrapper.element.className).not.include('px-table__checkered')
-			expect(wrapper.element.className).not.include('px-table__striped')
+			expect(wrapper.find('.px-table__striped').exists()).not.toBeTruthy()
+			expect(wrapper.find('.px-table__checkered').exists()).not.toBeTruthy()
 		})
 
 		it('should accept fixedHead prop', async () => {
@@ -155,10 +159,10 @@ describe('Table Component', () => {
 					columns: mockColumns
 				}
 			})
-			expect(wrapper.element.className).include('px-table__head-sticky')
+			expect(wrapper.find('.px-table__head-sticky').exists()).toBeTruthy()
 			wrapper.setProps({ fixedHead: false })
 			await nextTick()
-			expect(wrapper.element.className).not.include('px-table__head-sticky')
+			expect(wrapper.find('.px-table__head-sticky').exists()).not.toBeTruthy()
 		})
 		it('should accept numeric scroll.x and set wrapper width in px', () => {
 			const wrapper = mount(Table, {

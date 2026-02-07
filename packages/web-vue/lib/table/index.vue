@@ -8,11 +8,9 @@ import {
 	withScopeId
 } from 'vue'
 import type { TableData, TableEvents, TableExpose, TableProps } from './type'
-import { isBoolean, isFunction, isNullish, isNumber, isString } from 'parsnip-kit'
-import Empty from '../empty/index.vue'
+import { isBoolean, isFunction, isNullish, isNumber, isObject, isString } from 'parsnip-kit'
 import { useDrawPixel } from './module/draw'
 import { usePixelSize } from '../share/hook/use-pixel-size'
-import ScrollBar from '../scroll-bar/index.vue'
 import {
 	buildHeaderRows,
 	EMPTY_COL,
@@ -36,6 +34,12 @@ import { useFilterable } from './module/filterable'
 import { useSortable } from './module/sortable'
 import { useCellEvent } from './module/event'
 
+import Empty from '../empty/index.vue'
+import ScrollBar from '../scroll-bar/index.vue'
+import Spin from '../spin/index.vue'
+import Pagination from '../pagination/index.vue'
+import { usePagination } from './module/pagination'
+
 defineOptions({
 	name: 'Table'
 })
@@ -50,7 +54,8 @@ const props = withDefaults(defineProps<TableProps>(), {
 	rowKey: 'key',
 	variant: 'normal',
 	selection: false,
-	expandable: false
+	expandable: false,
+	pagination: true
 })
 
 const emits = defineEmits<TableEvents>()
@@ -103,6 +108,10 @@ const columnsInfo = computed(() => {
 
 const [_filterValue, filterData, genFilterableIcon] = useFilterable(columnsInfo, props, emits)
 const [_sortOrder, sortData, genSortableIcon] = useSortable(columnsInfo, props, emits)
+const [paginationConfig, page, onUpdatePage, pageSize, onUpdatePageSize] = usePagination(
+	props,
+	emits
+)
 
 const hasHierarchicalHead = computed(() => {
 	return columnsInfo.value.maxDepth > 1
@@ -117,10 +126,18 @@ const summaryRows = computed(() => {
 })
 
 const data = computed(() => {
-	let rows = [...props.data]
+	let rows = props.data.slice()
 	rows = filterData(rows)
 	rows = sortData(rows)
 
+	return rows
+})
+
+const dataPaginated = computed(() => {
+	let rows = data.value
+	if (paginationConfig.value.paginateMethod === 'auto') {
+		rows = rows.slice((page.value! - 1) * pageSize.value!, page.value! * pageSize.value!)
+	}
 	return rows
 })
 
@@ -324,6 +341,10 @@ const calcCellProps = (
 	const firstRightFixed =
 		cellData.fixed === 'right' &&
 		(colIndex === 0 || cellWrapperArr[colIndex - 1].cell.fixed !== 'right')
+	const wasEnd =
+		cellWrapper.spanData.rowspan &&
+		cellWrapper.spanData.rowspan > 0 &&
+		rowIndex + cellWrapper.spanData.rowspan >= data.value.length
 
 	return mergeProps(
 		{
@@ -337,7 +358,8 @@ const calcCellProps = (
 				'px-table-td__left-fixed': cellData.fixed === 'left',
 				'px-table-td__right-fixed': cellData.fixed === 'right',
 				'px-table-td__next-fixed': nextRightFixed,
-				'px-table-td__first-fixed': firstRightFixed
+				'px-table-td__first-fixed': firstRightFixed,
+				'px-table-td__last-row': wasEnd
 			},
 			style: {
 				width: isNumber(cellWrapper.presetWidth) ? `${cellWrapper.presetWidth}px` : undefined,
@@ -381,15 +403,14 @@ const renderCol = (
 	return row
 }
 
-const renderExpand = (record: TableData, rowIndex: number, isNextBottomFixed: boolean) => {
+const renderExpand = (record: TableData, rowIndex: number) => {
 	const slotExpand = slots.expand
 	const hasRowExpand = isString(record.expand) || isFunction(record.expand)
 	const hasSlotExpand = isFunction(slotExpand) && record.expand !== false
 	return hasRowExpand || hasSlotExpand ? (
 		<tr
 			class={{
-				'px-table-expand-row': true,
-				'px-table-expand-row__next-fixed': isNextBottomFixed
+				'px-table-expand-row': true
 			}}
 		>
 			<td
@@ -410,28 +431,24 @@ const renderExpand = (record: TableData, rowIndex: number, isNextBottomFixed: bo
 }
 
 const renderBody = () => {
+	const dataSource = dataPaginated.value
 	const spanCollector = new SpanCollector(
-		data.value.length,
+		dataSource.length,
 		columnsInfo.value.leafColumns.length
 	)
 	const cells = buildCommonRows(
 		columnsInfo.value.leafColumns,
-		data.value,
+		dataSource,
 		spanCollector,
 		props.spanMethod
 	)
 
-	return data.value.length && hasCols.value ? (
-		data.value.map((e, i) => {
+	return dataSource.length && hasCols.value ? (
+		dataSource.map((e, i) => {
 			const rowKey = e[props.rowKey]
 			const hasExpand = expandedKeys.value?.includes(rowKey)
-			const isNextBottomFixed = !!(
-				summaryRows.value.length &&
-				props.summary?.placement !== 'start' &&
-				i === data.value.length - 1
-			)
 
-			const expandRow = hasExpand ? renderExpand(e, i, isNextBottomFixed) : null
+			const expandRow = hasExpand ? renderExpand(e, i) : null
 
 			const rows = [
 				<tr
@@ -439,8 +456,7 @@ const renderBody = () => {
 					class={{
 						'px-table-row': true,
 						'px-table-row__even': i & 1,
-						'px-table-row__odd': (i & 1) === 0,
-						'px-table-row__next-fixed': expandRow ? false : isNextBottomFixed
+						'px-table-row__odd': (i & 1) === 0
 					}}
 				>
 					{renderCol(e, i, cells[i], false)}
@@ -507,12 +523,81 @@ const contentMinWidth = computed(() => {
 	return getMinWidthOfTable(columnsInfo.value.leafColumns)
 })
 
-const render = () => {
+const renderTable = () => {
 	return (
 		<div
-			class={{
-				pixelium: true,
-				'px-table': true,
+			class="px-table-wrapper"
+			style={{
+				width: scrollWidth.value,
+				minWidth: `${contentMinWidth.value}px`
+			}}
+		>
+			<table
+				class="px-table-inner"
+				ref={tableRef}
+				onClick={clickHandler}
+				onDblclick={dblclickHandler}
+				onContextmenu={contextmenuHandler}
+				onMouseover={mouseoverHandler}
+				onMouseout={mouseoutHandler}
+			>
+				<thead class="px-table-head">
+					{renderHeader()}
+					{hasCols.value &&
+						!!summaryRows.value.length &&
+						props.summary &&
+						props.summary.placement === 'start' &&
+						props.summary.fixed !== false &&
+						renderSummary()}
+				</thead>
+				<tbody class="px-table-body">
+					{hasCols.value &&
+						!!summaryRows.value.length &&
+						props.summary &&
+						props.summary.placement === 'start' &&
+						props.summary.fixed === false &&
+						renderSummary()}
+					{renderBody()}
+				</tbody>
+				{hasCols.value &&
+					!!summaryRows.value.length &&
+					props.summary?.placement !== 'start' && (
+						<tfoot
+							class={{
+								'px-table-foot': true,
+								'px-table-foot__fixed': props.summary?.fixed !== false
+							}}
+						>
+							{renderSummary()}
+						</tfoot>
+					)}
+			</table>
+		</div>
+	)
+}
+
+const getPaginationProps = () => {
+	const objPagination = isObject(props.pagination)
+	return mergeProps(
+		{
+			disabled: props.loading,
+			page: page.value,
+			pageSize: pageSize.value,
+			'onUpdate:page': onUpdatePage,
+			'onUpdate:pageSize': onUpdatePageSize,
+			class: 'px-table-pagination',
+			pollSizeChange: props.pollSizeChange,
+			total: objPagination ? (props.pagination.total ?? data.value.length) : data.value.length
+		},
+		objPagination ? props.pagination : {}
+	)
+}
+
+const getTableAreaProps = () => {
+	return mergeProps(
+		{
+			class: {
+				'px-table-area': true,
 				'px-table__striped': props.variant === 'striped',
 				'px-table__checkered': props.variant === 'checkered',
 				'px-table__col-bordered': bordered.value.col,
@@ -522,70 +607,42 @@ const render = () => {
 				'px-table__side-bordered': bordered.value.side,
 				'px-table__head-sticky': props.fixedHead,
 				'px-table__hierarchical-head': hasHierarchicalHead.value
+			}
+		},
+		props.tableAreaProps || {}
+	)
+}
+
+const render = () => {
+	return (
+		<div
+			class={{
+				pixelium: true,
+				'px-table': true
 			}}
-			ref={wrapperRef}
 		>
-			<ScrollBar
-				class="px-table-scroll-area"
-				showScrollPadding={false}
-				variant="simple"
-				style={{
-					clipPath:
-						bordered.value.table && bordered.value.side && polygon.value
-							? `polygon(${polygon.value})`
-							: undefined
-				}}
-			>
-				<div
-					class="px-table-wrapper"
+			<div {...getTableAreaProps()} ref={wrapperRef}>
+				<Spin
+					class="px-table-spin"
+					loading={props.loading}
 					style={{
-						width: scrollWidth.value,
-						minWidth: `${contentMinWidth.value}px`
+						clipPath:
+							bordered.value.table && bordered.value.side && polygon.value
+								? `polygon(${polygon.value})`
+								: undefined
 					}}
 				>
-					<table
-						class="px-table-inner"
-						ref={tableRef}
-						onClick={clickHandler}
-						onDblclick={dblclickHandler}
-						onContextmenu={contextmenuHandler}
-						onMouseover={mouseoverHandler}
-						onMouseout={mouseoutHandler}
-					>
-						<thead class="px-table-head">
-							{renderHeader()}
-							{hasCols.value &&
-								!!summaryRows.value.length &&
-								props.summary &&
-								props.summary.placement === 'start' &&
-								props.summary.fixed !== false &&
-								renderSummary()}
-						</thead>
-						<tbody class="px-table-body">
-							{hasCols.value &&
-								!!summaryRows.value.length &&
-								props.summary &&
-								props.summary.placement === 'start' &&
-								props.summary.fixed === false &&
-								renderSummary()}
-							{renderBody()}
-						</tbody>
-						{hasCols.value &&
-							!!summaryRows.value.length &&
-							props.summary?.placement !== 'start' && (
-								<tfoot
-									class={{
-										'px-table-foot': true,
-										'px-table-foot__fixed': props.summary?.fixed !== false
-									}}
-								>
-									{renderSummary()}
-								</tfoot>
-							)}
-					</table>
+					<ScrollBar class="px-table-scroll-area" showScrollPadding={false} variant="simple">
+						{renderTable()}
+					</ScrollBar>
+				</Spin>
+				<canvas class="px-table-canvas" ref={canvasRef}></canvas>
+			</div>
+			{!!props.pagination && (
+				<div class="px-table-foot-area">
+					<Pagination {...getPaginationProps()}></Pagination>
 				</div>
-			</ScrollBar>
-			<canvas class="px-table-canvas" ref={canvasRef}></canvas>
+			)}
 		</div>
 	)
 }

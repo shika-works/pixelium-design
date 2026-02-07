@@ -1,5 +1,11 @@
 <template>
-	<px-table :data="data" :columns="columns" row-key="name" style="max-height: 400px"></px-table>
+	<px-table
+		:pagination="false"
+		:data="data"
+		:columns="columns"
+		row-key="name"
+		:table-area-props="{ style: 'max-height: 400px' }"
+	></px-table>
 </template>
 
 <script setup lang="ts">
