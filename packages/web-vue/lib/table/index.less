@@ -10,19 +10,34 @@
 	@border-width: var(--px-bit);
 	@border-inner-width: calc(var(--px-bit) / 2);
 
-	border-width: 0;
+	&-foot-area {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: @px-interval-2;
+	}
+	& &-spin {
+		width: 100%;
+		display: block;
 
-	position: relative;
+		max-height: inherit;
+		height: 100%;
 
-	transition: 0.25s;
+		transition: none;
+	}
+	&-pagination {
+		margin-left: auto;
+	}
 
-	z-index: 0;
-
-	width: 100%;
-
-	box-sizing: border-box;
-
-	color: var(--px-neutral-10);
+	&-area {
+		border-width: 0;
+		position: relative;
+		transition: 0.25s;
+		z-index: 0;
+		width: 100%;
+		box-sizing: border-box;
+		color: var(--px-neutral-10);
+	}
 
 	&-head {
 		box-sizing: border-box;
@@ -221,6 +236,9 @@
 					border-bottom-width: 0;
 				}
 			}
+		}
+		& td.@{prefix}-td__last-row {
+			border-bottom-width: 0;
 		}
 	}
 
