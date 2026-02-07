@@ -98,12 +98,14 @@ When setting `columns[].width`, please leave at least one column unset so the ta
 [[[zh
 ## 表格高度
 
-直接设置表格最外层元素的 `height` 和 `max-height` 属性，即可设置固定或者动态的表格高度。
+由于 `display: table` 的特性，当为该 Table 组件最外层元素设置较小的 `height` 或者 `max-height` 时，会得到预期外的效果，`<table>` 的高度仍然会被子元素撑开。
+
+我们推荐使用 `tableAreaProps` 属性，设置固定或者动态的表格高度，例如 `:table-area-props="{ style: 'max-height: 400px' }"`。
 ]]]
 [[[en
-## Table Height
+Due to the features of `display: table`, unexpected results may occur when setting a small `height` or `max-height` on the outermost element of the Table component. The `<table>` height will still be expanded by its child elements.
 
-Set the `height` and `max-height` properties on the table's outer element to set a fixed or dynamic table height.
+We recommend using the `tableAreaProps` property to set a fixed or dynamic table height, for example: `:table-area-props="{ style: 'max-height: 400px' }"`.
 ]]]
 <preview path="./table-height.vue"></preview>
 
@@ -314,6 +316,54 @@ When the summary row is placed at the start of the data area, a fixed summary ro
 ]]]
 <preview path="./table-summary.vue"></preview>
 
+[[[zh
+## 加载状态
+
+通过设置 `loading` 配置表格的加载状态。
+]]]
+[[[en
+## Loading State
+
+Configure the loading state of the table by setting the `loading` property.
+]]]
+<preview path="./table-loading.vue"></preview>
+
+[[[zh
+## 前端分页
+
+表格组件默认支持对传入的数据自动分页，可以通过 `pagination` 属性设置分页配置。
+]]]
+[[[en
+## Client-side Pagination
+
+The table component supports automatic pagination of the passed data by default. The pagination configuration can be set via the `pagination` property.
+]]]
+<preview path="./table-pagination.vue"></preview>
+
+[[[zh
+## 异步分页
+
+设置 `pagination.paginateMethod` 为 `'custom` 时，表格不会进行自动排序，常用于后端分页的情况。通过 `pagination.total` 设置数据总数。
+]]]
+[[[en
+## Server-side Pagination
+
+When the `pagination.paginateMethod` is set to `'custom'`, the table will not perform automatic sorting. This is often used for server-side pagination. The total number of data items can be set via `pagination.total`.
+]]]
+<preview path="./table-pagination-async.vue"></preview>
+
+[[[zh
+## 单页时隐藏分页
+
+设置 `pagination.hideWhenSinglePage` 设置单页时隐藏分页。
+]]]
+[[[en
+## Hide Pagination on Single Page
+
+Set `pagination.hideWhenSinglePage` to hide pagination when there is only a single page.
+]]]
+<preview path="./table-pagination-hide.vue"></preview>
+
 ## API
 
 [[[api zh
@@ -337,12 +387,19 @@ defaultFilterValue: 默认的筛选值（非受控）。
 sortOrder: 当前的排序信息（受控）。
 defaultSortOrder: 默认的排序信息（非受控）。
 borderRadius: 表格的圆角设置。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。该属也会作用域内部单选框和多选框子组件。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。该属也会作用域内部单选框、多选框、分页子组件。
+page: 当前的页码（受控模式）。
+defaultPage: 当前的页码默认值（非受控模式）。
+pageSize: 当前的页面容量（受控模式）。
+defaultPageSize: 当前的页面容量默认值（非受控模式）。
+pagination: 表格分页配置。
+tableAreaProps: 表格区域属性对象，作用的元素你可以通过 `.px-table-area` 找到。
+loading: 表格是否处于加载状态。
 
 events.update:selectedKey: 更新 `selectedKeys` 的回调。
-events.update:select: 选择某一行的回调。
-events.update:selectAll: 全选的回调。
-events.update:selectedChange: 选择的行变化的回调。
+events.select: 选择某一行的回调。
+events.selectAll: 全选的回调。
+events.selectedChange: 选择的行变化的回调。
 events.update:expandedKeys: 更新 `expandedKeys` 的回调。
 events.expand: 展开某一行的回调。
 events.expandedChange: 展开的行变化的回调。
@@ -369,6 +426,8 @@ events.rowContextmenu: 右键点击数据区域行的回调。
 slots.\[columns\[\].labelSlotName\]:表格头部单元格自定义内容的插槽。
 slots.\[columns\[\].slotName\]:表格单元格自定义内容的插槽。
 slots.expand:表格展开行内容的插槽。
+events.update:page: 更新 `page` 的回调。
+events.update:pageSize: 更新 `pageSize` 的回调。
 
 tableData.expand: 展开行内容配置。
 tableData.disabled: 是否禁用行选择。
@@ -461,7 +520,14 @@ defaultFilterValue: Default filter values (uncontrolled).
 sortOrder: Current sorting information (controlled).
 defaultSortOrder: Default sorting information (uncontrolled).
 borderRadius: Table border-radius settings.
-pollSizeChange: Enable polling for component size changes. This may affect performance and is commonly used when a container element affects the component's size, causing canvas rendering issues. This prop also applies to internal radio and checkbox child components.
+pollSizeChange: Enable polling for component size changes. This may affect performance and is commonly used when a container element affects the component's size, causing canvas rendering issues. This prop also applies to internal Radio, Checkbox and Pagination child components.
+page: Current page number (controlled mode).
+defaultPage: Default value of current page number (uncontrolled mode).
+pageSize: Current page size (controlled mode).
+defaultPageSize: Default value of current page size (uncontrolled mode).
+pagination: Configuration for table pagination.
+tableAreaProps: A table area property object. The element it acts on can be found via `.px-table-area`.
+loading: Whether table is loading.
 
 events.update:selectedKey: Callback when `selectedKeys` is updated.
 events.select: Callback when a row is selected.
@@ -489,6 +555,8 @@ events.headCellContextmenu: Callback when a header cell is right-clicked (contex
 events.rowClick: Callback when a row in the data area is clicked.
 events.rowDblclick: Callback when a row in the data area is double-clicked.
 events.rowContextmenu: Callback when a row in the data area is right-clicked (context menu).
+events.update:page: Callback for updating `page`.
+events.update:pageSize: Callback for updating `pageSize`.
 
 slots.\[columns\[\].labelSlotName\]: Slot for custom content in header cells.
 slots.\[columns\[\].slotName\]: Slot for custom content in table cells.
@@ -564,8 +632,25 @@ tableSortable.multiple: Whether multi-column sorting is enabled.
 tableSortable.priority: Priority for multi-column sorting; higher values take precedence.
 ]]]
 
+### TablePagination
+
+[[[zh
+`paginateMethod` 字段控制表格组件内部的分页方法，`'auto'` 时，表格会根据页面容量对数据进行分页。为 `'custom'` 则不会有此类行为，这个配置常用于后端分页。
+]]]
+[[[en
+The `paginateMethod` field controls the pagination method inside the table component. When set to `'auto'`, the table will paginate the data based on the page capacity. When set to `'custom'`, no such behavior will occur; this configuration is often used for backend pagination.
+]]]
+
+```ts
+export type TablePagination = {
+	paginateMethod?: 'custom' | 'auto'
+} & PaginationProps &
+	EmitEvent<PaginationEvents> &
+	RestAttrs
+```
+
 ### TableOptionsArg
-``` ts
+```ts
 export type TableOptionsArg = {
 	rowIndex: number
 	colIndex: number

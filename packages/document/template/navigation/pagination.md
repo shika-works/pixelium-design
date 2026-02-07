@@ -18,7 +18,15 @@ The dataset is so large it could number in the thousands.
 `total` 设置当前数据总数，和 `pageSize` 一起，计算出分页的总页数。
 
 ]]]
+[[[en
+## Basic Usage
 
+Use `page` to control the current page number in pagination, which supports `v-model` (controlled mode). When `page` is `undefined` or not passed, it operates in uncontrolled mode, and its default value can be set via `defaultPage`.
+
+`total` sets the total number of data entries. Together with `pageSize`, it is used to calculate the total number of pages for pagination.
+]]]
+
+<preview path="./pagination-basic.vue"></preview>
 [[[zh
 ## 简单模式
 
@@ -127,6 +135,18 @@ Use `showSize` to toggle the page size selector.
 ]]]
 
 <preview path="./pagination-jumper.vue"></preview>
+
+[[[zh
+## 只有一页时隐藏
+
+`hideWhenSinglePage` 配置当小于等于一页时是否隐藏分页控件。
+]]]
+[[[en
+## Hide When Only One Page
+
+`hideWhenSinglePage` configures whether to hide the pagination controls when there is one page or less.
+]]]
+<preview path="./pagination-hide.vue"></preview>
 
 ## API
 

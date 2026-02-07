@@ -3,7 +3,7 @@
 		:data="data"
 		:columns="columns"
 		:scroll="{ x: 1500 }"
-		style="max-height: 400px"
+		:table-area-props="{ style: 'max-height: 400px' }"
 	></px-table>
 </template>
 

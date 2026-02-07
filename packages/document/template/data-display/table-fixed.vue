@@ -3,8 +3,9 @@
 		:data="data"
 		:columns="columns"
 		row-key="id"
-		style="max-height: 400px"
+		:table-area-props="{ style: 'max-height: 400px' }"
 		:scroll="{ x: 1200 }"
+		:pagination="false"
 	></px-table>
 </template>
 

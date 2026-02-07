@@ -86,7 +86,7 @@ const columns = [
 	{
 		key: 'action',
 		render: () => {
-			return h(Button, { size: 'small' }, 'Detail')
+			return h(Button, { size: 'small' }, { default: () => 'Detail' })
 		},
 		labelRender: () => {
 			return 'Actions'
