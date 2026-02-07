@@ -27,7 +27,7 @@ export type PaginationProps = {
 	 */
 	total?: number
 	/**
-	 * @property {number} [pageSlot=7]
+	 * @property {number} [pageSlot=9]
 	 * @version 0.1.0
 	 */
 	pageSlot?: number
@@ -82,7 +82,12 @@ export type PaginationProps = {
 	 */
 	totalLabel?: string
 	/**
-	 * @property {totalLabel} [itemsOrder=['total', 'page', 'size', 'jumper']]
+	 * @property {boolean} [hideWhenSinglePage=false]
+	 * @version 0.1.0
+	 */
+	hideWhenSinglePage?: boolean
+	/**
+	 * @property {('page' | 'size' | 'jumper' | 'total')[]} [itemsOrder=['total', 'page', 'size', 'jumper']]
 	 * @version 0.1.0
 	 */
 	itemsOrder?: ('page' | 'size' | 'jumper' | 'total')[]

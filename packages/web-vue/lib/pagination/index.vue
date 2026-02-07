@@ -21,7 +21,7 @@ defineOptions({
 const props = withDefaults(defineProps<PaginationProps>(), {
 	total: 0,
 	defaultPageSize: 10,
-	pageSlot: 7,
+	pageSlot: 9,
 	variant: 'ghost',
 	showSize: false,
 	showTotal: false,
@@ -31,7 +31,8 @@ const props = withDefaults(defineProps<PaginationProps>(), {
 	pageSizeOptions: () => [10, 20, 30, 40, 50, 100],
 	size: 'medium',
 	disabled: false,
-	pollSizeChange: false
+	pollSizeChange: false,
+	hideWhenSinglePage: false
 })
 
 const emits = defineEmits<PaginationEvents>()
@@ -344,8 +345,12 @@ const jumperRender = () => {
 	)
 }
 
+const hide = computed(() => {
+	return props.hideWhenSinglePage && pageCount.value <= 1
+})
+
 const render = () => {
-	return (
+	return !hide.value ? (
 		<div
 			class={{
 				pixelium: true,
@@ -370,7 +375,7 @@ const render = () => {
 				}
 			})}
 		</div>
-	)
+	) : null
 }
 
 defineRender(() => {
