@@ -103,7 +103,7 @@ watch(
 )
 
 const [initBody] = useScrollBar()
-const [initSidebar] = useScrollBar('simple')
+const [initSidebar, _, initialized] = useScrollBar('simple')
 
 if (typeof document !== 'undefined') {
 	initBody({
@@ -122,11 +122,13 @@ onMounted(() => {
 		initSidebar({
 			target: sidebar
 		})
-
-		setTimeout(() => {
-			scrollCallback()
-		}, 1000)
 	})
+})
+
+watch(initialized, () => {
+	if (initialized.value) {
+		scrollCallback()
+	}
 })
 </script>
 
