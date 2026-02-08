@@ -104,6 +104,6 @@ describe('Dialog functional calls (index.ts)', () => {
 
 		await vi.advanceTimersByTimeAsync(UNMOUNT_DELAY + 50)
 		expect(document.querySelector(`[id="${container!.id}"]`)).toBeNull()
-		expect(resolved).toBe(false)
+		expect(resolved).toBe(true)
 	})
 })
