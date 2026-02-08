@@ -268,16 +268,17 @@ export const useSelection = (
 		if (!selectionConfig.value.multiple) {
 			return
 		}
-		if (!value) {
-			await updateSelectedKeys([])
-			return
-		}
+		const currentSelectedKeys = selectedKeys.value || []
 		let rowKeys = (crossPage ? currentData.value : paginatedData.value) || []
 		if (ignoreDisabled) {
 			rowKeys = rowKeys.filter((e) => !e.disabled)
 		}
 		rowKeys = rowKeys.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
-		await updateSelectedKeys(rowKeys)
+		if (!value) {
+			await updateSelectedKeys(difference(currentSelectedKeys, rowKeys))
+			return
+		}
+		await updateSelectedKeys(union(currentSelectedKeys, rowKeys))
 	}
 	const selectExpose = {
 		select,
