@@ -2,11 +2,27 @@
 # 表格 Table
 
 这是一个表格，用于展示有行、列结构的内容。
+
+::: warning
+为确保行展开和选择行功能正常工作，需要这些功能时，请务必确保 `data` 数组中的每个数据项都包含与 `rowKey`（默认为 `'key'`）参数值同名的字段，且该字段的值在所有数据中保持唯一。
+
+如果需要进行后端分页，请参考 [异步分页](#异步分页)。
+
+如果需要进行跨页全选，请参考 [跨页全选](#跨页全选)。
+:::
 ]]]
 [[[en
 # Table
 
 This is a table used to display content with rows and columns.
+
+::: warning
+To ensure the row expansion and row selection functions work properly, when these functions are needed, you must ensure that each data item in the `data` array contains a field with the same name as the `rowKey` parameter (default is `'key'`), and the value of this field is unique across all data.
+
+If backend pagination is needed, please refer to [Server-side Pagination](#server-side-pagination).
+
+If cross-page selection is needed, please refer to [Cross-page Select all](#cross-page-select-all).
+:::
 ]]]
 
 [[[zh
@@ -364,6 +380,35 @@ Set `pagination.hideWhenSinglePage` to hide pagination when there is only a sing
 ]]]
 <preview path="./table-pagination-hide.vue"></preview>
 
+[[[zh
+## 实例方法
+
+需要注意的是，为了受控模式下的状态同步，选中、展开、筛选、排序等实例方法均采用异步设计，每次调用后可能需要等待一个微任务的时间才能生效。
+]]]
+[[[en
+## Instance Methods
+
+It is important to note that, for the purpose of state synchronization in controlled mode, instance methods such as selection, expansion, filtering, and sorting are designed asynchronously. Each invocation may require waiting for a microtask delay to take effect.
+]]]
+
+<preview path="./table-method.vue"></preview>
+
+[[[zh
+## 跨页全选
+
+`selection.selectAllMethod` 可以异步地自定义全选时更新的 `selectedKeys` 值。
+
+`selection.universalSetSelectAllRef` 配置全选复选框选中状态所参考的全集：`'current'`（当前页数据，默认）、`'all'`（所有页的数据）。
+]]]
+[[[en
+## Cross-Page Select All
+
+`selection.selectAllMethod` can asynchronously customize the `selectedKeys` value updated during a select-all operation.
+
+`selection.universalSetSelectAllRef` configures the universal set referenced for the select-all checkbox's checked status: `'current'` (data on the current page, default) or `'all'` (data across all pages).
+]]]
+<preview path="./table-select-all-cross-page.vue"></preview>
+
 ## API
 
 [[[api zh
@@ -429,6 +474,18 @@ slots.expand:表格展开行内容的插槽。
 events.update:page: 更新 `page` 的回调。
 events.update:pageSize: 更新 `pageSize` 的回调。
 
+tableExpose.getCurrentData: 获取表格经过排序和筛选的当前展示的数据。
+tableExpose.getPaginatedData: 获取表格分页后的当前展示的数据。
+tableExpose.select: 操作表格行选择状态。
+tableExpose.selectAll: 全选 / 全不选表格行，`crossPage` 表示跨页选择，默认 `false`，`ignoreDisabled` 控制是否忽略 `disabled` 状态的行，默认 `true`。
+tableExpose.clearSelect: 清除所有行的选择状态。
+tableExpose.expand: 操作表格行展开状态。
+tableExpose.clearExpand: 清除所有行的展开状态。
+tableExpose.filter: 操作列的筛选状态。
+tableExpose.clearFilter: 清除所有列的筛选状态。
+tableExpose.sort: 操作列的排序状态。
+tableExpose.clearSort: 清除所有列的排序状态。
+
 tableData.expand: 展开行内容配置。
 tableData.disabled: 是否禁用行选择。
 tableData.\[x: string | number | symbol\]: 其他属性。
@@ -469,6 +526,8 @@ tableSelection.cellProps: 列单元格属性对象。
 tableSelection.labelCellProps: 列表头单元格属性对象。
 tableSelection.contentProps: 列单元格内容属性对象。
 tableSelection.labelContentProps: 列表头内容属性对象。
+tableSelection.selectAllMethod: 自定义全选时更新的 `selectedKeys` 值。
+tableSelection.universalSetSelectAllRef: 配置全选复选框选中状态所参考的全集。
 
 tableExpandable.defaultExpandAllRows: 是否默认展开所有行。
 tableExpandable.label: 展开按钮列的表头文本。
@@ -562,6 +621,18 @@ slots.\[columns\[\].labelSlotName\]: Slot for custom content in header cells.
 slots.\[columns\[\].slotName\]: Slot for custom content in table cells.
 slots.expand: Slot for expanded row content.
 
+tableExpose.getCurrentData: Get the currently displayed data of the table after sorting and filtering.
+tableExpose.getPaginatedData: Get the currently displayed data of the table after pagination.
+tableExpose.select: Handle the selection state of table rows.
+tableExpose.selectAll: Select all/deselect all table rows. `crossPage` indicates cross-page selection, default is `false`. `ignoreDisabled` controls whether to ignore rows with a `disabled` state, default is `true`.
+tableExpose.clearSelect: Clear the selection state of all rows.
+tableExpose.expand: Handle the expand/collapse state of table rows.
+tableExpose.clearExpand: Clear the expanded/collapsed state of all rows.
+tableExpose.filter: Handle the filter state of table columns.
+tableExpose.clearFilter: Clear the filter state of all columns.
+tableExpose.sort: Handle the sort state of table columns.
+tableExpose.clearSort: Clear the sort state of all columns.
+
 tableData.expand: Configuration for expanded row content.
 tableData.disabled: Whether row selection is disabled.
 tableData.\[x: string | number | symbol\]: Other properties.
@@ -602,6 +673,8 @@ tableSelection.cellProps: Column cell properties object.
 tableSelection.labelCellProps: Column header cell properties object.
 tableSelection.contentProps: Column cell content properties object.
 tableSelection.labelContentProps: Column header content properties object.
+tableSelection.selectAllMethod: Customizes the `selectedKeys` value updated during a select‑all operation.
+tableSelection.universalSetSelectAllRef: Configures the universal set referenced for the select‑all checkbox’s checked status.
 
 tableExpandable.defaultExpandAllRows: Whether all rows are expanded by default.
 tableExpandable.label: Header text for the expand-button column.

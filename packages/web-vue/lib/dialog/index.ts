@@ -28,6 +28,7 @@ class DialogManager {
 	dialog: VNode
 	container: HTMLElement | null = null
 	state: Reactive<DialogManagerOptions & { visible: boolean; loading: boolean }>
+	timer: any = null
 	constructor(options: DialogManagerOptions) {
 		this.state = reactive({
 			...options,
@@ -44,16 +45,12 @@ class DialogManager {
 			setup() {
 				return () =>
 					h(Dialog, that.state as any, {
-						title: isString(titleRender) ? undefined : titleRender ? titleRender() : undefined,
-						default: isString(contentRender)
-							? () => contentRender
-							: contentRender
-								? contentRender()
-								: undefined,
+						title: isString(titleRender) ? undefined : titleRender ? titleRender : undefined,
+						default: isString(contentRender) ? () => contentRender : contentRender,
 						footer: isString(footerRender)
 							? () => footerRender
 							: footerRender
-								? footerRender()
+								? footerRender
 								: undefined,
 						icon: options.icon ? options.icon : undefined
 					})
@@ -72,9 +69,13 @@ class DialogManager {
 		render(this.dialog, this.container)
 	}
 	close() {
+		if (this.timer) {
+			return
+		}
 		this.state.visible = false
-		setTimeout(() => {
+		this.timer = setTimeout(() => {
 			this.unmount()
+			this.timer = null
 		}, ANIMATION_DURATION + DELAY)
 	}
 	unmount() {
@@ -142,6 +143,17 @@ const dialogCall = (
 	currentOptions.onCancel = (event) => {
 		try {
 			originCancel?.call(currentOptions, event)
+			currentManager.close()
+			resolve(false)
+		} catch (error) {
+			reject(error)
+		}
+	}
+
+	const originClose = currentOptions.onClose
+	currentOptions.onClose = () => {
+		try {
+			originClose?.call(currentOptions)
 			currentManager.close()
 			resolve(false)
 		} catch (error) {

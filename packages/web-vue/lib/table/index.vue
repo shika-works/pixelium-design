@@ -3,6 +3,7 @@ import {
 	computed,
 	getCurrentInstance,
 	mergeProps,
+	ref,
 	shallowRef,
 	useSlots,
 	withScopeId
@@ -61,8 +62,11 @@ const props = withDefaults(defineProps<TableProps>(), {
 const emits = defineEmits<TableEvents>()
 const slots = useSlots()
 
-const [_, genSelectionCol, selectionConfig] = useSelection(props, emits)
-const [expandedKeys, genExpandableCol, expandableConfig] = useExpandable(props, emits, slots)
+const [expandedKeys, genExpandableCol, expandableConfig, expandExpose] = useExpandable(
+	props,
+	emits,
+	slots
+)
 const genSummaryRow = useSummary()
 
 const bordered = computed(() => {
@@ -89,14 +93,16 @@ const pixelSize = usePixelSize()
 
 const instance = getCurrentInstance()
 
+// circular dependency
+const genSelectionColRef = ref<Function>()
 const columnsInfo = computed(() => {
 	const cols = [...props.columns]
-	const selection = props.selection
 	if (!cols.length) {
 		cols.push(EMPTY_COL)
 	} else {
-		if (selection) {
-			cols.unshift(genSelectionCol(selectionConfig.value, cols))
+		const selection = props.selection
+		if (selection && genSelectionColRef.value) {
+			cols.unshift(genSelectionColRef.value(selectionConfig.value, cols))
 		}
 		const expandable = props.expandable
 		if (expandable) {
@@ -106,12 +112,47 @@ const columnsInfo = computed(() => {
 	return buildHeaderRows(cols)
 })
 
-const [_filterValue, filterData, genFilterableIcon] = useFilterable(columnsInfo, props, emits)
-const [_sortOrder, sortData, genSortableIcon] = useSortable(columnsInfo, props, emits)
+const [_filterValue, filterData, genFilterableIcon, filterExpose] = useFilterable(
+	columnsInfo,
+	props,
+	emits
+)
+const [_sortOrder, sortData, genSortableIcon, sortExpose] = useSortable(
+	columnsInfo,
+	props,
+	emits
+)
+
+const data = computed(() => {
+	let rows = props.data.slice()
+	rows = filterData(rows)
+	rows = sortData(rows)
+
+	return rows
+})
+
 const [paginationConfig, page, onUpdatePage, pageSize, onUpdatePageSize] = usePagination(
 	props,
 	emits
 )
+
+const dataPaginated = computed(() => {
+	let rows = data.value
+	if (paginationConfig.value.paginateMethod === 'auto') {
+		rows = rows.slice((page.value! - 1) * pageSize.value!, page.value! * pageSize.value!)
+	}
+	return rows
+})
+
+const [_, genSelectionCol, selectionConfig, selectExpose] = useSelection(
+	data,
+	dataPaginated,
+	page,
+	pageSize,
+	props,
+	emits
+)
+genSelectionColRef.value = genSelectionCol
 
 const hasHierarchicalHead = computed(() => {
 	return columnsInfo.value.maxDepth > 1
@@ -123,22 +164,6 @@ const summaryRows = computed(() => {
 		return genSummaryRow(summary)
 	}
 	return []
-})
-
-const data = computed(() => {
-	let rows = props.data.slice()
-	rows = filterData(rows)
-	rows = sortData(rows)
-
-	return rows
-})
-
-const dataPaginated = computed(() => {
-	let rows = data.value
-	if (paginationConfig.value.paginateMethod === 'auto') {
-		rows = rows.slice((page.value! - 1) * pageSize.value!, page.value! * pageSize.value!)
-	}
-	return rows
 })
 
 const hasCols = computed(() => {
@@ -157,7 +182,12 @@ const [mouseoverHandler, mouseoutHandler, clickHandler, dblclickHandler, context
 const [polygon] = useDrawPixel(wrapperRef, canvasRef, pixelSize, bordered, props)
 
 defineExpose<TableExpose>({
-	getCurrentData: () => data.value
+	getCurrentData: () => data.value,
+	getPaginatedData: () => dataPaginated.value,
+	...selectExpose,
+	...expandExpose,
+	...filterExpose,
+	...sortExpose
 })
 
 const calcLabelContentProps = (cellData: HeaderCell) => {
@@ -344,7 +374,7 @@ const calcCellProps = (
 	const wasEnd =
 		cellWrapper.spanData.rowspan &&
 		cellWrapper.spanData.rowspan > 0 &&
-		rowIndex + cellWrapper.spanData.rowspan >= data.value.length
+		rowIndex + cellWrapper.spanData.rowspan >= dataPaginated.value.length
 
 	return mergeProps(
 		{
@@ -638,11 +668,10 @@ const render = () => {
 				</Spin>
 				<canvas class="px-table-canvas" ref={canvasRef}></canvas>
 			</div>
-			{!!props.pagination && (
-				<div class="px-table-foot-area">
-					<Pagination {...getPaginationProps()}></Pagination>
-				</div>
-			)}
+			<div class="px-table-foot-area">
+				{isFunction(slots.footer) ? slots.footer() : null}
+				{!!props.pagination && <Pagination {...getPaginationProps()}></Pagination>}
+			</div>
 		</div>
 	)
 }

@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 import type { LooseRequired } from '../../share/type'
 import type { TableProps } from '../type'
 import { isObject } from 'parsnip-kit'
@@ -24,14 +24,14 @@ export const usePagination = (
 		transform(arg: number | undefined | null) {
 			return Math.max(arg || 10, 1)
 		}
-	})
+	}) as readonly [Ref<number>, (x: number | undefined | null) => void, any]
 
 	const [page, updatePage] = useControlledMode('page', props, emits, {
 		defaultField: 'defaultPage',
 		transform(arg: number | undefined | null) {
 			return Math.max(arg || 1, 1)
 		}
-	})
+	}) as readonly [Ref<number>, (x: number | undefined | null) => void, any]
 
 	const onUpdatePage = (value: number) => {
 		updatePage(value)

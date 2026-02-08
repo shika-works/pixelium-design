@@ -439,7 +439,61 @@ export type TableSlots = {
 }
 
 export type TableExpose = {
+	/**
+	 * @property {() => TableData[]} getCurrentData
+	 * @version 0.1.0
+	 */
 	getCurrentData: () => TableData[]
+	/**
+	 * @property {() => TableData[]} getPaginatedData
+	 * @version 0.1.0
+	 */
+	getPaginatedData: () => TableData[]
+	/**
+	 * @property {(key: any | any[], value: boolean) => Promise<void>} select
+	 * @version 0.1.0
+	 */
+	select: (key: any | any[], value: boolean) => Promise<void>
+	/**
+	 * @property {(value: boolean, crossPage?: boolean, ignoreDisabled?: boolean) => Promise<void>} selectAll
+	 * @version 0.1.0
+	 */
+	selectAll: (value: boolean, crossPage?: boolean, ignoreDisabled?: boolean) => Promise<void>
+	/**
+	 * @property {() => Promise<void>} clearSelect
+	 * @version 0.1.0
+	 */
+	clearSelect: () => Promise<void>
+	/**
+	 * @property {(key: any | any[], value: boolean) => Promise<void>} expand
+	 * @version 0.1.0
+	 */
+	expand: (key: any | any[], value: boolean) => Promise<void>
+	/**
+	 * @property {() => Promise<void>} clearExpand
+	 * @version 0.1.0
+	 */
+	clearExpand: () => Promise<void>
+	/**
+	 * @property {(key: number | string | symbol, value: any[]) => Promise<void>} filter
+	 * @version 0.1.0
+	 */
+	filter: (key: number | string | symbol, value: any[]) => Promise<void>
+	/**
+	 * @property {() => Promise<void>} clearFilter
+	 * @version 0.1.0
+	 */
+	clearFilter: () => Promise<void>
+	/**
+	 * @property {(key: number | string | symbol, value: 'none' | 'asc' | 'desc') => Promise<void>} sort
+	 * @version 0.1.0
+	 */
+	sort: (key: number | string | symbol, value: 'none' | 'asc' | 'desc') => Promise<void>
+	/**
+	 * @property {() => Promise<void>} clearSort
+	 * @version 0.1.0
+	 */
+	clearSort: () => Promise<void>
 }
 
 export type TableData = {
@@ -599,6 +653,27 @@ export type TableSelection = {
 	 * @version 0.1.0
 	 */
 	showSelectAll?: boolean
+	/**
+	 * @property {(value: boolean, preState: { value: boolean, indeterminate: boolean }, arg: { originData: TableData[], currentData: TableData[], paginatedData: TableData[], page: number, pageSize: number }) => any[] | Promise<any[]>} [selectAllMethod]
+	 * @version 0.1.0
+	 */
+	selectAllMethod?: (
+		value: boolean,
+		preState: { value: boolean; indeterminate: boolean },
+		extra: {
+			originData: TableData[]
+			currentData: TableData[]
+			paginatedData: TableData[]
+			selectedKeys: any[]
+			page: number
+			pageSize: number
+		}
+	) => any[] | Promise<any[]>
+	/**
+	 * @property {'current' | 'all'} [universalSetSelectAllRef='current']
+	 * @version 0.1.0
+	 */
+	universalSetSelectAllRef?: 'current' | 'all'
 	/**
 	 * @property {string} [label]
 	 * @version 0.1.0
