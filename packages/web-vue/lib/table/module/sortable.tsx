@@ -261,7 +261,35 @@ export const useSortable = (
 		return rows
 	}
 
-	return [sortOrder, sortData, genSortableIcon] as const
+	const sort = async (key: number | string | symbol, value: 'none' | 'asc' | 'desc') => {
+		const keyFromParam = key
+		let nextSortOrder = { ...sortOrder.value }
+		const multiple = !!sortableInfo.value[key]?.sortable.multiple
+		const keys = getEnumerableKeys(nextSortOrder)
+		keys.forEach((key) => {
+			const multipleOfCurKey = !!sortableInfo.value[key]?.sortable.multiple
+			if ((multiple && !multipleOfCurKey) || (!multiple && key !== keyFromParam)) {
+				nextSortOrder[key] = 'none'
+			}
+		})
+		nextSortOrder[key] = value
+
+		await updateSortOrder(nextSortOrder)
+	}
+	const clearSort = async () => {
+		const nextSortOrder = { ...sortOrder.value }
+		const keys = getEnumerableKeys(nextSortOrder)
+		keys.forEach((key) => {
+			nextSortOrder[key] = 'none'
+		})
+		await updateSortOrder(nextSortOrder)
+	}
+	const sortExpose = {
+		clearSort,
+		sort
+	}
+
+	return [sortOrder, sortData, genSortableIcon, sortExpose] as const
 }
 
 export const defaultComparator = (

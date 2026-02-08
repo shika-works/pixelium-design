@@ -1,4 +1,12 @@
-import { isFunction, isNullish, isObject, isString } from 'parsnip-kit'
+import {
+	difference,
+	isArray,
+	isFunction,
+	isNullish,
+	isObject,
+	isString,
+	union
+} from 'parsnip-kit'
 import { useControlledMode } from '../../share/hook/use-controlled-mode'
 import type { LooseRequired } from '../../share/type'
 import type { TableColumn, TableData, TableExpandable, TableProps } from '../type'
@@ -123,5 +131,23 @@ export const useExpandable = (
 			label: expandable.label ?? ''
 		}
 	}
-	return [expandedKeys, genExpandableCol, expandableConfig] as const
+	const expand = async (key: any | any[], value: boolean) => {
+		const paramKeys = isArray(key) ? key : [key]
+
+		let nextSelectedKeys = expandedKeys.value || []
+		if (value) {
+			nextSelectedKeys = union(nextSelectedKeys, paramKeys)
+		} else {
+			nextSelectedKeys = difference(nextSelectedKeys, paramKeys)
+		}
+		await updateExpandedKeys(nextSelectedKeys)
+	}
+	const clearExpand = async () => {
+		await updateExpandedKeys([])
+	}
+	const expandExpose = {
+		expand,
+		clearExpand
+	}
+	return [expandedKeys, genExpandableCol, expandableConfig, expandExpose] as const
 }

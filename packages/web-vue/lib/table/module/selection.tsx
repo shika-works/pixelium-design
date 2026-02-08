@@ -1,15 +1,16 @@
 import {
 	difference,
 	intersection,
+	isArray,
+	isFunction,
 	isNullish,
 	isObject,
-	symmetricDifference,
 	union
 } from 'parsnip-kit'
 import { useControlledMode } from '../../share/hook/use-controlled-mode'
 import type { LooseRequired } from '../../share/type'
 import type { TableColumn, TableData, TableProps, TableSelection } from '../type'
-import { computed, Fragment, mergeProps, watch } from 'vue'
+import { computed, Fragment, mergeProps, watch, type Ref } from 'vue'
 
 import Radio from '../../radio/index.vue'
 import Checkbox from '../../checkbox/index.vue'
@@ -20,6 +21,10 @@ import {
 } from './share'
 
 export const useSelection = (
+	currentData: Ref<TableData[]>,
+	paginatedData: Ref<TableData[]>,
+	page: Ref<number>,
+	pageSize: Ref<number>,
 	props: LooseRequired<TableProps>,
 	emits: ((
 		evt: 'select',
@@ -42,7 +47,11 @@ export const useSelection = (
 			width: objectType ? selection.width : undefined,
 			minWidth: objectType ? selection.minWidth : undefined,
 			fixed: objectType ? !!selection.fixed : false,
-			onlyCurrent: objectType ? !!selection.onlyCurrent : false
+			onlyCurrent: objectType ? !!selection.onlyCurrent : false,
+			selectAllMethod: objectType ? selection.selectAllMethod : undefined,
+			universalSetSelectAllRef: objectType
+				? selection.universalSetSelectAllRef || 'current'
+				: 'all'
 		}
 	})
 	const [selectedKeys, updateSelectedKeys] = useControlledMode('selectedKeys', props, emits, {
@@ -67,12 +76,12 @@ export const useSelection = (
 		}
 	})
 	watch(
-		() => props.data,
+		paginatedData,
 		() => {
 			if (!selectionConfig.value.onlyCurrent) {
 				return
 			}
-			const rowKeys = (props.data || []).map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
+			const rowKeys = (paginatedData.value || []).map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
 			let curSelectedKeys = [...(selectedKeys.value || [])]
 
 			curSelectedKeys = intersection(curSelectedKeys, rowKeys)
@@ -118,16 +127,32 @@ export const useSelection = (
 		emits('selectedChange', curSelectedKeys)
 	}
 
-	const selectAllHandler = async (value: boolean, event: InputEvent) => {
-		const rowKeys = (props.data || [])
-			.filter((e) => !e.disabled)
-			.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
-		let curSelectedKeys = [...(selectedKeys.value || [])]
-		// ignore disabled rows
-		if (!value) {
-			curSelectedKeys = difference(curSelectedKeys, rowKeys)
+	const selectAllHandler = async (
+		value: boolean,
+		preState: { value: boolean; indeterminate: boolean },
+		event: InputEvent
+	) => {
+		let curSelectedKeys: any[] = []
+		if (isFunction(selectionConfig.value.selectAllMethod)) {
+			curSelectedKeys = await selectionConfig.value.selectAllMethod(value, preState, {
+				originData: props.data || [],
+				currentData: currentData.value,
+				paginatedData: paginatedData.value,
+				selectedKeys: selectedKeys.value || [],
+				page: page.value,
+				pageSize: pageSize.value
+			})
 		} else {
-			curSelectedKeys = union(curSelectedKeys, rowKeys)
+			const rowKeys = (paginatedData.value || [])
+				.filter((e) => !e.disabled)
+				.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
+			curSelectedKeys = [...(selectedKeys.value || [])]
+			// ignore disabled rows
+			if (!value) {
+				curSelectedKeys = difference(curSelectedKeys, rowKeys)
+			} else {
+				curSelectedKeys = union(curSelectedKeys, rowKeys)
+			}
 		}
 		await updateSelectedKeys(curSelectedKeys)
 		emits('selectAll', value, event)
@@ -179,18 +204,27 @@ export const useSelection = (
 			},
 			labelRender: () => {
 				const curSelectedKeys = selectedKeys.value || []
-				const rowKeys = (props.data || [])
+				const universalSet = (
+					selectionConfig.value.universalSetSelectAllRef === 'all'
+						? currentData.value
+						: paginatedData.value || []
+				)
 					.filter((e) => !e.disabled)
 					.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
-				const selectedAll = symmetricDifference(curSelectedKeys, rowKeys).length === 0
+
+				const selectedAll = difference(universalSet, curSelectedKeys).length === 0
+				const indeterminate =
+					!selectedAll && intersection(universalSet, curSelectedKeys).length > 0
 				return selection.multiple && selection.showSelectAll ? (
 					<Fragment>
 						{
 							<Checkbox
 								modelValue={selectedAll}
-								indeterminate={!selectedAll && !!curSelectedKeys.length}
+								indeterminate={indeterminate}
 								size="small"
-								onInput={(value, event) => selectAllHandler(value, event)}
+								onInput={(value, event) =>
+									selectAllHandler(value, { value: selectedAll, indeterminate }, event)
+								}
 								style={{
 									marginRight: selection.label ? `8px` : undefined
 								}}
@@ -205,5 +239,50 @@ export const useSelection = (
 			}
 		}
 	}
-	return [selectedKeys, genSelectionCol, selectionConfig] as const
+	const select = async (key: any | any[], value: boolean) => {
+		const rowKeys = paginatedData.value.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
+		const paramKeys = isArray(key) ? key : [key]
+		const validKeys = selectionConfig.value.onlyCurrent
+			? intersection(paramKeys, rowKeys)
+			: paramKeys
+		let nextSelectedKeys = selectedKeys.value || []
+		if (value) {
+			nextSelectedKeys = union(nextSelectedKeys, validKeys)
+		} else {
+			nextSelectedKeys = difference(nextSelectedKeys, validKeys)
+		}
+		if (!selectionConfig.value.multiple && nextSelectedKeys.length > 1) {
+			nextSelectedKeys.length = 1
+		}
+
+		await updateSelectedKeys(nextSelectedKeys)
+	}
+	const clearSelect = async () => {
+		await updateSelectedKeys([])
+	}
+	const selectAll = async (
+		value: boolean,
+		crossPage: boolean = false,
+		ignoreDisabled: boolean = true
+	) => {
+		if (!selectionConfig.value.multiple) {
+			return
+		}
+		if (!value) {
+			await updateSelectedKeys([])
+			return
+		}
+		let rowKeys = (crossPage ? currentData.value : paginatedData.value) || []
+		if (ignoreDisabled) {
+			rowKeys = rowKeys.filter((e) => !e.disabled)
+		}
+		rowKeys = rowKeys.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
+		await updateSelectedKeys(rowKeys)
+	}
+	const selectExpose = {
+		select,
+		clearSelect,
+		selectAll
+	}
+	return [selectedKeys, genSelectionCol, selectionConfig, selectExpose] as const
 }

@@ -354,5 +354,24 @@ export const useFilterable = (
 			})
 		})
 	}
-	return [filterValue, filterData, genFilterableIcon] as const
+	const filter = async (key: number | string | symbol, value: any[]) => {
+		const nextFilterValue = cloneFilterValue(filterValue.value || {})
+		nextFilterValue[key] = value
+		await updateFilterValue(nextFilterValue)
+		innerFilterValue.value[key] = filterValue.value?.[key] || []
+	}
+	const clearFilter = async () => {
+		const nextFilterValue = cloneFilterValue(filterValue.value || {})
+		const keys = getEnumerableKeys(nextFilterValue)
+		keys.forEach((key) => {
+			nextFilterValue[key] = []
+		})
+		await updateFilterValue({})
+		innerFilterValue.value = cloneFilterValue(filterValue.value || {})
+	}
+	const filterExpose = {
+		clearFilter,
+		filter
+	}
+	return [filterValue, filterData, genFilterableIcon, filterExpose] as const
 }
