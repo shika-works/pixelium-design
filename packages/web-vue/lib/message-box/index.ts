@@ -53,7 +53,7 @@ class MessageManager {
 	unmount() {
 		if (this.container) {
 			const container = this.container
-			render(this.messageBox, container)
+			render(null, container)
 			nextTick(() => {
 				container.remove()
 				this.container = null

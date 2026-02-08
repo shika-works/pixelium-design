@@ -22,6 +22,8 @@
 
 	transition: 0.25s all;
 
+	flex-grow: 1;
+
 	&-inner {
 		height: 100%;
 		border: 0;
@@ -32,8 +34,7 @@
 		font-family: var(--px-font);
 		padding: 0;
 		&:focus-visible {
-			outline-color: var(--px-neutral-10);
-			outline-offset: var(--px-bit);
+			outline: none;
 		}
 		&:disabled {
 			color: var(--px-neutral-10);

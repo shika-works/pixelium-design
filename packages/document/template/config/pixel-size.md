@@ -4,6 +4,8 @@
 
 ## setPixelSize
 你可以在任何地方，不管是入口文件还是业务代码中，通过导出的 `setPixelSize` 函数来修改像素尺寸。
+
+（v0.0.5）`dynamicComponentSize` 参数控制像素尺寸是否影响绝大部分组件的尺寸计算，默认 `false`。
 ]]]
 
 [[[en
@@ -12,6 +14,8 @@ The size of pixel points is controlled by the global CSS variable `--px-bit`, wi
 
 ## setPixelSize
 You can modify the pixel size through the exported `setPixelSize` function anywhere, whether in the entry file or business code.
+
+(v0.0.5) The `dynamicComponentSize` parameter controls whether the pixel size affects the size calculations for most components; default: `false`.
 ]]]
 
 ```ts
@@ -30,3 +34,8 @@ You can try it here:
 ]]]
 
 <preview path="./pixel-basic.vue"></preview>
+
+```ts
+const setPixelSize: (size: number, dynamicComponentSize?: boolean) => void
+const resetPixelSize: () => void
+```

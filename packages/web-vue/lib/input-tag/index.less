@@ -17,9 +17,12 @@
 	color: var(--px-neutral-10);
 	display: flex;
 	box-sizing: border-box;
+	min-height: var(--input-size);
 	cursor: text;
 
 	transition: 0.25s;
+
+	flex-grow: 1;
 
 	@sizes: small, medium, large;
 
@@ -88,8 +91,7 @@
 		font-family: var(--px-font);
 		padding: 0;
 		&:focus-visible {
-			outline-color: var(--px-neutral-10);
-			outline-offset: var(--px-bit);
+			outline: none;
 		}
 		&:disabled {
 			color: var(--px-neutral-10);
