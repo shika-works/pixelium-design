@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { nextTick, reactive } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { useSelection } from '../module/selection'
 import type { TableData } from '../type'
 
@@ -47,7 +47,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys, genSelectionCol] = useSelection(props, emits as any)
+			const [selectedKeys, genSelectionCol] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectedKeys).toBeDefined()
 			expect(typeof genSelectionCol).toBe('function')
@@ -63,7 +70,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectedKeys.value).toEqual([])
 		})
@@ -79,7 +93,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectedKeys.value).toContain(1)
 			expect(selectedKeys.value).toContain(2)
@@ -96,7 +117,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			// In single selection mode, only the first key should be kept
 			expect(selectedKeys.value).toHaveLength(1)
@@ -113,7 +141,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectedKeys.value).toHaveLength(3)
 		})
@@ -129,7 +164,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectedKeys.value).toEqual([])
 		})
@@ -145,7 +187,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(Array.isArray(selectedKeys.value)).toBe(true)
 		})
@@ -160,7 +209,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [, , selectionConfig] = useSelection(props, emits as any)
+			const [, , selectionConfig] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectionConfig.value.multiple).toBe(false)
 			expect(selectionConfig.value.showSelectAll).toBe(true)
@@ -189,7 +245,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [, , selectionConfig] = useSelection(props, emits as any)
+			const [, , selectionConfig] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			expect(selectionConfig.value.multiple).toBe(false)
 			expect(selectionConfig.value.showSelectAll).toBe(true)
@@ -212,7 +275,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genSelectionCol] = useSelection(props, emits as any)
+			const [, genSelectionCol] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 			const selectionCol = genSelectionCol({ multiple: true }, props.columns!)
 
 			expect(selectionCol).toBeDefined()
@@ -230,7 +300,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genSelectionCol] = useSelection(props, emits as any)
+			const [, genSelectionCol] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 			const selectionCol = genSelectionCol({ multiple: true, width: 50 }, props.columns!)
 
 			expect(selectionCol.width).toBe(50)
@@ -246,7 +323,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [, genSelectionCol] = useSelection(props, emits as any)
+			const [, genSelectionCol] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 			const selectionCol = genSelectionCol({ multiple: true }, props.columns!)
 
 			expect(['left', 'right', 'none']).toContain(selectionCol.fixed)
@@ -265,7 +349,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props,
+				emits as any
+			)
 
 			// When onlyCurrent is true, only keys from current data should be kept
 			expect(selectedKeys.value!.every((key) => mockData.some((d) => d.key === key))).toBe(true)
@@ -282,7 +373,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props as any, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props as any,
+				emits as any
+			)
 
 			expect(selectedKeys.value).toContain(1)
 			expect(selectedKeys.value).toContain(2)
@@ -313,7 +411,14 @@ describe('Selection Module', () => {
 
 			const emits = vi.fn()
 
-			const [selectedKeys] = useSelection(props as any, emits as any)
+			const [selectedKeys] = useSelection(
+				ref([]),
+				ref([]),
+				ref(1),
+				ref(10),
+				props as any,
+				emits as any
+			)
 
 			expect(selectedKeys.value!.length).toBeGreaterThan(1)
 

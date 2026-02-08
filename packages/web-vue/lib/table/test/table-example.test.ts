@@ -5,7 +5,14 @@ import { h, nextTick, ref, watch } from 'vue'
 import Radio from '../../radio/index.vue'
 import Checkbox from '../../checkbox/index.vue'
 import { DEFAULT_ADDITION_COL_WIDTH } from '../module/share'
-import type { FilterValue, SortOrder, TableData, TableOptionsArg, TableSummary } from '../type'
+import type {
+	FilterValue,
+	SortOrder,
+	TableColumn,
+	TableData,
+	TableOptionsArg,
+	TableSummary
+} from '../type'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 import { createMocks } from '../../share/util/test'
 import Spin from '../../spin/index.vue'
@@ -333,6 +340,10 @@ describe('Table Component Example', () => {
 			},
 			{
 				id: 1002
+			},
+			{
+				id: 1003,
+				disabled: true
 			}
 		]
 		const columns = [
@@ -367,12 +378,12 @@ describe('Table Component Example', () => {
 
 		const firstCell = wrapper.findAll('tr').map((e) => e.find('td'))
 
-		expect(firstCell.length).toBe(3)
+		expect(firstCell.length).toBe(4)
 
 		const checkboxes = wrapper.findAllComponents(Checkbox)
 
-		expect(checkboxes.length).toBe(3)
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, false, false])
+		expect(checkboxes.length).toBe(4)
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, false, false, false])
 
 		// select first row
 		checkboxes[1].find('input[type="checkbox"]').trigger('click')
@@ -390,7 +401,7 @@ describe('Table Component Example', () => {
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, true, false])
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, true, false, false])
 
 		// select second row
 		checkboxes[2].find('input[type="checkbox"]').trigger('click')
@@ -400,7 +411,7 @@ describe('Table Component Example', () => {
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([true, true, true])
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([true, true, true, false])
 
 		// select all clear
 		checkboxes[0].find('input[type="checkbox"]').trigger('click')
@@ -415,7 +426,7 @@ describe('Table Component Example', () => {
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, false, false])
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, false, false, false])
 
 		// select all
 		checkboxes[0].find('input[type="checkbox"]').trigger('click')
@@ -425,7 +436,7 @@ describe('Table Component Example', () => {
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([true, true, true])
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([true, true, true, false])
 		expect(checkboxes[0].vm.indeterminate).toBe(false)
 
 		// select indeterminate
@@ -436,7 +447,7 @@ describe('Table Component Example', () => {
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, false, true])
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([false, false, true, false])
 		expect(checkboxes[0].vm.indeterminate).toBe(true)
 
 		// select all again
@@ -447,15 +458,16 @@ describe('Table Component Example', () => {
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
 		await nextTick()
-		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([true, true, true])
+		expect(checkboxes.map((e) => e.vm.modelValue)).toEqual([true, true, true, false])
 		expect(checkboxes[0].vm.indeterminate).toBe(false)
 
 		// hide select all box
 		selection.showSelectAll = false
 		wrapper.setProps({ selection: { ...selection } })
 		await nextTick()
-		expect(wrapper.findAllComponents(Checkbox).length).toBe(2)
+		expect(wrapper.findAllComponents(Checkbox).length).toBe(3)
 	})
+
 	test('single selection with disabled', async () => {
 		const data = [
 			{
@@ -527,7 +539,9 @@ describe('Table Component Example', () => {
 				data,
 				columns,
 				selection,
-				'onUpdate:selectedKeys': (v) => (selectedKeys.value = v),
+				'onUpdate:selectedKeys': (v) => {
+					selectedKeys.value = v
+				},
 				selectedKeys: selectedKeys.value,
 				rowKey: 'id'
 			},
@@ -543,6 +557,7 @@ describe('Table Component Example', () => {
 		checkboxes[0].find('input[type="checkbox"]').trigger('click')
 		await nextTick()
 		expect(checkboxes[0].emitted('input')?.[0]?.[0]).toBe(true)
+		await new Promise((r) => setTimeout(r))
 		expect(selectedKeys.value).toEqual([1001])
 
 		wrapper.setProps({ selectedKeys: selectedKeys.value })
@@ -552,7 +567,7 @@ describe('Table Component Example', () => {
 
 		// select all clear
 		checkboxes[0].find('input[type="checkbox"]').trigger('click')
-		await nextTick()
+		await new Promise((r) => setTimeout(r))
 		expect(checkboxes[0].emitted('input')?.[1]?.[0]).toBe(false)
 		expect(selectedKeys.value).toEqual([])
 
@@ -1376,12 +1391,16 @@ describe('Table Component Example', () => {
 		expect(filterPopupWrapper2.element.style.display).not.toBe('none')
 		filterPopupWrapper2.findAll('.px-button')[0].trigger('click')
 		await new Promise((r) => setTimeout(r, 300))
-		expect(filterPopupWrapper2.element.style.display).toBe('none')
+		await expect
+			.poll(() => filterPopupWrapper2.element.style.display, { timeout: 400 })
+			.toBe('none')
 		expect(filterValue.value).toEqual({
 			baseSalary: [],
 			bonus: [500],
 			status: ['active', 'inactive']
 		})
+
+		await new Promise((r) => setTimeout(r, 500))
 
 		wrapper.setProps({ filterValue: filterValue.value })
 		await nextTick()
@@ -2015,5 +2034,361 @@ describe('Table Component Example', () => {
 			return tr.findAll('td').map((td) => td.text())
 		})
 		expect(curData2.length).greaterThan(curData1.length)
+	})
+
+	test('select all cross page', async () => {
+		const columns = [
+			{
+				key: 'id',
+				label: 'ID',
+				field: 'id'
+			},
+			{
+				key: 'user',
+				label: 'User',
+				field: 'user'
+			},
+			{
+				key: 'email',
+				label: 'Email',
+				field: 'email'
+			},
+			{
+				key: 'register',
+				label: 'Register',
+				field: 'register'
+			}
+		]
+		const selectAllMethod = async (
+			value: boolean,
+			_preState: { value: boolean; indeterminate: boolean },
+			extra: {
+				originData: TableData[]
+				currentData: TableData[]
+				paginatedData: TableData[]
+				selectedKeys: any[]
+				page: number
+				pageSize: number
+			}
+		) => {
+			return value ? extra.currentData.filter((e) => !e.disabled).map((e) => e.id) : []
+		}
+		const data = ref(generateRandomData(20, 0))
+		const selectedKeys = ref<number[]>([])
+		const wrapper = mount(Table, {
+			props: {
+				data: data.value,
+				columns,
+				pagination: {
+					showTotal: true,
+					showJumper: true,
+					showSize: true,
+					total: 1000
+				},
+				selection: {
+					selectAllMethod,
+					universalSetSelectAllRef: 'current',
+					multiple: true
+				},
+				selectedKeys: selectedKeys.value,
+				'onUpdate:selectedKeys': (e) => {
+					selectedKeys.value = e
+				},
+				rowKey: 'id'
+			},
+			attachTo: 'body'
+		})
+
+		wrapper.find('input[type="checkbox"]').trigger('click')
+		await new Promise((r) => setTimeout(r))
+		expect(selectedKeys.value).toEqual([
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+		])
+
+		wrapper.setProps({ selectedKeys: [...selectedKeys.value] })
+		await nextTick()
+
+		wrapper.vm.select(11, false)
+		expect(selectedKeys.value).toEqual([
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20
+		])
+
+		wrapper.setProps({ selectedKeys: [...selectedKeys.value] })
+		await nextTick()
+		expect(wrapper.findComponent(Checkbox).props('modelValue')).toEqual(true)
+		expect(wrapper.findComponent(Checkbox).props('indeterminate')).toEqual(false)
+
+		wrapper.setProps({
+			selection: {
+				selectAllMethod,
+				universalSetSelectAllRef: 'all',
+				multiple: true
+			}
+		})
+		await nextTick()
+		expect(wrapper.findComponent(Checkbox).props('modelValue')).toEqual(false)
+		expect(wrapper.findComponent(Checkbox).props('indeterminate')).toEqual(true)
+	})
+
+	test('instance methods', async () => {
+		const keys = ['email', 'city', 'address']
+		const expandRender = ({ record }: { record: TableData }) => {
+			return h(
+				'div',
+				{},
+				keys.map((e) => {
+					return h('div', { style: 'display: flex; align-items: center; gap: 8px' }, [
+						h('div', { style: 'color: gray; margin-right: 16px' }, e + ': '),
+						h('div', {}, record[e])
+					])
+				})
+			)
+		}
+
+		function generateData(count: number, startId: number = 1001) {
+			const firstNames = [
+				'Emma',
+				'James',
+				'Sophia',
+				'Michael',
+				'Olivia',
+				'Liam',
+				'Ava',
+				'Noah',
+				'Isabella',
+				'William',
+				'Mia',
+				'Ethan',
+				'Charlotte',
+				'Alexander',
+				'Amelia',
+				'Benjamin',
+				'Harper',
+				'Daniel',
+				'Evelyn',
+				'Matthew'
+			]
+			const lastNames = [
+				'Johnson',
+				'Wilson',
+				'Chen',
+				'Brown',
+				'Davis',
+				'Miller',
+				'Garcia',
+				'Rodriguez',
+				'Martinez',
+				'Taylor',
+				'Anderson',
+				'Thomas',
+				'Jackson',
+				'White',
+				'Harris',
+				'Martin',
+				'Thompson',
+				'Moore',
+				'Walker',
+				'Clark'
+			]
+			const cities = [
+				'New York',
+				'Los Angeles',
+				'Chicago',
+				'Miami',
+				'Seattle',
+				'Houston',
+				'Phoenix',
+				'Philadelphia',
+				'San Antonio',
+				'San Diego',
+				'Dallas',
+				'San Jose',
+				'Austin',
+				'Jacksonville',
+				'Fort Worth',
+				'Columbus',
+				'Charlotte',
+				'San Francisco',
+				'Indianapolis',
+				'Denver'
+			]
+			const streetNames = [
+				'Main Street',
+				'Oak Avenue',
+				'Pine Road',
+				'Beach Boulevard',
+				'Lakeview Drive',
+				'Maple Lane',
+				'Cedar Street',
+				'Elm Avenue',
+				'Hill Road',
+				'Park Boulevard',
+				'River Drive',
+				'Sunset Avenue',
+				'Mountain Road',
+				'Valley Drive',
+				'Ocean Boulevard',
+				'Forest Lane',
+				'Spring Avenue',
+				'Summer Road',
+				'Winter Drive',
+				'Autumn Lane'
+			]
+
+			const data = []
+
+			for (let i = 0; i < count; i++) {
+				const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+				const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+				const city = cities[Math.floor(Math.random() * cities.length)]
+				const streetName = streetNames[Math.floor(Math.random() * streetNames.length)]
+				const streetNumber = Math.floor(Math.random() * 900) + 100
+
+				const aptTypes = ['Apt', 'Suite', 'Unit', '#', null]
+				const aptType = aptTypes[Math.floor(Math.random() * aptTypes.length)]
+				const aptNumber = aptType
+					? Math.floor(Math.random() * 20) +
+						1 +
+						(Math.random() > 0.5 ? String.fromCharCode(65 + Math.floor(Math.random() * 5)) : '')
+					: ''
+
+				let address = `${streetNumber} ${streetName}`
+				if (aptType && aptNumber) {
+					address += `, ${aptType} ${aptNumber}`
+				}
+
+				const item = {
+					id: startId + i,
+					name: `${firstName} ${lastName}`,
+					email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+					city: city,
+					address: address,
+					expand: expandRender
+				}
+
+				data.push(item)
+			}
+
+			return data
+		}
+
+		const data = ref(generateData(50))
+		// @ts-ignore
+		data.value[6].disabled = true
+
+		const columns: TableColumn[] = [
+			{
+				key: 'id',
+				label: 'ID',
+				field: 'id',
+				fixed: 'left',
+				sortable: {
+					orders: ['asc', 'desc']
+				}
+			},
+			{
+				key: 'name',
+				label: 'Name',
+				field: 'name',
+				filterable: {
+					filterOptions: Array.from({ length: 26 }, (_, i) => ({
+						label: `${String.fromCharCode(65 + i)}...`,
+						value: String.fromCharCode(65 + i)
+					})),
+					filterMethod: (value: string[], record: TableData) => {
+						if (value.length) {
+							return record.name[0] === value[0]
+						} else {
+							return true
+						}
+					}
+				}
+			}
+		]
+
+		const expandedKeys = ref<number[]>([])
+		const selectedKeys = ref<number[]>([])
+		const sortOrder = ref<SortOrder>({})
+		const filterValue = ref<FilterValue>({})
+
+		const wrapper = mount(Table, {
+			props: {
+				data: data.value,
+				columns: columns,
+				rowKey: 'id',
+				expandable: true,
+				selectedKeys: selectedKeys.value,
+				'onUpdate:selectedKeys': (e) => (selectedKeys.value = e),
+				expandedKeys: expandedKeys.value,
+				'onUpdate:expandedKeys': (e) => (expandedKeys.value = e),
+				sortOrder: sortOrder.value,
+				'onUpdate:sortOrder': (e) => (sortOrder.value = e),
+				filterValue: filterValue.value,
+				'onUpdate:filterValue': (e) => (filterValue.value = e),
+				selection: {
+					multiple: true,
+					showSelectAll: true
+				}
+			}
+		})
+
+		expect(wrapper.vm.getCurrentData().length).toEqual(50)
+		expect(wrapper.vm.getPaginatedData().length).toEqual(10)
+
+		wrapper.vm.select([1001, 1002], true)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([1001, 1002])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.select([1001], false)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([1002])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.selectAll(false)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.selectAll(true)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([1001, 1002, 1003, 1004, 1005, 1006, 1008, 1009, 1010])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.clearSelect()
+		await nextTick()
+		expect(selectedKeys.value).toEqual([])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.selectAll(true, true)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([
+			1001, 1002, 1003, 1004, 1005, 1006, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016,
+			1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031,
+			1032, 1033, 1034, 1035, 1036, 1037, 1038, 1039, 1040, 1041, 1042, 1043, 1044, 1045, 1046,
+			1047, 1048, 1049, 1050
+		])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.selectAll(true, true, false)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([
+			1001, 1002, 1003, 1004, 1005, 1006, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016,
+			1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031,
+			1032, 1033, 1034, 1035, 1036, 1037, 1038, 1039, 1040, 1041, 1042, 1043, 1044, 1045, 1046,
+			1047, 1048, 1049, 1050, 1007
+		])
+		wrapper.setProps({ selectedKeys: selectedKeys.value })
+		await nextTick()
+
+		wrapper.vm.selectAll(false, true)
+		await nextTick()
+		expect(selectedKeys.value).toEqual([1007])
 	})
 })
