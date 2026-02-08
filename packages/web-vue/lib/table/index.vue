@@ -375,7 +375,7 @@ const calcCellProps = (
 		cellWrapper.spanData.rowspan &&
 		cellWrapper.spanData.rowspan > 0 &&
 		rowIndex + cellWrapper.spanData.rowspan >= dataPaginated.value.length
-	
+
 	return mergeProps(
 		{
 			'data-row': rowIndex,
