@@ -131,8 +131,8 @@ defaultActive: Default value for the activated menu item in uncontrolled mode.
 expanded: Expanded submenus. Supports controlled mode via `v-model`.
 defaultExpanded: Default value for expanded submenus in uncontrolled mode.
 collapsed: Whether the vertical menu is collapsed.
-submenuMode: Display mode for submenus. This value will be used if the submenu’s own `mode` is not set.
-submenuTrigger: Trigger method for submenu popups. This value will be used if the submenu’s own `trigger` is not set.
+submenuMode: Display mode for submenus. This value will be used if the submenu's own `mode` is not set.
+submenuTrigger: Trigger method for submenu popups. This value will be used if the submenu's own `trigger` is not set.
 indent: Indentation for each menu level.
 ellipsis: Whether overflowing items in a horizontal menu are collapsed into a "..." submenu.
 dark: Whether the menu uses dark mode.

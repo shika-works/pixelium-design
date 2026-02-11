@@ -674,7 +674,7 @@ tableSelection.labelCellProps: Column header cell properties object.
 tableSelection.contentProps: Column cell content properties object.
 tableSelection.labelContentProps: Column header content properties object.
 tableSelection.selectAllMethod: Customizes the `selectedKeys` value updated during a select‑all operation.
-tableSelection.universalSetSelectAllRef: Configures the universal set referenced for the select‑all checkbox’s checked status.
+tableSelection.universalSetSelectAllRef: Configures the universal set referenced for the select‑all checkbox's checked status.
 
 tableExpandable.defaultExpandAllRows: Whether all rows are expanded by default.
 tableExpandable.label: Header text for the expand-button column.
