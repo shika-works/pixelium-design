@@ -1,6 +1,7 @@
 <template>
 	<px-space direction="vertical">
 		<px-progress :percentage="progress"> </px-progress>
+		<px-progress :percentage="progress" theme="notice"> </px-progress>
 		<px-progress :percentage="progress" theme="success"> </px-progress>
 		<px-progress :percentage="progress" theme="warning"> </px-progress>
 		<px-progress :percentage="progress" theme="danger"> </px-progress>
