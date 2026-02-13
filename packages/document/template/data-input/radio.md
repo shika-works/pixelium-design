@@ -12,14 +12,14 @@ This component is called Radio...
 [[[zh
 ## 基础使用
 
-单选框 Radio 有两种样式变体，普通模式（`normal`，默认）和经典模式（`retro`）。经典模式的样式为致敬早期的游戏 UI 而设置。
+单选框 Radio 有两种样式变体，普通模式（`'normal'`，默认）和经典模式（`retro`）。经典模式的样式为致敬早期的游戏 UI 而设置。
 
 单选框 Radio，传入 `modelValue` 进入受控模式。不传或者为 `undefined` 则为非受控模式，此时可以传入 `defaultValue` 属性作为默认值。
 ]]]
 [[[en
 ## Basic Usage
 
-Radio has two style variants: normal mode (`normal`, default) and retro mode (`retro`). The retro mode style is a tribute to early game UI.
+Radio has two style variants: normal mode (`'normal'`, default) and retro mode (`retro`). The retro mode style is a tribute to early game UI.
 
 Radio enters controlled mode when `modelValue` is passed. When not passed or `undefined`, it's in uncontrolled mode, where you can pass the `defaultValue` property as the default value.
 ]]]
