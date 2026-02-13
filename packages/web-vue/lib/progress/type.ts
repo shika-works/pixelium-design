@@ -10,10 +10,10 @@ export type ProgressProps = {
 	 */
 	variant?: 'solid' | 'checkered'
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger'} [theme='primary']
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'notice'} [theme='primary']
 	 * @version 0.1.0
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'notice'
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.1.0

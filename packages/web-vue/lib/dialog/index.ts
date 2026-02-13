@@ -92,6 +92,7 @@ class DialogManager {
 
 const dialogTitles = {
 	info: () => t('dialog.infoTitle'),
+	notice: () => t('dialog.infoTitle'),
 	success: () => t('dialog.successTitle'),
 	warning: () => t('dialog.warningTitle'),
 	error: () => t('dialog.errorTitle'),
@@ -101,6 +102,7 @@ const dialogTitles = {
 
 const dialogIcons = {
 	info: () => h(InfoCircleSolid, { style: { fill: 'var(--px-primary-6)', marginTop: '1px' } }),
+	notice: () => h(InfoCircleSolid, { style: { fill: 'var(--px-notice-6)', marginTop: '1px' } }),
 	success: () =>
 		h(CheckCircleSolid, { style: { fill: 'var(--px-success-6)', marginTop: '1px' } }),
 	warning: () =>
@@ -178,19 +180,21 @@ const dialogCall = (
 	return promise as DialogReturn
 }
 
-;(['info', 'success', 'warning', 'error', 'normal', 'confirm'] as const).forEach((key) => {
-	;(DialogWrapped as any)[key] = (options: ValidContent | Omit<DialogOptions, 'type'>) => {
-		if (isString(options) || isFunction(options)) {
-			options = {
-				content: options
+;(['info', 'success', 'warning', 'error', 'normal', 'confirm', 'notice'] as const).forEach(
+	(key) => {
+		;(DialogWrapped as any)[key] = (options: ValidContent | Omit<DialogOptions, 'type'>) => {
+			if (isString(options) || isFunction(options)) {
+				options = {
+					content: options
+				}
 			}
+			return dialogCall({
+				...options,
+				type: key
+			})
 		}
-		return dialogCall({
-			...options,
-			type: key
-		})
 	}
-})
+)
 
 export default DialogWrapped as typeof DialogWrapped & {
 	[key in DialogOptions['type'] & string]: (
