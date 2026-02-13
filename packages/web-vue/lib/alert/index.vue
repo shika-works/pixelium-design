@@ -26,7 +26,7 @@
 		>
 			<slot name="icon">
 				<InfoCircleSolid
-					v-if="props.type === 'info'"
+					v-if="props.type === 'info' || props.type === 'notice'"
 					class="px-alert-icon"
 					:style="{
 						fill: textColor

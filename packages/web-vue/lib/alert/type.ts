@@ -17,10 +17,10 @@ export type AlertProps = {
 	 */
 	variant?: 'primary' | 'plain'
 	/**
-	 * @property {'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura'} [type='primary']
+	 * @property {'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura' | 'notice'} [type='primary']
 	 * @version 0.1.0
 	 */
-	type?: 'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura'
+	type?: 'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura' | 'notice'
 	/**
 	 * @property {'start' | 'center' | 'end'} [textAlign='start']
 	 * @version 0.1.0

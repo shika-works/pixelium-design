@@ -119,7 +119,7 @@
 		}
 	}
 
-	@theme: info, sakura, success, warning, error;
+	@theme: info, sakura, success, warning, error, notice;
 	each(@theme, {
   @theme-type: if(@value = info, primary, if(@value = error, danger, @value));
   
