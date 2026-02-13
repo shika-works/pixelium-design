@@ -181,5 +181,5 @@ const theme = computed(() => {
 	</OverlayScrollbarsComponent>
 </template>
 
-<style src="../share/style/index.css" />
 <style lang="less" src="./index.less"></style>
+<style src="../share/style/index.css" />
