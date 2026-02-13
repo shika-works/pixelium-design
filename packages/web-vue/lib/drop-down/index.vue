@@ -85,4 +85,3 @@ const visibleUpdateHandler = (value: boolean) => {
 		</template>
 	</Popover>
 </template>
-<style src="../share/style/index.css" />
