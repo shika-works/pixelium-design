@@ -47,4 +47,4 @@ const spanComputed = computed(() => {
 const gutter = inject<Ref<{ x: number; y: number }> | undefined>('px-row-provide', undefined)
 </script>
 <style lang="less" src="./index.less"></style>
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />
