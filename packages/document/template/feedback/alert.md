@@ -109,7 +109,7 @@ Control the shape of the Alert component via `shape`.
 borderRadius: 圆角半径，优先级高于 `shape`，行为与 CSS `border-radius` 一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 shape: 组件形状，可选 `'rect'` 或 `'round'`。
 variant: 样式变体，`'primary'` 或 `'plain'`。
-type: 类型（主题），`'info'`、`'success'`、`'warning'`、`'error'`、`'loading'`、`'normal'`、`'sakura'`。
+type: 警告的类型（主题）。
 textAlign: 文本对齐，`'start'` / `'center'` / `'end'`。
 title: 标题文本或通过 `title` 插槽提供。
 color: 自定义主色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
@@ -127,7 +127,7 @@ slots.icon: 图标插槽。
 borderRadius: Corner radius, takes precedence over `shape` and behaves like CSS `border-radius`.
 shape: Component shape, `'rect'` or `'round'`.
 variant: Style variant, `'primary'` or `'plain'`.
-type: Type (theme), `'info'`, `'success'`, `'warning'`, `'error'`, `'loading'`, `'normal'`, `'sakura'`.
+type: Type (theme).
 textAlign: Text alignment, `'start'` / `'center'` / `'end'`.
 title: Title text or provided via `title` slot.
 color: Custom primary color. It supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
