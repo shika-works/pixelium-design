@@ -2,6 +2,7 @@
 	<px-space direction="vertical">
 		<px-alert closable @close="closeHandler('info')">Info</px-alert>
 		<px-alert closable type="success" @close="closeHandler('success')">Success</px-alert>
+		<px-alert closable type="notice" @close="closeHandler('notice')">Notice</px-alert>
 		<px-alert closable type="warning" @close="closeHandler('warning')">Warning</px-alert>
 		<px-alert closable type="error" @close="closeHandler('error')">Error</px-alert>
 		<px-alert closable type="sakura" @close="closeHandler('sakura')">Sakura</px-alert>

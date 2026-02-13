@@ -11,11 +11,11 @@ A message bar component used to display important information or feedback for ac
 
 [[[en
 ## Alert Types
-The Alert supports seven types: `'info'` (default), `'success'`, `'warning'`, `'error'`, `'loading'`, `'normal'`, and `'sakura'`.
+The Alert supports various types: `'info'` (default), `'success'`, `'warning'`, `'error'`, `'loading'`, `'normal'`, `'sakura'` and `'notice'`.
 ]]]
 [[[zh
 ## 提示类型
-Alert 支持七种类型：`'info'`（默认）、`'success'`、`'warning'`、`'error'`、`'loading'`、`'normal'`、`'sakura'`。
+Alert 支持多种类型：`'info'`（默认）、`'success'`、`'warning'`、`'error'`、`'loading'`、`'normal'`、`'sakura'`、`'notice'`。
 ]]]
 <preview path="./alert-type.vue"></preview>
 

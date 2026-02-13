@@ -1,6 +1,7 @@
 <template>
 	<px-space direction="vertical">
-		<px-alert>Info</px-alert>
+		<px-alert variant="primary">Info</px-alert>
+		<px-alert variant="primary" type="notice">Notice</px-alert>
 		<px-alert variant="primary" type="success">Success</px-alert>
 		<px-alert variant="primary" type="warning">Warning</px-alert>
 		<px-alert variant="primary" type="error">Error</px-alert>
