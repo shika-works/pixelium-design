@@ -36,7 +36,7 @@
 	&__disabled {
 		cursor: not-allowed;
 	}
-	@theme: primary, sakura, success, warning, danger;
+	@theme: primary, sakura, success, warning, danger, notice;
 	each(@theme, {
     &.@{prefix}__@{value} {
       --text-color: var(~"--px-@{value}-6");
