@@ -114,186 +114,186 @@ html.dark {
 
 /* lint start */
 .px-link {
-  --text-color: var(--px-neutral-10);
-  color: var(--text-color) !important;
-  cursor: pointer !important;
-  transition: 0.25s !important;
-  text-decoration: none !important;
+	--text-color: var(--px-neutral-10);
+	color: var(--text-color) !important;
+	cursor: pointer !important;
+	transition: 0.25s !important;
+	text-decoration: none !important;
 }
 .px-link__underline {
-  text-decoration: underline !important;
-  text-underline-offset: 2px !important;
-  text-decoration-color: var(--text-color) !important;
+	text-decoration: underline !important;
+	text-underline-offset: 2px !important;
+	text-decoration-color: var(--text-color) !important;
 }
 .px-link-icon {
-  fill: var(--text-color) !important;
+	fill: var(--text-color) !important;
 }
 .px-link__loading {
-  cursor: auto !important;
+	cursor: auto !important;
 }
 .px-link__disabled {
-  cursor: not-allowed !important;
+	cursor: not-allowed !important;
 }
 .px-link.px-link__primary {
-  --text-color: var(--px-primary-6) !important;
+	--text-color: var(--px-primary-6) !important;
 }
 .px-link.px-link__primary:focus-visible {
-  outline-color: var(--px-primary-6) !important;
+	outline-color: var(--px-primary-6) !important;
 }
 .px-link.px-link__primary.px-link__disabled {
-  --text-color: var(--px-primary-2) !important;
+	--text-color: var(--px-primary-2) !important;
 }
 .px-link.px-link__primary:active.px-link__loading,
 .px-link.px-link__primary:hover.px-link__loading {
-  --text-color: var(--px-primary-6) !important;
+	--text-color: var(--px-primary-6) !important;
 }
 .px-link.px-link__primary:active.px-link__disabled,
 .px-link.px-link__primary:hover.px-link__disabled {
-  --text-color: var(--px-primary-2) !important;
+	--text-color: var(--px-primary-2) !important;
 }
 .px-link.px-link__primary:hover {
-  --text-color: var(--px-primary-5) !important;
+	--text-color: var(--px-primary-5) !important;
 }
 .px-link.px-link__primary:active {
-  --text-color: var(--px-primary-7) !important;
+	--text-color: var(--px-primary-7) !important;
 }
 .px-link.px-link__sakura {
-  --text-color: var(--px-sakura-6) !important;
+	--text-color: var(--px-sakura-6) !important;
 }
 .px-link.px-link__sakura:focus-visible {
-  outline-color: var(--px-sakura-6) !important;
+	outline-color: var(--px-sakura-6) !important;
 }
 .px-link.px-link__sakura.px-link__disabled {
-  --text-color: var(--px-sakura-2) !important;
+	--text-color: var(--px-sakura-2) !important;
 }
 .px-link.px-link__sakura:active.px-link__loading,
 .px-link.px-link__sakura:hover.px-link__loading {
-  --text-color: var(--px-sakura-6) !important;
+	--text-color: var(--px-sakura-6) !important;
 }
 .px-link.px-link__sakura:active.px-link__disabled,
 .px-link.px-link__sakura:hover.px-link__disabled {
-  --text-color: var(--px-sakura-2) !important;
+	--text-color: var(--px-sakura-2) !important;
 }
 .px-link.px-link__sakura:hover {
-  --text-color: var(--px-sakura-5) !important;
+	--text-color: var(--px-sakura-5) !important;
 }
 .px-link.px-link__sakura:active {
-  --text-color: var(--px-sakura-7) !important;
+	--text-color: var(--px-sakura-7) !important;
 }
 .px-link.px-link__success {
-  --text-color: var(--px-success-6) !important;
+	--text-color: var(--px-success-6) !important;
 }
 .px-link.px-link__success:focus-visible {
-  outline-color: var(--px-success-6) !important;
+	outline-color: var(--px-success-6) !important;
 }
 .px-link.px-link__success.px-link__disabled {
-  --text-color: var(--px-success-2) !important;
+	--text-color: var(--px-success-2) !important;
 }
 .px-link.px-link__success:active.px-link__loading,
 .px-link.px-link__success:hover.px-link__loading {
-  --text-color: var(--px-success-6) !important;
+	--text-color: var(--px-success-6) !important;
 }
 .px-link.px-link__success:active.px-link__disabled,
 .px-link.px-link__success:hover.px-link__disabled {
-  --text-color: var(--px-success-2) !important;
+	--text-color: var(--px-success-2) !important;
 }
 .px-link.px-link__success:hover {
-  --text-color: var(--px-success-5) !important;
+	--text-color: var(--px-success-5) !important;
 }
 .px-link.px-link__success:active {
-  --text-color: var(--px-success-7) !important;
+	--text-color: var(--px-success-7) !important;
 }
 .px-link.px-link__warning {
-  --text-color: var(--px-warning-6) !important;
+	--text-color: var(--px-warning-6) !important;
 }
 .px-link.px-link__warning:focus-visible {
-  outline-color: var(--px-warning-6) !important;
+	outline-color: var(--px-warning-6) !important;
 }
 .px-link.px-link__warning.px-link__disabled {
-  --text-color: var(--px-warning-2) !important;
+	--text-color: var(--px-warning-2) !important;
 }
 .px-link.px-link__warning:active.px-link__loading,
 .px-link.px-link__warning:hover.px-link__loading {
-  --text-color: var(--px-warning-6) !important;
+	--text-color: var(--px-warning-6) !important;
 }
 .px-link.px-link__warning:active.px-link__disabled,
 .px-link.px-link__warning:hover.px-link__disabled {
-  --text-color: var(--px-warning-2) !important;
+	--text-color: var(--px-warning-2) !important;
 }
 .px-link.px-link__warning:hover {
-  --text-color: var(--px-warning-5) !important;
+	--text-color: var(--px-warning-5) !important;
 }
 .px-link.px-link__warning:active {
-  --text-color: var(--px-warning-7) !important;
+	--text-color: var(--px-warning-7) !important;
 }
 .px-link.px-link__danger {
-  --text-color: var(--px-danger-6) !important;
+	--text-color: var(--px-danger-6) !important;
 }
 .px-link.px-link__danger:focus-visible {
-  outline-color: var(--px-danger-6) !important;
+	outline-color: var(--px-danger-6) !important;
 }
 .px-link.px-link__danger.px-link__disabled {
-  --text-color: var(--px-danger-2) !important;
+	--text-color: var(--px-danger-2) !important;
 }
 .px-link.px-link__danger:active.px-link__loading,
 .px-link.px-link__danger:hover.px-link__loading {
-  --text-color: var(--px-danger-6) !important;
+	--text-color: var(--px-danger-6) !important;
 }
 .px-link.px-link__danger:active.px-link__disabled,
 .px-link.px-link__danger:hover.px-link__disabled {
-  --text-color: var(--px-danger-2) !important;
+	--text-color: var(--px-danger-2) !important;
 }
 .px-link.px-link__danger:hover {
-  --text-color: var(--px-danger-5) !important;
+	--text-color: var(--px-danger-5) !important;
 }
 .px-link.px-link__danger:active {
-  --text-color: var(--px-danger-7) !important;
+	--text-color: var(--px-danger-7) !important;
 }
 .px-link.px-link__notice {
-  --text-color: var(--px-notice-6) !important;
+	--text-color: var(--px-notice-6) !important;
 }
 .px-link.px-link__notice:focus-visible {
-  outline-color: var(--px-notice-6) !important;
+	outline-color: var(--px-notice-6) !important;
 }
 .px-link.px-link__notice.px-link__disabled {
-  --text-color: var(--px-notice-2) !important;
+	--text-color: var(--px-notice-2) !important;
 }
 .px-link.px-link__notice:active.px-link__loading,
 .px-link.px-link__notice:hover.px-link__loading {
-  --text-color: var(--px-notice-6) !important;
+	--text-color: var(--px-notice-6) !important;
 }
 .px-link.px-link__notice:active.px-link__disabled,
 .px-link.px-link__notice:hover.px-link__disabled {
-  --text-color: var(--px-notice-2) !important;
+	--text-color: var(--px-notice-2) !important;
 }
 .px-link.px-link__notice:hover {
-  --text-color: var(--px-notice-5) !important;
+	--text-color: var(--px-notice-5) !important;
 }
 .px-link.px-link__notice:active {
-  --text-color: var(--px-notice-7) !important;
+	--text-color: var(--px-notice-7) !important;
 }
 .px-link.px-link__info {
-  --text-color: var(--px-neutral-10) !important;
+	--text-color: var(--px-neutral-10) !important;
 }
 .px-link.px-link__info:focus-visible {
-  outline-color: var(--px-neutral-10) !important;
+	outline-color: var(--px-neutral-10) !important;
 }
 .px-link.px-link__info.px-link__disabled {
-  --text-color: var(--px-neutral-6) !important;
+	--text-color: var(--px-neutral-6) !important;
 }
 .px-link.px-link__info:active.px-link__disabled,
 .px-link.px-link__info:hover.px-link__disabled {
-  --text-color: var(--px-neutral-6) !important;
+	--text-color: var(--px-neutral-6) !important;
 }
 .px-link.px-link__info:active.px-link__loading,
 .px-link.px-link__info:hover.px-link__loading {
-  --text-color: var(--px-neutral-10) !important;
+	--text-color: var(--px-neutral-10) !important;
 }
 .px-link.px-link__info:hover {
-  --text-color: var(--px-neutral-8) !important;
+	--text-color: var(--px-neutral-8) !important;
 }
 .px-link.px-link__info:active {
-  --text-color: var(--px-neutral-9) !important;
+	--text-color: var(--px-neutral-9) !important;
 }
 
 /* lint end */
