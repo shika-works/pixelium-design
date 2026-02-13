@@ -670,10 +670,10 @@ export type TableSelection = {
 		}
 	) => any[] | Promise<any[]>
 	/**
-	 * @property {'current' | 'all'} [universalSetSelectAllRef='current']
+	 * @property {'current' | 'all'} [supersetSelectAllRef='current']
 	 * @version 0.1.0
 	 */
-	universalSetSelectAllRef?: 'current' | 'all'
+	supersetSelectAllRef?: 'current' | 'all'
 	/**
 	 * @property {string} [label]
 	 * @version 0.1.0

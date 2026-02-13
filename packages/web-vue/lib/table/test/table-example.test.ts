@@ -2087,7 +2087,7 @@ describe('Table Component Example', () => {
 				},
 				selection: {
 					selectAllMethod,
-					universalSetSelectAllRef: 'current',
+					supersetSelectAllRef: 'current',
 					multiple: true
 				},
 				selectedKeys: selectedKeys.value,
@@ -2121,7 +2121,7 @@ describe('Table Component Example', () => {
 		wrapper.setProps({
 			selection: {
 				selectAllMethod,
-				universalSetSelectAllRef: 'all',
+				supersetSelectAllRef: 'all',
 				multiple: true
 			}
 		})

@@ -1,9 +1,9 @@
 <template>
 	<div style="display: flex; align-items: center">
-		Universal Set for Select All State Reference
+		Superset for Select All State Reference
 		<px-switch
 			style="margin-left: 16px"
-			v-model="universalSetWasAllData"
+			v-model="supersetWasAllData"
 			active-label="All Data"
 		></px-switch>
 	</div>
@@ -20,7 +20,7 @@
 		v-model:page="page"
 		:selection="{
 			selectAllMethod,
-			universalSetSelectAllRef,
+			supersetSelectAllRef,
 			multiple: true
 		}"
 		v-model:selected-keys="selectedKeys"
@@ -131,9 +131,9 @@ const getKeys = (data: TableData[]) => data.filter((e) => !e.disabled).map((e) =
 const pageSize = ref(10)
 const page = ref(1)
 
-const universalSetWasAllData = ref(false)
-const universalSetSelectAllRef = computed(() => {
-	return universalSetWasAllData.value ? 'all' : 'current'
+const supersetWasAllData = ref(false)
+const supersetSelectAllRef = computed(() => {
+	return supersetWasAllData.value ? 'all' : 'current'
 })
 
 const tableRef = ref<InstanceType<typeof Table> | null>(null)
@@ -191,7 +191,7 @@ const selectAllMethod = async (
 			extra.selectedKeys.length &&
 			intersection(paginatedDataKeys, extra.selectedKeys).length > 0
 		const allDataHasIntersection =
-			universalSetWasAllData.value &&
+			supersetWasAllData.value &&
 			extra.selectedKeys.length &&
 			intersection(currentDataKeys, extra.selectedKeys).length > 0
 		dialogReturn = Dialog.warning({

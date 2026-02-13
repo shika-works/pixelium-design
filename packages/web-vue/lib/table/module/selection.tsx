@@ -49,9 +49,7 @@ export const useSelection = (
 			fixed: objectType ? !!selection.fixed : false,
 			onlyCurrent: objectType ? !!selection.onlyCurrent : false,
 			selectAllMethod: objectType ? selection.selectAllMethod : undefined,
-			universalSetSelectAllRef: objectType
-				? selection.universalSetSelectAllRef || 'current'
-				: 'all'
+			supersetSelectAllRef: objectType ? selection.supersetSelectAllRef || 'current' : 'all'
 		}
 	})
 	const [selectedKeys, updateSelectedKeys] = useControlledMode('selectedKeys', props, emits, {
@@ -204,17 +202,16 @@ export const useSelection = (
 			},
 			labelRender: () => {
 				const curSelectedKeys = selectedKeys.value || []
-				const universalSet = (
-					selectionConfig.value.universalSetSelectAllRef === 'all'
+				const superset = (
+					selectionConfig.value.supersetSelectAllRef === 'all'
 						? currentData.value
 						: paginatedData.value || []
 				)
 					.filter((e) => !e.disabled)
 					.map((e) => e[props.rowKey || DEFAULT_ROW_KEY])
 
-				const selectedAll = difference(universalSet, curSelectedKeys).length === 0
-				const indeterminate =
-					!selectedAll && intersection(universalSet, curSelectedKeys).length > 0
+				const selectedAll = difference(superset, curSelectedKeys).length === 0
+				const indeterminate = !selectedAll && intersection(superset, curSelectedKeys).length > 0
 				return selection.multiple && selection.showSelectAll ? (
 					<Fragment>
 						{

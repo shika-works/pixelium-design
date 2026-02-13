@@ -398,14 +398,14 @@ It is important to note that, for the purpose of state synchronization in contro
 
 `selection.selectAllMethod` 可以异步地自定义全选时更新的 `selectedKeys` 值。
 
-`selection.universalSetSelectAllRef` 配置全选复选框选中状态所参考的全集：`'current'`（当前页数据，默认）、`'all'`（所有页的数据）。
+`selection.supersetSelectAllRef` 配置全选复选框选中状态所参考的超集：`'current'`（当前页数据，默认）、`'all'`（所有页的数据）。
 ]]]
 [[[en
 ## Cross-Page Select All
 
 `selection.selectAllMethod` can asynchronously customize the `selectedKeys` value updated during a select-all operation.
 
-`selection.universalSetSelectAllRef` configures the universal set referenced for the select-all checkbox's checked status: `'current'` (data on the current page, default) or `'all'` (data across all pages).
+`selection.supersetSelectAllRef` configures the superset referenced for the select-all checkbox's checked status: `'current'` (data on the current page, default) or `'all'` (data across all pages).
 ]]]
 <preview path="./table-select-all-cross-page.vue"></preview>
 
@@ -527,7 +527,7 @@ tableSelection.labelCellProps: 列表头单元格属性对象。
 tableSelection.contentProps: 列单元格内容属性对象。
 tableSelection.labelContentProps: 列表头内容属性对象。
 tableSelection.selectAllMethod: 自定义全选时更新的 `selectedKeys` 值。
-tableSelection.universalSetSelectAllRef: 配置全选复选框选中状态所参考的全集。
+tableSelection.supersetSelectAllRef: 配置全选复选框选中状态所参考的超集。
 
 tableExpandable.defaultExpandAllRows: 是否默认展开所有行。
 tableExpandable.label: 展开按钮列的表头文本。
@@ -674,7 +674,7 @@ tableSelection.labelCellProps: Column header cell properties object.
 tableSelection.contentProps: Column cell content properties object.
 tableSelection.labelContentProps: Column header content properties object.
 tableSelection.selectAllMethod: Customizes the `selectedKeys` value updated during a select‑all operation.
-tableSelection.universalSetSelectAllRef: Configures the universal set referenced for the select‑all checkbox's checked status.
+tableSelection.supersetSelectAllRef: Configures the superset referenced for the select‑all checkbox's checked status.
 
 tableExpandable.defaultExpandAllRows: Whether all rows are expanded by default.
 tableExpandable.label: Header text for the expand-button column.
