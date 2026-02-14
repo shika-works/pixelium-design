@@ -9,6 +9,7 @@
 ## v0.1.0
 
 - 新增：
+  - 新增 notice 蓝色主题，对应 `'theme'` 和部分反馈组件的 `'type'` 属性的 `'notice'` 取值。
   - 新增反馈组件：Dialog、Popconfirm、Badge、Alert、Progress。
   - 新增导航组件：Menu、MenuItem、Submenu、MenuGroup、BackTop、DropDown、Breadcrumb、BreadcrumbItem、Pagination。
   - Tooltip 和 Popover 新增 `cascade` 属性，以维持嵌套浮窗的展示。
@@ -16,6 +17,7 @@
   - Link 新增属性 `variant` 取值为 `'normal'` 和 `'underline'`（默认），控制是否展示下划线。
   - VirtualList 新增插槽 `'scroll-container'` 自定义滚动容器，建议配合 `h` 函数或者 JSX 食用。
 - 调整：
+  - ⚠️需要注意⚠️ 移除形如 --px-primary|success|warning|danger|sakura-light|dark-number 的在项目中实际上未被使用到的 CSS 变量，例如 `--px-warning-light-1`。事实上组件的颜色直接源于 --px-color-light|dark-number 的 CSS 变量，例如：`--px-orange-light-1`。
   - ⚠️需要注意⚠️ 为更方便地使用高阶组件，受限于 Vue 的机制，Row 与 Col、Container 与 Aside、Grid 与 GridItem、ButtonGroup 与 Button、InputGroup 与各数据输入组件等配对组件，接收对应的 `provide` 数据时，现在对直接的亲代组件的类型不再做严格要求。
   - ButtonGroup 的 `shape` 增加可选值 `square` 和 `circle`，并且移除默认值。`square` 和 `circle` 时，Button 子组件的在视觉上长和宽相等。此处变更不会影响旧代码，因为 ButtonGroup 的 `shape` 默认值不存在时，时，Button 子组件也会采取 `rect` 的默认值。
   - 为 Switch 组件 canvas 绘制增加防抖，改为用 `transform` 来控制滑块位置，增加动画的流畅性（特便是高频率切换的时候）。
@@ -39,6 +41,7 @@
 ## v0.1.0
 
 - New Features:
+  - Added notice blue theme, corresponding to the `'notice'` value of the `'theme'` property and some feedback components' `'type'` property.
   - Added feedback components: Dialog, Popconfirm, Badge, Alert, Progress.
   - Added navigation component: Menu, MenuItem, Submenu, MenuGroup, BackTop, DropDown, Breadcrumb, BreadcrumbItem, Pagination.
   - Added the `cascade` property to Tooltip and Popover to maintain the display of nested floating windows.
@@ -46,6 +49,7 @@
   - Added a new `variant` property to Link with values `'normal'` and `'underline'` (default), controlling whether to display the `'underline'`.
   - VirtualList adds a new slot `'scroll-container'` for customizing the scroll container. It's recommended to use with the `h` function or JSX.
 - Adjustment:
+  - ⚠️ Note ⚠️ Removed unused CSS variables in the form of --px-primary|success|warning|danger|sakura-light|dark-number, such as `--px-warning-light-1`. In fact, component colors directly derive from the --px-color-light|dark-number CSS variables, for example: `--px-orange-light-1`.
   - ⚠️ Note ⚠️ To facilitate the use of higher-order components and due to limitations in Vue's mechanism, paired components such as Row and Col, Container and Aside, Grid and GridItem, ButtonGroup and Button, InputGroup and various data input components, etc., when receiving corresponding `provide` data, will now no longer strictly require the type of the immediate parent component.
   - The `shape` property of ButtonGroup now accepts two additional optional values: `square` and `circle`, and its default value has been removed. When set to `square` or `circle`, the child Button components will visually have equal height and width. This change will not affect existing code, as child Button components will default to using `rect` when no `shape` value is provided for the ButtonGroup.
   - Add debouncing to the canvas rendering of the Switch component, change the slider position control to use `transform`, and enhance the smoothness of animations (especially during high-frequency switching).

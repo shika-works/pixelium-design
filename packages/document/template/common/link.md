@@ -12,6 +12,10 @@ A component used to display hyperlinks.
 [[[en
 ## Basic Usage
 Usually, we use it just like an `<a>` tag.
+
+::: warning
+The `href` property will be passed directly to the `<a>` tag. If a value like `javascript:alert(1)` or a malicious URL is passed, it may lead to XSS or open redirect vulnerabilities.
+:::
 ]]]
 [[[zh
 ## 基础使用
@@ -25,15 +29,12 @@ Usually, we use it just like an `<a>` tag.
 
 [[[en
 ## Link Themes
-The link offers six themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, and `'sakura'`.
+The link offers various themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, `'sakura'` and `'notice'`.
 
-::: warning
-The `href` property will be passed directly to the `<a>` tag. If a value like `javascript:alert(1)` or a malicious URL is passed, it may lead to XSS or open redirect vulnerabilities.
-:::
 ]]]
 [[[zh
 ## 链接主题
-链接有 `'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'` 六种主题。
+链接有 `'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'`、`'notice'` 多种主题。
 ]]]
 <preview path="./link-theme.vue"></preview>
 

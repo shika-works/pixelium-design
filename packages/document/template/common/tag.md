@@ -12,12 +12,12 @@ Generally used to display the features (not referring to bugs) of something.
 [[[zh
 ## 主题
 
-和按钮一样，标签有几种不同颜色的主题：`'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'`。
+和按钮一样，标签有几种不同颜色的主题：`'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'`、`'notice'`。
 ]]]
 [[[en
 ## Theme
 
-Like buttons, tags have several different color themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, and `'sakura'`.
+Like buttons, tags have several different color themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, `'sakura'` and `'notice'`.
 ]]]
 <preview path="./tag-theme.vue"></preview>
 

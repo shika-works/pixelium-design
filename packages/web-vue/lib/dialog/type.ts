@@ -24,10 +24,10 @@ export type DialogOptions = {
 	 */
 	footer?: ValidVNodeContent
 	/**
-	 * @property {'info' | 'success' | 'warning' | 'error' | 'normal' | 'confirm'} [type='normal']
+	 * @property {'info' | 'success' | 'warning' | 'error' | 'normal' | 'confirm' | 'notice'} [type='normal']
 	 * @version 0.1.0
 	 */
-	type?: 'info' | 'success' | 'warning' | 'error' | 'normal' | 'confirm'
+	type?: 'info' | 'success' | 'warning' | 'error' | 'normal' | 'confirm' | 'notice'
 	/**
 	 * @property {boolean} [closable=true]
 	 * @version 0.1.0

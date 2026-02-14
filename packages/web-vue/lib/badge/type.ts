@@ -17,10 +17,10 @@ export type BadgeProps = {
 	 */
 	dot?: boolean
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger'} [theme='danger']
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'notice'} [theme='danger']
 	 * @version 0.1.0
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'notice'
 	/**
 	 * @property {boolean} [visible=true]
 	 * @version 0.1.0

@@ -36,6 +36,7 @@ describe('Dialog functional calls (index.ts)', () => {
 		expect('warning' in Dialog).toBe(true)
 		expect('error' in Dialog).toBe(true)
 		expect('confirm' in Dialog).toBe(true)
+		expect('notice' in Dialog).toBe(true)
 		expect('normal' in Dialog).toBe(true)
 	})
 

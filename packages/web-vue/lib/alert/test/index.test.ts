@@ -116,4 +116,12 @@ describe('Alert component', () => {
 			expect(icon.exists()).toBe(true)
 		}
 	})
+	it('should render type correctly', () => {
+		;['info', 'success', 'warning', 'error', 'loading', 'normal', 'sakura', 'notice'].forEach(
+			(e) => {
+				const wrapper = mount(Alert, { props: { type: e as any } })
+				expect(wrapper.classes()).include(`px-alert__${e}`)
+			}
+		)
+	})
 })

@@ -14,14 +14,14 @@ This is for multiple choices.
 
 复选框 Checkbox，传入 `modelValue` 进入受控模式。不传或者为 `undefined` 则为非受控模式，此时可以传入 `defaultValue` 属性作为默认值。
 
-复选框 Checkbox 有两种样式变体，普通模式（`normal`，默认）和经典模式（`retro`）。经典模式的样式为致敬早期的游戏 UI 而设置。
+复选框 Checkbox 有两种样式变体，普通模式（`'normal'`，默认）和经典模式（`retro`）。经典模式的样式为致敬早期的游戏 UI 而设置。
 ]]]
 [[[en
 ## Basic Usage
 
 For the Checkbox component, passing `modelValue` puts it in controlled mode. Not passing it or passing `undefined` puts it in uncontrolled mode, where you can pass the `defaultValue` property as the default value.
 
-Checkbox has two style variants: normal mode (`normal`, default) and retro mode (`retro`). The retro mode style is a tribute to early game UI.
+Checkbox has two style variants: normal mode (`'normal'`, default) and retro mode (`retro`). The retro mode style is a tribute to early game UI.
 ]]]
 <preview path="./checkbox-basic.vue"></preview>
 

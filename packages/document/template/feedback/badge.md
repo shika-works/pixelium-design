@@ -41,11 +41,11 @@ Show a small dot only by setting `dot` to `true`.
 
 [[[en
 ## Themes
-Badge supports multiple themes: `'primary'`, `'sakura'`, `'success'`, `'warning'`, and `'danger'`.
+Badge supports multiple themes: `'primary'`, `'sakura'`, `'success'`, `'warning'`, `'danger'` and `'notice'`.
 ]]]
 [[[zh
 ## 主题
-Badge 支持主题：`'primary'`、`'sakura'`、`'success'`、`'warning'`、`'danger'`。
+Badge 支持主题：`'primary'`、`'sakura'`、`'success'`、`'warning'`、`'danger'`、`'notice'`。
 ]]]
 <preview path="./badge-theme.vue"></preview>
 
@@ -94,7 +94,7 @@ Use the `content` slot to fully customize the badge content when `dot` is `false
 value: 角标显示的数值或字符串。
 max: 数值上限，超出显示为 `${max}+`。
 dot: 是否以小圆点显示。
-theme: 主题，`'primary' | 'sakura' | 'success' | 'warning' | 'danger'`。
+theme: 角标的主题。
 visible: 是否可见。
 offset: 角标标记的偏移。
 color: 自定义背景色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
@@ -109,7 +109,7 @@ slots.content: 角标内容插槽（在 `dot` 为 `false` 时生效）。
 value: The value or string displayed on the badge.
 max: The maximum value. If exceeded, it displays as `${max}+`.
 dot: Whether to display as a small dot.
-theme: Theme, `'primary' | 'sakura' | 'success' | 'warning' | 'danger'`.
+theme: Badge's theme.
 visible: Whether it is visible.
 offset: The offset of the badge marker.
 color: Custom background color, supporting CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, and hexadecimal numbers with lengths of 3, 4, 6, or 8 digits.

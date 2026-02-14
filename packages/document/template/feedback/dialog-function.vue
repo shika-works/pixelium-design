@@ -1,6 +1,7 @@
 <template>
 	<px-space>
 		<px-button @click="info" variant="outline">Info</px-button>
+		<px-button @click="notice" theme="notice" variant="outline">Notice</px-button>
 		<px-button @click="success" theme="success" variant="outline">Success</px-button>
 		<px-button @click="warning" theme="warning" variant="outline">Warning</px-button>
 		<px-button @click="error" theme="danger" variant="outline">Error</px-button>
@@ -11,6 +12,9 @@
 <script setup lang="ts">
 const info = () => {
 	$dialog.info('This is an informational dialog.')
+}
+const notice = () => {
+	$dialog.notice('This is an notice dialog.')
 }
 const success = () => {
 	$dialog.success('This is a success dialog.')

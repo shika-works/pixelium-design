@@ -10,10 +10,10 @@ export type LinkProps = {
 	 */
 	loading?: boolean
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [theme='primary']
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'} [theme='primary']
 	 * @version 0.0.0-beta
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'
 	/**
 	 * @property {'normal' | 'underline'} [theme='underline']
 	 * @version 0.1.0

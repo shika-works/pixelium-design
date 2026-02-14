@@ -34,10 +34,10 @@ export type ButtonGroupProps = {
 	 */
 	variant?: 'primary' | 'plain' | 'text' | 'outline'
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [theme]
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'} [theme]
 	 * @version 0.0.0-beta
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'
 	/**
 	 * @property {boolean} [pollSizeChange=false]
 	 * @version 0.1.0

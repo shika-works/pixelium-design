@@ -13,11 +13,11 @@ This component represents task completion progress visually, though it is not in
 
 [[[en
 ## Progress Themes
-The progress offers 5 themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'` and `'sakura'`.
+The progress offers various themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'sakura'` and `'notice'`.
 ]]]
 [[[zh
 ## 主题颜色
-进度条有 `'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'sakura'` 五种主题。
+进度条有 `'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'sakura'` 和 `'notice'` 多种主题。
 ]]]
 <preview path="./progress-theme.vue"></preview>
 

@@ -11,11 +11,11 @@ A common button, a control to trigger functions.
 
 [[[en
 ## Button Themes
-The button offers six themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, and `'sakura'`.
+The button offers various themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, `'sakura'` and `'notice'`.
 ]]]
 [[[zh
 ## 按钮主题
-按钮有 `'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'` 六种主题。
+按钮有 `'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'`、`'notice'` 多种主题。
 ]]]
 <preview path="./button-theme.vue"></preview>
 

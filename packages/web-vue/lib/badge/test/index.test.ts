@@ -84,4 +84,11 @@ describe('Badge Component', () => {
 		expect(s3.attributes('style')).toContain('top: 8px')
 		expect(s3.attributes('style')).toContain('right: -7px')
 	})
+
+	it('should render theme correctly', () => {
+		;['primary', 'success', 'warning', 'error', 'sakura', 'notice'].forEach((e) => {
+			const wrapper = mount(Badge, { props: { theme: e as any } })
+			expect(wrapper.classes()).include(`px-badge__${e}`)
+		})
+	})
 })

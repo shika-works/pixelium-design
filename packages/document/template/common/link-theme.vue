@@ -1,6 +1,7 @@
 <template>
 	<px-space>
 		<px-link>Primary</px-link>
+		<px-link theme="notice">Notice</px-link>
 		<px-link theme="success">Success</px-link>
 		<px-link theme="warning">Warning</px-link>
 		<px-link theme="danger">Danger</px-link>

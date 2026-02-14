@@ -142,4 +142,11 @@ describe('Progress Component', () => {
 		expect(indicatorEl.style.right).toContain('px')
 		expect(indicatorEl.style.right.length).toBeGreaterThan(0)
 	})
+
+	it('should render theme correctly', () => {
+		;['primary', 'success', 'warning', 'error', 'sakura', 'notice', 'info'].forEach((e) => {
+			const wrapper = mount(Progress, { props: { theme: e } })
+			expect(wrapper.classes()).include(`px-progress__${e}`)
+		})
+	})
 })

@@ -186,7 +186,7 @@ defineRender(() => {
 						<div class="px-message-icon-wrapper">
 							{props.icon ? (
 								props.icon()
-							) : props.type === 'info' ? (
+							) : props.type === 'info' || props.type === 'notice' ? (
 								<InfoCircleSolid
 									// @ts-ignore
 									class="px-message-icon"

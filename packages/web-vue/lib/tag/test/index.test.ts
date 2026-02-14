@@ -81,4 +81,11 @@ describe('Tag Component', () => {
 		const colorStyle = el.element.style.color || getComputedStyle(el.element).color
 		expect(colorStyle).toBeTruthy()
 	})
+
+	it('should render theme correctly', () => {
+		;['primary', 'success', 'warning', 'error', 'sakura', 'notice', 'info'].forEach((e) => {
+			const wrapper = mount(Tag, { props: { theme: e as any } })
+			expect(wrapper.classes()).include(`px-tag__${e}`)
+		})
+	})
 })

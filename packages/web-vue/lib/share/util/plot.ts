@@ -387,12 +387,7 @@ export const getBorderRadius = (
 }
 
 export function calcWhenLeaveBaseline(pixelSize: number, borderRadius: number): number {
-	const step =
-		pixelSize * 4 < borderRadius
-			? Math.round(pixelSize / 2)
-			: pixelSize * 7 < borderRadius
-				? Math.round((pixelSize / 4) * 3)
-				: pixelSize
+	const step = pixelSize
 	return (
 		Math.ceil((-6 + Math.sqrt(36 - 48 * step + 32 * step * borderRadius)) / (8 * step)) * step
 	)
