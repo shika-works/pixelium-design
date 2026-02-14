@@ -145,7 +145,7 @@ describe('Progress Component', () => {
 
 	it('should render theme correctly', () => {
 		;['primary', 'success', 'warning', 'error', 'sakura', 'notice', 'info'].forEach((e) => {
-			const wrapper = mount(Progress, { props: { theme: e } })
+			const wrapper = mount(Progress, { props: { theme: e as any } })
 			expect(wrapper.classes()).include(`px-progress__${e}`)
 		})
 	})
