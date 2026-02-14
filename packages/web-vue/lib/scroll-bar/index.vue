@@ -1,0 +1,185 @@
+<script setup lang="ts">
+import { computed, ref, shallowRef, watch } from 'vue'
+import { initScroll } from '../share/util/scroll'
+
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
+import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
+import type { ScrollBarEvents, ScrollBarExpose, ScrollBarProps } from './type'
+import { debounce, isNullish, isNumber, isObject } from 'parsnip-kit'
+import { useControlledMode } from '../share/hook/use-controlled-mode'
+import { inBrowser, inVitest } from '../share/util/env'
+import type { OverlayScrollbars } from 'overlayscrollbars'
+
+initScroll()
+
+defineOptions({
+	name: 'ScrollBar'
+})
+
+const props = withDefaults(defineProps<ScrollBarProps>(), {
+	showScrollPadding: true,
+	variant: 'pixel'
+})
+
+const osRef = shallowRef<OverlayScrollbarsComponentRef>()
+
+const emits = defineEmits<ScrollBarEvents>()
+
+const transform = (nextValue: { left?: number; top?: number } | null | undefined) => {
+	if (isNullish(nextValue)) {
+		return { left: 0, top: 0 }
+	} else {
+		return {
+			left: nextValue.left || 0,
+			top: nextValue.top || 0
+		}
+	}
+}
+const [scrollOffset, updateScrollOffset] = useControlledMode<
+	{ left?: number; top?: number },
+	'scrollOffset',
+	'defaultScrollOffset',
+	typeof props
+>('scrollOffset', props, emits, {
+	transform,
+	defaultField: 'defaultScrollOffset'
+})
+
+watch(scrollOffset, () => {
+	scrollTo({
+		behavior: 'smooth',
+		...transform(scrollOffset.value)
+	})
+})
+
+const showYScroll = ref(false)
+const showXScroll = ref(false)
+
+const initializeHandler = (ins: OverlayScrollbars) => {
+	const state = ins.state()
+
+	showXScroll.value = state.hasOverflow.x
+	showYScroll.value = state.hasOverflow.y
+
+	scrollTo({
+		behavior: 'smooth',
+		...transform(scrollOffset.value)
+	})
+
+	emits('initialize', ins)
+}
+
+const updateScrollOffsetDebounce = debounce(updateScrollOffset, 100)
+
+const scrollHandler = (_: any, event: Event) => {
+	const target = event.target
+	if (inBrowser() && target && target instanceof Element) {
+		const { scrollLeft, scrollTop } = target
+		updateScrollOffsetDebounce({
+			left: scrollLeft,
+			top: scrollTop
+		})
+	}
+
+	emits('scroll', event)
+}
+
+type ScrollTo = {
+	(options?: ScrollToOptions): void
+	(x: number, y: number): void
+}
+type ScrollBy = {
+	(options?: ScrollToOptions): void
+	(x: number, y: number): void
+}
+
+const scrollTo: ScrollTo = (arg1?: ScrollToOptions | number, arg2?: number) => {
+	if (!inBrowser() || inVitest()) {
+		return
+	}
+	const osInstance = osRef?.value?.osInstance()
+
+	if (!osInstance) {
+		return
+	}
+
+	const { scrollOffsetElement } = osInstance.elements()
+	if (isNumber(arg1) && isNumber(arg2)) {
+		scrollOffsetElement.scrollTo(arg1, arg2)
+	} else if (isObject(arg1)) {
+		scrollOffsetElement.scrollTo(arg1)
+	}
+}
+const scrollBy: ScrollBy = (arg1?: ScrollToOptions | number, arg2?: number) => {
+	const osInstance = osRef?.value?.osInstance()
+
+	if (!osInstance) {
+		return
+	}
+
+	const { scrollOffsetElement } = osInstance.elements()
+
+	if (isNumber(arg1) && isNumber(arg2)) {
+		scrollOffsetElement.scrollBy(arg1, arg2)
+	} else if (isObject(arg1)) {
+		scrollOffsetElement.scrollBy(arg1)
+	}
+}
+
+defineExpose<ScrollBarExpose>({
+	scrollBy,
+	scrollTo
+})
+
+const updateHandler = (ins: OverlayScrollbars) => {
+	const state = ins.state()
+	showXScroll.value = state.hasOverflow.x
+	showYScroll.value = state.hasOverflow.y
+
+	const { scrollOffsetElement } = ins.elements()
+	const { scrollLeft, scrollTop } = scrollOffsetElement
+
+	updateScrollOffset({
+		left: scrollLeft,
+		top: scrollTop
+	})
+
+	emits('update', {
+		left: scrollLeft,
+		top: scrollTop
+	})
+}
+
+const theme = computed(() => {
+	return props.variant === 'simple' ? 'px-scroll-simple-theme' : 'px-scroll-theme'
+})
+</script>
+
+<template>
+	<OverlayScrollbarsComponent
+		ref="osRef"
+		:options="{
+			scrollbars: {
+				theme: theme,
+				clickScroll: true
+			}
+		}"
+		:events="{
+			initialized: initializeHandler,
+			scroll: scrollHandler,
+			updated: updateHandler
+		}"
+		defer
+		:class="{
+			'px-scroll': true,
+			'px-scroll__simple': props.variant === 'simple',
+			'px-scroll__x': props.showScrollPadding && showXScroll,
+			'px-scroll__y': props.showScrollPadding && showYScroll
+		}"
+	>
+		<slot></slot>
+	</OverlayScrollbarsComponent>
+</template>
+
+<style lang="less" src="./index.less"></style>
+<style src="../share/style/index.css" />

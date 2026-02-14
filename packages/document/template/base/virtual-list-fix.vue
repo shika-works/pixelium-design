@@ -7,9 +7,9 @@
 	></px-virtual-list>
 </template>
 <script lang="ts" setup>
-import { shallowRef, h } from 'vue'
+import { ref, h } from 'vue'
 
-const list = shallowRef(
+const list = ref(
 	Array.from({ length: 10000 })
 		.fill(0)
 		.map((_, index) => ({

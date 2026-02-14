@@ -109,20 +109,20 @@ const messageCall = (options: ValidContent | MessageOptions): MessageReturn => {
 
 const message = messageCall as MessageFunction
 
-;(['info', 'success', 'warning', 'error', 'loading', 'sakura', 'normal'] as const).forEach(
-	(key) => {
-		;(message as any)[key] = (options: ValidContent | Omit<MessageOptions, 'type'>) => {
-			if (isString(options) || isFunction(options)) {
-				options = {
-					content: options
-				}
+;(
+	['info', 'success', 'warning', 'error', 'loading', 'sakura', 'normal', 'notice'] as const
+).forEach((key) => {
+	;(message as any)[key] = (options: ValidContent | Omit<MessageOptions, 'type'>) => {
+		if (isString(options) || isFunction(options)) {
+			options = {
+				content: options
 			}
-			return message({
-				...options,
-				type: key
-			})
 		}
+		return message({
+			...options,
+			type: key
+		})
 	}
-)
+})
 
 export default message

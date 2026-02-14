@@ -123,6 +123,8 @@ root: 气泡挂载的元素。
 widthEqual: 气泡与挂载的元素等宽，置于挂载元素上下侧时生效。
 contentStyle: 内容区域样式。
 destroyOnHide: 是否在隐藏时销毁气泡。
+borderRadius: 圆角半径。
+cascade: 开启级联模式。开启了级联模式的多个嵌套 Popover 和 Tooltip 可以共存，操作打开新的浮窗不会关闭之前已存在的浮窗。该属性不具备响应式。
 
 events.update:visible: v-model 更新 visible 属性。
 events.close: 气泡关闭时的回调。
@@ -143,6 +145,8 @@ disabled: Whether the popover is disabled.
 zIndex: The `z-index` of the popover.
 root: The element where the popover is mounted.
 destroyOnHide: Whether the popover will be destroyed when hidden.
+borderRadius: Corner radius.
+cascade: Enable cascading mode. Multiple nested Popovers and Tooltips with cascading mode enabled can coexist; opening a new floating window will not close previously existing ones. This property is non-reactive.
 
 events.update:visible: v-model update for the visible property.
 events.close: Callback when the popover closes.

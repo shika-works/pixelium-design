@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 // https://github.com/arco-design/arco-design-vue/blob/main/packages/web-vue/components/_utils/vue-utils.ts
 import { isArray } from 'parsnip-kit'
-import type { Component, Slots, VNode, VNodeTypes } from 'vue'
+import type { Component, ComponentInternalInstance, Slots, VNode, VNodeTypes } from 'vue'
 import { Text } from 'vue'
 
 export enum ShapeFlags {
@@ -57,4 +57,17 @@ export const flattenVNodes = (children: VNode[] | undefined) => {
 		}
 	}
 	return results
+}
+
+export function traverseParent(
+	instance: ComponentInternalInstance | null,
+	callback: (arg: ComponentInternalInstance) => void | boolean
+) {
+	let current = instance
+	while (current) {
+		if (callback(current)) {
+			return
+		}
+		current = current.parent
+	}
 }

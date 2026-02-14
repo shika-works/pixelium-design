@@ -32,4 +32,5 @@ export type PopupContentProps = {
 export type PopupContentEvents = {
 	contentMouseenter: [e: MouseEvent]
 	contentMouseleave: [e: MouseEvent]
+	contentMousedown: [e: MouseEvent]
 }

@@ -82,6 +82,11 @@ export type SliderProps = {
 	 * @version 0.0.3
 	 */
 	tooltipEndProps?: Omit<TooltipProps, 'visible' | 'content'> & EmitEvent<TooltipEvents>
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.1.0
+	 */
+	pollSizeChange?: boolean
 }
 
 export type SliderEvent = {

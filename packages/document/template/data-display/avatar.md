@@ -68,6 +68,9 @@ size: 头像的尺寸。
 bordered: 头像是否拥有边框。
 backgroundColor: 头像背景颜色。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
 borderColor: 头像边框颜色。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 slots.default: 头像内容。
 ]]]
 [[[api en
@@ -76,5 +79,8 @@ size: The size of the avatar.
 bordered: Whether the avatar has a border.
 backgroundColor: The background color of the avatar. Supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
 borderColor: The border color of the avatar. Supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
+
+pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+
 slots.default: The content of the avatar.
 ]]]

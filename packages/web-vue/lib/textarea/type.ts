@@ -94,6 +94,11 @@ export type TextareaProps = {
 	 * @version 0.0.2
 	 */
 	autofocus?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.1.0
+	 */
+	pollSizeChange?: boolean
 }
 
 export type TextareaEvents = {

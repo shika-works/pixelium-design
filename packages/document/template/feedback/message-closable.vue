@@ -1,6 +1,7 @@
 <template>
 	<px-space>
 		<px-button @click="callMessage('info')">Info, Closable</px-button>
+		<px-button theme="notice" @click="callMessage('notice')">Notice, Closable</px-button>
 		<px-button theme="success" @click="callMessage('success')">Success, Closable</px-button>
 		<px-button theme="warning" @click="callMessage('warning')">Warning, Closable</px-button>
 		<px-button theme="danger" @click="callMessage('error')">Error, Closable</px-button>

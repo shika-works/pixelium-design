@@ -8,8 +8,9 @@ import type {
 } from './type'
 import { GROUP_OPTION_TYPE } from '../share/const'
 import { getCurrentInstance, useSlots, withScopeId } from 'vue'
-import VirtualList from '../virtual-list/index.vue'
+// import VirtualList from '../virtual-list/index.vue'
 import type { JSX } from 'vue/jsx-runtime'
+import Scroll from '../scroll-bar/index.vue'
 
 defineOptions({
 	name: 'OptionList'
@@ -134,16 +135,32 @@ const renderList = () => {
 			}
 		})
 	return (
-		<ul class="px-option-list">
-			{!props.virtualScroll ? (
-				list.map((item) => item.el)
-			) : (
-				<VirtualList
-					class={'px-option-list-virtual-list'}
-					list={list.map((item) => ({ render: () => item.el, key: item.key }))}
-					{...props.virtualListProps}
-				></VirtualList>
-			)}
+		<ul class="px-option-list pixelium">
+			<Scroll class="px-option-list-scroll">
+				{!props.virtualScroll
+					? list.map((item) => item.el)
+					: {
+							/* <VirtualList
+						class={'px-option-list-virtual-list'}
+						list={list.map((item) => ({ render: () => item.el, key: item.key }))}
+						{...props.virtualListProps}
+					>
+						{{
+							'scroll-container': ({
+								children,
+								onScroll
+							}: {
+								children: JSX.Element
+								onScroll: (event: Event) => void
+							}) => (
+								<Scroll class={'px-option-list-scroll'} onScroll={onScroll}>
+									{children}
+								</Scroll>
+							)
+						}}
+					</VirtualList> */
+						}}
+			</Scroll>
 		</ul>
 	)
 }
@@ -156,4 +173,4 @@ defineRender(() => {
 })
 </script>
 <style lang="less" src="./index.less"></style>
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

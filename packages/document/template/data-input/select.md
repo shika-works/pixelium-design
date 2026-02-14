@@ -179,6 +179,8 @@ status: 表单验证状态。
 popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
 optionsDestroyOnHide: 下拉选项是否会在隐藏时销毁。
 
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.input: 搜索选项输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.update:inputValue: 更新 `inputValue` 的回调。
@@ -231,6 +233,8 @@ status: Form validation status.
 popoverProps: Popover component properties when tags are collapsed.
 optionsDestroyOnHide: Whether the dropdown options will be destroyed when hidden.
 
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
+
 events.input: Fired on search input.
 events.update:modelValue: Fired when `modelValue` changes.
 events.update:inputValue: Fired when `inputValue` changes.
@@ -252,30 +256,11 @@ selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
 ]]]
 
+[[[slice group-option]]]
+[[[slice option-list]]]
 ### SelectOption, SelectGroupOption
 
 ```ts
-export interface Option<T = any> {
-	value: T
-	label: string
-}
-
-export interface GroupOption<T = any> {
-	children: (Option<T> | string)[]
-	type: typeof GROUP_OPTION_TYPE
-}
-
-export interface OptionListOption<T = any> extends Option<T> {
-	disabled?: boolean
-	key?: string | number | symbol
-}
-
-export interface OptionListGroupOption extends GroupOption {
-	label: string
-	key: string | number | symbol
-	children: (OptionListOption | string)[]
-}
-
 export interface SelectOption extends OptionListOption<any> {
 }
 
@@ -284,9 +269,5 @@ export interface SelectGroupOption extends OptionListGroupOption {
 }
 ```
 
-### EmitEvent
-```ts
-export type EmitEvent<T extends Record<string, any>> = {
-	[K in keyof T as `on${Capitalize<K & string>}`]?: (...args: T[K]) => void
-}
-```
+[[[slice rest-attrs]]]
+[[[slice emit-event]]]

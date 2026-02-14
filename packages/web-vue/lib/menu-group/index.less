@@ -1,0 +1,44 @@
+@import url(../share/style/variable.less);
+
+.px-menu-group {
+	@prefix: px-menu-group;
+	&-label {
+		padding: 0 @px-interval-4;
+		box-sizing: border-box;
+		height: @px-menu-size;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		transition: 0.25s;
+
+		background-color: var(--px-neutral-1);
+		color: var(--px-neutral-9);
+
+		display: flex;
+		align-items: center;
+		&__collapsed {
+			padding: 0 @px-interval-2;
+			justify-content: center;
+		}
+		&__in-popover {
+			height: @px-medium-base-size;
+		}
+	}
+	&-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		transition: 0.25s;
+	}
+	&-label {
+		&.@{prefix}-label__dark {
+			background-color: var(--px-neutral-10);
+			color: var(--px-neutral-7);
+			&.@{prefix}-label__dark-theme {
+				color: var(--px-neutral-8);
+				background-color: var(--px-neutral-1);
+			}
+		}
+	}
+}

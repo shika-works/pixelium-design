@@ -18,7 +18,7 @@ export type MessageOptions = {
 	 */
 	duration?: number
 	/**
-	 * @property {'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura'} [type='normal']
+	 * @property {'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura' | 'notice'} [type='normal']
 	 * @version 0.0.0-beta
 	 */
 	type?: MessageProps['type']

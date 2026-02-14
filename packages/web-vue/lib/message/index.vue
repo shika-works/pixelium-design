@@ -178,7 +178,7 @@ defineRender(() => {
 					class={{
 						'px-message': true,
 						pixelium: true,
-						[`px-message__${props.type || 'primary'}`]: true
+						[`px-message__${props.type || 'normal'}`]: true
 					}}
 				>
 					{(!!props.icon ||
@@ -186,7 +186,7 @@ defineRender(() => {
 						<div class="px-message-icon-wrapper">
 							{props.icon ? (
 								props.icon()
-							) : props.type === 'info' ? (
+							) : props.type === 'info' || props.type === 'notice' ? (
 								<InfoCircleSolid
 									// @ts-ignore
 									class="px-message-icon"
@@ -268,4 +268,4 @@ defineRender(() => {
 
 <style lang="less" src="./index.less" />
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

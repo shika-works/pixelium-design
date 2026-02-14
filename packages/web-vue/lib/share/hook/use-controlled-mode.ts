@@ -5,7 +5,7 @@ export const useControlledMode = <
 	T extends any,
 	K extends string = string,
 	D extends string | undefined = undefined,
-	const P extends { [key in (K | D) & string]: T | Nullish } = {
+	P extends { [key in (K | D) & string]: T | Nullish } = {
 		[key in (K | D) & string]: T | Nullish
 	},
 	const V extends P[K] = P[K]
@@ -15,22 +15,27 @@ export const useControlledMode = <
 	emits: Function,
 	options?: {
 		transform?: (nextValue: T | Nullish) => T | Nullish
+		initial?: (nextValue: T | Nullish) => T | Nullish
 		defaultField?: D
 	}
 ) => {
 	const controlledMode = computed(() => props[field] !== undefined)
 
-	const preValue = (
+	let preValue = (
 		controlledMode.value
 			? props[field]
 			: options?.defaultField
 				? props[options.defaultField]
 				: null
 	) as V | Nullish
+	if (options?.initial) {
+		preValue = options.initial(preValue) as V | Nullish
+	}
+	if (options?.transform) {
+		preValue = options.transform(preValue) as V | Nullish
+	}
 
-	const innerState = ref(options?.transform ? options?.transform(preValue) : preValue) as Ref<
-		V | Nullish
-	>
+	const innerState = ref(preValue) as Ref<V | Nullish>
 	const updateState = async (nextValue: V) => {
 		if (controlledMode.value) {
 			emits(`update:${field}`, nextValue)

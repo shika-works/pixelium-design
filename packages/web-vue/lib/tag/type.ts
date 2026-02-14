@@ -27,10 +27,10 @@ export type TagProps = {
 	 */
 	variant?: 'primary' | 'plain' | 'outline'
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [theme='primary']
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'} [theme='primary']
 	 * @version 0.0.2
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'
 	/**
 	 * @property {string} [color]
 	 * @version 0.0.2
@@ -41,6 +41,17 @@ export type TagProps = {
 	 * @version 0.0.2
 	 */
 	closable?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.1.0
+	 */
+	pollSizeChange?: boolean
+	/**
+	 * @property {number} [closeTabindex=0]
+	 * @ignore
+	 * @version 0.1.0
+	 */
+	closeTabindex?: number
 }
 
 export type TagEvents = {

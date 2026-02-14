@@ -6,6 +6,27 @@
 ]]]
 
 [[[zh
+## v0.2.0
+- 导航组件：标签页。
+- 反馈组件：通知、抽屉。
+- 数据展示组件：卡片、折叠区域、时间线、日历。
+- 表单组件：评分、日期选择器、时间选择器、颜色选择器。
+- 视觉组件：打字机、轮播、数字动画。
+- 优化代码和完善测试用例。
+- 落地页和后台模板和电话微波炉（暂定）。
+]]]
+[[[en
+## v0.2.0
+- Navigation components: Tabs.
+- Feedback components: Notification, Drawer.
+- Data display components: Card, Collapse, Timeline, Calendar.
+- Form components: Rate, Date Picker, Time Picker, Color Picker.
+- Visual components: Typewriter, Carousel, Number Animation.
+- Code optimization and test case improvement.
+- Template Project of landing page and admin dashboard, and telephone microwave (provisional).
+]]]
+
+[[[zh
 ## v0.1.0
 > 原定 v0.0.4
 - 导航组件：菜单、下拉菜单、面包屑、返回顶部。
@@ -18,7 +39,7 @@
 ## v0.1.0
 > Originally scheduled v0.0.4
 - Navigation components: Menu, Dropdown, Breadcrumb, BackTop.
-- Feedback components: Dialog, PopupConfirm, Tooltip, Badge, Progress.
+- Feedback components: Dialog, PopupConfirm, Alert, Badge, Progress.
 - Data display components: Table.
 - Layout components: Scrollbar.
 - Improved test cases.

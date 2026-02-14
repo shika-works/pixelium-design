@@ -5,7 +5,7 @@
 	--px-teal-light-3: rgba(155, 217, 202, 1);
 	--px-teal-light-4: rgba(119, 201, 183, 1);
 	--px-teal-light-5: rgba(79, 184, 164, 1);
-	--px-teal-light-6: rgba(0, 168, 145, 1);
+	--px-teal-light-6: rgba(0, 168, 145, 1); /* oklch(0.6547 0.1202 178.32) */
 	--px-teal-light-7: rgba(11, 128, 110, 1);
 	--px-teal-light-8: rgba(14, 90, 78, 1);
 	--px-teal-light-9: rgba(11, 55, 47, 1);
@@ -17,7 +17,7 @@
 	--px-green-light-3: rgba(167, 219, 166, 1);
 	--px-green-light-4: rgba(129, 207, 130, 1);
 	--px-green-light-5: rgba(86, 194, 91, 1);
-	--px-green-light-6: rgba(0, 180, 42, 1);
+	--px-green-light-6: rgba(0, 180, 42, 1); /* oklch(0.6687 0.2142 144.38) */
 	--px-green-light-7: rgba(34, 137, 44, 1);
 	--px-green-light-8: rgba(38, 96, 41, 1);
 	--px-green-light-9: rgba(34, 57, 34, 1);
@@ -29,7 +29,7 @@
 	--px-orange-light-3: rgba(253, 193, 158, 1);
 	--px-orange-light-4: rgba(255, 172, 121, 1);
 	--px-orange-light-5: rgba(255, 149, 80, 1);
-	--px-orange-light-6: rgba(255, 125, 0, 1);
+	--px-orange-light-6: rgba(255, 125, 0, 1); /* oklch(0.7274 0.1877 51.75) */
 	--px-orange-light-7: rgba(196, 103, 35, 1);
 	--px-orange-light-8: rgba(140, 80, 42, 1);
 	--px-orange-light-9: rgba(87, 58, 41, 1);
@@ -41,7 +41,7 @@
 	--px-red-light-3: rgba(255, 186, 178, 1);
 	--px-red-light-4: rgba(255, 161, 152, 1);
 	--px-red-light-5: rgba(255, 133, 124, 1);
-	--px-red-light-6: rgba(253, 104, 96, 1);
+	--px-red-light-6: rgba(253, 104, 96, 1); /* oklch(0.7029 0.1837 25.97) */
 	--px-red-light-7: rgba(193, 86, 79, 1);
 	--px-red-light-8: rgba(136, 68, 62, 1);
 	--px-red-light-9: rgba(82, 49, 46, 1);
@@ -53,11 +53,23 @@
 	--px-pink-light-3: rgba(253, 196, 208, 1);
 	--px-pink-light-4: rgba(255, 182, 198, 1);
 	--px-pink-light-5: rgba(255, 168, 188, 1);
-	--px-pink-light-6: rgba(255, 154, 178, 1);
+	--px-pink-light-6: rgba(255, 154, 178, 1); /* oklch(0.7964 0.1232 4.91) */
 	--px-pink-light-7: rgba(204, 126, 144, 1);
 	--px-pink-light-8: rgba(154, 99, 112, 1);
 	--px-pink-light-9: rgba(108, 73, 81, 1);
 	--px-pink-light-10: rgba(65, 48, 52, 1);
+
+	/* blue */
+	--px-blue-light-1: rgba(230, 241, 252, 1);
+	--px-blue-light-2: rgba(199, 225, 254, 1);
+	--px-blue-light-3: rgba(168, 209, 255, 1);
+	--px-blue-light-4: rgba(137, 192, 255, 1);
+	--px-blue-light-5: rgba(103, 176, 255, 1);
+	--px-blue-light-6: rgba(64, 158, 255, 1); /* oklch(0.6898 0.1679 252.18) */
+	--px-blue-light-7: rgba(56, 123, 193, 1);
+	--px-blue-light-8: rgba(47, 89, 135, 1);
+	--px-blue-light-9: rgba(37, 57, 81, 1);
+	--px-blue-light-10: rgba(24, 28, 32, 1);
 
 	/* neutral */
 	--px-neutral-light-1: rgba(255, 255, 255, 1);
@@ -131,6 +143,18 @@
 	--px-pink-dark-9: rgba(235, 193, 201, 1);
 	--px-pink-dark-10: rgba(227, 205, 209, 1);
 
+	/* blue */
+	--px-blue-dark-1: rgba(28, 35, 43, 1);
+	--px-blue-dark-2: rgba(37, 57, 81, 1);
+	--px-blue-dark-3: rgba(45, 81, 121, 1);
+	--px-blue-dark-4: rgba(52, 106, 164, 1);
+	--px-blue-dark-5: rgba(58, 131, 208, 1);
+	--px-blue-dark-6: rgba(64, 158, 255, 1);
+	--px-blue-dark-7: rgba(109, 176, 250, 1);
+	--px-blue-dark-8: rgba(147, 193, 245, 1);
+	--px-blue-dark-9: rgba(183, 209, 238, 1);
+	--px-blue-dark-10: rgba(219, 224, 229, 1);
+
 	/* neutral */
 	--px-neutral-dark-1: rgba(12, 12, 12, 1);
 	--px-neutral-dark-2: rgba(32, 32, 32, 1);
@@ -142,116 +166,6 @@
 	--px-neutral-dark-8: rgba(178, 178, 178, 1);
 	--px-neutral-dark-9: rgba(206, 206, 206, 1);
 	--px-neutral-dark-10: rgba(234, 234, 234, 1);
-
-	--px-primary-light-1: var(--px-teal-light-1);
-	--px-primary-light-2: var(--px-teal-light-2);
-	--px-primary-light-3: var(--px-teal-light-3);
-	--px-primary-light-4: var(--px-teal-light-4);
-	--px-primary-light-5: var(--px-teal-light-5);
-	--px-primary-light-6: var(--px-teal-light-6);
-	--px-primary-light-7: var(--px-teal-light-7);
-	--px-primary-light-8: var(--px-teal-light-8);
-	--px-primary-light-9: var(--px-teal-light-9);
-	--px-primary-light-10: var(--px-teal-light-10);
-
-	--px-success-light-1: var(--px-green-light-1);
-	--px-success-light-2: var(--px-green-light-2);
-	--px-success-light-3: var(--px-green-light-3);
-	--px-success-light-4: var(--px-green-light-4);
-	--px-success-light-5: var(--px-green-light-5);
-	--px-success-light-6: var(--px-green-light-6);
-	--px-success-light-7: var(--px-green-light-7);
-	--px-success-light-8: var(--px-green-light-8);
-	--px-success-light-9: var(--px-green-light-9);
-	--px-success-light-10: var(--px-green-light-10);
-
-	--px-warning-light-1: var(--px-orange-light-1);
-	--px-warning-light-2: var(--px-orange-light-2);
-	--px-warning-light-3: var(--px-orange-light-3);
-	--px-warning-light-4: var(--px-orange-light-4);
-	--px-warning-light-5: var(--px-orange-light-5);
-	--px-warning-light-6: var(--px-orange-light-6);
-	--px-warning-light-7: var(--px-orange-light-7);
-	--px-warning-light-8: var(--px-orange-light-8);
-	--px-warning-light-9: var(--px-orange-light-9);
-	--px-warning-light-10: var(--px-orange-light-10);
-
-	--px-danger-light-1: var(--px-red-light-1);
-	--px-danger-light-2: var(--px-red-light-2);
-	--px-danger-light-3: var(--px-red-light-3);
-	--px-danger-light-4: var(--px-red-light-4);
-	--px-danger-light-5: var(--px-red-light-5);
-	--px-danger-light-6: var(--px-red-light-6);
-	--px-danger-light-7: var(--px-red-light-7);
-	--px-danger-light-8: var(--px-red-light-8);
-	--px-danger-light-9: var(--px-red-light-9);
-	--px-danger-light-10: var(--px-red-light-10);
-
-	--px-sakura-light-1: var(--px-pink-light-1);
-	--px-sakura-light-2: var(--px-pink-light-2);
-	--px-sakura-light-3: var(--px-pink-light-3);
-	--px-sakura-light-4: var(--px-pink-light-4);
-	--px-sakura-light-5: var(--px-pink-light-5);
-	--px-sakura-light-6: var(--px-pink-light-6);
-	--px-sakura-light-7: var(--px-pink-light-7);
-	--px-sakura-light-8: var(--px-pink-light-8);
-	--px-sakura-light-9: var(--px-pink-light-9);
-	--px-sakura-light-10: var(--px-pink-light-10);
-
-	--px-primary-dark-1: var(--px-teal-dark-1);
-	--px-primary-dark-2: var(--px-teal-dark-2);
-	--px-primary-dark-3: var(--px-teal-dark-3);
-	--px-primary-dark-4: var(--px-teal-dark-4);
-	--px-primary-dark-5: var(--px-teal-dark-5);
-	--px-primary-dark-6: var(--px-teal-dark-6);
-	--px-primary-dark-7: var(--px-teal-dark-7);
-	--px-primary-dark-8: var(--px-teal-dark-8);
-	--px-primary-dark-9: var(--px-teal-dark-9);
-	--px-primary-dark-10: var(--px-teal-dark-10);
-
-	--px-success-dark-1: var(--px-green-dark-1);
-	--px-success-dark-2: var(--px-green-dark-2);
-	--px-success-dark-3: var(--px-green-dark-3);
-	--px-success-dark-4: var(--px-green-dark-4);
-	--px-success-dark-5: var(--px-green-dark-5);
-	--px-success-dark-6: var(--px-green-dark-6);
-	--px-success-dark-7: var(--px-green-dark-7);
-	--px-success-dark-8: var(--px-green-dark-8);
-	--px-success-dark-9: var(--px-green-dark-9);
-	--px-success-dark-10: var(--px-green-dark-10);
-
-	--px-warning-dark-1: var(--px-orange-dark-1);
-	--px-warning-dark-2: var(--px-orange-dark-2);
-	--px-warning-dark-3: var(--px-orange-dark-3);
-	--px-warning-dark-4: var(--px-orange-dark-4);
-	--px-warning-dark-5: var(--px-orange-dark-5);
-	--px-warning-dark-6: var(--px-orange-dark-6);
-	--px-warning-dark-7: var(--px-orange-dark-7);
-	--px-warning-dark-8: var(--px-orange-dark-8);
-	--px-warning-dark-9: var(--px-orange-dark-9);
-	--px-warning-dark-10: var(--px-orange-dark-10);
-
-	--px-danger-dark-1: var(--px-red-dark-1);
-	--px-danger-dark-2: var(--px-red-dark-2);
-	--px-danger-dark-3: var(--px-red-dark-3);
-	--px-danger-dark-4: var(--px-red-dark-4);
-	--px-danger-dark-5: var(--px-red-dark-5);
-	--px-danger-dark-6: var(--px-red-dark-6);
-	--px-danger-dark-7: var(--px-red-dark-7);
-	--px-danger-dark-8: var(--px-red-dark-8);
-	--px-danger-dark-9: var(--px-red-dark-9);
-	--px-danger-dark-10: var(--px-red-dark-10);
-
-	--px-sakura-dark-1: var(--px-pink-dark-1);
-	--px-sakura-dark-2: var(--px-pink-dark-2);
-	--px-sakura-dark-3: var(--px-pink-dark-3);
-	--px-sakura-dark-4: var(--px-pink-dark-4);
-	--px-sakura-dark-5: var(--px-pink-dark-5);
-	--px-sakura-dark-6: var(--px-pink-dark-6);
-	--px-sakura-dark-7: var(--px-pink-dark-7);
-	--px-sakura-dark-8: var(--px-pink-dark-8);
-	--px-sakura-dark-9: var(--px-pink-dark-9);
-	--px-sakura-dark-10: var(--px-pink-dark-10);
 
 	--px-primary-1: var(--px-primary-light-custom-1, var(--px-teal-light-1));
 	--px-primary-2: var(--px-primary-light-custom-2, var(--px-teal-light-2));
@@ -307,6 +221,17 @@
 	--px-sakura-8: var(--px-sakura-light-custom-8, var(--px-pink-light-8));
 	--px-sakura-9: var(--px-sakura-light-custom-9, var(--px-pink-light-9));
 	--px-sakura-10: var(--px-sakura-light-custom-10, var(--px-pink-light-10));
+
+	--px-notice-1: var(--px-notice-light-custom-1, var(--px-blue-light-1));
+	--px-notice-2: var(--px-notice-light-custom-2, var(--px-blue-light-2));
+	--px-notice-3: var(--px-notice-light-custom-3, var(--px-blue-light-3));
+	--px-notice-4: var(--px-notice-light-custom-4, var(--px-blue-light-4));
+	--px-notice-5: var(--px-notice-light-custom-5, var(--px-blue-light-5));
+	--px-notice-6: var(--px-notice-light-custom-6, var(--px-blue-light-6));
+	--px-notice-7: var(--px-notice-light-custom-7, var(--px-blue-light-7));
+	--px-notice-8: var(--px-notice-light-custom-8, var(--px-blue-light-8));
+	--px-notice-9: var(--px-notice-light-custom-9, var(--px-blue-light-9));
+	--px-notice-10: var(--px-notice-light-custom-10, var(--px-blue-light-10));
 
 	--px-neutral-1: var(--px-neutral-light-custom-1, var(--px-neutral-light-1));
 	--px-neutral-2: var(--px-neutral-light-custom-2, var(--px-neutral-light-2));
@@ -375,6 +300,17 @@
 		--px-sakura-9: var(--px-sakura-dark-custom-9, var(--px-pink-dark-9));
 		--px-sakura-10: var(--px-sakura-dark-custom-10, var(--px-pink-dark-10));
 
+		--px-notice-1: var(--px-notice-dark-custom-1, var(--px-blue-dark-1));
+		--px-notice-2: var(--px-notice-dark-custom-2, var(--px-blue-dark-2));
+		--px-notice-3: var(--px-notice-dark-custom-3, var(--px-blue-dark-3));
+		--px-notice-4: var(--px-notice-dark-custom-4, var(--px-blue-dark-4));
+		--px-notice-5: var(--px-notice-dark-custom-5, var(--px-blue-dark-5));
+		--px-notice-6: var(--px-notice-dark-custom-6, var(--px-blue-dark-6));
+		--px-notice-7: var(--px-notice-dark-custom-7, var(--px-blue-dark-7));
+		--px-notice-8: var(--px-notice-dark-custom-8, var(--px-blue-dark-8));
+		--px-notice-9: var(--px-notice-dark-custom-9, var(--px-blue-dark-9));
+		--px-notice-10: var(--px-notice-dark-custom-10, var(--px-blue-dark-10));
+
 		--px-neutral-1: var(--px-neutral-dark-custom-1, var(--px-neutral-dark-1));
 		--px-neutral-2: var(--px-neutral-dark-custom-2, var(--px-neutral-dark-2));
 		--px-neutral-3: var(--px-neutral-dark-custom-3, var(--px-neutral-dark-3));
@@ -441,6 +377,17 @@
 		--px-sakura-8: var(--px-sakura-dark-custom-8, var(--px-pink-dark-8));
 		--px-sakura-9: var(--px-sakura-dark-custom-9, var(--px-pink-dark-9));
 		--px-sakura-10: var(--px-sakura-dark-custom-10, var(--px-pink-dark-10));
+
+		--px-notice-1: var(--px-notice-dark-custom-1, var(--px-blue-dark-1));
+		--px-notice-2: var(--px-notice-dark-custom-2, var(--px-blue-dark-2));
+		--px-notice-3: var(--px-notice-dark-custom-3, var(--px-blue-dark-3));
+		--px-notice-4: var(--px-notice-dark-custom-4, var(--px-blue-dark-4));
+		--px-notice-5: var(--px-notice-dark-custom-5, var(--px-blue-dark-5));
+		--px-notice-6: var(--px-notice-dark-custom-6, var(--px-blue-dark-6));
+		--px-notice-7: var(--px-notice-dark-custom-7, var(--px-blue-dark-7));
+		--px-notice-8: var(--px-notice-dark-custom-8, var(--px-blue-dark-8));
+		--px-notice-9: var(--px-notice-dark-custom-9, var(--px-blue-dark-9));
+		--px-notice-10: var(--px-notice-dark-custom-10, var(--px-blue-dark-10));
 
 		--px-neutral-1: var(--px-neutral-dark-custom-1, var(--px-neutral-dark-1));
 		--px-neutral-2: var(--px-neutral-dark-custom-2, var(--px-neutral-dark-2));
@@ -509,6 +456,17 @@
 		--px-sakura-8: var(--px-sakura-light-custom-8, var(--px-pink-light-8));
 		--px-sakura-9: var(--px-sakura-light-custom-9, var(--px-pink-light-9));
 		--px-sakura-10: var(--px-sakura-light-custom-10, var(--px-pink-light-10));
+
+		--px-notice-1: var(--px-notice-light-custom-1, var(--px-blue-light-1));
+		--px-notice-2: var(--px-notice-light-custom-2, var(--px-blue-light-2));
+		--px-notice-3: var(--px-notice-light-custom-3, var(--px-blue-light-3));
+		--px-notice-4: var(--px-notice-light-custom-4, var(--px-blue-light-4));
+		--px-notice-5: var(--px-notice-light-custom-5, var(--px-blue-light-5));
+		--px-notice-6: var(--px-notice-light-custom-6, var(--px-blue-light-6));
+		--px-notice-7: var(--px-notice-light-custom-7, var(--px-blue-light-7));
+		--px-notice-8: var(--px-notice-light-custom-8, var(--px-blue-light-8));
+		--px-notice-9: var(--px-notice-light-custom-9, var(--px-blue-light-9));
+		--px-notice-10: var(--px-notice-light-custom-10, var(--px-blue-light-10));
 
 		--px-neutral-1: var(--px-neutral-light-custom-1, var(--px-neutral-light-1));
 		--px-neutral-2: var(--px-neutral-light-custom-2, var(--px-neutral-light-2));

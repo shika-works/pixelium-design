@@ -9,10 +9,10 @@ export type ButtonGroupProps = {
 	 */
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	/**
-	 * @property {'rect' | 'round'} [shape='rect']
+	 * @property {'rect' | 'round' | 'square' | 'circle'} [shape]
 	 * @version 0.0.0-beta
 	 */
-	shape?: 'rect' | 'round' | 'default'
+	shape?: 'rect' | 'round' | 'default' | 'square' | 'circle'
 	/**
 	 * @property {'medium' | 'large' | 'small'} [size='medium']
 	 * @version 0.0.3
@@ -34,10 +34,15 @@ export type ButtonGroupProps = {
 	 */
 	variant?: 'primary' | 'plain' | 'text' | 'outline'
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [theme]
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'} [theme]
 	 * @version 0.0.0-beta
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.1.0
+	 */
+	pollSizeChange?: boolean
 }
 
 export type ButtonGroupSlots = {
@@ -58,4 +63,5 @@ export type ButtonGroupProvide = ToRefs<LooseRequired<ButtonGroupProps>> & {
 	childrenInfo: Ref<ChildrenInfo[]>
 	collectChildrenInfo: (info: ChildrenInfo) => void
 	removeChildrenInfo: (id: string) => void
+	id: string
 }

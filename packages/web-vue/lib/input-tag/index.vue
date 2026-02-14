@@ -5,10 +5,10 @@
 		:class="{
 			[`px-input-tag__${sizeComputed}`]: !!sizeComputed,
 			[`px-input-tag__${shapeComputed}`]: !!shapeComputed,
-			'px-input-tag__inner': innerInputGroup,
+			'px-input-tag__inner': !!inputGroupProvide,
 			'px-input-tag__disabled': !!disabledComputed
 		}"
-		@click="focusInputHandler"
+		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -27,7 +27,9 @@
 				:closable="tagCanClose"
 				:disabled="disabledComputed"
 				:color="props.tagColor"
+				:poll-size-change="pollSizeChangeComputed"
 				v-bind="props.tagProps"
+				:close-tabindex="-1"
 				@close="(e: MouseEvent) => tagCloseHandler(index, e)"
 			>
 				<slot name="tag" :tag="tag" :index="index">{{ tag }}</slot>
@@ -40,19 +42,27 @@
 					:theme="props.tagTheme"
 					:disabled="disabledComputed"
 					:color="props.tagColor"
+					:poll-size-change="pollSizeChangeComputed"
 					v-bind="props.tagProps"
 				>
 					<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
 						>+{{ tagsCollapsed.length }}</slot
 					>
 				</Tag>
-				<Popover v-else v-bind="popoverProps">
+				<Popup
+					v-else
+					v-bind="popoverProps"
+					:content-props="{
+						onMousedown: tagPopupContentMousedownHandler
+					}"
+				>
 					<Tag
 						:size="tagSize"
 						:variant="props.tagVariant"
 						:theme="props.tagTheme"
 						:disabled="disabledComputed"
 						:color="props.tagColor"
+						:poll-size-change="pollSizeChangeComputed"
 						v-bind="props.tagProps"
 					>
 						<slot name="tag" :tag="`+${tagsCollapsed.length}`" :index="-1"
@@ -70,7 +80,9 @@
 								:closable="tagCanClose"
 								:disabled="disabledComputed"
 								:color="props.tagColor"
+								:poll-size-change="pollSizeChangeComputed"
 								v-bind="props.tagProps"
+								:close-tabindex="-1"
 								@close="
 									(e: MouseEvent) =>
 										tagCloseHandler(index + Math.floor(props.maxDisplayTags!), e)
@@ -85,7 +97,7 @@
 							</Tag>
 						</div>
 					</template>
-				</Popover>
+				</Popup>
 			</template>
 			<input
 				class="px-input-tag-inner"
@@ -119,17 +131,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import {
-	computed,
-	getCurrentInstance,
-	inject,
-	nextTick,
-	onMounted,
-	ref,
-	shallowRef,
-	useSlots,
-	watch
-} from 'vue'
+import { computed, inject, nextTick, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
 import type { InputTagEvents, InputTagExpose, InputTagProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
@@ -154,12 +156,14 @@ import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
 import Tag from '../tag/index.vue'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
-import Popover from '../popover/index.vue'
 import { BORDER_CORNER_RAD_RANGE, POPUP_CONTENT_DEFAULT_MAX_WIDTH } from '../share/const'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import Popup from '../popup/index.vue'
 
 defineOptions({
 	name: 'InputTag'
@@ -187,43 +191,39 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 	}
 })
 
-const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
-	: [ref(0), ref(false), ref(false)]
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] = inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`)
+	: [ref(0), ref(false), ref(false)]
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 
@@ -231,7 +231,7 @@ const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -308,8 +308,13 @@ const inputChangeHandler = (e: Event) => {
 }
 
 const focusMode = ref(false)
+const [wait, cancel] = useCancelableDelay()
 
 const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
 	focusMode.value = false
 	await updateInputValue('')
 	emits('inputChange', '')
@@ -318,8 +323,19 @@ const blurHandler = async (e: FocusEvent) => {
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
-	emits('focus', e)
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
+}
+
+const tagPopupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const enterDownHandler = async (e: KeyboardEvent) => {
@@ -343,7 +359,9 @@ const enterDownHandler = async (e: KeyboardEvent) => {
 }
 
 const focusInputHandler = () => {
-	inputRef.value?.focus()
+	setTimeout(() => {
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const hoverFlag = ref(false)
@@ -442,7 +460,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value,
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -471,7 +489,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value
@@ -496,8 +514,26 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

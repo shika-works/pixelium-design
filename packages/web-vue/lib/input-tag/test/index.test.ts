@@ -3,7 +3,7 @@ import { h, nextTick, ref, Transition } from 'vue'
 import InputTag from '../index.vue'
 import Tag from '../../tag/index.vue'
 import InputGroup from '../../input-group/index.vue'
-import Popover from '../../popover/index.vue'
+import Popup from '../../popup/index.vue'
 import { vi, describe, afterEach, it, expect, beforeEach } from 'vitest'
 import { createMocks } from '../../share/util/test'
 
@@ -230,7 +230,7 @@ describe('InputTag Component', () => {
 			const collapseTag = wrapper.findAllComponents(Tag).at(2)
 			await collapseTag?.trigger('click')
 
-			const popover = wrapper.findComponent(Popover)
+			const popover = wrapper.findComponent(Popup)
 			expect(popover.exists()).toBe(true)
 
 			const popoverTags = popover.findAllComponents(Tag)
@@ -257,7 +257,7 @@ describe('InputTag Component', () => {
 
 			collapseTag.trigger('mouseenter')
 			const popupContent = wrapper
-				.findComponent(Popover)
+				.findComponent(Popup)
 				.findComponent(Transition)
 				.find('.px-popup-content')
 			expect(popupContent.attributes('style')).toContain('max-width: 400px;')

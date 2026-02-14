@@ -24,7 +24,10 @@
 		"erasableSyntaxOnly": false,
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
-		"types": ["vite/client", "vue"]
+		"types": ["vite/client", "vue"],
+		"paths": {
+			"@pixelium/locale/*": ["../locale/src/*"]
+		}
 	},
 	"include": ["lib/**/*.ts", "lib/**/*.tsx", "lib/**/*.vue"],
 	"exclude": ["script/**/*", "plugin/**/*"]

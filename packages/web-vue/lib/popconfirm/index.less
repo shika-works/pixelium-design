@@ -1,0 +1,36 @@
+@import url(../share/style/variable.less);
+
+.px-popconfirm {
+	&-content {
+		display: flex;
+		align-items: center;
+		margin-bottom: @px-interval-2;
+		font-size: @px-medium-font-size;
+	}
+	&-icon-wrapper {
+		display: flex;
+		align-items: center;
+		margin-right: @px-interval-2;
+		flex-shrink: 0;
+		& > svg {
+			font-size: @px-medium-font-size + @px-interval-2;
+			color: var(--px-warning-6);
+		}
+	}
+	&-warning-icon {
+		width: @px-medium-font-size + @px-interval-2;
+		height: @px-medium-font-size + @px-interval-2;
+		fill: var(--px-warning-6);
+	}
+	&-footer {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+	&-confirm-button {
+		margin-left: @px-interval-2;
+	}
+	&-cancel-button {
+		margin-left: @px-interval-6;
+	}
+}

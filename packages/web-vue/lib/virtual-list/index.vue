@@ -9,7 +9,8 @@ import {
 	shallowRef,
 	Fragment,
 	getCurrentInstance,
-	withScopeId
+	withScopeId,
+	useSlots
 } from 'vue'
 import type { VirtualListProps } from './type'
 import { inVitest } from '../share/util/env'
@@ -34,7 +35,6 @@ const props = withDefaults(defineProps<VirtualListProps>(), {
 })
 
 const containerRef = shallowRef<HTMLDivElement | null>(null)
-const scrollAreaRef = shallowRef<HTMLDivElement | null>(null)
 const contentRef = shallowRef<HTMLDivElement | null>(null)
 
 const scrollTop = ref(0)
@@ -329,8 +329,8 @@ const updateItemSizes = () => {
 	}
 }
 
-const handleScroll = (e: Event) => {
-	scrollTop.value = (e.target as HTMLElement).scrollTop
+const handleScroll = (event: Event) => {
+	scrollTop.value = (event.target as HTMLElement).scrollTop
 }
 
 onMounted(() => {
@@ -367,6 +367,59 @@ useResizeObserver(containerRef, () => {
 
 const instance = getCurrentInstance()
 
+const renderScrollItems = (
+	placeholderHeight: number,
+	visibleItems: typeof props.list,
+	start: number
+) => {
+	return (
+		<div
+			class={{
+				'px-virtual-list-content': props.fixedHeight
+			}}
+			style={{
+				maxHeight: props.fixedHeight ? `${placeholderHeight}px` : undefined
+			}}
+		>
+			<div
+				class={'px-virtual-list-placeholder'}
+				style={{
+					height: `${placeholderHeight}px`
+				}}
+			/>
+			<div
+				ref={contentRef}
+				class={'px-virtual-list-item'}
+				style={{
+					transform: `translateY(${contentOffset.value}px)`
+				}}
+			>
+				{visibleItems.map((item, index) => {
+					const itemIndex = start + index
+					const key = item.key ?? itemIndex
+
+					const renderResult = item.render
+					let content
+					if (isString(renderResult)) {
+						content = <div>{renderResult}</div>
+					} else {
+						const renderReturn = renderResult()
+						if (isString(renderReturn)) {
+							content = <div>{renderReturn}</div>
+						} else {
+							content = renderReturn
+						}
+					}
+
+					return <Fragment key={key}>{content}</Fragment>
+				})}
+			</div>
+		</div>
+	)
+}
+
+const slots = useSlots()
+
 defineRender(() => {
 	const { start, end } = visibleRange.value
 	const visibleItems = props.list.slice(start, end + 1)
@@ -377,50 +430,16 @@ defineRender(() => {
 
 	const render = () => (
 		<div ref={containerRef} class={'px-virtual-list'}>
-			<div ref={scrollAreaRef} class={'px-virtual-list-scroll-area'} onScroll={handleScroll}>
-				<div
-					class={{
-						'px-virtual-list-content': props.fixedHeight
-					}}
-					style={{
-						maxHeight: props.fixedHeight ? `${placeholderHeight}px` : undefined
-					}}
-				>
-					<div
-						class={'px-virtual-list-placeholder'}
-						style={{
-							height: `${placeholderHeight}px`
-						}}
-					/>
-					<div
-						ref={contentRef}
-						class={'px-virtual-list-item'}
-						style={{
-							transform: `translateY(${contentOffset.value}px)`
-						}}
-					>
-						{visibleItems.map((item, index) => {
-							const itemIndex = start + index
-							const key = item.key ?? itemIndex
-
-							const renderResult = item.render
-							let content
-							if (isString(renderResult)) {
-								content = <div>{renderResult}</div>
-							} else {
-								const renderReturn = renderResult()
-								if (isString(renderReturn)) {
-									content = <div>{renderReturn}</div>
-								} else {
-									content = renderReturn
-								}
-							}
-
-							return <Fragment key={key}>{content}</Fragment>
-						})}
-					</div>
+			{slots['scroll-container'] ? (
+				slots['scroll-container']({
+					children: renderScrollItems(placeholderHeight, visibleItems, start),
+					onScroll: handleScroll
+				})
+			) : (
+				<div class={'px-virtual-list-scroll-area'} onScroll={handleScroll}>
+					{renderScrollItems(placeholderHeight, visibleItems, start)}
 				</div>
-			</div>
+			)}
 		</div>
 	)
 

@@ -3,7 +3,7 @@
 		class="pixelium px-input-group-label"
 		:class="{
 			[`px-input-group-label__${sizeComputed}`]: sizeComputed,
-			'px-input-group-label__inner': innerInputGroup
+			'px-input-group-label__inner': !!inputGroupProvide
 		}"
 		ref="labelRef"
 	>
@@ -12,16 +12,7 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import {
-	computed,
-	getCurrentInstance,
-	inject,
-	nextTick,
-	onMounted,
-	ref,
-	shallowRef,
-	watch
-} from 'vue'
+import { computed, inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import type { InputGroupLabelProps } from './type'
 import {
 	calcBorderCornerCenter,
@@ -43,6 +34,7 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -50,41 +42,36 @@ defineOptions({
 
 const props = withDefaults(defineProps<InputGroupLabelProps>(), {})
 
-const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
-	: [ref(0), ref(false), ref(false)]
-
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] = inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`)
+	: [ref(0), ref(false), ref(false)]
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[inputGroupProvide, props],
+	'or'
 )
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -141,7 +128,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value,
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -160,7 +147,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value
@@ -178,8 +165,26 @@ const drawPixel = () => {
 useResizeObserver(labelRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(labelRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = labelRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

@@ -9,6 +9,9 @@
 			[`px-switch__inactive`]: progress <= MID_PROGRESS
 		}"
 		ref="switchRef"
+		@mousedown="mousedownHandler"
+		@focusin="focusinHandler"
+		@focusout="focusoutHandler"
 	>
 		<div
 			class="px-switch-prefix-wrapper"
@@ -37,7 +40,7 @@
 				class="px-switch-button"
 				ref="switchButtonRef"
 				:style="{
-					left: `${iconLeft}px`,
+					transform: `translateY(-50%) translateX(${iconLeft}px)`,
 					fill: iconColor,
 					color: iconColor
 				}"
@@ -65,8 +68,7 @@
 			class="px-switch-inner"
 			:disabled="disabledComputed || readonlyComputed"
 			:checked="!!modelValue"
-			@focus="focusHandler"
-			@blur="blurHandler"
+			ref="checkboxRef"
 			@input.stop="inputHandler"
 			@change.stop="changeHandler"
 		/>
@@ -99,6 +101,9 @@ import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/sp
 import { inBrowser } from '../share/util/env'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
+import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { debounce, isNullish } from 'parsnip-kit'
 
 const MID_PROGRESS = 0.5
 
@@ -123,7 +128,7 @@ const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const buttonCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const switchButtonRef = shallowRef<HTMLDivElement | null>(null)
+const switchButtonRef = shallowRef<HTMLLabelElement | null>(null)
 const canvasWrapperRef = shallowRef<HTMLDivElement | null>(null)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
@@ -137,6 +142,11 @@ const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, u
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 const sizeComputed = createProvideComputed(
 	'size',
 	() => [props.size && props, formItemProvide, props],
@@ -166,13 +176,33 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
-const blurHandler = (e: FocusEvent) => {
+const [wait, cancel] = useCancelableDelay()
+const focusState = ref(false)
+const checkboxRef = shallowRef<HTMLInputElement | null>(null)
+
+const mousedownHandler = () => {
+	setTimeout(() => {
+		checkboxRef.value?.focus()
+	}, 0)
+}
+
+const focusoutHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
+
 	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
-const focusHandler = (e: FocusEvent) => {
-	emits('focus', e)
+const focusinHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusState.value
+	focusState.value = true
+	if (!currentFocus) {
+		emits('focus', e)
+	}
 }
 
 onMounted(() => {
@@ -240,19 +270,20 @@ watch(
 	}
 )
 
+watch(progress, (val, old) => {
+	if (!isNullish(old) && (val - MID_PROGRESS) * (old - MID_PROGRESS) < 0) nextTick(drawPixel)
+})
 watch(
 	[
 		darkMode,
-		progress,
 		sizeComputed,
 		() => props.shape,
 		disabledComputed,
 		() => props.activeColor,
-		() => props.inactiveColor,
-		iconLeft
+		() => props.inactiveColor
 	],
 	() => {
-		drawPixel()
+		debounceDrawPixel()
 	}
 )
 
@@ -327,16 +358,36 @@ const drawPixel = () => {
 	drawButton()
 }
 
+const debounceDrawPixel = debounce(drawPixel, 0, { maxWait: 50 })
+
 const refresh = () => {
-	drawPixel()
+	debounceDrawPixel()
 	updateSize()
 }
 
 useResizeObserver(canvasWrapperRef, refresh)
 useWatchGlobalCssVal(refresh)
 useTransitionEnd(canvasWrapperRef, refresh)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = canvasWrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

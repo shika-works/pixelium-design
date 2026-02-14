@@ -97,6 +97,8 @@ import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { traverseParent } from '../share/util/render'
 
 defineOptions({
 	name: 'Button'
@@ -111,19 +113,32 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 })
 
 const instance = getCurrentInstance()
-const innerButtonGroup = ref(instance?.parent?.type.name === 'ButtonGroup')
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [index, first, last] = innerButtonGroup.value
-	? useIndexOfChildren(BUTTON_GROUP_UPDATE)
-	: innerInputGroup.value
-		? useIndexOfChildren(INPUT_GROUP_UPDATE)
-		: [ref(0), ref(false), ref(false)]
+const innerInputGroup = ref(false)
+const innerButtonGroup = ref(false)
+
+traverseParent(instance, (ins) => {
+	if (ins.type.name === 'ButtonGroup') {
+		innerButtonGroup.value = true
+		return true
+	} else if (ins.type.name === 'InputGroup') {
+		innerInputGroup.value = true
+		return true
+	}
+})
 
 const buttonGroupProvide = inject<undefined | ButtonGroupProvide>(
 	BUTTON_GROUP_PROVIDE,
 	undefined
 )
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] =
+	innerButtonGroup.value && buttonGroupProvide
+		? useIndexOfChildren(BUTTON_GROUP_UPDATE + `-${buttonGroupProvide.id}`)
+		: innerInputGroup.value && inputGroupProvide
+			? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`)
+			: [ref(0), ref(false), ref(false)]
+
 const formProps = inject<undefined | FormProvide>(FORM_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
@@ -183,6 +198,17 @@ const disabledComputed = createProvideComputed(
 const loadingComputed = createProvideComputed(
 	'loading',
 	[innerButtonGroup.value && buttonGroupProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[
+		innerButtonGroup.value && buttonGroupProvide,
+		innerInputGroup.value && inputGroupProvide,
+		formItemProvide,
+		formProps,
+		props
+	],
 	'or'
 )
 
@@ -302,15 +328,16 @@ watch(
 		hoverFlag,
 		activeFlag,
 		darkMode,
-		nextIsTextButton
+		nextIsTextButton,
+		first,
+		last
 	],
 	() => {
-		drawPixel()
+		nextTick(() => {
+			drawPixel()
+		})
 	}
 )
-watch([first, last], () => {
-	drawPixel()
-})
 const drawPixel = () => {
 	const preprocessData = canvasPreprocess(buttonRef, canvasRef)
 	if (!preprocessData) {
@@ -399,7 +426,26 @@ const drawPixel = () => {
 useResizeObserver(buttonRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(buttonRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const button = buttonRef.value
+	if (button) {
+		const rect = button.getBoundingClientRect()
+
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

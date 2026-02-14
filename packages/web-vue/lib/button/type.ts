@@ -32,10 +32,10 @@ export type ButtonProps = {
 	 */
 	variant?: 'primary' | 'plain' | 'text' | 'outline'
 	/**
-	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'} [theme='primary']
+	 * @property {'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'} [theme='primary']
 	 * @version 0.0.0-beta
 	 */
-	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info'
+	theme?: 'primary' | 'sakura' | 'success' | 'warning' | 'danger' | 'info' | 'notice'
 	/**
 	 * @property {string} [color]
 	 * @version 0.0.0-beta
@@ -56,6 +56,11 @@ export type ButtonProps = {
 	 * @version 0.0.0-beta
 	 */
 	autofocus?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.1.0
+	 */
+	pollSizeChange?: boolean
 }
 
 export type ButtonEvents = {
@@ -64,7 +69,7 @@ export type ButtonEvents = {
 	 * @version 0.0.0-beta
 	 * @param {MouseEvent} e
 	 */
-	click: (e: MouseEvent) => any
+	click: [e: MouseEvent]
 }
 
 export type ButtonSlots = {

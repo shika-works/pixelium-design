@@ -50,16 +50,18 @@ const dfs = (
 }
 
 const newItems: string[] = [
-	'form',
-	'switch',
-	'slider',
-	'checkbox',
-	'radio',
-	'image',
-	'avatar',
-	'virtual-list',
-	'pixelate',
-	'text-outline'
+	'dialog',
+	'popconfirm',
+	'badge',
+	'back-top',
+	'progress',
+	'menu',
+	'i18n',
+	'drop-down',
+	'breadcrumb',
+	'scroll-bar',
+	'table',
+	'pagination'
 ]
 
 const order = [
@@ -69,6 +71,7 @@ const order = [
 	'layout',
 	'data-input',
 	'data-display',
+	'navigation',
 	'feedback',
 	'base',
 	'fabulous-idea'

@@ -3,21 +3,21 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { h, nextTick, Transition } from 'vue'
 import Popup from '../index.vue'
 import PopupContent from '../../popup-content/index.vue'
+import PopupWrapper from '../../popup-wrapper/index.vue'
 import AutoComplete from '../../auto-complete/index.vue'
 import { createMocks } from '../../share/util/test'
 
-const { pre, post } = createMocks()
-
-beforeEach(() => {
-	pre()
-})
-
-afterEach(() => {
-	post()
-	vi.restoreAllMocks()
-})
-
 describe('Popup Component', () => {
+	const { pre, post } = createMocks()
+
+	beforeEach(() => {
+		pre()
+	})
+
+	afterEach(() => {
+		post()
+		vi.restoreAllMocks()
+	})
 	it('opens on hover and closes on mouseleave (uncontrolled)', async () => {
 		const wrapper = mount(Popup, {
 			props: {
@@ -138,5 +138,70 @@ describe('Popup Component', () => {
 
 		expect(wrapper.findComponent(PopupContent).props('visible')).toBe(false)
 		expect(wrapper.emitted('close')).toBeTruthy()
+	})
+
+	it('renders different variants', () => {
+		const wrapper = mount(Popup, {
+			props: {
+				variant: 'dark'
+			},
+			slots: {
+				default: () => h('span', 'Trigger')
+			},
+			attachTo: 'body'
+		})
+
+		const popupWrapperComp = wrapper.findComponent(PopupWrapper)
+		expect(popupWrapperComp.exists()).toBe(true)
+		expect(popupWrapperComp.find('.px-popup-content').classes()).include(
+			'px-popup-content__dark'
+		)
+	})
+
+	describe('disabled', () => {
+		it('does not respond when disabled', async () => {
+			const wrapper = mount(Popup, {
+				props: {
+					disabled: true,
+					trigger: 'click'
+				},
+				slots: {
+					default: () => h('button', { class: 'trigger-btn' }, 'Click')
+				}
+			})
+
+			await wrapper.find('.trigger-btn').trigger('click')
+			await nextTick()
+
+			const popupWrapperComp = wrapper.findComponent(PopupWrapper)
+			expect(popupWrapperComp.exists()).toBe(true)
+
+			expect(popupWrapperComp.find('.px-popup-content').attributes('style')).include(
+				'display: none'
+			)
+		})
+	})
+
+	describe('Destroy behavior', () => {
+		it('handles destroyOnHide', async () => {
+			const wrapper = mount(Popup, {
+				props: {
+					destroyOnHide: true,
+					trigger: 'click'
+				},
+				slots: {
+					default: () => h('button', { class: 'trigger-btn' }, 'Click')
+				}
+			})
+
+			const popupWrapperComp = wrapper.findComponent(PopupWrapper)
+			expect(popupWrapperComp.exists()).toBe(true)
+			expect(popupWrapperComp.find('.px-popup-content').exists()).toBe(false)
+
+			await wrapper.find('.trigger-btn').trigger('click')
+			await nextTick()
+
+			expect(popupWrapperComp.find('.px-popup-content').exists()).toBe(true)
+		})
 	})
 })

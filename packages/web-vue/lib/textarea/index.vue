@@ -7,7 +7,7 @@
 			'px-textarea__disabled': !!disabledComputed,
 			'px-textarea__resize': !!props.resize
 		}"
-		@click="focusInputHandler"
+		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -41,10 +41,10 @@
 					:count="currentLength"
 					:max-length="props.maxLength"
 				>
-					<span
-						>{{ currentLength
-						}}{{ isNullish(props.maxLength) ? '' : ' / ' + props.maxLength }}</span
-					>
+					<span>
+						{{ currentLength }}
+						{{ isNullish(props.maxLength) ? '' : ' / ' + props.maxLength }}
+					</span>
 				</slot>
 			</div>
 			<div class="px-textarea-loading-wrapper" v-if="props.loading">
@@ -75,6 +75,8 @@ import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Textarea'
@@ -114,6 +116,11 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 const sizeComputed = createProvideComputed(
 	'size',
 	() => [props.size && props, formItemProvide, props],
@@ -188,7 +195,13 @@ watch(height, () => {
 	setHeight()
 })
 
-const blurHandler = (e: FocusEvent) => {
+const [wait, cancel] = useCancelableDelay()
+
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
 	setHeight()
 	focusMode.value = false
 	emits('blur', e)
@@ -196,15 +209,19 @@ const blurHandler = (e: FocusEvent) => {
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
 	setHeight()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
-	emits('focus', e)
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
 }
 
 const showClose = computed(() => {
 	return (
 		props.clearable &&
-		focusMode.value &&
+		(focusMode.value || hoverFlag.value) &&
 		!disabledComputed.value &&
 		!readonlyComputed.value &&
 		!!modelValue.value
@@ -212,7 +229,9 @@ const showClose = computed(() => {
 })
 
 const focusInputHandler = () => {
-	inputRef.value?.focus()
+	setTimeout(() => {
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const hoverFlag = ref(false)
@@ -301,8 +320,26 @@ useResizeObserver(wrapperRef, drawPixelDebounce)
 useWatchGlobalCssVal(drawPixelDebounce)
 
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

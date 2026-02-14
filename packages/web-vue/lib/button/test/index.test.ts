@@ -235,11 +235,11 @@ describe('Button Component - Comprehensive Tests', () => {
 		})
 
 		describe('theme', () => {
-			it('should apply theme class', () => {
-				const wrapper = mount(Button, {
-					props: { theme: 'success' }
+			it('should render theme correctly', () => {
+				;['primary', 'success', 'warning', 'error', 'sakura', 'notice', 'info'].forEach((e) => {
+					const wrapper = mount(Button, { props: { theme: e as any } })
+					expect(wrapper.classes()).include(`px-button__${e}`)
 				})
-				expect(wrapper.classes()).toContain('px-button__success')
 			})
 		})
 
@@ -342,7 +342,9 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: collectSpy,
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false),
+					id: '114514'
 				}
 
 				const wrapper = mount(Button, {
@@ -451,7 +453,9 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: vi.fn(),
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false),
+					id: '114514'
 				}
 
 				const wrapper = mount(Button, {
@@ -496,7 +500,9 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: vi.fn(),
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false),
+					id: '114514'
 				}
 
 				const wrapper = mount(Button, {
@@ -534,7 +540,9 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: vi.fn(),
 					removeChildrenInfo: removeSpy,
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false),
+					id: '114514'
 				}
 
 				const wrapper = mount(Button, {
@@ -565,7 +573,9 @@ describe('Button Component - Comprehensive Tests', () => {
 					theme: ref('primary'),
 					collectChildrenInfo: collectSpy,
 					removeChildrenInfo: vi.fn(),
-					childrenInfo: ref([])
+					childrenInfo: ref([]),
+					pollSizeChange: ref(false),
+					id: '114514'
 				}
 
 				const wrapper = mount(Button, {

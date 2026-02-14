@@ -10,6 +10,9 @@
 		}"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
+		@mousedown="focusInputHandler"
+		@focusout="blurHandler"
+		@focusin="focusHandler"
 	>
 		<div class="px-checkbox-box" ref="boxRef">
 			<canvas class="px-checkbox-canvas" ref="canvasRef"></canvas>
@@ -20,11 +23,10 @@
 			<input
 				type="checkbox"
 				class="px-checkbox-input"
+				ref="checkboxRef"
 				:disabled="disabledComputed || readonlyComputed"
 				:value="props.value"
 				:checked="!!modelValue"
-				@focus="focusHandler"
-				@blur="blurHandler"
 				@input.stop="inputHandler"
 				@change.stop="changeHandler"
 			/>
@@ -52,6 +54,8 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
+import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 defineOptions({
 	name: 'Checkbox'
 })
@@ -101,12 +105,24 @@ const readonlyComputed = createProvideComputed(
 	[checkboxGroupProvide, formItemProvide, props],
 	'or'
 )
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[checkboxGroupProvide, formItemProvide, props],
+	'or'
+)
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const boxRef = shallowRef<HTMLDivElement | null>(null)
 
 const focusFlag = ref(false)
 const hoverFlag = ref(false)
+
+const checkboxRef = shallowRef<HTMLInputElement | null>(null)
+const focusInputHandler = () => {
+	setTimeout(() => {
+		checkboxRef.value?.focus()
+	}, 0)
+}
 
 const mouseenterHandler = () => {
 	hoverFlag.value = true
@@ -116,15 +132,25 @@ const mouseleaveHandler = () => {
 	hoverFlag.value = false
 }
 
-const blurHandler = (e: FocusEvent) => {
+const [wait, cancel] = useCancelableDelay()
+
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
 	emits('blur', e)
 	focusFlag.value = false
 	formItemProvide?.blurHandler()
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusFlag.value
 	focusFlag.value = true
-	emits('focus', e)
+	if (!currentFocus) {
+		emits('focus', e)
+	}
 }
 
 const inputHandler = async (e: InputEvent) => {
@@ -238,7 +264,25 @@ watch(
 useResizeObserver(boxRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(boxRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = boxRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />
