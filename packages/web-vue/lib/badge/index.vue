@@ -2,7 +2,8 @@
 	<div
 		class="pixelium px-badge px-badge-wrapper"
 		:class="{
-			'px-badge__dot': props.dot
+			'px-badge__dot': props.dot,
+			[`px-badge__${props.theme}`]: props.theme
 		}"
 	>
 		<slot></slot>

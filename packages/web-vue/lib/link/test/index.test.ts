@@ -264,4 +264,11 @@ describe('Link Component', () => {
 
 		expect(wrapper.classes()).not.toContain('px-link__custom')
 	})
+
+	it('should render theme correctly', () => {
+		;['primary', 'success', 'warning', 'error', 'sakura', 'notice', 'info'].forEach((e) => {
+			const wrapper = mount(PxLink, { props: { theme: e as any } })
+			expect(wrapper.classes()).include(`px-link__${e}`)
+		})
+	})
 })
