@@ -28,6 +28,11 @@ export type InputGroupProps = {
 	 * @version 0.0.3
 	 */
 	readonly?: boolean
+	/**
+	 * @property {boolean} [pollSizeChange=false]
+	 * @version 0.1.0
+	 */
+	pollSizeChange?: boolean
 }
 
 export type InputGroupSlots = {
@@ -42,4 +47,5 @@ export type InputGroupProvide = ToRefs<LooseRequired<InputGroupProps>> & {
 	childrenInfo: Ref<ChildrenInfo[]>
 	collectChildrenInfo: (info: ChildrenInfo) => void
 	removeChildrenInfo: (id: string) => void
+	id: string
 }

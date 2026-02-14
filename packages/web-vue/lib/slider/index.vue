@@ -10,7 +10,7 @@
 		}"
 		ref="sliderRef"
 		@click.self="selectSliderHandler"
-		@click="focusSliderHandler"
+		@mousedown="focusSliderHandler"
 		:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 		@focusin="focusinHandler"
 		@focusout="focusoutHandler"
@@ -35,10 +35,14 @@
 				</template>
 			</template>
 		</div>
-		<Tooltip
+		<Popup
 			:arrow="false"
 			:placement="props.direction === 'horizontal' ? 'top' : 'right'"
+			variant="dark"
 			v-bind="props.tooltipProps"
+			:content-props="{
+				onMousedown: numberDisplayMousedownHandler
+			}"
 			v-if="props.tooltip && !props.range"
 		>
 			<div
@@ -62,7 +66,7 @@
 					</slot>
 				</div>
 			</template>
-		</Tooltip>
+		</Popup>
 		<div
 			v-if="!props.range && !props.tooltip"
 			class="px-slider-thumb"
@@ -79,10 +83,14 @@
 			<canvas ref="thumbCanvasRef" class="px-slider-canvas"></canvas>
 		</div>
 		<template v-if="props.range">
-			<Tooltip
+			<Popup
 				:arrow="false"
 				:placement="props.direction === 'horizontal' ? 'top' : 'right'"
+				variant="dark"
 				v-bind="props.tooltipStartProps"
+				:content-props="{
+					onMousedown: numberDisplayMousedownHandler
+				}"
 				v-if="props.tooltip"
 			>
 				<div
@@ -106,7 +114,7 @@
 						</slot>
 					</div>
 				</template>
-			</Tooltip>
+			</Popup>
 			<div
 				v-else
 				class="px-slider-thumb px-slider-thumb-start"
@@ -123,10 +131,14 @@
 				<canvas ref="thumbStartCanvasRef" class="px-slider-canvas"></canvas>
 			</div>
 
-			<Tooltip
+			<Popup
 				:arrow="false"
 				:placement="props.direction === 'horizontal' ? 'top' : 'right'"
+				variant="dark"
 				v-bind="props.tooltipEndProps"
+				:content-props="{
+					onMousedown: numberDisplayMousedownHandler
+				}"
 				v-if="props.tooltip"
 			>
 				<div
@@ -150,7 +162,7 @@
 						</slot>
 					</div>
 				</template>
-			</Tooltip>
+			</Popup>
 			<div
 				v-else
 				class="px-slider-thumb px-slider-thumb-end"
@@ -173,7 +185,15 @@
 </template>
 
 <script setup lang="ts">
-import { clone, isArray, isNumber, isUndefined, throttle, type Nullish } from 'parsnip-kit'
+import {
+	clone,
+	isArray,
+	isNullish,
+	isNumber,
+	isUndefined,
+	throttle,
+	type Nullish
+} from 'parsnip-kit'
 import { ref, computed, onUnmounted, watch, shallowRef, onMounted, nextTick, inject } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { calcBorderCornerCenter, calcPixelSize, canvasPreprocess } from '../share/util/plot'
@@ -198,8 +218,10 @@ import {
 	calcThumbLeft,
 	updateMarkPoints
 } from './util'
-import Tooltip from '../tooltip/index.vue'
+import Popup from '../popup/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Slider'
@@ -222,6 +244,11 @@ const emits = defineEmits<SliderEvent>()
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')
 const readonlyComputed = createProvideComputed('readonly', [formItemProvide, props], 'or')
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, props],
+	'or'
+)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue',
@@ -534,40 +561,66 @@ const focusSliderHandler = (e: MouseEvent) => {
 	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
-	const target = e.target as Element
-	if (
-		(markWrapperRef.value && markWrapperRef.value.contains(target)) ||
-		(thumbRef.value && thumbRef.value.contains(target)) ||
-		(thumbStartRef.value && thumbStartRef.value.contains(target)) ||
-		(thumbEndRef.value && thumbEndRef.value.contains(target))
-	) {
-		return
-	}
-
-	if (target === sliderRef.value) {
-		return
-	}
-	if (sliderRef.value) {
-		sliderRef.value.focus()
-	}
+	const target = e.target as HTMLElement
+	setTimeout(() => {
+		if (!isNullish(target.tabIndex)) {
+			target.focus()
+		} else if (target === sliderRef.value && sliderRef.value) {
+			sliderRef.value.focus()
+		} else if (
+			markWrapperRef.value &&
+			markWrapperRef.value.contains(target) &&
+			target !== markWrapperRef.value
+		) {
+			;[...markWrapperRef.value.children]
+				.filter((e) => e instanceof HTMLDivElement && !isNullish(e.tabIndex))
+				.some((e) => {
+					if (e.contains(target)) {
+						;(e as HTMLDivElement).focus()
+						return true
+					}
+				})
+		} else if (thumbRef.value && thumbRef.value.contains(target)) {
+			thumbRef.value.focus()
+		} else if (thumbStartRef.value && thumbStartRef.value.contains(target)) {
+			thumbStartRef.value.focus()
+		} else if (thumbEndRef.value && thumbEndRef.value.contains(target)) {
+			thumbEndRef.value.focus()
+		} else if (sliderRef.value) {
+			sliderRef.value.focus()
+		}
+	}, 0)
 }
+
+const [wait, cancel] = useCancelableDelay()
+
+const focusState = ref(false)
 
 const focusinHandler = (e: FocusEvent) => {
-	const target = e.target as Element
-	if (target === sliderRef.value) {
-		return
+	cancel()
+	const currentFocus = focusState.value
+	focusState.value = true
+	if (!currentFocus) {
+		emits('focus', e)
 	}
-
-	emits('focus', e)
 }
-const focusoutHandler = (e: FocusEvent) => {
-	const target = e.target as Element
-	if (target === sliderRef.value) {
+const focusoutHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
 		return
 	}
-
+	focusState.value = false
 	emits('blur', e)
 	formItemProvide?.blurHandler()
+}
+
+const numberDisplayMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		if (sliderRef.value) {
+			sliderRef.value.focus()
+		}
+	}, 0)
 }
 
 const darkMode = useDarkMode()
@@ -696,8 +749,28 @@ const refresh = () => {
 useResizeObserver(sliderRef, refresh)
 useWatchGlobalCssVal(refresh)
 useTransitionEnd(sliderRef, refresh)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = sliderRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+			updateSliderRect()
+			updateThumbRect()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

@@ -83,6 +83,16 @@ export type PopoverProps = {
 	 * @version 0.0.3
 	 */
 	destroyOnHide?: boolean
+	/**
+	 * @property {number} [borderRadius]
+	 * @version 0.1.0
+	 */
+	borderRadius?: number
+	/**
+	 * @property {boolean} [cascade=false]
+	 * @version 0.1.0
+	 */
+	cascade?: boolean
 }
 
 export type PopoverEvents = {
@@ -97,7 +107,7 @@ export type PopoverEvents = {
 	 * @param {MouseEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e: MouseEvent | TouchEvent]
+	close: [e?: MouseEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e

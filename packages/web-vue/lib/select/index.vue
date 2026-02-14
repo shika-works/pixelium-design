@@ -42,7 +42,7 @@ import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
-import Popover from '../popover/index.vue'
+import Popup from '../popup/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
 import { defaultFilter, findSameOption } from '../share/util/common'
@@ -67,9 +67,12 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { inVitest } from '../share/util/env'
 
 defineOptions({
-	name: 'Select'
+	name: 'Select',
+	inheritAttrs: false
 })
 
 const attrs = useAttrs()
@@ -105,44 +108,41 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] = inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`, (instance) => {
 			return instance?.vnode.el?.nextElementSibling
 		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 
@@ -150,7 +150,7 @@ const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -264,7 +264,7 @@ const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const contentRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
-const popoverRef = shallowRef<InstanceType<typeof Popover> | null>(null)
+const popoverRef = shallowRef<InstanceType<typeof Popup> | null>(null)
 const closeRef = shallowRef<any>(null)
 
 watch(
@@ -333,13 +333,7 @@ const [wait, cancel] = useCancelableDelay()
 
 const focusMode = ref(false)
 
-const focusImpl = async (e: FocusEvent) => {
-	if (disabledComputed.value || readonlyComputed.value) {
-		return
-	}
-	cancel()
-
-	focusMode.value = true
+const setupSelect = () => {
 	nextTick(() => {
 		if (inputRef.value && props.filterable) {
 			inputRef.value.focus()
@@ -353,9 +347,34 @@ const focusImpl = async (e: FocusEvent) => {
 		}
 	})
 	triggerPopover()
-	emits('focus', e)
 }
-const focusInputHandler = async (e: MouseEvent) => {
+
+let clickTagPopupContentFlag = false
+
+const focusHandler = async (e: FocusEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
+		return
+	}
+	cancel()
+	const currentFocusMode = focusMode.value
+	focusMode.value = true
+
+	const target = e.target
+	if (target instanceof HTMLElement || target instanceof SVGElement) {
+		if (!closeRef.value?.$el.contains(target) && !clickTagPopupContentFlag) {
+			setupSelect()
+		}
+		if (clickTagPopupContentFlag) {
+			clickTagPopupContentFlag = false
+		}
+	}
+
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
+}
+
+const mousedownHandler = async (e: MouseEvent) => {
 	if (disabledComputed.value || readonlyComputed.value) {
 		return
 	}
@@ -365,7 +384,12 @@ const focusInputHandler = async (e: MouseEvent) => {
 			return
 		}
 	}
-	contentRef.value?.focus()
+	if (focusMode.value && !popoverVisible.value) {
+		setupSelect()
+	}
+	setTimeout(() => {
+		contentRef.value?.focus()
+	}, 0)
 }
 
 const blurSelectImpl = async () => {
@@ -396,10 +420,13 @@ const blurSelect = async (e: FocusEvent) => {
 
 const focusoutHandler = (e: FocusEvent) => {
 	const relatedTarget = e.relatedTarget as Node
-	if (relatedTarget && popoverRef.value?.triggerContent?.content?.contains(relatedTarget)) {
+	const triggerEl = popoverRef.value?.triggerContent?.content
+	const containEl = popoverRef.value?.triggerContent?.content
+
+	if (relatedTarget && triggerEl?.contains(relatedTarget)) {
 		return
 	}
-	if (relatedTarget && wrapperRef.value?.contains(relatedTarget)) {
+	if (relatedTarget && containEl?.contains(relatedTarget)) {
 		return
 	}
 	blurSelect(e)
@@ -443,7 +470,6 @@ const selectHandler = async (value: any, option: string | SelectOption, e: Mouse
 	const nextInputValue = ''
 	await updateModelValue(nextValue)
 	if (!props.multiple) {
-		focusMode.value = false
 		closePopover()
 		emits('select', nextValue, option, e)
 		emits('change', nextValue)
@@ -517,7 +543,7 @@ const optionsFiltered = computed(() => {
 	return ans
 })
 
-defineExpose<SelectExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | null }>({
+const expose: any = {
 	focus: () => {
 		if (disabledComputed.value || readonlyComputed.value) {
 			return
@@ -529,7 +555,14 @@ defineExpose<SelectExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | nul
 	},
 	clear: () => clearHandler(),
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
-})
+}
+if (inVitest()) {
+	expose.first = first
+	expose.last = last
+	expose.index = index
+}
+
+defineExpose<SelectExpose>(expose)
 
 const popoverVisible = ref(false)
 const popoverVisibleUpdateHandler = (value: boolean) => {
@@ -635,7 +668,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value,
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -664,7 +697,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value
@@ -689,6 +722,39 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
+
+const popupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		contentRef.value?.focus()
+	}, 0)
+}
+
+const tagPopupContentMousedownHandler = () => {
+	setTimeout(() => {
+		clickTagPopupContentFlag = true
+		cancel()
+		contentRef.value?.focus()
+	}, 0)
+}
 
 const popoverProps = computed(() => {
 	return {
@@ -720,7 +786,9 @@ defineRender(() => {
 								closable={tagCanClose.value}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								pollSizeChange={pollSizeChangeComputed.value}
 								{...props.tagProps}
+								closeTabindex={-1}
 								onClose={(event) => tagCloseHandler(e, event)}
 							>
 								{{
@@ -747,6 +815,7 @@ defineRender(() => {
 								theme={props.tagTheme}
 								disabled={disabledComputed.value}
 								color={props.tagColor}
+								pollSizeChange={pollSizeChangeComputed.value}
 								{...props.tagProps}
 							>
 								{{
@@ -763,7 +832,12 @@ defineRender(() => {
 								}}
 							</Tag>
 						) : (
-							<Popover {...popoverProps.value}>
+							<Popup
+								{...popoverProps.value}
+								contentProps={{
+									onMousedown: tagPopupContentMousedownHandler
+								}}
+							>
 								{{
 									default: () => (
 										<Tag
@@ -772,6 +846,7 @@ defineRender(() => {
 											theme={props.tagTheme}
 											disabled={disabledComputed.value}
 											color={props.tagColor}
+											pollSizeChange={pollSizeChangeComputed.value}
 											{...props.tagProps}
 										>
 											{{
@@ -800,7 +875,9 @@ defineRender(() => {
 														disabled={disabledComputed.value}
 														color={props.tagColor}
 														closable={tagCanClose.value}
+														pollSizeChange={pollSizeChangeComputed.value}
 														{...props.tagProps}
+														closeTabindex={-1}
 														onClose={(event) => tagCloseHandler(e, event)}
 													>
 														{{
@@ -823,7 +900,7 @@ defineRender(() => {
 										</div>
 									)
 								}}
-							</Popover>
+							</Popup>
 						)}
 					</Fragment>
 				)}
@@ -907,7 +984,7 @@ defineRender(() => {
 	}
 	const pixelSize = calcPixelSize()
 	const Render = (
-		<Popover
+		<Popup
 			placement="bottom"
 			offset={0}
 			width-equal={true}
@@ -918,6 +995,9 @@ defineRender(() => {
 			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
 			destroyOnHide={props.optionsDestroyOnHide}
+			contentProps={{
+				onMousedown: popupContentMousedownHandler
+			}}
 		>
 			{{
 				default: () =>
@@ -930,12 +1010,12 @@ defineRender(() => {
 									'pixelium px-select',
 									sizeComputed.value && `px-select__${sizeComputed.value}`,
 									shapeComputed.value && `px-select__${shapeComputed.value}`,
-									{ 'px-select__inner': innerInputGroup.value },
+									{ 'px-select__inner': !!inputGroupProvide },
 									{ 'px-select__disabled': disabledComputed.value }
 								],
-								onFocusin: focusImpl,
+								onFocusin: focusHandler,
 								onFocusout: focusoutHandler,
-								onClick: focusInputHandler,
+								onMousedown: mousedownHandler,
 								onMouseenter: mouseenterHandler,
 								onMouseleave: mouseleaveHandler,
 								...scopeObj
@@ -972,7 +1052,7 @@ defineRender(() => {
 						</div>
 					)
 			}}
-		</Popover>
+		</Popup>
 	)
 	return Render
 })
@@ -980,4 +1060,4 @@ defineRender(() => {
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

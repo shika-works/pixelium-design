@@ -26,7 +26,7 @@ Below are the preset styles provided by `pixelium`:
 导入 `import '@pixelium/web-vue/dist/font.css'` 后，你可以在 `font-family` 属性中设置 `'Fusion Pixel Zh_hans'`，在组件外的地方使用这个字体。
 
 
-汉字字形默认使用了简体中文，如果需要其他字形（如繁体、日韩汉字等）请不要导入 `'@pixelium/web-vue/dist/font.css'`。出于项目体积考虑，你可以前往 [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font) 或者其他字体库下载并使用。
+默认情况下，汉字字形使用简体中文。这并不影响繁体中文或日韩汉字的显示，但可能存在细微差异。若需使用其他字形（如繁体、日韩汉字等），请勿导入 `'@pixelium/web-vue/dist/font.css'`。为减少项目体积，建议从 [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font) 或其他字体库下载并引用所需字体。
 
 
 下面是预设的 `--px-font` 提供的字体：
@@ -36,7 +36,7 @@ After importing `import '@pixelium/web-vue/dist/font.css'`, you can set `'Fusion
 
 Component fonts are provided by the CSS variable `var(--px-font)`. If you need to change the font, you can override it by creating a `--px-font` variable.
 
-Chinese character glyphs use Simplified Chinese by default. To reduce project size, if you need other character sets (such as Traditional Chinese, Japanese/Korean characters, etc.), please do not import `'@pixelium/web-vue/dist/font.css'`. You can download and use alternatives from [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font) or other font libraries.
+By default, the Chinese character glyphs use Simplified Chinese. This does not affect the display of Traditional Chinese or Japanese/Korean Han characters, but there may be subtle differences. If you need other glyphs (e.g., Traditional Chinese, Japanese/Korean Han characters, etc.), do not import `'@pixelium/web-vue/dist/font.css'`. To reduce project size, it is recommended to download and reference the required fonts from [Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font) or other font libraries.
 
 Below are the fonts provided by the preset `--px-font`:
 ]]]

@@ -6,3 +6,9 @@
 	font-family: var(--px-font);
 	line-height: var(--px-line-height);
 }
+
+.px-word-wrap {
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: normal;
+}

@@ -218,3 +218,12 @@ function isValidPort(port: string): boolean {
 export const fixedNumber = (value: number, precision: number) => {
 	return parseFloat(value.toFixed(clamp(Math.round(precision), 0, 100)))
 }
+
+export const getEnumerableKeys = (obj: object) => {
+	const enumerableStringKeys = Object.keys(obj)
+
+	const enumerableSymbolKeys = Object.getOwnPropertySymbols(obj).filter((sym) => {
+		return Object.getOwnPropertyDescriptor(obj, sym)?.enumerable
+	})
+	return [...enumerableStringKeys, ...enumerableSymbolKeys]
+}

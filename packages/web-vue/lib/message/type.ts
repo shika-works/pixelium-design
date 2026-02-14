@@ -22,10 +22,10 @@ export type MessageProps = {
 	 */
 	id?: number | string | symbol
 	/**
-	 * @property {'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura'} [type='normal']
+	 * @property {'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura' | 'notice'} [type='normal']
 	 * @version 0.0.0-beta
 	 */
-	type?: 'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura'
+	type?: 'info' | 'success' | 'warning' | 'error' | 'loading' | 'normal' | 'sakura' | 'notice'
 	/**
 	 * @property {string} [color]
 	 * @version 0.0.0-beta

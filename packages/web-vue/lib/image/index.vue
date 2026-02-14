@@ -30,34 +30,38 @@
 			<slot v-if="!loaded && !loadFailed" name="placeholder"></slot>
 			<slot v-if="loadFailed" name="error"></slot>
 		</div>
-		<PopupWrapper
-			v-if="props.previewable"
-			:visible="previewVisible"
-			:position="'fixed'"
-			:close-delay="ANIMATION_DURATION"
-			v-bind="props.popupWrapperProps"
-		>
-			<Transition name="px-image-preview">
-				<div class="px-image-preview" v-if="previewVisible">
-					<Mask :z-index="0" v-bind="maskProps" @click="closeHandler"></Mask>
-					<Times z-index="0" @click="closeHandler" class="px-image-preview-close"></Times>
-					<img
-						z-index="0"
-						:src="curSrc"
-						:srcset="curSrcset"
-						:alt="props.alt"
-						:referrerpolicy="props.referrerpolicy as any"
-						:crossorigin="props.crossorigin"
-						class="px-image-preview-img"
-						:style="{
-							width: `${previewStyle.width}px`,
-							height: `${previewStyle.height}px`,
-							transform: `translate(${previewStyle.left}px, ${previewStyle.top}px)`
-						}"
-					/>
-				</div>
-			</Transition>
-		</PopupWrapper>
+		<PopupPortal :root="props.popupWrapperProps?.root">
+			<PopupWrapper
+				v-if="props.previewable"
+				:visible="previewVisible"
+				:position="'fixed'"
+				:close-delay="ANIMATION_DURATION"
+				:destroy-on-hide="props.previewDestroyOnHide"
+				prevent-document-scroll
+				v-bind="props.popupWrapperProps"
+			>
+				<Transition name="px-image-preview">
+					<div class="px-image-preview" v-if="previewVisible">
+						<Mask :z-index="0" v-bind="maskProps" @click="closeHandler"></Mask>
+						<Times z-index="0" @click="closeHandler" class="px-image-preview-close"></Times>
+						<img
+							z-index="0"
+							:src="curSrc"
+							:srcset="curSrcset"
+							:alt="props.alt"
+							:referrerpolicy="props.referrerpolicy as any"
+							:crossorigin="props.crossorigin"
+							class="px-image-preview-img"
+							:style="{
+								width: `${previewStyle.width}px`,
+								height: `${previewStyle.height}px`,
+								transform: `translate(${previewStyle.left}px, ${previewStyle.top}px)`
+							}"
+						/>
+					</div>
+				</Transition>
+			</PopupWrapper>
+		</PopupPortal>
 	</div>
 </template>
 <script lang="ts" setup>
@@ -65,11 +69,13 @@ import { ref, shallowRef, useSlots, watch } from 'vue'
 import type { ImageEvents, ImageProps } from './type'
 import { useLazyLoad } from '../share/hook/use-lazy-load'
 import { calculateZoomedSize } from '../share/util/dom'
+import PopupPortal from '../popup-portal/index.vue'
 import PopupWrapper from '../popup-wrapper/index.vue'
 import Mask from '../mask/index.vue'
 import { useWindowResizeListener } from '../share/hook/use-window-resize-listener'
 // @ts-ignore
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
+import { isArray, isNullish, isNumber } from 'parsnip-kit'
 
 defineOptions({
 	name: 'Image'
@@ -84,7 +90,8 @@ const props = withDefaults(defineProps<ImageProps>(), {
 	crossorigin: '',
 	rootMargin: () => [100, 200],
 	previewable: false,
-	lazy: false
+	lazy: false,
+	previewDestroyOnHide: false
 })
 
 const ANIMATION_DURATION = 250
@@ -102,7 +109,10 @@ const emits = defineEmits<ImageEvents>()
 
 useLazyLoad(imgRef, {
 	root: props.root,
-	rootMargin: props.rootMargin,
+	rootMargin:
+		isArray(props.rootMargin) || isNumber(props.rootMargin) || isNullish(props.rootMargin)
+			? props.rootMargin
+			: [props.rootMargin.x || 0, props.rootMargin.y || 0],
 	onError: (img, error) => {
 		loadFailed.value = true
 		loaded.value = false
@@ -179,4 +189,4 @@ watch(
 </script>
 
 <style lang="less" src="./index.less"></style>
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

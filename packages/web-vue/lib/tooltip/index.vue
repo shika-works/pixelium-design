@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { useSlots, shallowRef, useAttrs } from 'vue'
+import { useSlots, shallowRef, mergeProps } from 'vue'
 import type { TooltipEvents, TooltipProps } from './type'
 import Popup from '../popup/index.vue'
 import { forwardEmits } from '../share/util/reactivity'
@@ -20,7 +20,6 @@ const props = withDefaults(defineProps<TooltipProps>(), {
 	destroyOnHide: false
 })
 
-const attrs = useAttrs()
 const emits = defineEmits<TooltipEvents>()
 
 const popupRef = shallowRef<InstanceType<typeof Popup> | null>(null)
@@ -40,7 +39,7 @@ const forward = forwardEmits(emits, ['open', 'close', 'update:visible'])
 
 defineRender(() => {
 	return (
-		<Popup ref={popupRef} {...{ ...props, ...forward, ...attrs }}>
+		<Popup ref={popupRef} {...mergeProps(props, forward)}>
 			{{
 				default: slots.default,
 				content: slots.content

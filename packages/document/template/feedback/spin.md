@@ -96,3 +96,5 @@ slots.default: Content wrapped by Spin.
 slots.icon: Icon for Spin.
 slots.description: Description during Spin loading.
 ]]]
+
+[[[slice rest-attrs]]]

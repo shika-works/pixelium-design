@@ -20,10 +20,24 @@ try {
 	log('Cleaning output...')
 	await rimraf.sync(join(root, 'dist'))
 	await rimraf.sync(join(root, 'es'))
+	await rimraf.sync(join(root, 'lib'), {
+		filter(path) {
+			if (!path.endsWith('.d.ts')) {
+				return false
+			}
+			if (path.endsWith('share/type/shim.d.ts') || path.endsWith('share\\type\\shim.d.ts')) {
+				return false
+			}
+			return true
+		}
+	})
 
 	log('Running vue-tsc...')
 	await $('npx vue-tsc -b')
 	await $('node script/build-dts.mts')
+	await $(
+		'npx dts-bundle-generator --no-check --config script/dts-bundle-generator.config.locale.json'
+	)
 
 	log('Building font...')
 	await $('npx vite build --config ./script/vite.config.font.ts')
@@ -41,7 +55,9 @@ try {
 
 	log('Building Vue...')
 	await $('npx vite build --config ./script/vite.config.vue.ts')
-	await $('npx dts-bundle-generator --no-check --config dts-bundle-generator.config.json')
+	await $(
+		'npx dts-bundle-generator --no-check --config script/dts-bundle-generator.config.json'
+	)
 
 	log('✅ Build completed successfully!')
 } catch (err: any) {

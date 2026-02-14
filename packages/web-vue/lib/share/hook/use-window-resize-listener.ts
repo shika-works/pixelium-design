@@ -10,7 +10,9 @@ export const useWindowResizeListener = (
 	}
 	onMounted(() => {
 		nextTick(() => {
-			leading && callback()
+			if (leading) {
+				callback()
+			}
 			window.addEventListener('resize', callback)
 		})
 	})

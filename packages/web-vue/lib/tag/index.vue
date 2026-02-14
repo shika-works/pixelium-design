@@ -23,6 +23,7 @@
 				@mouseenter="toggleHover(true)"
 				@mouseleave="toggleHover(false)"
 				@click="closeHandler"
+				:tabindex="props.disabled ? -1 : props.closeTabindex"
 				class="px-tag-icon"
 				:style="{
 					fill: textColor
@@ -50,6 +51,7 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'Tag'
@@ -60,7 +62,8 @@ const props = withDefaults(defineProps<TagProps>(), {
 	size: 'medium',
 	disabled: false,
 	variant: 'primary',
-	theme: 'primary'
+	theme: 'primary',
+	closeTabindex: 0
 })
 
 const emits = defineEmits<TagEvents>()
@@ -79,7 +82,7 @@ const toggleActive = (value: boolean) => {
 const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const tagRef = shallowRef<HTMLButtonElement | null>(null)
+const tagRef = shallowRef<HTMLSpanElement | null>(null)
 
 onMounted(() => {
 	nextTick(() => {
@@ -164,8 +167,29 @@ const drawPixel = () => {
 useResizeObserver(tagRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(tagRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(
+	() => props.pollSizeChange,
+	() => {
+		const wrapper = tagRef.value
+		if (wrapper) {
+			const rect = wrapper.getBoundingClientRect()
+			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+				wrapperSize = {
+					width: rect.width,
+					height: rect.height
+				}
+				drawPixel()
+			}
+		}
+	}
+)
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

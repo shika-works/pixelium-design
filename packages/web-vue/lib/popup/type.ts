@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'vue'
+import PopupContent from '../popup-content/index.vue'
+import type { RestAttrs } from '../share/type'
 
 export type PopupProps = {
 	/**
@@ -83,6 +85,22 @@ export type PopupProps = {
 	 * @version 0.0.3
 	 */
 	destroyOnHide?: boolean
+	/**
+	 * @property {number} [borderRadius]
+	 * @version 0.1.0
+	 */
+	borderRadius?: number
+	/**
+	 * @property {boolean} [cascade=false]
+	 * @version 0.1.0
+	 */
+	cascade?: boolean
+	/**
+	 * @property {RestAttrs} [contentProps]
+	 * @ignore
+	 * @version 0.1.0
+	 */
+	contentProps?: RestAttrs
 }
 
 export type PopupEvents = {
@@ -97,7 +115,7 @@ export type PopupEvents = {
 	 * @param {MouseEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e: MouseEvent | TouchEvent]
+	close: [e?: MouseEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e
@@ -117,4 +135,20 @@ export type PopupSlots = {
 	 * @version 0.0.0-beta
 	 */
 	content: {}
+}
+
+export type PopupContentGetter = {
+	id: string
+	getter: () => InstanceType<typeof PopupContent> | undefined | null
+	children?: PopupContentGetter[]
+}
+
+export type PopupProvide = {
+	removePopup: (itemId: string) => void
+	collectPopup: (
+		itemId: string,
+		getter: () => InstanceType<typeof PopupContent> | undefined | null,
+		children?: PopupContentGetter[]
+	) => void
+	triggerUpdate: () => Promise<void>
 }

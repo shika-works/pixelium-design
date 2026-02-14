@@ -27,14 +27,16 @@ If you have fully registered the component library, you can use it in the follow
 When importing on-demand, you can also import `Message` from `@pixelium/web-vue/es` for use.
 ]]]
 <preview path="./message-basic.vue"></preview>
+
 [[[zh
 ## 消息类型
-消息有 `'normal'`（默认）、`'info'`、`'success'`、`'warning'`、`'error'`、`'loading'`、`'sakura'`，7 种类型，其中 `'normal'` 和 `'sakura'` 默认不展示图标。
+消息有 `'normal'`（默认）、`'info'`、`'success'`、`'warning'`、`'error'`、`'loading'`、`'sakura'`、`'notice'`，多种类型，其中 `'normal'` 和 `'sakura'` 默认不展示图标。
 ]]]
 [[[en
 ## Message Types
-Messages come in 7 types: `'normal'` (default), `'info'`, `'success'`, `'warning'`, `'error'`, `'loading'`, and `'sakura'`. Among them, `'normal'` and `'sakura'` do not display icons by default.
+Messages come in various types: `'normal'` (default), `'info'`, `'success'`, `'warning'`, `'error'`, `'loading'`, `'sakura'` and `'notice'`. Among them, `'normal'` and `'sakura'` do not display icons by default.
 ]]]
+
 <preview path="./message-theme.vue"></preview>
 [[[zh
 ## 消息位置
@@ -99,6 +101,7 @@ MessageBox 组件是消息的容器，消息出现的位置由容器的 `placeme
 The MessageBox component is the container for messages. The position of the message is determined by the container's `placement`. In functionally created messages, messages with the same position are sub-components of the same MessageBox. We also provide an export for MessageBox.
 ]]]
 <preview path="./message-box.vue"></preview>
+
 ## API
 ### MessageFunction
 ```ts
@@ -109,7 +112,7 @@ declare const message: MessageFunction
 ```
 ### ValidContent, ValidVNodeContent
 ```ts
-export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element)
+export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element | null | void)
 export type ValidVNodeContent = (...args: any[]) => VNode | JSX.Element
 ```
 [[[api message-box en

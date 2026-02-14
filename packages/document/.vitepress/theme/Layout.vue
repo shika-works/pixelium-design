@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
-import { onMounted, watchEffect } from 'vue'
-import { inBrowser, onContentUpdated, useData } from 'vitepress'
+import { nextTick, onMounted, watch, watchEffect } from 'vue'
+import { inBrowser, onContentUpdated, useData, useRoute } from 'vitepress'
+import { locale } from '@pixelium/web-vue'
+import { useScrollBar } from '@pixelium/web-vue'
 const base = 'pixelium-design'
 if (inBrowser) {
 	const lang = navigator.language
@@ -50,6 +52,84 @@ if (inBrowser) {
 		updateThemeClass()
 	})
 }
+
+let lastUrl = ''
+
+const checkUrlChange = () => {
+	const currentUrl = window.location.href
+
+	if (currentUrl !== lastUrl) {
+		lastUrl = currentUrl
+		const pathname = window.location.pathname
+
+		if (pathname.includes('/zh/')) {
+			locale.setLocale('zh-cn')
+		} else if (pathname.includes('/en/')) {
+			locale.setLocale('en')
+		}
+	}
+}
+
+if (typeof window !== 'undefined') {
+	window.addEventListener('popstate', checkUrlChange)
+	;['pushState', 'replaceState'].forEach((method) => {
+		// @ts-ignore
+		const original = window.history[method]
+		// @ts-ignore
+		window.history[method] = function (...args) {
+			const result = original.apply(this, args)
+			checkUrlChange()
+			return result
+		}
+	})
+
+	checkUrlChange()
+}
+
+const route = useRoute()
+const scrollCallback = () => {
+	nextTick(() => {
+		const activeElement = document.querySelector('.VPSidebarItem.is-active')
+		if (activeElement) {
+			activeElement.scrollIntoView({ block: 'center', behavior: 'smooth' })
+		}
+	})
+}
+watch(
+	() => route.path,
+	() => {
+		scrollCallback()
+	}
+)
+
+const [initBody] = useScrollBar()
+const [initSidebar, _, initialized] = useScrollBar('simple')
+
+if (typeof document !== 'undefined') {
+	initBody({
+		target: document.body
+	})
+}
+
+onMounted(() => {
+	nextTick(() => {
+		const sidebar = document.querySelector('.VPSidebar') as HTMLElement | null
+		if (!sidebar) {
+			return
+		}
+		sidebar.setAttribute('data-overlayscrollbars-initialize', '')
+
+		initSidebar({
+			target: sidebar
+		})
+	})
+})
+
+watch(initialized, () => {
+	if (initialized.value) {
+		scrollCallback()
+	}
+})
 </script>
 
 <template>

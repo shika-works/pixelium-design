@@ -49,6 +49,24 @@ import Checkbox from './checkbox/index.vue'
 import CheckboxGroup from './checkbox-group/index.vue'
 import TextOutline from './text-outline/index.vue'
 import { useForm } from './form/use-form.ts'
+import Dialog from './dialog/index.ts'
+import { locale } from './share/util/locale.ts'
+import Alert from './alert/index.vue'
+import Progress from './progress/index.vue'
+import Popconfirm from './popconfirm/index.vue'
+import Badge from './badge/index.vue'
+import BackTop from './back-top/index.vue'
+import Menu from './menu/index.vue'
+import MenuItem from './menu-item/index.vue'
+import MenuGroup from './menu-group/index.vue'
+import Submenu from './submenu/index.vue'
+import DropDown from './drop-down/index.vue'
+import Breadcrumb from './breadcrumb/index.vue'
+import BreadcrumbItem from './breadcrumb-item/index.vue'
+import ScrollBar from './scroll-bar/index.vue'
+import { useScrollBar } from './scroll-bar/use-scroll-bar.ts'
+import Table from './table/index.vue'
+import Pagination from './pagination/index.vue'
 
 const components = [
 	Button,
@@ -92,7 +110,23 @@ const components = [
 	RadioGroup,
 	Checkbox,
 	CheckboxGroup,
-	TextOutline
+	TextOutline,
+	Dialog,
+	Alert,
+	Progress,
+	Popconfirm,
+	Badge,
+	BackTop,
+	Menu,
+	MenuItem,
+	MenuGroup,
+	Submenu,
+	DropDown,
+	Breadcrumb,
+	BreadcrumbItem,
+	ScrollBar,
+	Table,
+	Pagination
 ]
 
 const defaultPrefix = 'Px'
@@ -112,12 +146,15 @@ const install = (
 	if (options.attachToApp !== false) {
 		app.config.globalProperties.PixeliumVue = {
 			message: Message,
+			dialog: Dialog,
 			useThemeMode: useThemeMode
 		}
 	}
 	if (options.attachToWindow !== false && inBrowser()) {
 		// @ts-ignore
 		window.$message = Message
+		// @ts-ignore
+		window.$dialog = Dialog
 	}
 }
 export { install }
@@ -172,7 +209,25 @@ export {
 	CheckboxGroup,
 	imageDataToDataURL,
 	TextOutline,
-	useForm
+	useForm,
+	Dialog,
+	locale,
+	Alert,
+	Progress,
+	Popconfirm,
+	Badge,
+	BackTop,
+	Menu,
+	MenuItem,
+	MenuGroup,
+	Submenu,
+	DropDown,
+	Breadcrumb,
+	BreadcrumbItem,
+	ScrollBar,
+	useScrollBar,
+	Table,
+	Pagination
 }
 export default {
 	install
@@ -187,7 +242,10 @@ export type {
 	ValueWithDeviceWidth
 } from './share/type/index.ts'
 
+export type { RestAttrs, VueStyleValue, VueClassValue, EmitEvent } from './share/type/index.ts'
+
 export type { MessageOptions, MessageReturn } from './message-box/type.ts'
+export type { DialogReturn, DialogOptions } from './dialog/type.ts'
 
 export type { AutoCompleteOption, AutoCompleteGroupOption } from './auto-complete/type.ts'
 export type { SelectOption, SelectGroupOption } from './select/type.ts'
@@ -203,3 +261,25 @@ export type {
 	FormValidateResult,
 	UseFormReturn
 } from './form/type.ts'
+
+export type { DropDownOption, DropDownGroupOption } from './drop-down-list/type.ts'
+export type { MenuOption, MenuGroupOption, SubmenuOption } from './menu/type.ts'
+export type { NavigationOption } from './share/type/index.ts'
+export type { BreadcrumbOption } from './breadcrumb/type.ts'
+
+export type {
+	TableData,
+	TableColumn,
+	TableBordered,
+	TableSelection,
+	TableExpandable,
+	TableSummary,
+	TableFilterOption,
+	TableFilterable,
+	TableSortable,
+	TableOptionsArg,
+	SortOrder,
+	FilterValue
+} from './table/type.ts'
+
+export type { PaginationOption } from './pagination/type.ts'

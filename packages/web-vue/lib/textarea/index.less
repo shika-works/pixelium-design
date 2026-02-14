@@ -35,6 +35,11 @@
 				padding-left: @@paddingVar;
 				font-size: @@fontVar;
 			}
+			.@{prefix}-close-wrapper,
+			.@{prefix}-loading-wrapper {
+				width: @@fontVar;
+				height: @@fontVar;
+			}
 			.@{prefix}-addition-wrapper {
 				right: @@paddingVar;
 			}
@@ -47,7 +52,6 @@
 		background-color: transparent;
 		box-sizing: border-box;
 		width: 100%;
-		font-size: var(--text-size);
 		line-height: @px-line-height;
 		font-family: var(--px-font);
 		min-height: @px-medium-base-size;
@@ -91,8 +95,6 @@
 	}
 	&-close-wrapper {
 		.@{prefix}-icon {
-			width: var(--text-size);
-			height: var(--text-size);
 			cursor: pointer;
 			fill: var(--px-neutral-8);
 			transition: 0.25s;
@@ -106,8 +108,6 @@
 	}
 	&-loading-wrapper {
 		.@{prefix}-icon {
-			width: var(--text-size);
-			height: var(--text-size);
 			fill: var(--px-primary-6);
 		}
 	}

@@ -1,4 +1,5 @@
 import type { MaskProps } from '../mask/type'
+import type { RestAttrs } from '../share/type'
 
 export type SpinProps = {
 	/**
@@ -12,10 +13,10 @@ export type SpinProps = {
 	 */
 	size?: 'medium' | 'large' | 'small' | number
 	/**
-	 * @property {Omit<MaskProps, 'zIndex'>} [maskProps]
+	 * @property {Omit<MaskProps, 'zIndex'> & RestAttrs} [maskProps]
 	 * @version 0.0.3
 	 */
-	maskProps?: Omit<MaskProps, 'zIndex'>
+	maskProps?: Omit<MaskProps, 'zIndex'> & RestAttrs
 	/**
 	 * @property {number} [zIndex=20]
 	 * @version 0.0.2

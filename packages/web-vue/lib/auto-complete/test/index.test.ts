@@ -4,7 +4,7 @@ import AutoComplete from '../index.vue'
 import type { AutoCompleteOption } from '../type'
 import InputGroup from '../../input-group/index.vue'
 import OptionList from '../../option-list/index.vue'
-import Popover from '../../popover/index.vue'
+import Popup from '../../popup/index.vue'
 import { vi, describe, afterEach, it, expect, beforeEach } from 'vitest'
 import { createMocks } from '../../share/util/test'
 
@@ -217,7 +217,7 @@ describe('AutoComplete Component', () => {
 		})
 	})
 
-	describe('Popover Control', () => {
+	describe('Popup Control', () => {
 		it('Should show popover when input has value and matching options', async () => {
 			const wrapper = mountComponent()
 			const input = wrapper.find('input.px-auto-complete-inner')
@@ -225,30 +225,30 @@ describe('AutoComplete Component', () => {
 			await input.setValue('a')
 			await nextTick()
 
-			const popover = wrapper.findComponent(Popover)
+			const popover = wrapper.findComponent(Popup)
 			expect(popover.props('visible')).toBe(true)
 			expect(wrapper.find('.px-auto-complete-empty').exists()).toBe(false)
 		})
 
-		it('Should hide popover when no matching options (showPopoverEmpty: false)', async () => {
+		it('Should hide popover when no matching options (showPopupEmpty: false)', async () => {
 			const wrapper = mountComponent()
 			const input = wrapper.find('input.px-auto-complete-inner')
 
 			await input.setValue('xyz')
 			await nextTick()
 
-			const popover = wrapper.findComponent(Popover)
+			const popover = wrapper.findComponent(Popup)
 			expect(popover.props('visible')).toBe(false)
 		})
 
-		it('Should control popover via shouldShowPopover function', async () => {
+		it('Should control popover via shouldShowPopup function', async () => {
 			const shouldShowPopover = vi.fn(() => true)
 			const wrapper = mountComponent({ shouldShowPopover, modelValue: '' })
 			const input = wrapper.find('input.px-auto-complete-inner')
 
 			await input.setValue('xyz')
 			await nextTick()
-			const popover = wrapper.findComponent(Popover)
+			const popover = wrapper.findComponent(Popup)
 			expect(shouldShowPopover).toHaveBeenCalled()
 			await nextTick()
 			expect(popover.props('visible')).toBe(true)
@@ -263,7 +263,7 @@ describe('AutoComplete Component', () => {
 			await input.setValue('a')
 			await nextTick()
 
-			const popover = wrapper.findComponent(Popover)
+			const popover = wrapper.findComponent(Popup)
 			expect(popover.props('visible')).toBe(true)
 			const optionList = wrapper.findComponent(OptionList)
 
@@ -285,7 +285,7 @@ describe('AutoComplete Component', () => {
 				filter: (_: string, options: string[]) => {
 					return options
 				},
-				shouldShowPopover: (value: string) => {
+				shouldShowPopup: (value: string) => {
 					return value.endsWith('@')
 				},
 				options: ['gmail.com', '163.com', 'qq.com'],
@@ -296,7 +296,7 @@ describe('AutoComplete Component', () => {
 			await input.setValue('@')
 			await nextTick()
 
-			const popover = wrapper.findComponent(Popover)
+			const popover = wrapper.findComponent(Popup)
 			expect(popover.props('visible')).toBe(true)
 			const optionList = wrapper.findComponent(OptionList)
 			expect(optionList.props('options')).toEqual(['gmail.com', '163.com', 'qq.com'])

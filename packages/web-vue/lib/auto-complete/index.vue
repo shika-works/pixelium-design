@@ -41,7 +41,7 @@ import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
-import Popover from '../popover/index.vue'
+import Popup from '../popup/index.vue'
 import Empty from '../empty/index.vue'
 import OptionList from '../option-list/index.vue'
 import { defaultFilter } from '../share/util/common'
@@ -51,9 +51,13 @@ import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { inVitest } from '../share/util/env'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
-	name: 'AutoComplete'
+	name: 'AutoComplete',
+	inheritAttrs: false
 })
 
 const attrs = useAttrs()
@@ -83,51 +87,51 @@ const [isComposing, compositionStartHandler, compositionUpdateHandler] = useComp
 })
 
 const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE, (instance) => {
+
+const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] = inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`, (instance) => {
 			return instance?.vnode.el?.nextElementSibling
 		})
 	: [ref(0), ref(false), ref(false)]
-const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
+	[formItemProvide, inputGroupProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[formItemProvide, innerInputGroup.value && inputGroupProvide, props],
+	[formItemProvide, inputGroupProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[formItemProvide, inputGroupProvide, props],
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
+const [wait, cancel] = useCancelableDelay()
+
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -202,17 +206,28 @@ const changeHandler = (e: Event) => {
 
 const focusMode = ref(false)
 
-const blurHandler = (e: FocusEvent) => {
-	e.stopPropagation()
-	emits('blur', e)
+const closePopover = async () => {
+	popoverVisible.value = false
+}
+
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
 	focusMode.value = false
+	closePopover()
+	emits('blur', e)
 	formItemProvide?.blurHandler()
 }
 
 const focusHandler = (e: FocusEvent) => {
-	e.stopPropagation()
-	emits('focus', e)
+	cancel()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
 }
 
 const focusInputHandler = () => {
@@ -256,7 +271,7 @@ const optionsFiltered = computed(() => {
 	return defaultFilter(modelValue.value, props.options || [])
 })
 
-defineExpose<AutoCompleteExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement | null }>({
+const expose: any = {
 	focus: () => {
 		inputRef.value?.focus()
 	},
@@ -268,13 +283,26 @@ defineExpose<AutoCompleteExpose & { [GET_ELEMENT_RENDERED]: () => HTMLDivElement
 		inputRef.value?.select()
 	},
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
-})
+}
+if (inVitest()) {
+	expose.first = first
+	expose.last = last
+	expose.index = index
+}
+
+defineExpose<AutoCompleteExpose>(expose)
 
 const popoverVisible = ref(false)
 const popoverVisibleUpdateHandler = (value: boolean) => {
 	if (!value) {
 		popoverVisible.value = value
 	}
+}
+
+const popupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+	}, 0)
 }
 
 const darkMode = useDarkMode()
@@ -317,7 +345,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value || 'rect',
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -346,7 +374,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value
@@ -371,6 +399,24 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 
 defineRender(() => {
 	const Inner = (
@@ -425,7 +471,7 @@ defineRender(() => {
 	}
 	const pixelSize = calcPixelSize()
 	const Render = (
-		<Popover
+		<Popup
 			placement="bottom"
 			offset={0}
 			width-equal={true}
@@ -435,6 +481,9 @@ defineRender(() => {
 			trigger="click"
 			contentStyle={{ padding: `${pixelSize}px` }}
 			destroyOnHide={props.optionsDestroyOnHide}
+			contentProps={{
+				onMousedown: popupContentMousedownHandler
+			}}
 		>
 			{{
 				default: () =>
@@ -446,7 +495,7 @@ defineRender(() => {
 								'pixelium px-auto-complete',
 								sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
 								shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
-								{ 'px-auto-complete__inner': innerInputGroup.value },
+								{ 'px-auto-complete__inner': !!inputGroupProvide },
 								{ 'px-auto-complete__disabled': disabledComputed.value }
 							],
 							onClick: focusInputHandler,
@@ -486,11 +535,11 @@ defineRender(() => {
 						</div>
 					)
 			}}
-		</Popover>
+		</Popup>
 	)
 	return Render
 })
 </script>
 
 <style lang="less" src="./index.less"></style>
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />

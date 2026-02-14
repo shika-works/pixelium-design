@@ -16,7 +16,7 @@
 
 <script setup>
 const variants = ['default', 'plain', 'outline', 'text']
-const themes = ['default', 'success', 'warning', 'danger', 'info', 'sakura']
+const themes = ['default', 'success', 'warning', 'danger', 'info', 'sakura', 'notice']
 const variantLabels = {
 	default: 'Primary',
 	plain: 'Plain',

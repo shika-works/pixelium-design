@@ -10,6 +10,7 @@ import Input from '../../input/index.vue'
 
 // Mock form context
 const createMockFormContext = (options: any = {}): FormProvide => ({
+	pollSizeChange: ref(options.pollSizeChange || {}),
 	model: ref(options.model || {}),
 	rules: ref(options.rules || {}),
 	disabled: ref(options.disabled || false),
@@ -586,7 +587,7 @@ describe('FormItem Component Tests', () => {
 			await nextTick()
 			const inputWrapper = wrapper.find('.px-input input')
 			inputWrapper.trigger('focusout')
-			await nextTick()
+			await new Promise((r) => setTimeout(r, 300))
 
 			expect(wrapper.vm.tipMessage).toEqual({
 				message: 'field is required',

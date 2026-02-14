@@ -1,11 +1,36 @@
-import { promises as fs } from 'fs'
+import { promises as fs, readFileSync } from 'fs'
 import * as path from 'path'
 import { kebabCase, pairsToObject, pascalCase } from 'parsnip-kit'
 import { resolve } from './resolve-api.mts'
 
 const BLOCK_RE = /\[\[\[\s*([a-zA-Z-]+)([\s\S]*?)\]\]\]/g
-const API_BLOCK_RE = /\[\[\[api(?: +([a-zA-Z-]+))? +([a-zA-Z-]+)(\s*[\s\S]*?\]\]\])/g
+const API_BLOCK_RE = /\[\[\[\s*api(?: +([a-zA-Z-]+))? +([a-zA-Z-]+)(\s*[\s\S]*?\]\]\])/g
+const SLICE_BLOCK_RE = /\[\[\[\s*slice\s+([a-zA-Z_-]+)\s*[\s\S]*?\]\]\]/g
+
 const collapseNewlines = (s: string): string => s.trim().replace(/\n{3,}/g, '\n\n')
+
+function processSliceMarkdownFrontMatter(mdString: string) {
+	const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n?/
+	const sliceTitleRegex = /slice-title:\s*(.+)/i
+	let sliceTitle = ''
+	let processedContent = mdString
+
+	const frontMatterMatch = mdString.match(frontMatterRegex)
+	if (frontMatterMatch) {
+		const frontMatter = frontMatterMatch[1]
+		const titleMatch = frontMatter.match(sliceTitleRegex)
+
+		if (titleMatch) {
+			sliceTitle = titleMatch[1].trim()
+		}
+		processedContent = mdString.replace(frontMatterRegex, '')
+	}
+
+	return {
+		content: processedContent.trim(),
+		sliceTitle: sliceTitle
+	}
+}
 
 function getValidLineNumber(mdContent: string): number {
 	const lines = mdContent.split(/\r?\n/)
@@ -42,7 +67,7 @@ function getValidLineNumber(mdContent: string): number {
 async function processMd(src: string, dst: string, lang: string): Promise<void> {
 	const text = await fs.readFile(src, 'utf8')
 	let newText = text.replace(BLOCK_RE, (_: any, l: string, c: any) => {
-		return l === 'api' ? _ : l === lang ? c || '' : ''
+		return l === 'api' || l === 'slice' ? _ : l === lang ? c || '' : ''
 	})
 	newText = newText.replace(
 		API_BLOCK_RE,
@@ -69,6 +94,13 @@ async function processMd(src: string, dst: string, lang: string): Promise<void> 
 			return resolve(`../web-vue/lib/${fileName}/type.ts`, pascalCase(fileName), lang, docMap)
 		}
 	)
+	newText = newText.replace(SLICE_BLOCK_RE, (_: any, curType: string) => {
+		const fileName = kebabCase(curType)
+		const { content, sliceTitle } = processSliceMarkdownFrontMatter(
+			readFileSync(`./slice/${fileName}.md`, 'utf-8')
+		)
+		return `### ${sliceTitle || pascalCase(curType)}\n\n${content}`
+	})
 	newText = collapseNewlines(newText)
 	await fs.mkdir(path.dirname(dst), { recursive: true })
 	if (lang === 'en' && path.basename(src) === 'index.md') {

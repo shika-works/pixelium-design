@@ -98,6 +98,8 @@ activeTip: The text tip when selected, located inside the switch.
 activeColor: The label color when selected, supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3, 4, 6, or 8-digit hexadecimal number representations.
 inactiveColor: The label color when not selected, supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3, 4, 6, or 8-digit hexadecimal number representations.
 
+pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
+
 events.update:modelValue: Callback for updating `modelValue`.
 events.input: Callback when the switch is triggered.
 events.change: Callback when the switch's selection state changes.
@@ -125,6 +127,8 @@ inactiveTip: 未选中时的文本提示，位于开关内侧。
 activeTip: 选中时的文本提示，位于开关内侧。
 activeColor: 选中时标签颜色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
 inactiveColor: 未选中时标签颜色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
 
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 触发开关的回调。

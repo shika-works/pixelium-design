@@ -1,0 +1,44 @@
+@import url(../share/style/variable.less);
+
+.px-badge {
+	position: relative;
+	display: inline-block;
+	&-content {
+		position: absolute;
+		transform: translate(50%, -50%);
+		font-size: @px-small-font-size;
+		min-height: var(--px-medium-sub-size);
+		min-width: var(--px-medium-sub-size);
+		line-height: var(--px-medium-sub-base-size);
+		padding: 0 @px-interval-1;
+		color: var(--px-neutral-1);
+
+		border-width: var(--px-bit);
+		border-style: solid;
+		border-color: transparent;
+		box-sizing: border-box;
+
+		text-align: center;
+
+		z-index: 1;
+	}
+
+	&__dot {
+		.px-badge-content {
+			width: calc(@px-interval-2 + var(--px-bit) * 2);
+			height: calc(@px-interval-2 + var(--px-bit) * 2);
+			min-width: 0;
+			min-height: 0;
+			padding: 0;
+		}
+	}
+
+	&-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: -1;
+		pointer-events: none;
+	}
+}

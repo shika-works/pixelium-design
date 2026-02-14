@@ -12,12 +12,12 @@ Generally used to display the features (not referring to bugs) of something.
 [[[zh
 ## 主题
 
-和按钮一样，标签有几种不同颜色的主题：`'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'`。
+和按钮一样，标签有几种不同颜色的主题：`'primary'`（默认）、`'success'`、`'warning'`、`'danger'`、`'info'`、`'sakura'`、`'notice'`。
 ]]]
 [[[en
 ## Theme
 
-Like buttons, tags have several different color themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, and `'sakura'`.
+Like buttons, tags have several different color themes: `'primary'` (default), `'success'`, `'warning'`, `'danger'`, `'info'`, `'sakura'` and `'notice'`.
 ]]]
 <preview path="./tag-theme.vue"></preview>
 
@@ -102,6 +102,9 @@ variant: 标签样式变体。
 theme: 标签主题。
 color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
 closable: 标签可关闭。
+
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+
 events.close: 关闭事件。
 slots.default: 标签内容。
 ]]]
@@ -114,6 +117,9 @@ variant: Tag style variant.
 theme: Tag theme.
 color: Custom main color. A complete color palette will be generated based on this color, which takes precedence over the preset palette provided by `theme`. Supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, or 8-digit hexadecimal values.
 closable: Whether the tag can be closed.
+
+pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+
 events.close: Close event.
 slots.default: Tag content.
 ]]]

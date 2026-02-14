@@ -5,10 +5,10 @@
 		:class="{
 			[`px-input-number__${sizeComputed}`]: !!sizeComputed,
 			[`px-input-number__${shapeComputed}`]: !!shapeComputed,
-			'px-input-number__inner': innerInputGroup,
+			'px-input-number__inner': !!inputGroupProvide,
 			'px-input-number__disabled': !!disabledComputed
 		}"
-		@click="focusInputHandler"
+		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -30,7 +30,6 @@
 				@click="increaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showPlusPrefix"
-				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
 				ref="plusRef"
 			></Plus>
@@ -39,7 +38,6 @@
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusPrefix"
-				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
 				ref="minusRef"
 			></Minus>
@@ -77,7 +75,6 @@
 				@click="increaseHandler"
 				v-if="showPlusSuffix"
 				@mousedown="subButtonMousedownHandler"
-				:tabindex="disabledComputed || readonlyComputed || increaseDisabled ? -1 : 0"
 				:class="increaseDisabled && 'px-input-number-icon__disabled'"
 				ref="plusRef"
 			></Plus>
@@ -86,7 +83,6 @@
 				@click="decreaseHandler"
 				@mousedown="subButtonMousedownHandler"
 				v-if="showMinusSuffix"
-				:tabindex="disabledComputed || readonlyComputed || decreaseDisabled ? -1 : 0"
 				:class="decreaseDisabled && 'px-input-number-icon__disabled'"
 				ref="minusRef"
 			></Minus>
@@ -101,17 +97,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import {
-	computed,
-	getCurrentInstance,
-	inject,
-	nextTick,
-	onMounted,
-	ref,
-	shallowRef,
-	useSlots,
-	watch
-} from 'vue'
+import { computed, inject, nextTick, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
 import type { InputNumberEvents, InputNumberExpose, InputNumberProps } from './type'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { drawBorder } from './draw'
@@ -146,6 +132,8 @@ import { createProvideComputed } from '../share/util/reactivity'
 import type { VueComponent } from '../share/type'
 import { fixedNumber } from '../share/util/common'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { usePolling } from '../share/hook/use-polling'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'InputNumber'
@@ -166,50 +154,46 @@ const props = withDefaults(defineProps<InputNumberProps>(), {
 
 const emits = defineEmits<InputNumberEvents>()
 
-const instance = getCurrentInstance()
-const innerInputGroup = ref(instance?.parent?.type.name === 'InputGroup')
-const [index, first, last] = innerInputGroup.value
-	? useIndexOfChildren(INPUT_GROUP_UPDATE)
-	: [ref(0), ref(false), ref(false)]
 const inputGroupProvide = inject<undefined | InputGroupProvide>(INPUT_GROUP_PROVIDE, undefined)
+
+const [index, first, last] = inputGroupProvide
+	? useIndexOfChildren(INPUT_GROUP_UPDATE + `-${inputGroupProvide.id}`)
+	: [ref(0), ref(false), ref(false)]
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 
-const borderRadiusComputed = createProvideComputed('borderRadius', [
-	innerInputGroup.value && inputGroupProvide,
-	props
-])
+const borderRadiusComputed = createProvideComputed('borderRadius', [inputGroupProvide, props])
 const sizeComputed = createProvideComputed(
 	'size',
-	() => [
-		innerInputGroup.value && inputGroupProvide,
-		props.size && props,
-		formItemProvide,
-		props
-	],
+	() => [inputGroupProvide, props.size && props, formItemProvide, props],
 	'nullish',
 	(val) => val || 'medium'
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[innerInputGroup.value && inputGroupProvide, props],
+	[inputGroupProvide, props],
 	'nullish',
 	(val) => val || 'rect'
 )
 const disabledComputed = createProvideComputed(
 	'disabled',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const readonlyComputed = createProvideComputed(
 	'readonly',
-	[innerInputGroup.value && inputGroupProvide, formItemProvide, props],
+	[inputGroupProvide, formItemProvide, props],
+	'or'
+)
+const pollSizeChangeComputed = createProvideComputed(
+	'pollSizeChange',
+	[inputGroupProvide, formItemProvide, props],
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
-		return innerInputGroup.value
+		return inputGroupProvide
 			? !!(
 					inputGroupProvide?.childrenInfo.value.find((e) => e.index === index.value + 1)
 						?.variant === 'text'
@@ -359,9 +343,14 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
+const [wait, cancel] = useCancelableDelay()
 const focusMode = ref(false)
 
-const blurHandler = (e: FocusEvent) => {
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
 	setInputValue(formatNumberValue(modelValue.value))
 	focusMode.value = false
 	emits('blur', e)
@@ -369,8 +358,12 @@ const blurHandler = (e: FocusEvent) => {
 }
 
 const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocusMode = focusMode.value
 	focusMode.value = true
-	emits('focus', e)
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
 }
 
 const showClose = computed(() => {
@@ -502,7 +495,9 @@ const focusInputHandler = (e: MouseEvent) => {
 	) {
 		return
 	}
-	inputRef.value?.focus()
+	setTimeout(() => {
+		inputRef.value?.focus()
+	}, 0)
 }
 
 const hoverFlag = ref(false)
@@ -553,7 +548,7 @@ const drawPixel = () => {
 		borderRadiusComputed.value,
 		shapeComputed.value,
 		sizeComputed.value || 'medium',
-		innerInputGroup.value,
+		!!inputGroupProvide,
 		first.value,
 		last.value
 	)
@@ -582,7 +577,7 @@ const drawPixel = () => {
 			rad,
 			borderColor,
 			pixelSize,
-			innerInputGroup.value,
+			!!inputGroupProvide,
 			first.value,
 			last.value,
 			nextIsTextButton.value
@@ -607,8 +602,26 @@ onMounted(() => {
 useResizeObserver(wrapperRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
 useTransitionEnd(wrapperRef, drawPixel)
+
+let wrapperSize = {
+	width: 0,
+	height: 0
+}
+usePolling(pollSizeChangeComputed, () => {
+	const wrapper = wrapperRef.value
+	if (wrapper) {
+		const rect = wrapper.getBoundingClientRect()
+		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
+			wrapperSize = {
+				width: rect.width,
+				height: rect.height
+			}
+			drawPixel()
+		}
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>
 
-<style lang="less" src="../share/style/index.css" />
+<style src="../share/style/index.css" />
