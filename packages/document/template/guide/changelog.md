@@ -6,6 +6,23 @@
 ]]]
 
 [[[zh
+## v0.1.1
+> hotfix
+- 修复：
+  - 修复 `MessageFunction` TS 类型丢失了静态方法的问题。
+- 调整：
+  - 把 mitt 依赖移动到 `"dependencies"` 配置中，并且在打包时视为外部依赖。
+]]]
+[[[en
+## v0.1.1
+> hotfix
+- Fixes:
+  - Fixed the `MessageFunction` TypeScript type missing static methods.
+- Adjustment:
+  - Moved the `mitt` dependency to the `"dependencies"` configuration and marked it as an external dependency during bundling.
+]]]
+
+[[[zh
 ## v0.1.0
 
 - 新增：
