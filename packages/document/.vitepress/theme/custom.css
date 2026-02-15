@@ -112,7 +112,7 @@ html.dark {
 	max-width: 920px !important;
 }
 
-/* lint start */
+/* link start */
 .px-link {
 	--text-color: var(--px-neutral-10);
 	color: var(--text-color) !important;
@@ -296,4 +296,110 @@ html.dark {
 	--text-color: var(--px-neutral-9) !important;
 }
 
-/* lint end */
+/* link end */
+
+/* menu start */
+.px-menu-item {
+	background-color: var(--px-neutral-1) !important;
+	cursor: pointer !important;
+}
+.px-menu-item-link {
+	color: var(--px-neutral-10) !important;
+	text-decoration: none !important;
+}
+.px-menu-item__active > .px-menu-item-link {
+  color: var(--px-primary-6) !important;
+}
+.px-menu-item__active {
+  background-color: var(--px-primary-1) !important;
+}
+.px-menu-item__disabled:hover,
+.px-menu-item__disabled:focus {
+	background-color: var(--px-neutral-1) !important;
+}
+.px-menu-item__disabled.px-menu-item__active > .px-menu-item-link {
+	color: var(--px-primary-8) !important;
+}
+.px-menu-item__dark {
+	background-color: var(--px-neutral-10) !important;
+}
+.px-menu-item__dark > .px-menu-item-link {
+	color: var(--px-neutral-1) !important;
+}
+.px-menu-item__dark:hover,
+.px-menu-item__dark:focus {
+	background-color: var(--px-neutral-9) !important;
+}
+.px-menu-item__dark:hover.px-menu-item__active,
+.px-menu-item__dark:focus.px-menu-item__active {
+	background-color: var(--px-primary-5) !important;
+}
+.px-menu-item__dark.px-menu-item__active {
+	background-color: var(--px-primary-6) !important;
+}
+.px-menu-item__dark.px-menu-item__active > .px-menu-item-link {
+	color: var(--px-neutral-1) !important;
+}
+.px-menu-item__dark.px-menu-item__disabled {
+	background-color: var(--px-neutral-10) !important;
+}
+.px-menu-item__dark.px-menu-item__disabled > .px-menu-item-link {
+	color: var(--px-neutral-8) !important;
+}
+.px-menu-item__dark.px-menu-item__disabled:hover,
+.px-menu-item__dark.px-menu-item__disabled:focus {
+	background-color: var(--px-neutral-10) !important;
+}
+.px-menu-item__dark.px-menu-item__disabled.px-menu-item__active {
+	background-color: var(--px-primary-8) !important;
+}
+.px-menu-item__dark.px-menu-item__disabled.px-menu-item__active:hover,
+.px-menu-item__dark.px-menu-item__disabled.px-menu-item__active:focus {
+	background-color: var(--px-primary-8) !important;
+}
+.px-menu-item__dark.px-menu-item__disabled.px-menu-item__active > .px-menu-item-link {
+	color: var(--px-neutral-8) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme {
+	background-color: var(--px-neutral-1) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme > .px-menu-item-link {
+	color: var(--px-neutral-10) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme:hover,
+.px-menu-item__dark.px-menu-item__dark-theme:focus {
+	background-color: var(--px-neutral-3) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme:hover.px-menu-item__active,
+.px-menu-item__dark.px-menu-item__dark-theme:focus.px-menu-item__active {
+	background-color: var(--px-primary-5) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__active {
+	background-color: var(--px-primary-6) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__active > .px-menu-item-link {
+	color: var(--px-neutral-10) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled {
+	background-color: var(--px-neutral-1) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled > .px-menu-item-link {
+	color: var(--px-neutral-4) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled:hover,
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled:focus {
+	background-color: var(--px-neutral-1) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled.px-menu-item__active {
+	background-color: var(--px-primary-3) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled.px-menu-item__active:hover,
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled.px-menu-item__active:focus {
+	background-color: var(--px-primary-3) !important;
+}
+.px-menu-item__dark.px-menu-item__dark-theme.px-menu-item__disabled.px-menu-item__active
+	> .px-menu-item-link {
+	color: var(--px-neutral-8) !important;
+}
+
+/* menu end */
