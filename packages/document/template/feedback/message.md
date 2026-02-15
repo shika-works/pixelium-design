@@ -105,8 +105,12 @@ The MessageBox component is the container for messages. The position of the mess
 ## API
 ### MessageFunction
 ```ts
-type MessageFunction = (options: ValidContent | MessageOptions) => MessageReturn & {
-  [key in MessageOptions['type'] & string]: (options: Omit<MessageOptions, 'type'> | string) => MessageReturn
+export type MessageFunction = {
+	(options: ValidContent | MessageOptions): MessageReturn
+} & {
+	[key in MessageOptions['type'] & string]: (
+		options: Omit<MessageOptions, 'type'> | string
+	) => MessageReturn
 }
 declare const message: MessageFunction
 ```

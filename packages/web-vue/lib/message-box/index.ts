@@ -73,7 +73,9 @@ const messageManagers: Record<
 	'bottom-right': undefined
 }
 
-export type MessageFunction = (options: ValidContent | MessageOptions) => MessageReturn & {
+export type MessageFunction = {
+	(options: ValidContent | MessageOptions): MessageReturn
+} & {
 	[key in MessageOptions['type'] & string]: (
 		options: Omit<MessageOptions, 'type'> | string
 	) => MessageReturn

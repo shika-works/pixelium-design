@@ -6,6 +6,7 @@ import VueMacros from 'vue-macros/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import { promises as fs } from 'node:fs'
 import { isArray } from 'parsnip-kit'
+import { external, outputGlobal, target } from './common.mts'
 
 const __dirname = process.cwd()
 
@@ -20,7 +21,6 @@ const onDemandImport: Plugin = {
 }
 
 const basePlugins = [Vue(), VueJsx(), VueMacros(), viteSvgLoader(), onDemandImport]
-const target = ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14']
 async function buildLib() {
 	await build(
 		defineConfig({
@@ -36,25 +36,11 @@ async function buildLib() {
 				outDir: 'es',
 				minify: false,
 				rollupOptions: {
-					external: [
-						'vue',
-						'@floating-ui/dom',
-						'overlayscrollbars',
-						'overlayscrollbars-vue',
-						'parsnip-kit',
-						'vue-router'
-					],
+					external,
 					preserveEntrySignatures: 'allow-extension',
 					output: {
 						exports: 'named',
-						globals: {
-							vue: 'Vue',
-							'@floating-ui/dom': 'FloatingUI',
-							overlayscrollbars: 'OverlayScrollbarsGlobal',
-							'overlayscrollbars-vue': 'OverlayScrollbarsVue',
-							'parsnip-kit': 'parsnip-kit',
-							'vue-router': 'VueRouter'
-						},
+						globals: outputGlobal,
 						entryFileNames: 'index.js',
 						chunkFileNames: '[name].js',
 						inlineDynamicImports: false,

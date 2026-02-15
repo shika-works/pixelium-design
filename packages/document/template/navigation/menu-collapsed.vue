@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<px-switch v-model="collapsed" inactive-tip="Expanded" active-tip="Collapsed"></px-switch>
-		<px-menu :collapsed="collapsed" :default-active="1" style="margin-top: 8px">
+		<px-menu :collapsed="collapsed" style="margin-top: 8px">
 			<px-menu-item index="Overview">
 				Overview
 				<template #icon>

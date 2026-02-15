@@ -5,11 +5,12 @@ import viteSvgLoader from '../plugin/svg-loader.ts'
 import Vue from '@vitejs/plugin-vue'
 import VueMacros from 'vue-macros/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
+import { external, outputGlobal, target } from './common.mts'
 
 export default defineConfig({
 	plugins: [Vue(), VueJsx(), VueMacros(), viteSvgLoader()],
 	build: {
-		target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+		target,
 		emptyOutDir: false,
 		lib: {
 			entry: resolve(__dirname, '../lib/index.ts'),
@@ -19,24 +20,10 @@ export default defineConfig({
 			formats: ['es', 'cjs', 'umd']
 		},
 		rollupOptions: {
-			external: [
-				'vue',
-				'@floating-ui/dom',
-				'overlayscrollbars',
-				'overlayscrollbars-vue',
-				'parsnip-kit',
-				'vue-router'
-			],
+			external,
 			output: {
 				exports: 'named',
-				globals: {
-					vue: 'Vue',
-					'@floating-ui/dom': 'FloatingUI',
-					overlayscrollbars: 'OverlayScrollbarsGlobal',
-					'overlayscrollbars-vue': 'OverlayScrollbarsVue',
-					'parsnip-kit': 'parsnip-kit',
-					'vue-router': 'VueRouter'
-				}
+				globals: outputGlobal
 			}
 		}
 	},
