@@ -58,7 +58,6 @@
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
 		"@vue/test-utils": "^2.4.6",
 		"less": "^4.4.0",
-		"mitt": "^3.0.1",
 		"modern-normalize": "^3.0.1",
 		"nanoid": "^5.1.5",
 		"pixelarticons": "^1.8.1",
@@ -69,6 +68,7 @@
 	},
 	"dependencies": {
 		"@floating-ui/dom": "^1.7.4",
+		"mitt": "^3.0.1",
 		"overlayscrollbars": "^2.13.0",
 		"overlayscrollbars-vue": "^0.5.9",
 		"parsnip-kit": "^0.0.7"
