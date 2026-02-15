@@ -308,10 +308,10 @@ html.dark {
 	text-decoration: none !important;
 }
 .px-menu-item__active > .px-menu-item-link {
-  color: var(--px-primary-6) !important;
+	color: var(--px-primary-6) !important;
 }
 .px-menu-item__active {
-  background-color: var(--px-primary-1) !important;
+	background-color: var(--px-primary-1) !important;
 }
 .px-menu-item__disabled:hover,
 .px-menu-item__disabled:focus {
