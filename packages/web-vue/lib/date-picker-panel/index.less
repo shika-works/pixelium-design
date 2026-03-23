@@ -1,0 +1,44 @@
+.px-date-picker-panel {
+  width: 350px;
+  border: 1px solid #eee;
+  padding: 10px;
+  background: #fff;
+  &-weeks {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 10px;
+  }
+  &-week-item {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: #666;
+  }
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  &-day-item {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+    &:hover {
+      background-color: #f0f7ff;
+    }
+    &__not-current {
+      color: #ccc;
+    }
+    &__today {
+      background-color: #1890ff !important;
+      color: #fff;
+    }
+  }
+  &-day-number {
+    font-size: 14px;
+  }
+}
