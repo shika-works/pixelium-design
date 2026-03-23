@@ -625,4 +625,68 @@ describe('Button Component - Comprehensive Tests', () => {
 			expect(buttons[2].vm.nextIsTextButton).toBe(false)
 		})
 	})
+
+	describe('square bounded render', () => {
+		it('should not render default slot when shape is circle and icon slot exists', async () => {
+			const wrapperCircle = mount(Button, {
+				props: { shape: 'circle' },
+				slots: {
+					icon: h('span', { class: 'custom-icon' }, 'ICON'),
+					default: 'TEXT_CONTENT'
+				}
+			})
+			const wrapperSquare = mount(Button, {
+				props: { shape: 'square' },
+				slots: {
+					icon: h('span', { class: 'custom-icon' }, 'ICON'),
+					default: 'TEXT_CONTENT'
+				}
+			})
+
+			expect(wrapperCircle.findAll('.px-button-icon-wrapper__last').length).toBe(1)
+			expect(wrapperSquare.findAll('.px-button-icon-wrapper__last').length).toBe(1)
+		})
+
+		it('should not render default slot when shape is circle and icon slot exists', async () => {
+			const wrapper = mount(Button, {
+				props: { shape: 'circle', loading: false },
+				slots: {
+					icon: h('span', { class: 'custom-icon' }, 'ICON'),
+					default: 'TEXT_CONTENT'
+				}
+			})
+
+			await nextTick()
+			// default slot should not be rendered when showContent false
+			expect(wrapper.text()).not.toContain('TEXT_CONTENT')
+
+			await wrapper.setProps({ loading: true })
+			await nextTick()
+			// loading state also should not render default slot for shape circle + icon
+			expect(wrapper.text()).not.toContain('TEXT_CONTENT')
+		})
+
+		it('should render default slot if no icon slot and toggle loading state', async () => {
+			const wrapper = mount(Button, {
+				props: { shape: 'square', loading: false },
+				slots: {
+					default: 'TEXT_CONTENT'
+				}
+			})
+
+			await nextTick()
+			// when not loading and no icon
+			expect(wrapper.text()).toContain('TEXT_CONTENT')
+
+			await wrapper.setProps({ loading: true })
+			await nextTick()
+			// should hide default slot when loading true
+			expect(wrapper.text()).not.toContain('TEXT_CONTENT')
+
+			await wrapper.setProps({ loading: false })
+			await nextTick()
+			// should show default slot again after loading false
+			expect(wrapper.text()).toContain('TEXT_CONTENT')
+		})
+	})
 })
