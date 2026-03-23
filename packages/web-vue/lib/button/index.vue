@@ -31,7 +31,7 @@
 			v-if="slots.icon || loadingComputed"
 			class="px-button-icon-wrapper"
 			:class="{
-				'px-button-icon-wrapper__last': !slots.default
+				'px-button-icon-wrapper__last': squareBounded || !slots.default
 			}"
 		>
 			<SpinnerThirdSolid
@@ -43,7 +43,7 @@
 			></SpinnerThirdSolid>
 			<slot name="icon" v-else> </slot>
 		</div>
-		<slot></slot>
+		<slot v-if="showContent"></slot>
 	</button>
 </template>
 <script lang="ts" setup>
@@ -224,6 +224,18 @@ const toggleHover = (value: boolean) => {
 const toggleActive = (value: boolean) => {
 	activeFlag.value = value
 }
+
+const squareBounded = computed(() => {
+	return shapeComputed.value === 'square' || shapeComputed.value === 'circle'
+})
+
+const showContent = computed(() => {
+	if (squareBounded.value) {
+		return !slots.icon && !loadingComputed.value
+	} else {
+		return true
+	}
+})
 
 const darkMode = useDarkMode()
 
