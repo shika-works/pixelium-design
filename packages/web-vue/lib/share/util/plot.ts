@@ -376,6 +376,7 @@ export const getBorderRadius = (
 					: MEDIUM_BASE_SIZE + 2 * pixelSize
 		switch (shape) {
 			case 'round':
+			case 'circle':
 				const roundArr = fillArr(getRadius(canvas, pixelSize, height, direction), 4)
 				if (last) return roundArr.map((e, i) => (i < 1 || i > 2 ? pixelSize : e))
 				if (first) return roundArr.map((e, i) => (i > 0 && i < 3 ? pixelSize : e))

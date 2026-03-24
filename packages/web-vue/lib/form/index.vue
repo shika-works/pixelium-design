@@ -3,7 +3,6 @@
 		class="px-form pixelium"
 		@submit.stop.prevent="formSubmitHandler"
 		@reset.stop="formResetHandler"
-		@keydown.enter.prevent
 	>
 		<slot></slot>
 	</form>
@@ -116,7 +115,12 @@ const validate = async (field?: string | string[]) => {
 	return { isValid, results: validateObj }
 }
 
-const formSubmitHandler = (e: Event) => {
+const formSubmitHandler = (e: SubmitEvent) => {
+	const submitter = e.submitter
+	if (!submitter) {
+		return
+	}
+
 	emits('submit', model.value!, e)
 }
 

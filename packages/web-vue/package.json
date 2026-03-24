@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
@@ -54,6 +54,7 @@
 	"devDependencies": {
 		"@hackernoon/pixel-icon-library": "^1.0.6",
 		"@pixelium/locale": "workspace:*",
+		"@testing-library/user-event": "^14.6.1",
 		"@vitejs/plugin-vue": "^6.0.1",
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
 		"@vue/test-utils": "^2.4.6",

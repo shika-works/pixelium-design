@@ -6,6 +6,27 @@
 ]]]
 
 [[[zh
+## v0.1.2
+> fix
+- 修复：
+  - 修复 Textarea 组件在 Form 下无法换行的问题。
+  - 修复 Button 组件 `shape="circle"` 和 `shape="square"` 的时候，padding 被错误添加，导致的 `size="small"` 时，宽度异常的问题。
+  - 修复 Button 组件作为 ButtonGroup 子组件时，`shape="circle"` 失效的问题。
+  - 修复 Button `shape="circle"` 和 `shape="square"` 的时候，在传入 `icon` 插槽或加载状态下，图标和内容一同展示的问题。
+  - 为以上修复补充测试用例。
+]]]
+[[[en
+## v0.1.2
+> fix
+- Fixes:
+  - Fixed the issue where Textarea could not wrap in a Form.
+  - Fixed the issue where Button with `shape="circle"` and `shape="square"` got incorrect extra padding, causing abnormal width when `size="small"`.
+  - Fixed the issue where Button’s `shape="circle"` did not work when the Button was a child of ButtonGroup.
+  - Fixed the issue where Button with `shape="circle"` and `shape="square"` displayed both icon and content together when `icon` slot was provided or in loading state.
+  - Added test cases for the above fixes.
+]]]
+
+[[[zh
 ## v0.1.1
 > hotfix
 - 修复：
