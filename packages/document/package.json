@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"@pixelium/web-vue": "workspace:*",
-		"@vitepress-demo-preview/component": "^2.6.1",
+		"@vitepress-demo-preview/component": "^2.6.2",
 		"@vitepress-demo-preview/core": "^0.3.0",
 		"@vitepress-demo-preview/plugin": "^1.4.1",
 		"grapheme-splitter": "^1.0.4",

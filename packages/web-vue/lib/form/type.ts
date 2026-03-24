@@ -124,10 +124,10 @@ export type FormEvents = {
 	/**
 	 * @event submit
 	 * @param {Record<number | string, any>} form
-	 * @param {Event} event
+	 * @param {SubmitEvent} event
 	 * @version 0.0.3
 	 */
-	submit: [form: Record<number | string, any>, event: Event]
+	submit: [form: Record<number | string, any>, event: SubmitEvent]
 	/**
 	 * @event reset
 	 * @param {Record<number | string, any>} form

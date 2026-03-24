@@ -59,12 +59,6 @@
   }
 });
 
-	&__circle,
-	&__square {
-		width: var(--button-size);
-		padding: 0px;
-		justify-content: center;
-	}
 	&__large {
 		padding-left: @px-large-padding-x;
 		padding-right: @px-large-padding-x;
@@ -76,6 +70,14 @@
 		padding-right: @px-small-padding-x;
 		--button-size: var(--px-small-size);
 		font-size: @px-small-font-size;
+	}
+	&__circle,
+	&__square {
+		width: var(--button-size);
+		padding: 0px;
+		justify-content: center;
+		padding-left: 0;
+		padding-right: 0;
 	}
 	&__loading {
 		cursor: auto;
