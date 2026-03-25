@@ -6,6 +6,21 @@
 ]]]
 
 [[[zh
+## v0.1.3
+> fix
+- 修复：
+  - Select 和 AutoComplete 组件的虚拟滚动被意外地移除了。
+  - 为以上修复补充测试用例。
+]]]
+[[[en
+## v0.1.3
+> fix
+- Fixes:
+  - The virtual scrolling for Select and AutoComplete components was accidentally removed.
+  - Added test coverage for the above fix.
+]]]
+
+[[[zh
 ## v0.1.2
 > fix
 - 修复：
