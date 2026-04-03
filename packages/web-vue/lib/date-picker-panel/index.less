@@ -1,44 +1,52 @@
+@import url(../share/style/variable.less);
+
 .px-date-picker-panel {
-  width: 350px;
-  border: 1px solid #eee;
-  padding: 10px;
-  background: #fff;
-  &-weeks {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 10px;
-  }
-  &-week-item {
-    text-align: center;
-    font-weight: bold;
-    font-size: 14px;
-    color: #666;
-  }
-  &-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-  }
-  &-day-item {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.2s;
-    &:hover {
-      background-color: #f0f7ff;
-    }
-    &__not-current {
-      color: #ccc;
-    }
-    &__today {
-      background-color: #1890ff !important;
-      color: #fff;
-    }
-  }
-  &-day-number {
-    font-size: 14px;
-  }
+	@prefix: px-date-picker-panel;
+	background: var(--px-neutral-1);
+	padding: @px-interval-1;
+	box-sizing: border-box;
+
+	&-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: @px-interval-1;
+		width: @px-date-picker-body-width;
+		padding: 0 @px-interval-2;
+		box-sizing: border-box;
+	}
+
+	&-title {
+		color: var(--px-neutral-10);
+		font-size: @px-medium-font-size;
+		cursor: pointer;
+	}
+
+	&-nav {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		& > &-icon {
+			fill: var(--px-neutral-8);
+			height: 1em;
+			width: 1em;
+			transition: color 0.25s;
+			&:hover {
+				fill: var(--px-neutral-7);
+			}
+			&:active {
+				fill: var(--px-neutral-9);
+			}
+		}
+	}
+
+	&-dropdown {
+		position: relative;
+		margin-top: @px-interval-1;
+	}
+
+	&-picker-column {
+		flex: 1;
+	}
 }
