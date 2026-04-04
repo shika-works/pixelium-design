@@ -8,7 +8,7 @@
 			'px-input-number__inner': !!inputGroupProvide,
 			'px-input-number__disabled': !!disabledComputed
 		}"
-		@mousedown="focusInputHandler"
+		@mousedown="wrapperMousedownHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -133,7 +133,7 @@ import type { VueComponent } from '../share/type'
 import { fixedNumber } from '../share/util/common'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
 	name: 'InputNumber'
@@ -343,28 +343,34 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
-const [wait, cancel] = useCancelableDelay()
-const focusMode = ref(false)
+const { focusMode, focusHandler, blurHandler, wrapperMousedownHandler } = useFocusMode(
+	{
+		onFocus: (e, isFirstFocus) => {
+			if (isFirstFocus) {
+				emits('focus', e)
+			}
+		},
+		onBlur: async (e) => {
+			setInputValue(formatNumberValue(modelValue.value))
+			emits('blur', e)
+			formItemProvide?.blurHandler()
+		},
+		onWrapperMousedown: (e) => {
+			const target = e.target as Element
+			const plusIcon = plusRef.value.$el as Nullish | SVGElement
+			const minusIcon = minusRef.value.$el as Nullish | SVGElement
 
-const blurHandler = async (e: FocusEvent) => {
-	const next = await wait()
-	if (!next) {
-		return next
-	}
-	setInputValue(formatNumberValue(modelValue.value))
-	focusMode.value = false
-	emits('blur', e)
-	formItemProvide?.blurHandler()
-}
-
-const focusHandler = (e: FocusEvent) => {
-	cancel()
-	const currentFocusMode = focusMode.value
-	focusMode.value = true
-	if (!currentFocusMode) {
-		emits('focus', e)
-	}
-}
+			if (
+				inputRef.value?.contains(target) ||
+				minusIcon?.contains(target) ||
+				plusIcon?.contains(target)
+			) {
+				return false
+			}
+		}
+	},
+	inputRef
+)
 
 const showClose = computed(() => {
 	return props.clearable && !disabledComputed.value && !readonlyComputed.value
@@ -482,22 +488,6 @@ const subButtonMousedownHandler = (e: MouseEvent) => {
 	if (e.detail > 1) {
 		e.preventDefault()
 	}
-}
-const focusInputHandler = (e: MouseEvent) => {
-	const target = e.target as Element
-	const plusIcon = plusRef.value.$el as Nullish | SVGElement
-	const minusIcon = minusRef.value.$el as Nullish | SVGElement
-
-	if (
-		inputRef.value?.contains(target) ||
-		minusIcon?.contains(target) ||
-		plusIcon?.contains(target)
-	) {
-		return
-	}
-	setTimeout(() => {
-		inputRef.value?.focus()
-	}, 0)
 }
 
 const hoverFlag = ref(false)

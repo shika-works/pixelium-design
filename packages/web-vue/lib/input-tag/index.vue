@@ -162,7 +162,7 @@ import type { FormItemProvide } from '../form-item/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useFocusMode } from '../share/hook/use-focus-mode'
 import Popup from '../popup/index.vue'
 
 defineOptions({
@@ -307,36 +307,26 @@ const inputChangeHandler = (e: Event) => {
 	emits('inputChange', target.value, e)
 }
 
-const focusMode = ref(false)
-const [wait, cancel] = useCancelableDelay()
+const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
+	useFocusMode(
+		{
+			onFocus: (e, isFirstFocus) => {
+				if (isFirstFocus) {
+					emits('focus', e)
+				}
+			},
+			onBlur: async (e) => {
+				await updateInputValue('')
+				emits('inputChange', '')
+				emits('blur', e)
+				formItemProvide?.blurHandler()
+			}
+		},
+		inputRef
+	)
 
-const blurHandler = async (e: FocusEvent) => {
-	const next = await wait()
-	if (!next) {
-		return next
-	}
-	focusMode.value = false
-	await updateInputValue('')
-	emits('inputChange', '')
-	emits('blur', e)
-	formItemProvide?.blurHandler()
-}
-
-const focusHandler = (e: FocusEvent) => {
-	cancel()
-	const currentFocusMode = focusMode.value
-	focusMode.value = true
-	if (!currentFocusMode) {
-		emits('focus', e)
-	}
-}
-
-const tagPopupContentMousedownHandler = () => {
-	setTimeout(() => {
-		cancel()
-		inputRef.value?.focus()
-	}, 0)
-}
+const focusInputHandler = wrapperMousedownHandler
+const tagPopupContentMousedownHandler = popupMousedownHandler
 
 const enterDownHandler = async (e: KeyboardEvent) => {
 	const currentValue = (inputValue.value || '').trim()
@@ -356,12 +346,6 @@ const enterDownHandler = async (e: KeyboardEvent) => {
 	emits('change', currentTags)
 	emits('inputChange', '')
 	formItemProvide?.changeHandler()
-}
-
-const focusInputHandler = () => {
-	setTimeout(() => {
-		inputRef.value?.focus()
-	}, 0)
 }
 
 const hoverFlag = ref(false)

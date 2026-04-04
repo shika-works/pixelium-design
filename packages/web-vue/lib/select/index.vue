@@ -65,10 +65,10 @@ import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
+import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
 	name: 'Select',
@@ -328,11 +328,6 @@ const changeHandler = (e: Event) => {
 	const target = e.target as HTMLInputElement
 	emits('inputChange', target.value, e)
 }
-
-const [wait, cancel] = useCancelableDelay()
-
-const focusMode = ref(false)
-
 const setupSelect = () => {
 	nextTick(() => {
 		if (inputRef.value && props.filterable) {
@@ -349,56 +344,9 @@ const setupSelect = () => {
 	triggerPopover()
 }
 
-let clickTagPopupContentFlag = false
+let mousedownTagPopupContentFlag = false
 
-const focusHandler = async (e: FocusEvent) => {
-	if (disabledComputed.value || readonlyComputed.value) {
-		return
-	}
-	cancel()
-	const currentFocusMode = focusMode.value
-	focusMode.value = true
-
-	const target = e.target
-	if (target instanceof HTMLElement || target instanceof SVGElement) {
-		if (!closeRef.value?.$el.contains(target) && !clickTagPopupContentFlag) {
-			setupSelect()
-		}
-		if (clickTagPopupContentFlag) {
-			clickTagPopupContentFlag = false
-		}
-	}
-
-	if (!currentFocusMode) {
-		emits('focus', e)
-	}
-}
-
-const mousedownHandler = async (e: MouseEvent) => {
-	if (disabledComputed.value || readonlyComputed.value) {
-		return
-	}
-	const target = e.target
-	if (target instanceof HTMLElement || target instanceof SVGElement) {
-		if (closeRef.value?.$el.contains(target)) {
-			return
-		}
-	}
-	if (focusMode.value && !popoverVisible.value) {
-		setupSelect()
-	}
-	setTimeout(() => {
-		contentRef.value?.focus()
-	}, 0)
-}
-
-const blurSelectImpl = async () => {
-	const next = await wait()
-	if (!next) {
-		return next
-	}
-
-	focusMode.value = false
+const doBlur = () => {
 	closePopover()
 	inputRef.value?.blur()
 	contentRef.value?.blur()
@@ -406,31 +354,57 @@ const blurSelectImpl = async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
-	return next
 }
 
-const blurSelect = async (e: FocusEvent) => {
-	const next = await blurSelectImpl()
-	if (!next) {
-		return
-	}
-	emits('blur', e)
-	formItemProvide?.blurHandler()
+const tagPopupContentMousedownHandler = (e: MouseEvent) => {
+	mousedownTagPopupContentFlag = true
+	popupMousedownHandler(e)
 }
 
-const focusoutHandler = (e: FocusEvent) => {
-	const relatedTarget = e.relatedTarget as Node
-	const triggerEl = popoverRef.value?.triggerContent?.content
-	const containEl = popoverRef.value?.triggerContent?.content
+const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
+	useFocusMode(
+		{
+			onFocus: async (e, isFirstFocus) => {
+				if (disabledComputed.value || readonlyComputed.value) {
+					return
+				}
 
-	if (relatedTarget && triggerEl?.contains(relatedTarget)) {
-		return
-	}
-	if (relatedTarget && containEl?.contains(relatedTarget)) {
-		return
-	}
-	blurSelect(e)
-}
+				const target = e.target
+				if (target instanceof HTMLElement || target instanceof SVGElement) {
+					if (!closeRef.value?.$el.contains(target) && !mousedownTagPopupContentFlag) {
+						setupSelect()
+					}
+					if (mousedownTagPopupContentFlag) {
+						mousedownTagPopupContentFlag = false
+					}
+				}
+
+				if (isFirstFocus) {
+					emits('focus', e)
+				}
+			},
+			onBlur: (e) => {
+				doBlur()
+				emits('blur', e)
+				formItemProvide?.blurHandler()
+			},
+			onWrapperMousedown: (e) => {
+				if (disabledComputed.value || readonlyComputed.value) {
+					return false
+				}
+				const target = e.target
+				if (target instanceof HTMLElement || target instanceof SVGElement) {
+					if (closeRef.value?.$el.contains(target)) {
+						return false
+					}
+				}
+				if (focusMode.value && !popoverVisible.value) {
+					setupSelect()
+				}
+			}
+		},
+		contentRef
+	)
 
 const hoverFlag = ref(false)
 const mouseenterHandler = () => {
@@ -551,7 +525,7 @@ const expose: any = {
 		contentRef.value?.focus()
 	},
 	blur: () => {
-		blurSelectImpl()
+		doBlur()
 	},
 	clear: () => clearHandler(),
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
@@ -741,21 +715,6 @@ usePolling(pollSizeChangeComputed, () => {
 	}
 })
 
-const popupContentMousedownHandler = () => {
-	setTimeout(() => {
-		cancel()
-		contentRef.value?.focus()
-	}, 0)
-}
-
-const tagPopupContentMousedownHandler = () => {
-	setTimeout(() => {
-		clickTagPopupContentFlag = true
-		cancel()
-		contentRef.value?.focus()
-	}, 0)
-}
-
 const popoverProps = computed(() => {
 	return {
 		...props.popoverProps,
@@ -864,7 +823,7 @@ defineRender(() => {
 										</Tag>
 									),
 									content: () => (
-										<div class="px-input-tag-content">
+										<div class="px-select-tag-content">
 											{tagsCollapsed.value.map((e: any, index: number) => {
 												return (
 													<Tag
@@ -996,7 +955,7 @@ defineRender(() => {
 			ref={popoverRef}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
-				onMousedown: popupContentMousedownHandler
+				onMousedown: popupMousedownHandler
 			}}
 		>
 			{{
@@ -1014,8 +973,8 @@ defineRender(() => {
 									{ 'px-select__disabled': disabledComputed.value }
 								],
 								onFocusin: focusHandler,
-								onFocusout: focusoutHandler,
-								onMousedown: mousedownHandler,
+								onFocusout: blurHandler,
+								onMousedown: wrapperMousedownHandler,
 								onMouseenter: mouseenterHandler,
 								onMouseleave: mouseleaveHandler,
 								...scopeObj
