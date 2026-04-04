@@ -339,6 +339,9 @@ const tagPopupContentMousedownHandler = () => {
 }
 
 const enterDownHandler = async (e: KeyboardEvent) => {
+	if (inputValue.value) {
+		e.preventDefault()
+	}
 	const currentValue = (inputValue.value || '').trim()
 	if (
 		!currentValue ||
