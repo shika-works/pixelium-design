@@ -12,6 +12,17 @@
   - Form 组件新增 `enterSubmit` 属性控制回车是否触发提交，默认 `false`。
 - 修复：
   - 修复在存在 `type="submit"` 按钮子组件的情况下，Form 组件按回车会触发提交的问题。
+  - 修复 InputTag 按下回车以确认标签输入时，触发浏览器的表单提交的问题。
+]]]
+[[[en
+## v0.1.4
+> fix
+
+- New Features:
+  - Added `enterSubmit` property to the **Form** component to control whether the Enter key triggers submission. Defaults to `false`.
+- Fixes:
+  - Fixed an issue where the **Form** component would trigger submission upon pressing Enter when a child component with `type="submit"` was present.
+  - Fixed an issue where pressing Enter in **InputTag** to confirm a tag would trigger the browser's default form submission.
 ]]]
 
 [[[zh
