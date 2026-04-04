@@ -864,7 +864,7 @@ defineRender(() => {
 										</Tag>
 									),
 									content: () => (
-										<div class="px-input-tag-content">
+										<div class="px-select-tag-content">
 											{tagsCollapsed.value.map((e: any, index: number) => {
 												return (
 													<Tag
