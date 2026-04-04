@@ -271,7 +271,9 @@ watch(
 	() => props.multiple,
 	(val, old) => {
 		if (val && !old) {
-			updateModelValue([modelValue.value])
+			if (!isNullish(modelValue.value)) {
+				updateModelValue([modelValue.value])
+			}
 		} else {
 			updateModelValue(modelValue.value[0] || null)
 		}

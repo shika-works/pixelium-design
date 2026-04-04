@@ -14,6 +14,7 @@
   - 修复在存在 `type="submit"` 按钮子组件的情况下，Form 组件按回车会触发提交的问题。
   - 修复 InputTag 按下回车以确认标签输入时，触发浏览器的表单提交的问题。
   - 修复了单独导入 Select 时，Select 组件多选的情况下，浮窗中 Tag 间隔消失的问题。
+  - 修复 Select 组件在切换到 multiple 模式时的值处理逻辑，避免空值被错误转换为 `[null]` / `[undefined]`。
 ]]]
 [[[en
 ## v0.1.4
@@ -25,6 +26,7 @@
   - Fixed an issue where the Form component would trigger submission upon pressing Enter when a child component with `type="submit"` was present.
   - Fixed an issue where pressing Enter in InputTag to confirm a tag would trigger the browser's default form submission.
   - Fixed missing margins for Tags in the Select floating overlay in multi-select mode when individual imported.
+  - Fixed the Select component’s value handling when switching to multiple mode, preventing empty values from being incorrectly converted to `[null]` / `[undefined]`.
 ]]]
 
 [[[zh
