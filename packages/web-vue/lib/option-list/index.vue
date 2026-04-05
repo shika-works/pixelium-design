@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { isString, isObject } from 'parsnip-kit'
+import { isString, isObject, isNullish } from 'parsnip-kit'
 import type {
 	OptionListGroupOption,
 	OptionListEvent,
@@ -18,7 +18,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<OptionListProps>(), {
 	options: () => [],
-	activeValues: () => [],
 	virtualScroll: false
 })
 
@@ -50,7 +49,7 @@ const getKey = (option: string | OptionListOption | OptionListGroupOption) => {
 }
 
 const checkActive = (option: string | OptionListOption) => {
-	if (!props.activeValues.length) {
+	if (isNullish(props.activeValues) || props.activeValues.length === 0) {
 		return false
 	}
 	if (isString(option)) {
