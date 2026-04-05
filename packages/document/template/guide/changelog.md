@@ -6,6 +6,19 @@
 ]]]
 
 [[[zh
+## v0.2.0
+- 调整：
+  - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
+  - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
+]]]
+[[[en
+## v0.2.0
+- Adjustment:
+  - Consolidated focus-related logic for form input components, improving maintainability and readability, and added related test cases.
+  - ⚠️ Note ⚠️ Removed tabindex from Slider component tick marks and labels; only the slider thumb can receive focus, and focus styles were added to the thumb.
+]]]
+
+[[[zh
 ## v0.1.4
 > fix
 - 新增：

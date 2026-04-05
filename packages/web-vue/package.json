@@ -72,7 +72,7 @@
 		"mitt": "^3.0.1",
 		"overlayscrollbars": "^2.13.0",
 		"overlayscrollbars-vue": "^0.5.9",
-		"parsnip-kit": "^0.0.7"
+		"parsnip-kit": "^0.1.0"
 	},
 	"repository": {
 		"type": "git",

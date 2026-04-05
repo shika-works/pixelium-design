@@ -315,21 +315,23 @@ export const drawGradient = (
 			dxBottomLeft * innerAndFirstOrNotInner +
 			dxBottomRight * innerAndLastOrNotInner -
 			1 * +!innerAndLastOrNotInner
-		barLenX > 0 &&
+		if (barLenX > 0) {
 			ctx.fillRect(
 				center[3][0] - dxBottomLeft * innerAndFirstOrNotInner,
 				height - pixelSize * 2,
 				barLenX,
 				pixelSize
 			)
+		}
 		const barLenY = center[2][1] + pixelSize - center[1][1] + dxTopRight + dxBottomRight
-		barLenY > 0 &&
+		if (barLenY > 0) {
 			ctx.fillRect(
 				width - pixelSize * 2 - (!last ? +inner * pixelSize * 1 : 0),
 				center[1][1] - dxTopRight,
 				pixelSize,
 				barLenY
 			)
+		}
 	} else {
 		const barColor = getGradientColor(disabled, loading, theme, palette, hoverFlag, activeFlag)
 
@@ -375,15 +377,18 @@ export const drawGradient = (
 			dxTopRight * +innerAndLastOrNotInner +
 			dxTopLeft * innerAndFirstOrNotInner -
 			1 * +!innerAndLastOrNotInner
-		barLenX > 0 &&
+		if (barLenX > 0) {
 			ctx.fillRect(
 				center[0][0] - dxTopLeft * innerAndFirstOrNotInner,
 				pixelSize,
 				barLenX,
 				pixelSize
 			)
+		}
 		const barLenY = pixelSize + center[3][1] - center[0][1] + dxBottomLeft + dxTopLeft
-		barLenY > 0 && ctx.fillRect(pixelSize, center[0][1] - dxTopLeft, pixelSize, barLenY)
+		if (barLenY > 0) {
+			ctx.fillRect(pixelSize, center[0][1] - dxTopLeft, pixelSize, barLenY)
+		}
 	}
 }
 
