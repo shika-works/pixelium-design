@@ -3,10 +3,10 @@
 .px-divider {
 	@prefix: px-divider;
 	&__horizontal {
-		margin-top: 16px;
-		margin-bottom: 16px;
+		margin-top: @px-interval-4;
+		margin-bottom: @px-interval-4;
 		height: 0px;
-		border-bottom-width: 2px;
+		border-bottom-width: @px-interval-mini-1;
 		border-bottom-color: var(--px-neutral-8);
 		@variant: solid, dashed, dotted, double, ridge, groove;
 		each(@variant, {
@@ -16,11 +16,11 @@
     });
 	}
 	&__vertical {
-		margin-left: 12px;
-		margin-right: 12px;
+		margin-left: @px-interval-3;
+		margin-right: @px-interval-3;
 		width: 0px;
 		height: 100%;
-		border-right-width: 2px;
+		border-right-width: @px-interval-mini-1;
 		min-height: 1em;
 		border-right-color: var(--px-neutral-8);
 		display: inline-block;

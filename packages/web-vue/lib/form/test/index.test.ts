@@ -9,6 +9,7 @@ import Textarea from '../../textarea/index.vue'
 import { h, nextTick, ref } from 'vue'
 import type { FieldType } from '../type'
 import userEvent from '@testing-library/user-event'
+import { wait } from 'parsnip-kit'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -107,10 +108,53 @@ describe('Form Component', () => {
 
 			const button = wrapper.find('button')
 			await button.trigger('click')
+			await wait(200)
 			expect(onSubmit).toBeCalledTimes(1)
 
 			const formEl = wrapper.find('form')
-			await formEl.trigger('keydown.enter')
+			formEl.trigger('keydown.enter')
+			await formEl.trigger('submit')
+			// @ts-ignore
+			expect(wrapper.vm.enterDownFlag).toBe(true)
+			expect(onSubmit).toBeCalledTimes(1)
+		})
+		it('Enter submits the form when enterSubmit is true', async () => {
+			const form = ref({
+				input: ''
+			})
+			const rules = {
+				input: { required: true }
+			}
+			const onSubmit = vi.fn()
+			const wrapper = mount(Form, {
+				props: {
+					model: form.value,
+					rules: rules,
+					enterSubmit: true,
+					onSubmit
+				},
+				slots: {
+					default: () => [
+						h(
+							FormItem,
+							{ field: 'input', label: 'Input' },
+							{
+								default: () =>
+									h(Input, {
+										modelValue: form.value.input,
+										'onUpdate:modelValue': (e) => (form.value.input = e)
+									})
+							}
+						),
+						h(Button, { nativeType: 'submit' }, { default: 'Submit' })
+					]
+				},
+				attachTo: 'body'
+			})
+
+			const formEl = wrapper.find('input')
+			formEl.trigger('keydown.enter')
+			await formEl.trigger('submit')
 			expect(onSubmit).toBeCalledTimes(1)
 		})
 		it('Textarea can wrap normally', async () => {
