@@ -271,7 +271,9 @@ watch(
 	() => props.multiple,
 	(val, old) => {
 		if (val && !old) {
-			updateModelValue([modelValue.value])
+			if (!isNullish(modelValue.value)) {
+				updateModelValue([modelValue.value])
+			}
 		} else {
 			updateModelValue(modelValue.value[0] || null)
 		}
@@ -864,7 +866,7 @@ defineRender(() => {
 										</Tag>
 									),
 									content: () => (
-										<div class="px-input-tag-content">
+										<div class="px-select-tag-content">
 											{tagsCollapsed.value.map((e: any, index: number) => {
 												return (
 													<Tag
