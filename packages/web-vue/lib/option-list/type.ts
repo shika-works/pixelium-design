@@ -14,7 +14,7 @@ export interface OptionListGroupOption extends GroupOption {
 
 export type OptionListProps = {
 	options?: (string | OptionListOption | OptionListGroupOption)[]
-	activeValues?: any[]
+	activeValues?: any[] | null
 	virtualScroll?: boolean
 	virtualListProps?: Omit<VirtualListProps, 'list' | 'fixedHeight'> & RestAttrs
 }

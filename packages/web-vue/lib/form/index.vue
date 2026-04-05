@@ -3,7 +3,7 @@
 		class="px-form pixelium"
 		@submit.stop.prevent="formSubmitHandler"
 		@reset.stop="formResetHandler"
-		@keydown.enter.prevent
+		@keydown.enter="enterDownHandler"
 	>
 		<slot></slot>
 	</form>
@@ -20,7 +20,7 @@ import type {
 	RuleLevel
 } from './type'
 import { FORM_PROVIDE } from '../share/const/provide-key'
-import { isNullish, isString, max } from 'parsnip-kit'
+import { debounce, isNullish, isString, max } from 'parsnip-kit'
 import { throwError } from '../share/util/console'
 
 defineOptions({ name: 'Form' })
@@ -116,7 +116,27 @@ const validate = async (field?: string | string[]) => {
 	return { isValid, results: validateObj }
 }
 
-const formSubmitHandler = (e: Event) => {
+// Since a type="submit" button is present, the browser triggers a submit event
+// where the submitter is identical for both clicks and Enter key-presses.
+// To differentiate the two and block unwanted behavior,
+// a flag is set on keydown to suppress submissions triggered by the Enter key.
+let enterDownFlag = false
+const clearEnterDownFlag = debounce(() => {
+	enterDownFlag = false
+}, 20)
+const enterDownHandler = () => {
+	if (props.enterSubmit) {
+		return
+	}
+	enterDownFlag = true
+	clearEnterDownFlag()
+}
+
+const formSubmitHandler = (e: SubmitEvent) => {
+	if (!props.enterSubmit && enterDownFlag) {
+		return
+	}
+
 	emits('submit', model.value!, e)
 }
 

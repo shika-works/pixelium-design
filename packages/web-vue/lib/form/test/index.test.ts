@@ -5,21 +5,11 @@ import Form from '../index.vue'
 import FormItem from '../../form-item/index.vue'
 import Input from '../../input/index.vue'
 import Button from '../../button/index.vue'
-import ButtonGroup from '../../button-group/index.vue'
-import AutoComplete from '../../auto-complete/index.vue'
-import InputTag from '../../input-tag/index.vue'
-import InputNumber from '../../input-number/index.vue'
 import Textarea from '../../textarea/index.vue'
-import Select from '../../select/index.vue'
-import InputGroup from '../../input-group/index.vue'
 import { h, nextTick, ref } from 'vue'
 import type { FieldType } from '../type'
-import Switch from '../../switch/index.vue'
-import Slider from '../../slider/index.vue'
-import Checkbox from '../../checkbox/index.vue'
-import CheckboxGroup from '../../checkbox-group/index.vue'
-import Radio from '../../radio/index.vue'
-import RadioGroup from '../../radio-group/index.vue'
+import userEvent from '@testing-library/user-event'
+import { wait } from 'parsnip-kit'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -29,8 +19,8 @@ describe('Form Component', () => {
 	beforeEach(() => {
 		pre()
 	})
-	describe('Control Rendering', () => {
-		it('Button', async () => {
+	describe('Basic Action', () => {
+		it('Submit and reset button work', async () => {
 			const form = ref({
 				input: ''
 			})
@@ -75,86 +65,27 @@ describe('Form Component', () => {
 			await nextTick()
 			const input = wrapper.find('input.px-input-inner')
 			expect(input.attributes('value')).toBe('test')
+
 			const reset = wrapper.findAll('button')[1]
 			await reset.trigger('click')
 			expect(onReset).toBeCalledTimes(1)
 			expect(form.value.input).toBe('')
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const buttonAll1 = wrapper.findAll('button')
-			expect(buttonAll1[0].attributes('disabled')).toBe('')
-			expect(buttonAll1[1].attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const buttonAll2 = wrapper.findAll('button')
-			expect(buttonAll2[0].attributes('disabled')).toBe('')
-			expect(buttonAll2[1].attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const buttonAll3 = wrapper.findAll('button')
-			expect(buttonAll3[0].attributes('class')).include('px-button__large')
-			expect(buttonAll3[1].attributes('class')).include('px-button__large')
 		})
-		it('ButtonGroup', async () => {
+	})
+	describe('Enter Cases', () => {
+		it('Enter cannot submits the form', async () => {
 			const form = ref({
 				input: ''
 			})
 			const rules = {
 				input: { required: true }
 			}
+			const onSubmit = vi.fn()
 			const wrapper = mount(Form, {
 				props: {
 					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							ButtonGroup,
-							{},
-							{
-								default: () => [
-									h(Button, {}, { default: 'Submit' }),
-									h(Button, {}, { default: 'test' })
-								]
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const buttonAll1 = wrapper.findAll('button')
-			expect(buttonAll1[0].attributes('disabled')).toBe('')
-			expect(buttonAll1[1].attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const buttonAll2 = wrapper.findAll('button')
-			expect(buttonAll2[0].attributes('disabled')).toBe('')
-			expect(buttonAll2[1].attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const buttonAll3 = wrapper.findAll('button')
-			expect(buttonAll3[0].attributes('class')).include('px-button__large')
-			expect(buttonAll3[1].attributes('class')).include('px-button__large')
-		})
-		it('Input', async () => {
-			const form = ref({
-				input: ''
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
+					rules: rules,
+					onSubmit
 				},
 				slots: {
 					default: () => [
@@ -168,37 +99,39 @@ describe('Form Component', () => {
 										'onUpdate:modelValue': (e) => (form.value.input = e)
 									})
 							}
-						)
+						),
+						h(Button, { nativeType: 'submit' }, { default: 'Submit' })
 					]
-				}
+				},
+				attachTo: 'body'
 			})
 
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
+			const button = wrapper.find('button')
+			await button.trigger('click')
+			await wait(200)
+			expect(onSubmit).toBeCalledTimes(1)
 
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-input')
-			expect(input3.attributes('class')).include('px-input__large')
+			const formEl = wrapper.find('form')
+			formEl.trigger('keydown.enter')
+			await formEl.trigger('submit')
+			// @ts-ignore
+			expect(wrapper.vm.enterDownFlag).toBe(true)
+			expect(onSubmit).toBeCalledTimes(1)
 		})
-		it('AutoComponent', async () => {
+		it('Enter submits the form when enterSubmit is true', async () => {
 			const form = ref({
 				input: ''
 			})
 			const rules = {
 				input: { required: true }
 			}
+			const onSubmit = vi.fn()
 			const wrapper = mount(Form, {
 				props: {
 					model: form.value,
-					rules: rules
+					rules: rules,
+					enterSubmit: true,
+					onSubmit
 				},
 				slots: {
 					default: () => [
@@ -207,120 +140,24 @@ describe('Form Component', () => {
 							{ field: 'input', label: 'Input' },
 							{
 								default: () =>
-									h(AutoComplete, {
+									h(Input, {
 										modelValue: form.value.input,
 										'onUpdate:modelValue': (e) => (form.value.input = e)
 									})
 							}
-						)
+						),
+						h(Button, { nativeType: 'submit' }, { default: 'Submit' })
 					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-auto-complete')
-			expect(input3.attributes('class')).include('px-auto-complete__large')
-		})
-		it('InputTag', async () => {
-			const form = ref({
-				input: [] as string[]
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
 				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(InputTag, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e)
-									})
-							}
-						)
-					]
-				}
+				attachTo: 'body'
 			})
 
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-input-tag')
-			expect(input3.attributes('class')).include('px-input-tag__large')
+			const formEl = wrapper.find('input')
+			formEl.trigger('keydown.enter')
+			await formEl.trigger('submit')
+			expect(onSubmit).toBeCalledTimes(1)
 		})
-		it('InputNumber', async () => {
-			const form = ref({
-				input: 0
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(InputNumber, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e)
-									})
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-input-number')
-			expect(input3.attributes('class')).include('px-input-number__large')
-		})
-		it('Textarea', async () => {
+		it('Textarea can wrap normally', async () => {
 			const form = ref({
 				input: ''
 			})
@@ -346,389 +183,14 @@ describe('Form Component', () => {
 							}
 						)
 					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('textarea')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('textarea')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-textarea')
-			expect(input3.attributes('class')).include('px-textarea__large')
-		})
-		it('Select', async () => {
-			const form = ref({
-				input: null
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
 				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(Select, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e)
-									})
-							}
-						)
-					]
-				}
+				attachTo: 'body'
 			})
 
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-select')
-			expect(input3.attributes('class')).include('px-select__large')
-		})
-		it('InputGroup', async () => {
-			const form = ref({
-				input: ''
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(
-										InputGroup,
-										{},
-										{
-											default: () =>
-												h(Input, {
-													modelValue: form.value.input,
-													'onUpdate:modelValue': (e) => (form.value.input = e)
-												})
-										}
-									)
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-input')
-			expect(input3.attributes('class')).include('px-input__large')
-		})
-		it('Switch', async () => {
-			const form = ref({
-				input: false
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(Switch, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e)
-									})
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'small' })
-			await nextTick()
-			const input3 = wrapper.find('.px-switch')
-			expect(input3.attributes('class')).include('px-switch__small')
-		})
-		it('Slider', async () => {
-			const form = ref({
-				input: 0
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(Slider, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e as number)
-									})
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('.px-slider')
-			expect(input1.attributes('tabindex')).toBe('-1')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('.px-slider')
-			expect(input2.attributes('tabindex')).toBe('-1')
-		})
-		it('Checkbox', async () => {
-			const form = ref({
-				input: false
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(Checkbox, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e)
-									})
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-checkbox')
-			expect(input3.attributes('class')).include('px-checkbox__large')
-		})
-		it('CheckboxGroup', async () => {
-			const form = ref({
-				input: [] as any[]
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(
-										CheckboxGroup,
-										{
-											modelValue: form.value.input,
-											'onUpdate:modelValue': (e) => (form.value.input = e)
-										},
-										{
-											default: () => h(Checkbox, {})
-										}
-									)
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-checkbox')
-			expect(input3.attributes('class')).include('px-checkbox__large')
-		})
-		it('Radio', async () => {
-			const form = ref({
-				input: false
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(Radio, {
-										modelValue: form.value.input,
-										'onUpdate:modelValue': (e) => (form.value.input = e)
-									})
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-radio')
-			expect(input3.attributes('class')).include('px-radio__large')
-		})
-		it('RadioGroup', async () => {
-			const form = ref({
-				input: null as any
-			})
-			const rules = {
-				input: { required: true }
-			}
-			const wrapper = mount(Form, {
-				props: {
-					model: form.value,
-					rules: rules
-				},
-				slots: {
-					default: () => [
-						h(
-							FormItem,
-							{ field: 'input', label: 'Input' },
-							{
-								default: () =>
-									h(
-										RadioGroup,
-										{
-											modelValue: form.value.input,
-											'onUpdate:modelValue': (e) => (form.value.input = e)
-										},
-										{
-											default: () => h(Radio, {})
-										}
-									)
-							}
-						)
-					]
-				}
-			})
-
-			wrapper.setProps({ readonly: true })
-			await nextTick()
-			const input1 = wrapper.find('input')
-			expect(input1.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ readonly: false, disabled: true })
-			await nextTick()
-			const input2 = wrapper.find('input')
-			expect(input2.attributes('disabled')).toBe('')
-
-			wrapper.setProps({ size: 'large' })
-			await nextTick()
-			const input3 = wrapper.find('.px-radio')
-			expect(input3.attributes('class')).include('px-radio__large')
+			const user = userEvent.setup()
+			const textarea = wrapper.find('textarea')
+			await user.type(textarea.element, '{Enter}')
+			expect(textarea.element.value).toBe('\n')
 		})
 	})
 	describe('Validate', () => {

@@ -1,10 +1,9 @@
 <template>
 	<label
 		class="pixelium px-radio"
-		ref="radioRef"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
-		@mousedown="focusInputHandler"
+		@mousedown="wrapperMousedownHandler"
 		@focusout="blurHandler"
 		@focusin="focusHandler"
 		:class="{
@@ -20,7 +19,7 @@
 			ref="canvasWrapperRef"
 			:class="{
 				'px-animation__blink':
-					focusFlag && !disabledComputed && !readonlyComputed && variantComputed === 'retro'
+					focusMode && !disabledComputed && !readonlyComputed && variantComputed === 'retro'
 			}"
 		>
 			<input
@@ -31,7 +30,7 @@
 				@input.stop="inputHandler"
 				@change.stop="handleChange"
 				:disabled="disabledComputed || readonlyComputed"
-				ref="checkboxRef"
+				ref="radioRef"
 			/>
 			<canvas ref="canvasRef" class="px-radio-canvas"></canvas>
 		</div>
@@ -67,7 +66,7 @@ import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
 	name: 'Radio'
@@ -147,34 +146,22 @@ const mouseleaveHandler = () => {
 	hoverFlag.value = false
 }
 
-const focusFlag = ref(false)
-const [wait, cancel] = useCancelableDelay()
+const radioRef = shallowRef<HTMLInputElement | null>(null)
 
-const focusHandler = (e: FocusEvent) => {
-	cancel()
-	const currentFocus = focusFlag.value
-	focusFlag.value = true
-	if (!currentFocus) {
-		emits('focus', e)
-	}
-}
-
-const blurHandler = async (e: FocusEvent) => {
-	const next = await wait()
-	if (!next) {
-		return
-	}
-	focusFlag.value = false
-	emits('blur', e)
-	formItemProvide?.blurHandler()
-}
-
-const checkboxRef = shallowRef<HTMLInputElement | null>(null)
-const focusInputHandler = () => {
-	setTimeout(() => {
-		checkboxRef.value?.focus()
-	}, 0)
-}
+const { focusMode, focusHandler, blurHandler, wrapperMousedownHandler } = useFocusMode(
+	{
+		onFocus: (e, isFirstFocus) => {
+			if (isFirstFocus) {
+				emits('focus', e)
+			}
+		},
+		onBlur: (e) => {
+			emits('blur', e)
+			formItemProvide?.blurHandler()
+		}
+	},
+	radioRef
+)
 
 const handleChange = (event: Event) => {
 	const target = event.target as HTMLInputElement

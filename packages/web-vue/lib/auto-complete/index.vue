@@ -53,7 +53,7 @@ import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
 	name: 'AutoComplete',
@@ -126,8 +126,6 @@ const pollSizeChangeComputed = createProvideComputed(
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
-
-const [wait, cancel] = useCancelableDelay()
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
@@ -204,34 +202,25 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
-const focusMode = ref(false)
+const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
+	useFocusMode(
+		{
+			onFocus: (e, isFirstFocus) => {
+				if (isFirstFocus) {
+					emits('focus', e)
+				}
+			},
+			onBlur: (e) => {
+				closePopover()
+				emits('blur', e)
+				formItemProvide?.blurHandler()
+			}
+		},
+		inputRef
+	)
 
 const closePopover = async () => {
 	popoverVisible.value = false
-}
-
-const blurHandler = async (e: FocusEvent) => {
-	const next = await wait()
-	if (!next) {
-		return
-	}
-	focusMode.value = false
-	closePopover()
-	emits('blur', e)
-	formItemProvide?.blurHandler()
-}
-
-const focusHandler = (e: FocusEvent) => {
-	cancel()
-	const currentFocusMode = focusMode.value
-	focusMode.value = true
-	if (!currentFocusMode) {
-		emits('focus', e)
-	}
-}
-
-const focusInputHandler = () => {
-	inputRef.value?.focus()
 }
 
 const hoverFlag = ref(false)
@@ -297,12 +286,6 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 	if (!value) {
 		popoverVisible.value = value
 	}
-}
-
-const popupContentMousedownHandler = () => {
-	setTimeout(() => {
-		cancel()
-	}, 0)
 }
 
 const darkMode = useDarkMode()
@@ -419,6 +402,8 @@ usePolling(pollSizeChangeComputed, () => {
 })
 
 defineRender(() => {
+	console.log(attrs)
+
 	const Inner = (
 		<Fragment>
 			{slots.prefix && <div class="px-auto-complete-prefix-wrapper">{slots.prefix()}</div>}
@@ -482,7 +467,7 @@ defineRender(() => {
 			contentStyle={{ padding: `${pixelSize}px` }}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
-				onMousedown: popupContentMousedownHandler
+				onMousedown: popupMousedownHandler
 			}}
 		>
 			{{
@@ -498,7 +483,7 @@ defineRender(() => {
 								{ 'px-auto-complete__inner': !!inputGroupProvide },
 								{ 'px-auto-complete__disabled': disabledComputed.value }
 							],
-							onClick: focusInputHandler,
+							onMousedown: wrapperMousedownHandler,
 							onMouseenter: mouseenterHandler,
 							onMouseleave: mouseleaveHandler,
 							onFocusout: blurHandler,

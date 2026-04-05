@@ -6,6 +6,79 @@
 ]]]
 
 [[[zh
+## v0.2.0
+- 调整：
+  - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
+  - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
+]]]
+[[[en
+## v0.2.0
+- Adjustment:
+  - Consolidated focus-related logic for form input components, improving maintainability and readability, and added related test cases.
+  - ⚠️ Note ⚠️ Removed tabindex from Slider component tick marks and labels; only the slider thumb can receive focus, and focus styles were added to the thumb.
+]]]
+
+[[[zh
+## v0.1.4
+> fix
+- 新增：
+  - Form 组件新增 `enterSubmit` 属性控制回车是否触发提交，默认 `false`。
+- 修复：
+  - 修复在存在 `type="submit"` 按钮子组件的情况下，Form 组件按回车会触发提交的问题。
+  - 修复 InputTag 按下回车以确认标签输入时，触发浏览器的表单提交的问题。
+  - 修复了单独导入 Select 时，Select 组件多选的情况下，浮窗中 Tag 间隔消失的问题。
+  - 修复 Select 组件在切换到 multiple 模式时的值处理逻辑，避免空值被错误转换为 `[null]` / `[undefined]`。
+]]]
+[[[en
+## v0.1.4
+> fix
+
+- New Features:
+  - Added `enterSubmit` property to the Form component to control whether the Enter key triggers submission. Defaults to `false`.
+- Fixes:
+  - Fixed an issue where the Form component would trigger submission upon pressing Enter when a child component with `type="submit"` was present.
+  - Fixed an issue where pressing Enter in InputTag to confirm a tag would trigger the browser's default form submission.
+  - Fixed missing margins for Tags in the Select floating overlay in multi-select mode when individual imported.
+  - Fixed the Select component’s value handling when switching to multiple mode, preventing empty values from being incorrectly converted to `[null]` / `[undefined]`.
+]]]
+
+[[[zh
+## v0.1.3
+> fix
+- 修复：
+  - Select 和 AutoComplete 组件的虚拟滚动被意外地移除了。
+  - 为以上修复补充测试用例。
+]]]
+[[[en
+## v0.1.3
+> fix
+- Fixes:
+  - The virtual scrolling for Select and AutoComplete components was accidentally removed.
+  - Added test coverage for the above fix.
+]]]
+
+[[[zh
+## v0.1.2
+> fix
+- 修复：
+  - 修复 Textarea 组件在 Form 下无法换行的问题。
+  - 修复 Button 组件 `shape="circle"` 和 `shape="square"` 的时候，padding 被错误添加，导致的 `size="small"` 时，宽度异常的问题。
+  - 修复 Button 组件作为 ButtonGroup 子组件时，`shape="circle"` 失效的问题。
+  - 修复 Button `shape="circle"` 和 `shape="square"` 的时候，在传入 `icon` 插槽或加载状态下，图标和内容一同展示的问题。
+  - 为以上修复补充测试用例。
+]]]
+[[[en
+## v0.1.2
+> fix
+- Fixes:
+  - Fixed the issue where Textarea could not wrap in a Form.
+  - Fixed the issue where Button with `shape="circle"` and `shape="square"` got incorrect extra padding, causing abnormal width when `size="small"`.
+  - Fixed the issue where Button’s `shape="circle"` did not work when the Button was a child of ButtonGroup.
+  - Fixed the issue where Button with `shape="circle"` and `shape="square"` displayed both icon and content together when `icon` slot was provided or in loading state.
+  - Added test cases for the above fixes.
+]]]
+
+[[[zh
 ## v0.1.1
 > hotfix
 - 修复：

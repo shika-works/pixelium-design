@@ -35,6 +35,11 @@ export type FormProps = {
 	 */
 	rules?: Record<string, RuleItem | RuleItem[]>
 	/**
+	 * @property {boolean} [enterSubmit=false]
+	 * @version 0.2.0
+	 */
+	enterSubmit?: boolean
+	/**
 	 * @property {boolean} [disabled=false]
 	 * @version 0.0.3
 	 */
@@ -124,10 +129,10 @@ export type FormEvents = {
 	/**
 	 * @event submit
 	 * @param {Record<number | string, any>} form
-	 * @param {Event} event
+	 * @param {SubmitEvent} event
 	 * @version 0.0.3
 	 */
-	submit: [form: Record<number | string, any>, event: Event]
+	submit: [form: Record<number | string, any>, event: SubmitEvent]
 	/**
 	 * @event reset
 	 * @param {Record<number | string, any>} form
@@ -252,7 +257,7 @@ export type FormProvide = {
 	collectLabelWidth: (item: { id: string; width: number }) => void
 	removeLabelWidth: (itemId: string) => void
 	model: Ref<Record<string | number, any>>
-} & ToRefs<LooseRequired<Omit<FormProps, 'form' | 'model'>>>
+} & ToRefs<LooseRequired<Omit<FormProps, 'form' | 'model' | 'enterSubmit'>>>
 
 export type UseFormRegisterOptions = {
 	validate: (field?: string | string[]) => FormValidateResult

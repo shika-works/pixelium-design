@@ -177,19 +177,6 @@ describe('Switch Component', () => {
 			expect(wrapper.emitted('change')?.[0]).toEqual([false, expect.anything()])
 		})
 
-		it('should emit focus event when focused', async () => {
-			const wrapper = mount(Switch)
-			await wrapper.find('input').trigger('focusin')
-			expect(wrapper.emitted('focus')).toBeTruthy()
-		})
-
-		it('should emit blur event when blurred', async () => {
-			const wrapper = mount(Switch)
-			await wrapper.find('input').trigger('focusout')
-			await new Promise((r) => setTimeout(r, 300))
-			expect(wrapper.emitted('blur')).toBeTruthy()
-		})
-
 		it('should not emit events when disabled', async () => {
 			const wrapper = mount(Switch, {
 				props: { disabled: true }

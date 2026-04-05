@@ -184,7 +184,7 @@ describe('DropDownList Component', () => {
 			expect(wrapper.emitted('select')).toBeTruthy()
 			const event = wrapper.emitted('select')?.[0]
 			expect(event?.[0]).toBe('1')
-			expect((event?.[1] as DropDownOption).label).toBe('Edit')
+			expect((event?.[1] as DropDownOption)?.label).toBe('Edit')
 
 			const disabledItem = wrapper.findAll('.px-drown-list-item')[1]
 			await disabledItem.trigger('click')

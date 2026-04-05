@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { isString, isObject } from 'parsnip-kit'
+import { isString, isObject, isNullish } from 'parsnip-kit'
 import type {
 	OptionListGroupOption,
 	OptionListEvent,
@@ -8,7 +8,7 @@ import type {
 } from './type'
 import { GROUP_OPTION_TYPE } from '../share/const'
 import { getCurrentInstance, useSlots, withScopeId } from 'vue'
-// import VirtualList from '../virtual-list/index.vue'
+import VirtualList from '../virtual-list/index.vue'
 import type { JSX } from 'vue/jsx-runtime'
 import Scroll from '../scroll-bar/index.vue'
 
@@ -18,7 +18,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<OptionListProps>(), {
 	options: () => [],
-	activeValues: () => [],
 	virtualScroll: false
 })
 
@@ -50,7 +49,7 @@ const getKey = (option: string | OptionListOption | OptionListGroupOption) => {
 }
 
 const checkActive = (option: string | OptionListOption) => {
-	if (!props.activeValues.length) {
+	if (isNullish(props.activeValues) || props.activeValues.length === 0) {
 		return false
 	}
 	if (isString(option)) {
@@ -137,10 +136,10 @@ const renderList = () => {
 	return (
 		<ul class="px-option-list pixelium">
 			<Scroll class="px-option-list-scroll">
-				{!props.virtualScroll
-					? list.map((item) => item.el)
-					: {
-							/* <VirtualList
+				{!props.virtualScroll ? (
+					list.map((item) => item.el)
+				) : (
+					<VirtualList
 						class={'px-option-list-virtual-list'}
 						list={list.map((item) => ({ render: () => item.el, key: item.key }))}
 						{...props.virtualListProps}
@@ -158,8 +157,8 @@ const renderList = () => {
 								</Scroll>
 							)
 						}}
-					</VirtualList> */
-						}}
+					</VirtualList>
+				)}
 			</Scroll>
 		</ul>
 	)
