@@ -159,6 +159,7 @@ rowProps: 表单项行容器的属性。
 labelProps: 表单项标签列的属性。
 contentProps: 表单项内容列的属性。
 labelAutoWidth: 表单项标签宽度自适应。
+enterSubmit: 是否允许回车提交表单。
 
 pollSizeChange: 开启轮询组件尺寸变化，会影响子树上组件的按钮组件和数据输入组件的同名属性。
 
@@ -227,6 +228,7 @@ rowProps: Props for the form item row container.
 labelProps: Props for the form item's label column.
 contentProps: Props for the form item's content column.
 labelAutoWidth: Enable auto width for form item labels.
+enterSubmit: Whether to allow Enter to submit the form.
 
 pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in button and data input components within its subtree.
 
