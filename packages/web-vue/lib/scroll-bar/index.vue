@@ -173,6 +173,7 @@ const theme = computed(() => {
 		:class="{
 			'px-scroll': true,
 			'px-scroll__simple': props.variant === 'simple',
+			'px-scroll__ghost': props.ghost,
 			'px-scroll__x': props.showScrollPadding && showXScroll,
 			'px-scroll__y': props.showScrollPadding && showYScroll
 		}"

@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { isObject, isString } from 'parsnip-kit'
-import type { ScrollPickerOption, ScrollPickerProps, ScrollPickerEvent } from './type'
+import { computed, ref } from 'vue'
+import { isNumber, isString } from 'parsnip-kit'
+import type {
+	ScrollPickerOption,
+	ScrollPickerProps,
+	ScrollPickerEvent,
+	ScrollPickerExpose
+} from './type'
 import Scroll from '../scroll-bar/index.vue'
 
 defineOptions({
@@ -14,6 +19,8 @@ const props = withDefaults(defineProps<ScrollPickerProps>(), {
 })
 
 const emits = defineEmits<ScrollPickerEvent>()
+
+const listRef = ref<HTMLUListElement | null>(null)
 
 const normalizedOptions = computed(() => {
 	return props.options.map((option) => {
@@ -28,45 +35,72 @@ const normalizedOptions = computed(() => {
 	})
 })
 
-const getOptionKey = (option: string | ScrollPickerOption) => {
-	if (isString(option)) {
+const getOptionKey = (option: string | number | ScrollPickerOption) => {
+	if (isString(option) || isNumber(option)) {
 		return option
 	}
 	return option.key ?? option.value
 }
 
-const getOptionLabel = (option: string | ScrollPickerOption) => {
-	return isString(option) ? option : option.label
+const getActiveOptionKey = () => {
+	const activeOption = normalizedOptions.value.find((option) => isActive(option))
+	return activeOption ? String(getOptionKey(activeOption)) : null
 }
 
-const isDisabled = (option: string | ScrollPickerOption) => {
-	return !isString(option) && option.disabled
+const scrollToCurrent = () => {
+	const currentKey = getActiveOptionKey()
+	if (!currentKey) {
+		return
+	}
+
+	const item = Array.from(listRef.value?.children || []).find((child) => {
+		return child instanceof HTMLElement && child.dataset.optionKey === currentKey
+	}) as HTMLLIElement | undefined
+
+	if (!item) {
+		return
+	}
+
+	item.scrollIntoView({ block: 'center' })
 }
 
-const isActive = (option: string | ScrollPickerOption) => {
-	if (isString(option)) {
+const getOptionLabel = (option: string | number | ScrollPickerOption) => {
+	return isString(option) || isNumber(option) ? option : option.label
+}
+
+const isDisabled = (option: string | number | ScrollPickerOption) => {
+	return !isString(option) && !isNumber(option) && option.disabled
+}
+
+const isActive = (option: string | number | ScrollPickerOption) => {
+	if (isString(option) || isNumber(option)) {
 		return option === props.current
 	}
 	return option.value === props.current
 }
 
-const selectHandler = (option: string | ScrollPickerOption, event: MouseEvent) => {
+const selectHandler = (option: string | number | ScrollPickerOption, event: MouseEvent) => {
 	if (isDisabled(option)) {
 		return
 	}
 
-	const value = isString(option) ? option : option.value
+	const value = isString(option) || isNumber(option) ? option : option.value
 	emits('select', value, option, event)
 }
+
+defineExpose<ScrollPickerExpose>({
+	scrollToCurrent
+})
 </script>
 
 <template>
 	<div class="pixelium px-scroll-picker">
-		<Scroll class="px-scroll-picker-scroll">
-			<ul class="px-scroll-picker-list">
+		<Scroll class="px-scroll-picker-scroll" variant="simple" ghost>
+			<ul ref="listRef" class="px-scroll-picker-list">
 				<li
 					v-for="option in normalizedOptions"
 					:key="getOptionKey(option)"
+					:data-option-key="String(getOptionKey(option))"
 					class="px-scroll-picker-item"
 					:class="{
 						'px-scroll-picker-item__active': isActive(option),

@@ -2,6 +2,7 @@
 
 .px-date-picker-body {
 	@prefix: px-date-picker-body;
+	user-select: none;
 	border: 0;
 	padding: 0;
 	background: var(--px-neutral-1);
@@ -131,6 +132,8 @@
 		justify-content: center;
 		transition: background 0.25s;
 		background-color: var(--px-neutral-1);
+
+		cursor: pointer;
 
 		flex: 0 0 @px-interval-6;
 	}

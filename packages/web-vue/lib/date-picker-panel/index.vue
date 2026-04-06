@@ -14,20 +14,26 @@
 				root="body"
 				:offset="4"
 				:visible="yearMonthPickerVisible"
+				@open="openHandler"
 				@update:visible="(value) => (yearMonthPickerVisible = value)"
 			>
-				<template #default>
-					<button class="px-date-picker-panel-title" type="button">
-						{{ year }} 年 {{ month + 1 }} 月
-					</button>
-				</template>
-
+				<div class="px-date-picker-panel-title">
+					{{ displayYearMonth }}
+				</div>
 				<template #content>
 					<div class="px-date-picker-panel-dropdown">
-						<ScrollPicker :options="yearOptions" :current="String(year)" @select="selectYear" />
 						<ScrollPicker
+							ref="yearPickerRef"
+							class="px-date-picker-panel-dropdown-picker"
+							:options="yearOptions"
+							:current="year"
+							@select="selectYear"
+						/>
+						<ScrollPicker
+							ref="monthPickerRef"
+							class="px-date-picker-panel-dropdown-picker"
 							:options="monthOptions"
-							:current="String(month + 1)"
+							:current="month + 1"
 							@select="selectMonth"
 						/>
 					</div>
@@ -41,16 +47,16 @@
 			</div>
 		</div>
 
-		<DatePickerBody :year="year" :month="month" :current="currentDate" />
+		<DatePickerBody :year="year" :month="month" :current="props.current" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import DatePickerBody from '../date-picker-body/index.vue'
 import Popover from '../popover/index.vue'
 import ScrollPicker from '../scroll-picker/index.vue'
-import type { DatePickerPanelEvent, DatePickerPanelProps } from './type'
+import type { DatePickerPanelProps } from './type'
 
 import AngleLeft from '@hackernoon/pixel-icon-library/icons/SVG/regular/angle-left.svg'
 import ArrowLeft from '@hackernoon/pixel-icon-library/icons/SVG/regular/arrow-left.svg'
@@ -65,44 +71,36 @@ const props = withDefaults(defineProps<DatePickerPanelProps>(), {
 	current: undefined
 })
 
-const emits = defineEmits<DatePickerPanelEvent>()
-
-const currentDate = ref<Date>(new Date())
 const yearMonthPickerVisible = ref(false)
+const displayDate = ref<Date>(new Date())
 
-onMounted(() => {
-	if (props.current instanceof Date && !Number.isNaN(props.current.getTime())) {
-		currentDate.value = new Date(props.current)
+const setDisplayDate = (date: Date | undefined | null) => {
+	if (date instanceof Date && !Number.isNaN(date.getTime())) {
+		displayDate.value = new Date(date)
+		return
 	}
-})
-
-watch(
-	() => props.current,
-	(next) => {
-		if (next instanceof Date && !Number.isNaN(next.getTime())) {
-			currentDate.value = new Date(next)
-		}
-	}
-)
-
-const year = computed(() => currentDate.value.getFullYear())
-const month = computed(() => currentDate.value.getMonth())
-
-const normalizeDate = (nextDate: Date) => {
-	currentDate.value = nextDate
-	emits('change', new Date(nextDate))
+	displayDate.value = new Date()
 }
 
+onMounted(() => {
+	setDisplayDate(props.current)
+})
+
+watch(() => props.current, setDisplayDate)
+
+const year = computed(() => displayDate.value.getFullYear())
+const month = computed(() => displayDate.value.getMonth())
+
 const changeYear = (delta: number) => {
-	const next = new Date(currentDate.value)
+	const next = new Date(displayDate.value)
 	next.setFullYear(next.getFullYear() + delta)
-	normalizeDate(next)
+	displayDate.value = next
 }
 
 const changeMonth = (delta: number) => {
-	const next = new Date(currentDate.value)
+	const next = new Date(displayDate.value)
 	next.setMonth(next.getMonth() + delta)
-	normalizeDate(next)
+	displayDate.value = next
 }
 
 const selectYear = (value: string | number) => {
@@ -110,9 +108,9 @@ const selectYear = (value: string | number) => {
 	if (Number.isNaN(nextYear)) {
 		return
 	}
-	const next = new Date(currentDate.value)
+	const next = new Date(displayDate.value)
 	next.setFullYear(nextYear)
-	normalizeDate(next)
+	displayDate.value = next
 }
 
 const selectMonth = (value: string | number) => {
@@ -120,27 +118,38 @@ const selectMonth = (value: string | number) => {
 	if (Number.isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
 		return
 	}
-	const next = new Date(currentDate.value)
+	const next = new Date(displayDate.value)
 	next.setMonth(monthIndex)
-	normalizeDate(next)
+	displayDate.value = next
 	yearMonthPickerVisible.value = false
 }
 
 const yearOptions = computed(() => {
 	const center = year.value
-	const range = 30
+	const range = 100
 	const start = center - range
 	const end = center + range
-	const options: string[] = []
+	const options: number[] = []
 	for (let y = start; y <= end; y++) {
-		options.push(String(y))
+		options.push(y)
 	}
 	return options
 })
 
 const monthOptions = computed(() => {
-	return Array.from({ length: 12 }, (_, i) => String(i + 1))
+	return Array.from({ length: 12 }, (_, i) => i + 1)
 })
+
+const displayYearMonth = computed(() => {
+	return `${year.value}-${String(month.value + 1).padStart(2, '0')}`
+})
+
+const yearPickerRef = shallowRef<InstanceType<typeof ScrollPicker> | null>(null)
+const monthPickerRef = shallowRef<InstanceType<typeof ScrollPicker> | null>(null)
+const openHandler = () => {
+	yearPickerRef.value?.scrollToCurrent()
+	monthPickerRef.value?.scrollToCurrent()
+}
 </script>
 
 <style src="./index.less" lang="less" />

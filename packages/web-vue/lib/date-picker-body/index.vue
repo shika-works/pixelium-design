@@ -8,15 +8,16 @@
 
 		<div class="px-date-picker-body-grid">
 			<div
+				@click="selectHandler(item, $event)"
 				v-for="(item, index) in calendarDays"
 				:key="index"
 				:class="[
 					'px-date-picker-body-day-item',
 					{ 'px-date-picker-body-day-item__not-current': !item.isCurrentMonth },
-					{ 'px-date-picker-body-day-item__today': item.start || item.end },
+					{ 'px-date-picker-body-day-item__today': item.current },
 					{ 'px-date-picker-body-day-item__today-start': item.start },
 					{ 'px-date-picker-body-day-item__today-end': item.end },
-					{ 'px-date-picker-body-day-item__within': calendarDays[index].within }
+					{ 'px-date-picker-body-day-item__within': item.within }
 				]"
 			>
 				<div class="px-date-picker-body-day-number">{{ item.date }}</div>
@@ -26,13 +27,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { DatePickerBodyProps } from './type'
+import { computed, ref, watch } from 'vue'
+import type { DatePickerBodyEvents, DatePickerBodyProps } from './type'
 import { isArray, isNullish } from 'parsnip-kit'
 
 defineOptions({
 	name: 'DatePickerBody'
 })
+
+const emits = defineEmits<DatePickerBodyEvents>()
 
 const DATE_COUNT = 42
 
@@ -51,6 +54,7 @@ interface CalendarItem {
 	month: number
 	year: number
 	isCurrentMonth: boolean
+	current: boolean
 	start: boolean
 	end: boolean
 	within: boolean
@@ -61,14 +65,6 @@ const getDateNumber = (date: Date) => {
 		year: date.getFullYear(),
 		month: date.getMonth(),
 		date: date.getDate()
-	}
-}
-
-const getNow = () => {
-	const now = new Date()
-	return {
-		now,
-		...getDateNumber(now)
 	}
 }
 
@@ -90,83 +86,130 @@ const isBetweenYMD = (target: DateNumber, start: DateNumber, end: DateNumber): b
 	return compareYMD(start, target) < 0 && compareYMD(target, end) < 0
 }
 
-const getCurrent = (
-	current: Date | Date[] | undefined | null,
-	index: number,
-	today: DateNumber
-): DateNumber => {
-	if (isNullish(current)) return today
-	if (isArray(current))
-		return !isNullish(current[index]) ? getDateNumber(current[index]) : today
-	return getDateNumber(current)
+const createCalendarItem = (
+	year: number,
+	month: number,
+	date: number,
+	isCurrentMonth: boolean,
+	start: DateNumber,
+	end: DateNumber,
+	range: boolean
+): CalendarItem => {
+	const entity: CalendarItem = {
+		date,
+		month,
+		year,
+		isCurrentMonth,
+		start: false,
+		end: false,
+		within: false,
+		current: false
+	}
+
+	const isStart = compareYMD(entity, start) === 0
+	const isEnd = compareYMD(entity, end) === 0
+	entity.current = isStart || isEnd
+	entity.start = isStart && range
+	entity.end = isEnd && range
+	entity.within = isCurrentMonth && isBetweenYMD(entity, start, end)
+
+	return entity
 }
 
 const calendarDays = computed(() => {
-	const days: CalendarItem[] = []
-	let { year, month } = props
-
-	const today = getNow()
-	if (isNullish(year) || isNullish(month)) {
-		year = today.year
-		month = today.month
+	let { year, month, current } = props
+	if (isNullish(current) || (isArray(current) && isNullish(current[0]))) {
+		return []
 	}
+	const days: CalendarItem[] = []
 
 	const firstDayOfWeek = getDateObj(year, month, 1).getDay()
 	const currentMonthDays = getDateObj(year, month + 1, 0).getDate()
 	const lastMonthDays = getDateObj(year, month, 0).getDate()
 
-	const start = getCurrent(props.current, 0, today)
-	const end = getCurrent(props.current, 1, start)
+	const start = isArray(current) ? getDateNumber(current[0]) : getDateNumber(current)
+	const end = isArray(current) && !isNullish(current[1]) ? getDateNumber(current[1]) : start
+	const range = compareYMD(start, end) !== 0
 
 	for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-		const entity: CalendarItem = {
-			date: lastMonthDays - i,
-			month: month - 1,
-			year: month === 0 ? year - 1 : year,
-			isCurrentMonth: false,
-			start: false,
-			end: false,
-			within: false
-		}
-		entity.start = compareYMD(entity, start) === 0
-		entity.end = compareYMD(entity, end) === 0
-		days.push(entity)
+		const date = lastMonthDays - i
+		const prevDate = getDateObj(year, month - 1, date)
+		days.push(
+			createCalendarItem(
+				prevDate.getFullYear(),
+				prevDate.getMonth(),
+				date,
+				false,
+				start,
+				end,
+				range
+			)
+		)
 	}
 
 	for (let i = 1; i <= currentMonthDays; i++) {
-		const entity: CalendarItem = {
-			date: i,
-			month,
-			year,
-			isCurrentMonth: true,
-			start: false,
-			end: false,
-			within: false
-		}
-		const within = isBetweenYMD(entity, start, end)
-		entity.start = compareYMD(entity, start) === 0
-		entity.end = compareYMD(entity, end) === 0
-		entity.within = !!within
-		days.push(entity)
+		days.push(createCalendarItem(year, month, i, true, start, end, range))
 	}
 
 	const remaining = DATE_COUNT - days.length
 	for (let i = 1; i <= remaining; i++) {
-		const entity: CalendarItem = {
-			date: i,
-			month: month + 1,
-			year: month === 11 ? year + 1 : year,
-			isCurrentMonth: false,
-			start: false,
-			end: false,
-			within: false
-		}
-		entity.start = compareYMD(entity, start) === 0
-		entity.end = compareYMD(entity, end) === 0
-		days.push(entity)
+		const nextDate = getDateObj(year, month + 1, i)
+		days.push(
+			createCalendarItem(
+				nextDate.getFullYear(),
+				nextDate.getMonth(),
+				i,
+				false,
+				start,
+				end,
+				range
+			)
+		)
 	}
 
 	return days
+})
+
+const innerCurrent = ref<Date | Date[] | null>(props.current || null)
+
+const selectHandler = (item: CalendarItem, event: MouseEvent) => {
+	const { year, month, date } = item
+	const selectedDate = getDateObj(year, month, date)
+	if (props.multiple) {
+		if (!isArray(innerCurrent.value)) {
+			if (isNullish(innerCurrent.value)) {
+				innerCurrent.value = [selectedDate]
+			} else {
+				innerCurrent.value = [innerCurrent.value, selectedDate]
+				innerCurrent.value.sort((a, b) => a.getTime() - b.getTime())
+			}
+		} else if (innerCurrent.value.length > 1) {
+			innerCurrent.value = [selectedDate]
+		} else {
+			innerCurrent.value.push(selectedDate)
+			innerCurrent.value.sort((a, b) => a.getTime() - b.getTime())
+		}
+		if (isArray(innerCurrent.value) && innerCurrent.value.length === 2) {
+			emits('select', selectedDate, event)
+		}
+	} else {
+		innerCurrent.value = selectedDate
+		emits('select', selectedDate, event)
+	}
+}
+
+watch([() => props.multiple, () => props.current], () => {
+	if (props.multiple && !isArray(props.current)) {
+		if (isNullish(props.current)) {
+			innerCurrent.value = []
+		} else {
+			innerCurrent.value = [props.current]
+		}
+	} else if (!props.multiple && isArray(props.current)) {
+		innerCurrent.value = props.current[0] || null
+	} else {
+		innerCurrent.value = props.current || null
+	}
 })
 </script>
 

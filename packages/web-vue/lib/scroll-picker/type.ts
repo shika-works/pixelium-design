@@ -6,10 +6,14 @@ export interface ScrollPickerOption<T = any> extends Option<T> {
 }
 
 export type ScrollPickerProps = {
-	options?: (string | ScrollPickerOption)[]
+	options?: (string | number | ScrollPickerOption)[]
 	current?: any
 }
 
 export type ScrollPickerEvent = {
-	select: [value: any, option: string | ScrollPickerOption, e: MouseEvent]
+	select: [value: any, option: string | number | ScrollPickerOption, e: MouseEvent]
+}
+
+export type ScrollPickerExpose = {
+	scrollToCurrent: () => void
 }

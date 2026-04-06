@@ -44,6 +44,7 @@ describe('DatePickerPanel component', () => {
 		}
 
 		await monthOption.trigger('click')
+		// @ts-ignore
 		expect(wrapper.emitted('change')?.slice(-1)[0][0].getMonth()).toBe(11)
 		expect(wrapper.find('.px-date-picker-panel-dropdown').exists()).toBe(false)
 	})

@@ -10,16 +10,23 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		margin-bottom: @px-interval-1;
+		margin-bottom: @px-interval-2;
 		width: @px-date-picker-body-width;
 		padding: 0 @px-interval-2;
 		box-sizing: border-box;
+		user-select: none;
 	}
 
 	&-title {
 		color: var(--px-neutral-10);
 		font-size: @px-medium-font-size;
 		cursor: pointer;
+		padding-left: @px-interval-2;
+		padding-right: @px-interval-2;
+		transition: background-color 0.25s;
+		&:hover {
+			background-color: var(--px-neutral-4);
+		}
 	}
 
 	&-nav {
@@ -42,11 +49,10 @@
 	}
 
 	&-dropdown {
-		position: relative;
-		margin-top: @px-interval-1;
-	}
-
-	&-picker-column {
-		flex: 1;
+		display: flex;
+		& &-picker {
+			height: @px-date-picker-body-height;
+			width: @px-scroll-picker-width;
+		}
 	}
 }
