@@ -586,6 +586,7 @@ describe('FormItem Component Tests', () => {
 
 			await nextTick()
 			const inputWrapper = wrapper.find('.px-input input')
+			inputWrapper.trigger('focusin')
 			inputWrapper.trigger('focusout')
 			await new Promise((r) => setTimeout(r, 300))
 
