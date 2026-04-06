@@ -354,7 +354,7 @@ describe('Form Component', () => {
 								})
 						}
 					),
-				disabledTarget: '.px-slider',
+				disabledTarget: '.px-slider-thumb',
 				disabledAttr: 'tabindex',
 				disabledValue: '-1'
 			}

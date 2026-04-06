@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import AutoComplete from '../index.vue'
-import { createMocks } from '../../share/util/test'
+import { createMocks, createMocks4Focus } from '../../share/util/test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { wait } from 'parsnip-kit'
 import PopupWrapper from '../../popup-wrapper/index.vue'
@@ -26,12 +26,15 @@ const mountComponent = (props = {}, slots = {}) => {
 
 describe('AutoComplete focus/blur behavior', () => {
 	const { pre, post } = createMocks()
+	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
 		post()
+		focusPost()
 	})
 	beforeEach(() => {
 		pre()
+		focusPre()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {

@@ -53,7 +53,8 @@ import {
 	isNumber,
 	isObject,
 	isString,
-	isUndefined
+	isUndefined,
+	wait
 } from 'parsnip-kit'
 import {
 	BORDER_CORNER_RAD_RANGE,
@@ -367,41 +368,41 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 	useFocusMode(
 		{
 			onFocus: async (e, isFirstFocus) => {
+				if (!isFirstFocus) {
+					return
+				}
 				if (disabledComputed.value || readonlyComputed.value) {
 					return
 				}
 
 				const target = e.target
+				
 				if (target instanceof HTMLElement || target instanceof SVGElement) {
 					if (!closeRef.value?.$el.contains(target) && !mousedownTagPopupContentFlag) {
 						setupSelect()
 					}
-					if (mousedownTagPopupContentFlag) {
-						mousedownTagPopupContentFlag = false
-					}
 				}
-
-				if (isFirstFocus) {
-					emits('focus', e)
-				}
+				mousedownTagPopupContentFlag = false
+				emits('focus', e)
 			},
 			onBlur: (e) => {
 				doBlur()
 				emits('blur', e)
 				formItemProvide?.blurHandler()
 			},
-			onWrapperMousedown: (e) => {
-				if (disabledComputed.value || readonlyComputed.value) {
+			onWrapperMousedown: (e, isFirstFocus) => {
+				if (!isFirstFocus) {
+					// When clicking select component again after select a option, we should display the dropdown.
+					const target = e.target
+					if (target instanceof HTMLElement || target instanceof SVGElement) {
+						if (!closeRef.value?.$el.contains(target)) {
+							setupSelect()
+						}
+					}
 					return false
 				}
-				const target = e.target
-				if (target instanceof HTMLElement || target instanceof SVGElement) {
-					if (closeRef.value?.$el.contains(target)) {
-						return false
-					}
-				}
-				if (focusMode.value && !popoverVisible.value) {
-					setupSelect()
+				if (disabledComputed.value || readonlyComputed.value) {
+					return false
 				}
 			}
 		},
@@ -441,18 +442,16 @@ const getNextModelValue = (value: any) => {
 }
 
 const selectHandler = async (value: any, option: string | SelectOption, e: MouseEvent) => {
-	await new Promise((res) => setTimeout(res))
+	await wait(0)
 	const nextValue = getNextModelValue(value)
-	const nextInputValue = ''
+	const nextInputValue = isString(option) ? option : option.label
 	await updateModelValue(nextValue)
 	if (!props.multiple) {
 		closePopover()
 		emits('select', nextValue, option, e)
 		emits('change', nextValue)
 		formItemProvide?.changeHandler()
-		setTimeout(async () => {
-			await updateInputValue(nextInputValue)
-		}, ANIMATION_DURATION)
+		await updateInputValue(nextInputValue)
 	}
 }
 
