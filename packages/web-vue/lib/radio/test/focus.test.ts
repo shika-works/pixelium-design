@@ -1,14 +1,21 @@
 import { mount } from '@vue/test-utils'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
-import { createMocks } from '../../share/util/test'
+import { createMocks, createMocks4Focus } from '../../share/util/test'
 import Radio from '../index.vue'
 import { wait } from 'parsnip-kit'
 
 describe('Radio focus/blur behavior', () => {
 	const { pre, post } = createMocks()
+	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
-	beforeEach(() => pre())
-	afterEach(() => post())
+	afterEach(() => {
+		post()
+		focusPost()
+	})
+	beforeEach(() => {
+		pre()
+		focusPre()
+	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
 		const onFocus = vi.fn()

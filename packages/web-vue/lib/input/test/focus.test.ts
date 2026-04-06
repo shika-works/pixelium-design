@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import Input from '../index.vue'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
-import { createMocks } from '../../share/util/test'
+import { createMocks, createMocks4Focus } from '../../share/util/test'
 import { wait } from 'parsnip-kit'
 
 const mountComponent = (props = {}, slots = {}) => {
@@ -17,12 +17,15 @@ const mountComponent = (props = {}, slots = {}) => {
 
 describe('Input focus/blur behavior', () => {
 	const { pre, post } = createMocks()
+	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
 		post()
+		focusPost()
 	})
 	beforeEach(() => {
 		pre()
+		focusPre()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
