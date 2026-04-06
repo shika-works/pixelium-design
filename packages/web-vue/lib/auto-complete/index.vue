@@ -402,8 +402,6 @@ usePolling(pollSizeChangeComputed, () => {
 })
 
 defineRender(() => {
-	console.log(attrs)
-
 	const Inner = (
 		<Fragment>
 			{slots.prefix && <div class="px-auto-complete-prefix-wrapper">{slots.prefix()}</div>}
