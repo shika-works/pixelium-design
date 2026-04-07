@@ -40,28 +40,30 @@ export const useFocusMode = (
 	}
 
 	const focusElement = () => {
+		cancel()
+		if (elementRef?.value && typeof elementRef.value.focus === 'function') {
+			elementRef.value.focus()
+		}
+	}
+
+	const popupMousedownHandler = (event: MouseEvent) => {
 		setTimeout(() => {
-			cancel()
-			if (elementRef?.value && typeof elementRef.value.focus === 'function') {
-				elementRef.value.focus()
+			const currentFocusMode = focusMode.value
+			const shouldFocus = options.onPopupMousedown?.(event, !currentFocusMode)
+			if (shouldFocus !== false) {
+				focusElement()
 			}
 		}, 0)
 	}
 
-	const popupMousedownHandler = (event: MouseEvent) => {
-		const currentFocusMode = focusMode.value
-		const shouldFocus = options.onPopupMousedown?.(event, !currentFocusMode)
-		if (shouldFocus !== false) {
-			focusElement()
-		}
-	}
-
 	const wrapperMousedownHandler = (event: MouseEvent) => {
-		const currentFocusMode = focusMode.value
-		const shouldFocus = options.onWrapperMousedown?.(event, !currentFocusMode)
-		if (shouldFocus !== false) {
-			focusElement()
-		}
+		setTimeout(() => {
+			const currentFocusMode = focusMode.value
+			const shouldFocus = options.onWrapperMousedown?.(event, !currentFocusMode)
+			if (shouldFocus !== false) {
+				focusElement()
+			}
+		}, 0)
 	}
 
 	return {

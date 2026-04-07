@@ -1,9 +1,11 @@
 import Select from '../index.vue'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
-import { createMocks } from '../../share/util/test'
+import { createMocks, createMocks4Focus } from '../../share/util/test'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 import { wait } from 'parsnip-kit'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
+import OptionList from '../../option-list/index.vue'
 
 const baseOptions = [
 	'Apple',
@@ -25,12 +27,15 @@ const mountComponent = (props = {}, slots = {}) => {
 
 describe('Select focus/blur behavior', () => {
 	const { pre, post } = createMocks()
+	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
 		post()
+		focusPost()
 	})
 	beforeEach(() => {
 		pre()
+		focusPre()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -97,8 +102,8 @@ describe('Select focus/blur behavior', () => {
 		const onFocus = vi.fn()
 		const wrapper = mountComponent({ onFocus, onBlur })
 
-		const wrapperEl = wrapper.find('.px-select')
-		await wrapperEl.trigger('mousedown')
+		const selectWrapper = wrapper.find('.px-select')
+		await selectWrapper.trigger('mousedown')
 		await wait(20)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
@@ -138,6 +143,47 @@ describe('Select focus/blur behavior', () => {
 		await tagPopup.trigger('mousedown')
 		await wait(200)
 
+		expect(onBlur).not.toHaveBeenCalled()
+		expect(onFocus).toHaveBeenCalledTimes(1)
+	})
+
+	it('filterable, single selection', async () => {
+		const onBlur = vi.fn()
+		const onFocus = vi.fn()
+
+		const wrapper = mountComponent({ filterable: true, options: baseOptions, onBlur, onFocus })
+
+		const selectWrapper = wrapper.find('.px-select')
+		await selectWrapper.trigger('mousedown')
+		await wait(20)
+
+		const popupWrapper = wrapper.findComponent(PopupWrapper)
+		expect(popupWrapper.attributes('style')).not.include('display: none;')
+		const optionItem = popupWrapper.find('.px-option-list-item')
+		expect(optionItem.exists()).toBe(true)
+
+		const inputWrapper = wrapper.find('.px-select-inner')
+		expect(inputWrapper.attributes('style')).not.include('display: none;')
+		expect(document.activeElement).eq(inputWrapper.element)
+
+		inputWrapper.setValue('Ban')
+
+		await nextTick()
+		const optionListComponent = wrapper.findComponent(OptionList)
+		expect(optionListComponent.exists()).toBe(true)
+		expect(optionListComponent.findAll('.px-option-list-item').length).toBeGreaterThan(0)
+		expect(optionListComponent.find('.px-option-list-item').text()).toContain('Banana')
+
+		await optionListComponent.find('.px-option-list-item').trigger('mousedown')
+		await optionListComponent.find('.px-option-list-item').trigger('click')
+
+		await wait(200)
+		expect(document.activeElement).eq(wrapper.find('.px-select-content').element)
+		await wait(300)
+		expect(popupWrapper.attributes('style')).include('display: none;')
+		// @ts-ignore
+		expect(wrapper.emitted('select')[0][0]).eq('banana')
+		
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
 	})

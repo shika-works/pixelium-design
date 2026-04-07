@@ -13,14 +13,47 @@ export function createMocks() {
 	let originalMatchMedia: any
 	let originalResizeObserver: any
 	let originalIntersectionObserver: any
-	let originalFocus: any
-	let originalBlur: any
-	let originalDispatchEvent: any
 
 	const pre = () => {
 		originalMatchMedia = window.matchMedia
 		originalResizeObserver = window.ResizeObserver
 		originalIntersectionObserver = window.IntersectionObserver
+
+		window.matchMedia = vi.fn().mockImplementation(() => ({
+			matches: false,
+			removeEventListener: vi.fn(),
+			addEventListener: vi.fn()
+		}))
+
+		window.ResizeObserver = vi.fn().mockImplementation(() => ({
+			observe: vi.fn(),
+			unobserve: vi.fn(),
+			disconnect: vi.fn()
+		}))
+
+		window.IntersectionObserver = vi.fn().mockImplementation(() => ({
+			observe: vi.fn(),
+			unobserve: vi.fn(),
+			disconnect: vi.fn()
+		}))
+	}
+
+	const post = () => {
+		window.matchMedia = originalMatchMedia
+		window.ResizeObserver = originalResizeObserver
+		window.IntersectionObserver = originalIntersectionObserver
+		vi.clearAllMocks()
+	}
+
+	return { pre, post }
+}
+
+export function createMocks4Focus() {
+	let originalFocus: any
+	let originalBlur: any
+	let originalDispatchEvent: any
+
+	const pre = () => {
 		originalFocus = HTMLElement.prototype.focus
 		originalBlur = HTMLElement.prototype.blur
 		originalDispatchEvent = HTMLElement.prototype.dispatchEvent
@@ -97,14 +130,15 @@ export function createMocks() {
 	}
 
 	const post = () => {
-		window.matchMedia = originalMatchMedia
-		window.ResizeObserver = originalResizeObserver
-		window.IntersectionObserver = originalIntersectionObserver
-		HTMLElement.prototype.focus = originalFocus
-		HTMLElement.prototype.blur = originalBlur
-		HTMLElement.prototype.dispatchEvent = originalDispatchEvent
-		// @ts-ignore
-		delete document.activeElement
+		try {
+			HTMLElement.prototype.focus = originalFocus
+			HTMLElement.prototype.blur = originalBlur
+			HTMLElement.prototype.dispatchEvent = originalDispatchEvent
+			// @ts-ignore
+			delete document.activeElement
+		} catch (error) {
+			console.log(error);
+		}
 		vi.clearAllMocks()
 	}
 

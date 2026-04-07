@@ -1,18 +1,20 @@
 import { mount } from '@vue/test-utils'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
-import { createMocks } from '../../share/util/test'
+import { createMocks, createMocks4Focus } from '../../share/util/test'
 import Checkbox from '../index.vue'
 import { wait } from 'parsnip-kit'
 
 describe('Checkbox focus/blur behavior', () => {
 	const { pre, post } = createMocks()
-
-	beforeEach(() => {
-		pre()
-	})
+	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
 		post()
+		focusPost()
+	})
+	beforeEach(() => {
+		pre()
+		focusPre()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
