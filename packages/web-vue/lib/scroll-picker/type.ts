@@ -1,7 +1,7 @@
 import type { Option } from '../share/type'
 
 export interface ScrollPickerOption<T = any> extends Option<T> {
-	key?: string | number | symbol
+	key?: string | number
 	disabled?: boolean
 }
 
@@ -15,5 +15,5 @@ export type ScrollPickerEvent = {
 }
 
 export type ScrollPickerExpose = {
-	scrollToCurrent: () => void
+	scrollToCurrent: (key?: number | string) => void
 }

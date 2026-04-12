@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { isNumber, isString } from 'parsnip-kit'
+import { ref } from 'vue'
+import { isNullish, isNumber, isString } from 'parsnip-kit'
 import type {
 	ScrollPickerOption,
 	ScrollPickerProps,
@@ -8,6 +8,7 @@ import type {
 	ScrollPickerExpose
 } from './type'
 import Scroll from '../scroll-bar/index.vue'
+import { inVitest } from '../share/util/env'
 
 defineOptions({
 	name: 'ScrollPicker'
@@ -22,19 +23,6 @@ const emits = defineEmits<ScrollPickerEvent>()
 
 const listRef = ref<HTMLUListElement | null>(null)
 
-const normalizedOptions = computed(() => {
-	return props.options.map((option) => {
-		if (isString(option)) {
-			return {
-				value: option,
-				label: option,
-				key: option
-			} as ScrollPickerOption
-		}
-		return option
-	})
-})
-
 const getOptionKey = (option: string | number | ScrollPickerOption) => {
 	if (isString(option) || isNumber(option)) {
 		return option
@@ -43,18 +31,22 @@ const getOptionKey = (option: string | number | ScrollPickerOption) => {
 }
 
 const getActiveOptionKey = () => {
-	const activeOption = normalizedOptions.value.find((option) => isActive(option))
+	const activeOption = props.options.find((option) => isActive(option))
 	return activeOption ? String(getOptionKey(activeOption)) : null
 }
 
-const scrollToCurrent = () => {
-	const currentKey = getActiveOptionKey()
-	if (!currentKey) {
+const scrollToCurrent = (key?: string | number) => {
+	if (inVitest()) {
+		return
+	}
+
+	const currentKey = key ?? getActiveOptionKey()
+	if (isNullish(currentKey)) {
 		return
 	}
 
 	const item = Array.from(listRef.value?.children || []).find((child) => {
-		return child instanceof HTMLElement && child.dataset.optionKey === currentKey
+		return child instanceof HTMLElement && child.dataset.optionKey === `${currentKey}`
 	}) as HTMLLIElement | undefined
 
 	if (!item) {
@@ -98,7 +90,7 @@ defineExpose<ScrollPickerExpose>({
 		<Scroll class="px-scroll-picker-scroll" variant="simple" ghost>
 			<ul ref="listRef" class="px-scroll-picker-list">
 				<li
-					v-for="option in normalizedOptions"
+					v-for="option in props.options"
 					:key="getOptionKey(option)"
 					:data-option-key="String(getOptionKey(option))"
 					class="px-scroll-picker-item"

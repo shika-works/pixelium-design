@@ -24,6 +24,7 @@
 		transition: background-color 0.25s;
 		background-color: var(--px-neutral-1);
 		color: var(--px-neutral-10);
+		user-select: none;
 
 		&:focus,
 		&:hover {
@@ -33,6 +34,7 @@
 		&.__active,
 		&.@{prefix}-item__active {
 			color: var(--px-primary-6);
+			background: var(--px-neutral-4);
 		}
 
 		&.@{prefix}-item__disabled {
@@ -45,6 +47,7 @@
 			}
 			&.@{prefix}-item__active {
 				color: var(--px-primary-3);
+				background: var(--px-neutral-1);
 			}
 		}
 	}
