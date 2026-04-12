@@ -36,6 +36,16 @@ The divider supports various styles based on CSS `border-style`, which can be se
 ]]]
 <preview path="./divider-variant.vue"></preview>
 
+[[[zh
+## 分隔线颜色
+分隔线支持通过 `soft` 开启浅色模式，通过 `color` 自定义颜色。
+]]]
+[[[en
+## Separator Line Color
+The separator line supports enabling light mode via `soft`, and customizing the color via `color`.
+]]]
+<preview path="./divider-color.vue"></preview>
+
 ## API
 [[[api zh
 direction: 分隔线方向。
