@@ -183,7 +183,7 @@ describe('Select focus/blur behavior', () => {
 		expect(popupWrapper.attributes('style')).include('display: none;')
 		// @ts-ignore
 		expect(wrapper.emitted('select')[0][0]).eq('banana')
-		
+
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
 	})
