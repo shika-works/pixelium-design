@@ -41,3 +41,11 @@ export const INV_SQRT3 = 1 / SQRT3
 export const GET_ELEMENT_RENDERED = 'getElementRendered'
 
 export const SUBMENU_OPTION_TYPE = 'submenu'
+
+export const DEFAULT_YEAR = 1970
+export const DEFAULT_MONTH = 0
+export const DEFAULT_DATE = 1
+export const DEFAULT_HOUR = 0
+export const DEFAULT_MINUTE = 0
+export const DEFAULT_SECOND = 0
+export const DEFAULT_MILLISECOND = 0
