@@ -3,9 +3,7 @@
 .px-date-picker-panel {
 	@prefix: px-date-picker-panel;
 	background: var(--px-neutral-1);
-	padding: @px-interval-1;
 	box-sizing: border-box;
-
 	&-header {
 		display: flex;
 		align-items: center;
@@ -49,10 +47,6 @@
 	}
 
 	&-dropdown {
-		display: flex;
-		& &-picker {
-			height: @px-date-picker-body-height;
-			width: @px-scroll-picker-width;
-		}
+		height: @px-date-picker-body-height;
 	}
 }

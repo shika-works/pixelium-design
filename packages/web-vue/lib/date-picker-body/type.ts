@@ -2,7 +2,8 @@ export type DatePickerBodyProps = {
 	year: number
 	month: number
 	current?: Date | Date[] | null
-	multiple?: boolean
+	range?: boolean
+	week?: boolean
 }
 
 export type DatePickerBodyEvents = {
