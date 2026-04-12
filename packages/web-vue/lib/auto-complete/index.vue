@@ -67,7 +67,6 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
 	clearable: false,
 	loading: false,
 	readonly: false,
-	showCount: false,
 	status: 'normal',
 	options: () => [],
 	showPopoverEmpty: false,
@@ -452,7 +451,6 @@ defineRender(() => {
 	if (parentScopeId) {
 		scopeObj[parentScopeId] = ''
 	}
-	const pixelSize = calcPixelSize()
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -462,11 +460,11 @@ defineRender(() => {
 			visible={popoverVisible.value}
 			onUpdate:visible={popoverVisibleUpdateHandler}
 			trigger="click"
-			contentStyle={{ padding: `${pixelSize}px` }}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
 				onMousedown: popupMousedownHandler
 			}}
+			{...(props.dropdownProps || {})}
 		>
 			{{
 				default: () =>

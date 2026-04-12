@@ -376,7 +376,6 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 				}
 
 				const target = e.target
-				
 				if (target instanceof HTMLElement || target instanceof SVGElement) {
 					if (!closeRef.value?.$el.contains(target) && !mousedownTagPopupContentFlag) {
 						setupSelect()
@@ -942,7 +941,6 @@ defineRender(() => {
 	if (parentScopeId) {
 		scopeObj[parentScopeId] = ''
 	}
-	const pixelSize = calcPixelSize()
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -952,12 +950,12 @@ defineRender(() => {
 			visible={popoverVisible.value}
 			onUpdate:visible={popoverVisibleUpdateHandler}
 			trigger="click"
-			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
 				onMousedown: popupMousedownHandler
 			}}
+			{...(props.dropdownProps || {})}
 		>
 			{{
 				default: () =>
