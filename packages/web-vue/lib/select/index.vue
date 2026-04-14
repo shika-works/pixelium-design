@@ -70,6 +70,7 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
 import { useFocusMode } from '../share/hook/use-focus-mode'
+import { getScopedObj } from '../share/util/render'
 
 defineOptions({
 	name: 'Select',
@@ -725,6 +726,7 @@ const popoverProps = computed(() => {
 	}
 })
 
+const scopedObj = getScopedObj(instance)
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -932,15 +934,25 @@ defineRender(() => {
 			<canvas ref={canvasRef} class="px-select-canvas" />
 		</Fragment>
 	)
-	const scopeObj: Record<string, ''> = {}
-	const scopeId = instance?.vnode.scopeId
-	const parentScopeId = instance?.vnode.scopeId
-	if (scopeId) {
-		scopeObj[scopeId] = ''
-	}
-	if (parentScopeId) {
-		scopeObj[parentScopeId] = ''
-	}
+	const mergedProps = mergeProps(
+		{
+			ref: wrapperRef,
+			class: [
+				'pixelium px-select',
+				sizeComputed.value && `px-select__${sizeComputed.value}`,
+				shapeComputed.value && `px-select__${shapeComputed.value}`,
+				{ 'px-select__inner': !!inputGroupProvide },
+				{ 'px-select__disabled': disabledComputed.value }
+			],
+			onFocusin: focusHandler,
+			onFocusout: blurHandler,
+			onMousedown: wrapperMousedownHandler,
+			onMouseenter: mouseenterHandler,
+			onMouseleave: mouseleaveHandler
+		},
+		attrs,
+		scopedObj
+	)
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -958,30 +970,7 @@ defineRender(() => {
 			{...(props.dropdownProps || {})}
 		>
 			{{
-				default: () =>
-					h(
-						'div',
-						mergeProps(
-							{
-								ref: wrapperRef,
-								class: [
-									'pixelium px-select',
-									sizeComputed.value && `px-select__${sizeComputed.value}`,
-									shapeComputed.value && `px-select__${shapeComputed.value}`,
-									{ 'px-select__inner': !!inputGroupProvide },
-									{ 'px-select__disabled': disabledComputed.value }
-								],
-								onFocusin: focusHandler,
-								onFocusout: blurHandler,
-								onMousedown: wrapperMousedownHandler,
-								onMouseenter: mouseenterHandler,
-								onMouseleave: mouseleaveHandler,
-								...scopeObj
-							},
-							attrs
-						),
-						[Inner]
-					),
+				default: () => h('div', mergedProps, [Inner]),
 				content: () =>
 					optionsFiltered.value.length ? (
 						<OptionList

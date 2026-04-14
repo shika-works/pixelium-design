@@ -11,7 +11,8 @@ import {
 	watch,
 	useAttrs,
 	Fragment,
-	h
+	h,
+	mergeProps
 } from 'vue'
 import type {
 	AutoCompleteEvents,
@@ -54,6 +55,7 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
 import { useFocusMode } from '../share/hook/use-focus-mode'
+import { getScopedObj } from '../share/util/render'
 
 defineOptions({
 	name: 'AutoComplete',
@@ -400,6 +402,8 @@ usePolling(pollSizeChangeComputed, () => {
 	}
 })
 
+const scopedObj = getScopedObj(instance)
+
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -442,15 +446,26 @@ defineRender(() => {
 			<canvas ref={canvasRef} class="px-auto-complete-canvas" />
 		</Fragment>
 	)
-	const scopeObj: Record<string, ''> = {}
-	const scopeId = instance?.vnode.scopeId
-	const parentScopeId = instance?.vnode.scopeId
-	if (scopeId) {
-		scopeObj[scopeId] = ''
-	}
-	if (parentScopeId) {
-		scopeObj[parentScopeId] = ''
-	}
+
+	const mergedProps = mergeProps(
+		{
+			ref: wrapperRef,
+			class: [
+				'pixelium px-auto-complete',
+				sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
+				shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
+				{ 'px-auto-complete__inner': !!inputGroupProvide },
+				{ 'px-auto-complete__disabled': disabledComputed.value }
+			],
+			onMousedown: wrapperMousedownHandler,
+			onMouseenter: mouseenterHandler,
+			onMouseleave: mouseleaveHandler,
+			onFocusout: blurHandler,
+			onFocusin: focusHandler
+		},
+		scopedObj,
+		attrs
+	)
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -467,28 +482,7 @@ defineRender(() => {
 			{...(props.dropdownProps || {})}
 		>
 			{{
-				default: () =>
-					h(
-						'div',
-						{
-							ref: wrapperRef,
-							class: [
-								'pixelium px-auto-complete',
-								sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
-								shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
-								{ 'px-auto-complete__inner': !!inputGroupProvide },
-								{ 'px-auto-complete__disabled': disabledComputed.value }
-							],
-							onMousedown: wrapperMousedownHandler,
-							onMouseenter: mouseenterHandler,
-							onMouseleave: mouseleaveHandler,
-							onFocusout: blurHandler,
-							onFocusin: focusHandler,
-							...scopeObj,
-							...attrs
-						},
-						[Inner]
-					),
+				default: () => h('div', mergedProps, [Inner]),
 				content: () =>
 					optionsFiltered.value.length ? (
 						<OptionList
