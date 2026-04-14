@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { isNullish, isNumber, isString } from 'parsnip-kit'
 import type {
 	ScrollPickerOption,
@@ -35,6 +35,8 @@ const getActiveOptionKey = () => {
 	return activeOption ? String(getOptionKey(activeOption)) : null
 }
 
+const scrollRef = shallowRef<InstanceType<typeof Scroll> | null>(null)
+
 const scrollToCurrent = (key?: string | number) => {
 	if (inVitest()) {
 		return
@@ -53,7 +55,22 @@ const scrollToCurrent = (key?: string | number) => {
 		return
 	}
 
-	item.scrollIntoView({ block: 'center' })
+	const container = scrollRef.value
+	if (!container) {
+		return
+	}
+
+	const containerRect = container.$el.getBoundingClientRect()
+	const itemRect = item.getBoundingClientRect()
+
+	const offsetFromContainerTop = itemRect.top - containerRect.top + container.scrollTop
+
+	const targetScrollTop =
+		offsetFromContainerTop - containerRect.height / 2 + itemRect.height / 2
+
+	container.scrollTo({
+		top: Math.min(Math.max(targetScrollTop, 0), container.scrollHeight - containerRect.height)
+	})
 }
 
 const getOptionLabel = (option: string | number | ScrollPickerOption) => {
@@ -87,7 +104,7 @@ defineExpose<ScrollPickerExpose>({
 
 <template>
 	<div class="pixelium px-scroll-picker">
-		<Scroll class="px-scroll-picker-scroll" variant="simple" ghost>
+		<Scroll class="px-scroll-picker-scroll" variant="simple" ghost ref="scrollRef">
 			<ul ref="listRef" class="px-scroll-picker-list">
 				<li
 					v-for="option in props.options"
