@@ -9,26 +9,36 @@ const SLICE_BLOCK_RE = /\[\[\[\s*slice\s+([a-zA-Z_-]+)\s*[\s\S]*?\]\]\]/g
 
 const collapseNewlines = (s: string): string => s.trim().replace(/\n{3,}/g, '\n\n')
 
-function processSliceMarkdownFrontMatter(mdString: string) {
+function processSliceMarkdownFrontMatter(mdString: string, lang: string) {
 	const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n?/
 	const sliceTitleRegex = /slice-title:\s*(.+)/i
+	const levelRegex = /title-level:\s*(.+)/i
 	let sliceTitle = ''
+	let titleLevel = 3
 	let processedContent = mdString
 
 	const frontMatterMatch = mdString.match(frontMatterRegex)
 	if (frontMatterMatch) {
 		const frontMatter = frontMatterMatch[1]
 		const titleMatch = frontMatter.match(sliceTitleRegex)
-
 		if (titleMatch) {
 			sliceTitle = titleMatch[1].trim()
+		}
+		const titleLevelMatch = frontMatter.match(levelRegex)
+		if (titleLevelMatch) {
+			titleLevel = parseInt(titleLevelMatch[1].trim()) || 3
 		}
 		processedContent = mdString.replace(frontMatterRegex, '')
 	}
 
+	processedContent = processedContent.replace(BLOCK_RE, (_: any, l: string, c: any) => {
+		return l === lang ? c || '' : ''
+	})
+
 	return {
 		content: processedContent.trim(),
-		sliceTitle: sliceTitle
+		sliceTitle,
+		titleLevel
 	}
 }
 
@@ -96,10 +106,11 @@ async function processMd(src: string, dst: string, lang: string): Promise<void> 
 	)
 	newText = newText.replace(SLICE_BLOCK_RE, (_: any, curType: string) => {
 		const fileName = kebabCase(curType)
-		const { content, sliceTitle } = processSliceMarkdownFrontMatter(
-			readFileSync(`./slice/${fileName}.md`, 'utf-8')
+		const { content, sliceTitle, titleLevel } = processSliceMarkdownFrontMatter(
+			readFileSync(`./slice/${fileName}.md`, 'utf-8'),
+			lang
 		)
-		return `### ${sliceTitle || pascalCase(curType)}\n\n${content}`
+		return `${'#'.repeat(titleLevel)} ${sliceTitle || pascalCase(curType)}\n\n${content}`
 	})
 	newText = collapseNewlines(newText)
 	await fs.mkdir(path.dirname(dst), { recursive: true })

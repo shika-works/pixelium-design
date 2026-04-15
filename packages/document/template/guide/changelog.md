@@ -7,15 +7,33 @@
 
 [[[zh
 ## v0.2.0
+- 新增：
+  - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
+  - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
+  - Divider 组件新增属性 `soft` 和 `color`。
+  - ScrollBar 组件新增 expose `scrollHeight`、`scrollWidth`、`scrollTop`、`scrollLeft` 用于获取当前滚动状态。
 - 调整：
   - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
   - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
+- 修复：
+  - 修复多语言切换不会触发响应式更新的问题。
+  - 修复 Slider 组件的聚焦逻辑，现在在调节器 thumb 外按下鼠标会聚焦到最近的 thumb。
+  - 滚动条和它的 hook 按需导入时，现在也会导入公共样式。
 ]]]
 [[[en
 ## v0.2.0
+- New Features:
+  - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
+  - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
+  - Divider component adds `soft` and `color` properties.
+  - ScrollBar component adds expose `scrollHeight`, `scrollWidth`, `scrollTop`, `scrollLeft` for getting the current scroll state.
 - Adjustment:
   - Consolidated focus-related logic for form input components, improving maintainability and readability, and added related test cases.
   - ⚠️ Note ⚠️ Removed tabindex from Slider component tick marks and labels; only the slider thumb can receive focus, and focus styles were added to the thumb.
+- Fixes
+  - Fixed an issue where language switching did not trigger reactive updates.
+  - Fixed focus logic in the Slider component: now when pressing the mouse outside the thumb, it focuses on the nearest thumb.
+  - When scrollbar and its hooks are imported on demand, the public styles are now also imported.
 ]]]
 
 [[[zh
