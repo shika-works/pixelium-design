@@ -67,6 +67,9 @@ import ScrollBar from './scroll-bar/index.vue'
 import { useScrollBar } from './scroll-bar/use-scroll-bar.ts'
 import Table from './table/index.vue'
 import Pagination from './pagination/index.vue'
+import DatePicker from './date-picker/index.vue'
+import DateTimePicker from './date-time-picker/index.vue'
+import TimePicker from './time-picker/index.vue'
 
 const components = [
 	Button,
@@ -126,7 +129,10 @@ const components = [
 	BreadcrumbItem,
 	ScrollBar,
 	Table,
-	Pagination
+	Pagination,
+	DatePicker,
+	DateTimePicker,
+	TimePicker
 ]
 
 const defaultPrefix = 'Px'
@@ -227,7 +233,10 @@ export {
 	ScrollBar,
 	useScrollBar,
 	Table,
-	Pagination
+	Pagination,
+	DatePicker,
+	DateTimePicker,
+	TimePicker
 }
 export default {
 	install

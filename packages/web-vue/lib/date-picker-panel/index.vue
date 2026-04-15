@@ -16,6 +16,9 @@
 				:visible="yearMonthPickerVisible"
 				@open="openHandler"
 				@update:visible="(value) => (yearMonthPickerVisible = value)"
+				:content-props="{
+					onMousedown: baseDatePickerProvide?.popupMousedownHandler
+				}"
 			>
 				<div class="px-date-picker-panel-title">
 					{{ displayYearMonth }}
@@ -50,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, inject, onMounted, ref, shallowRef, watch } from 'vue'
 import DatePickerBody from '../date-picker-body/index.vue'
 import Popover from '../popover/index.vue'
 import type { DatePickerPanelProps, DatePickerPanelEvents } from './type'
@@ -61,6 +64,8 @@ import AngleRight from '@hackernoon/pixel-icon-library/icons/SVG/regular/angle-r
 import ArrowRight from '@hackernoon/pixel-icon-library/icons/SVG/regular/arrow-right.svg'
 
 import DateScrollPicker from '../date-scroll-picker/index.vue'
+import { BASE_DATE_PICKER_PROVIDE } from '../share/const/provide-key'
+import type { BaseDatePickerProvide } from '../base-date-picker/type'
 
 defineOptions({
 	name: 'DatePickerPanel'
@@ -71,6 +76,11 @@ const props = withDefaults(defineProps<DatePickerPanelProps>(), {
 })
 
 const emits = defineEmits<DatePickerPanelEvents>()
+
+const baseDatePickerProvide = inject<BaseDatePickerProvide | undefined>(
+	BASE_DATE_PICKER_PROVIDE,
+	undefined
+)
 
 const yearMonthPickerVisible = ref(false)
 const displayDate = ref<Date>(new Date())
