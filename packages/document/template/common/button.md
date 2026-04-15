@@ -189,7 +189,4 @@ pollSizeChange: Enables polling for component size changes. This also affects th
 slots.default: The sub-buttons.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]

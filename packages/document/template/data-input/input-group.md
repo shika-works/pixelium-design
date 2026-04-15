@@ -130,7 +130,4 @@ pollSizeChange: Enables polling for component size changes. This may impact perf
 slots.default: Label content.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]
