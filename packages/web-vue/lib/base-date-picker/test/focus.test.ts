@@ -109,7 +109,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 	})
 
-	it('clicking the clear icon clears the value and keeps focus after 300ms', async () => {
+	it('clicking the clear icon clears the value and keeps focus', async () => {
 		const onFocus = vi.fn()
 		const onUpdate = vi.fn()
 		const onBlur = vi.fn()
@@ -145,7 +145,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		expect(onBlur).not.toHaveBeenCalled()
 	})
 
-	it('clicking the clear icon while dropdown is open closes the dropdown and keeps focus after 300ms', async () => {
+	it('clicking the clear icon while dropdown is open closes the dropdown and keeps focus', async () => {
 		const onFocus = vi.fn()
 		const onBlur = vi.fn()
 		const initialDate = new Date('2025-01-15')

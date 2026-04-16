@@ -15,6 +15,7 @@
 - 调整：
   - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
   - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
+  - ⚠️需要注意⚠️Select、AutoComplete 组件增加事件 `dropdownOpen`、`dropdownClose`，建议通过 `dropdownOpen` 监听下拉选项展示。通过 `focus` 和 `select` 方法不再回触发下拉选项。原有通过 `focus` 监听的方式对用户操作和触发的下拉展示依然可用。
 - 修复：
   - 修复多语言切换不会触发响应式更新的问题。
   - 修复 Slider 组件的聚焦逻辑，现在在调节器 thumb 外按下鼠标会聚焦到最近的 thumb。
@@ -30,6 +31,7 @@
 - Adjustment:
   - Consolidated focus-related logic for form input components, improving maintainability and readability, and added related test cases.
   - ⚠️ Note ⚠️ Removed tabindex from Slider component tick marks and labels; only the slider thumb can receive focus, and focus styles were added to the thumb.
+  - ⚠️ Note ⚠️: Select and AutoComplete now emit `dropdownOpen` and `dropdownClose` events. Use `dropdownOpen` to listen for the dropdown being shown. Calling the `focus` or `select` methods will no longer trigger the dropdown. However, listening to the `focus` event for user-initiated interactions will still cause the dropdown to appear.
 - Fixes
   - Fixed an issue where language switching did not trigger reactive updates.
   - Fixed focus logic in the Slider component: now when pressing the mouse outside the thumb, it focuses on the nearest thumb.

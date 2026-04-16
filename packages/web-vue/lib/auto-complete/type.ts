@@ -175,6 +175,16 @@ export type AutoCompleteEvents = {
 	 * @version 0.0.2
 	 */
 	select: [value: string, option: string | AutoCompleteOption, e: MouseEvent]
+	/**
+	 * @event dropdownOpen
+	 * @version 0.2.0
+	 */
+	dropdownOpen: []
+	/**
+	 * @event dropdownClose
+	 * @version 0.2.0
+	 */
+	dropdownClose: []
 }
 
 export type AutoCompleteSlots = {

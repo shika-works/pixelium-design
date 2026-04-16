@@ -152,7 +152,7 @@ const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 
-const triggerPopover = async () => {
+const triggerPopover = async (visible: boolean = true) => {
 	await nextTick()
 	if (props.shouldShowPopover) {
 		popoverVisible.value = !!props.shouldShowPopover(
@@ -165,7 +165,7 @@ const triggerPopover = async () => {
 		modelValue.value &&
 		((!props.showPopoverEmpty && optionsFiltered.value.length) || props.showPopoverEmpty)
 	) {
-		popoverVisible.value = true
+		popoverVisible.value = visible
 	} else {
 		popoverVisible.value = false
 	}
@@ -203,6 +203,8 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
+const closeIconRef = shallowRef<SVGElement | null>(null)
+
 const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
 	useFocusMode(
 		{
@@ -215,6 +217,15 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 				closePopover()
 				emits('blur', e)
 				formItemProvide?.blurHandler()
+			},
+			onWrapperMousedown(event) {
+				const target = event.target as Element
+				// @ts-ignore
+				if (!closeIconRef.value?.$el?.contains(target)) {
+					triggerPopover()
+				} else {
+					triggerPopover(false)
+				}
 			}
 		},
 		inputRef
@@ -404,6 +415,14 @@ usePolling(pollSizeChangeComputed, () => {
 
 const scopedObj = getScopedObj(instance)
 
+watch(popoverVisible, () => {
+	if (popoverVisible.value) {
+		emits('dropdownOpen')
+	} else {
+		emits('dropdownClose')
+	}
+})
+
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -425,6 +444,8 @@ defineRender(() => {
 				<div class="px-auto-complete-close-wrapper">
 					{hoverFlag.value && modelValue.value ? (
 						<TimesCircleSolid
+							// @ts-ignore
+							ref={closeIconRef}
 							// @ts-ignore
 							class="px-auto-complete-icon"
 							onClick={clearHandler}

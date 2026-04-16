@@ -219,16 +219,14 @@ export type DateTimePickerEvents = {
 	referredDateChange: [referredDate: Date, event: MouseEvent]
 	/**
 	 * @event dropdownOpen
-	 * @param {Event} event
 	 * @version 0.2.0
 	 */
-	dropdownOpen: [event: Event]
+	dropdownOpen: []
 	/**
 	 * @event dropdownClose
-	 * @param {Event} event
 	 * @version 0.2.0
 	 */
-	dropdownClose: [event: Event]
+	dropdownClose: []
 }
 
 export type DateTimePickerSlots = {

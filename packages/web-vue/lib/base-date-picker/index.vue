@@ -425,7 +425,7 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 					return false
 				}
 
-				const target = event.target as HTMLElement
+				const target = event.target as Element
 
 				// @ts-ignore
 				if (!closeIconRef.value?.$el?.contains(target)) {
@@ -434,7 +434,7 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 					triggerPopover(false)
 				}
 
-				if (target.tabIndex >= 0) {
+				if (target instanceof HTMLElement && target.tabIndex >= 0) {
 					target.focus()
 				} else if (inputRef.value && inputRef.value.contains(target)) {
 					inputRef.value.focus()
@@ -688,14 +688,14 @@ provide<BaseDatePickerProvide>(BASE_DATE_PICKER_PROVIDE, {
 	popupMousedownHandler
 })
 
-const popupOpenHandler = (e: Event) => {
-	triggerDropdown()
-	emits('dropdownOpen', e)
-}
-const popupCloseHandler = (e?: Event) => {
-	// e is undefined only when Popup is in cascade mode
-	emits('dropdownClose', e as Event)
-}
+watch(popoverVisible, () => {
+	if (popoverVisible.value) {
+		triggerDropdown()
+		emits('dropdownOpen')
+	} else {
+		emits('dropdownClose')
+	}
+})
 
 defineRender(() => {
 	const Inner = renderInner()
@@ -712,8 +712,6 @@ defineRender(() => {
 				onMousedown: popupMousedownHandler,
 				class: 'px-base-date-picker-dropdown-content-wrapper'
 			}}
-			onOpen={popupOpenHandler}
-			onClose={popupCloseHandler}
 			{...(props.dropdownProps || {})}
 		>
 			{{

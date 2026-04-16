@@ -221,6 +221,35 @@ describe('BaseDatePicker Component', () => {
 		})
 	})
 
+	describe('Date Select', () => {
+		it('date', async () => {
+			const wrapper = mountComponent({
+				mode: 'date'
+			})
+
+			const input = wrapper.find('input.px-base-date-picker-inner')
+			input.trigger('mousedown')
+
+			await wait(20)
+
+			const popupWrapper = wrapper.findComponent(PopupWrapper)
+			expect(popupWrapper.attributes('style')).not.include('display: none')
+
+			const panel = popupWrapper.find('.px-date-picker-panel')
+			panel.find('.px-date-picker-body-day-item').trigger('click')
+			await wait(20)
+
+			const selected = wrapper.emitted('change')?.[0][0] as Date
+			expect(selected).instanceOf(Date)
+			expect(selected.getDate()).toBe(24)
+			expect(selected.getMonth()).toBe(1)
+			expect(selected.getFullYear()).toBe(2025)
+
+			expect(wrapper.emitted('dropdownOpen')?.length).toBe(1)
+			expect(wrapper.emitted('dropdownClose')?.length).toBe(1)
+		})
+	})
+
 	describe('Panel Event', () => {
 		it('Event from DatePickerPanel should be triggered', async () => {
 			const wrapper = mountComponent({

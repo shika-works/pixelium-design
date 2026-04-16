@@ -8,6 +8,7 @@ import OptionList from '../../option-list/index.vue'
 import { vi, describe, afterEach, it, expect, beforeEach } from 'vitest'
 import { createMocks } from '../../share/util/test'
 import Popup from '../../popup/index.vue'
+import { wait } from 'parsnip-kit'
 
 describe('Select Component', () => {
 	const { pre, post } = createMocks()
@@ -207,17 +208,22 @@ describe('Select Component', () => {
 		it('Basic usage: select option by click', async () => {
 			const wrapper = mountComponent()
 			const input = wrapper.find('div.px-select')
-			await input.trigger('click')
-			await nextTick()
+			await input.trigger('mousedown')
+			await wait(50)
+			const popup = wrapper.findComponent(Popup)
+			expect(popup.props('visible')).toBe(true)
 			const optionListComponent = wrapper.findComponent(OptionList)
 			expect(optionListComponent.exists()).toBe(true)
 			const option = optionListComponent.findAll('.px-option-list-item')[1]
 			expect(option.exists()).toBe(true)
 			await option.trigger('click')
-			await new Promise((res) => setTimeout(res, 50))
+			await wait(350)
 			const label = wrapper.find('.px-select-label')
 			expect(label.exists()).toBe(true)
 			expect(label.attributes('style')).not.include('display: none')
+
+			expect(wrapper.emitted('dropdownOpen')?.length).toBe(1)
+			expect(wrapper.emitted('dropdownClose')?.length).toBe(1)
 		})
 
 		it('Disabled option should not be selectable', async () => {

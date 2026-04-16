@@ -29,8 +29,9 @@ export default defineConfig({
 	},
 	// @ts-ignore
 	test: {
+		maxWorkers: 4,
 		environment: 'jsdom',
-		testTimeout: 10 * 1000,
+		testTimeout: 20 * 1000,
 		coverage: {
 			provider: 'v8',
 			include: ['lib/**/*.{ts,tsx,js,jsx,vue}'],

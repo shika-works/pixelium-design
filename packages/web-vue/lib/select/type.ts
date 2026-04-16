@@ -244,6 +244,16 @@ export type SelectEvents = {
 	 * @version 0.0.2
 	 */
 	tagClose: [value: any, e: MouseEvent]
+	/**
+	 * @event dropdownOpen
+	 * @version 0.2.0
+	 */
+	dropdownOpen: []
+	/**
+	 * @event dropdownClose
+	 * @version 0.2.0
+	 */
+	dropdownClose: []
 }
 
 export type SelectSlots = {

@@ -348,21 +348,12 @@ const setupSelect = () => {
 	triggerPopover()
 }
 
-let mousedownTagPopupContentFlag = false
-
-const doBlur = () => {
+const clearDropdown = () => {
 	closePopover()
-	inputRef.value?.blur()
-	contentRef.value?.blur()
 	setTimeout(async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
-}
-
-const tagPopupContentMousedownHandler = (e: MouseEvent) => {
-	mousedownTagPopupContentFlag = true
-	popupMousedownHandler(e)
 }
 
 const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
@@ -375,34 +366,24 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 				if (disabledComputed.value || readonlyComputed.value) {
 					return
 				}
-
-				const target = e.target
-				if (target instanceof HTMLElement || target instanceof SVGElement) {
-					if (!closeRef.value?.$el.contains(target) && !mousedownTagPopupContentFlag) {
-						setupSelect()
-					}
-				}
-				mousedownTagPopupContentFlag = false
 				emits('focus', e)
 			},
 			onBlur: (e) => {
-				doBlur()
+				clearDropdown()
 				emits('blur', e)
 				formItemProvide?.blurHandler()
 			},
-			onWrapperMousedown: (e, isFirstFocus) => {
-				if (!isFirstFocus) {
-					// When clicking select component again after select a option, we should display the dropdown.
-					const target = e.target
-					if (target instanceof HTMLElement || target instanceof SVGElement) {
-						if (!closeRef.value?.$el.contains(target)) {
-							setupSelect()
-						}
-					}
-					return false
-				}
+			onWrapperMousedown: (e) => {
 				if (disabledComputed.value || readonlyComputed.value) {
 					return false
+				}
+				const target = e.target
+				if (target instanceof HTMLElement || target instanceof SVGElement) {
+					if (!closeRef.value?.$el.contains(target)) {
+						setupSelect()
+					} else {
+						clearDropdown()
+					}
 				}
 			}
 		},
@@ -526,7 +507,7 @@ const expose: any = {
 		contentRef.value?.focus()
 	},
 	blur: () => {
-		doBlur()
+		clearDropdown()
 	},
 	clear: () => clearHandler(),
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
@@ -545,6 +526,14 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 		popoverVisible.value = value
 	}
 }
+
+watch(popoverVisible, () => {
+	if (popoverVisible.value) {
+		emits('dropdownOpen')
+	} else {
+		emits('dropdownClose')
+	}
+})
 
 const showPlaceholder = computed(() => {
 	return (
@@ -727,6 +716,7 @@ const popoverProps = computed(() => {
 })
 
 const scopedObj = getScopedObj(instance)
+
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -796,7 +786,7 @@ defineRender(() => {
 							<Popup
 								{...popoverProps.value}
 								contentProps={{
-									onMousedown: tagPopupContentMousedownHandler
+									onMousedown: popupMousedownHandler
 								}}
 							>
 								{{

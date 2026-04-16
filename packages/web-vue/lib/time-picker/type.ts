@@ -177,16 +177,14 @@ export type TimePickerEvents = {
 	select: [value: Date | Date[], event: Event]
 	/**
 	 * @event dropdownOpen
-	 * @param {Event} event
 	 * @version 0.2.0
 	 */
-	dropdownOpen: [event: Event]
+	dropdownOpen: []
 	/**
 	 * @event dropdownClose
-	 * @param {Event} event
 	 * @version 0.2.0
 	 */
-	dropdownClose: [event: Event]
+	dropdownClose: []
 }
 
 export type TimePickerSlots = {
