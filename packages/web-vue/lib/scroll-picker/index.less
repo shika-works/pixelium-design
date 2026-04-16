@@ -1,0 +1,54 @@
+@import url(../share/style/variable.less);
+
+.px-scroll-picker {
+	@prefix: px-scroll-picker;
+
+	&-scroll {
+		max-height: inherit;
+		height: 100%;
+	}
+
+	&-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: @px-medium-font-size;
+	}
+
+	&-item {
+		height: @px-medium-base-size;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: background-color 0.25s;
+		background-color: var(--px-neutral-1);
+		color: var(--px-neutral-10);
+		user-select: none;
+
+		&:focus,
+		&:hover {
+			background-color: var(--px-primary-1);
+		}
+
+		&.__active,
+		&.@{prefix}-item__active {
+			color: var(--px-primary-6);
+			background: var(--px-neutral-4);
+		}
+
+		&.@{prefix}-item__disabled {
+			color: var(--px-neutral-6);
+			cursor: not-allowed;
+
+			&:hover,
+			&:focus {
+				background-color: var(--px-neutral-1);
+			}
+			&.@{prefix}-item__active {
+				color: var(--px-primary-3);
+				background: var(--px-neutral-1);
+			}
+		}
+	}
+}

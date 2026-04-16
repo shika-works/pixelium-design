@@ -1,5 +1,6 @@
 import type { OptionListGroupOption, OptionListOption } from '../option-list/type'
-import type { NumberOrPercentage, RestAttrs } from '../share/type'
+import type { PopoverEvents, PopoverProps } from '../popover/type'
+import type { EmitEvent, NumberOrPercentage, RestAttrs } from '../share/type'
 import type { VirtualListProps } from '../virtual-list/type'
 
 export interface AutoCompleteOption extends OptionListOption<string> {}
@@ -111,6 +112,11 @@ export type AutoCompleteProps = {
 	 */
 	autofocus?: boolean
 	/**
+	 * @property {Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>} [popoverProps]
+	 * @version 0.2.0
+	 */
+	dropdownProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
+	/**
 	 * @property {boolean} [optionsDestroyOnHide=false]
 	 * @version 0.0.3
 	 */
@@ -169,6 +175,16 @@ export type AutoCompleteEvents = {
 	 * @version 0.0.2
 	 */
 	select: [value: string, option: string | AutoCompleteOption, e: MouseEvent]
+	/**
+	 * @event dropdownOpen
+	 * @version 0.2.0
+	 */
+	dropdownOpen: []
+	/**
+	 * @event dropdownClose
+	 * @version 0.2.0
+	 */
+	dropdownClose: []
 }
 
 export type AutoCompleteSlots = {

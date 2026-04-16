@@ -177,14 +177,88 @@ describe('Select focus/blur behavior', () => {
 		await optionListComponent.find('.px-option-list-item').trigger('mousedown')
 		await optionListComponent.find('.px-option-list-item').trigger('click')
 
-		await wait(200)
+		await wait(1000)
 		expect(document.activeElement).eq(wrapper.find('.px-select-content').element)
-		await wait(300)
 		expect(popupWrapper.attributes('style')).include('display: none;')
 		// @ts-ignore
 		expect(wrapper.emitted('select')[0][0]).eq('banana')
-		
+
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
+	})
+
+	it('clicking the clear icon clears the value and keeps focus', async () => {
+		const onFocus = vi.fn()
+		const onUpdate = vi.fn()
+		const onBlur = vi.fn()
+		const initValue = 'Apple'
+		const wrapper = mountComponent({
+			modelValue: initValue,
+			mode: 'date',
+			onFocus,
+			onBlur,
+			clearable: true,
+			'onUpdate:modelValue': onUpdate
+		})
+
+		const wrapperEl = wrapper.find('.px-select')
+		const content = wrapper.find('.px-select-content')
+		await content.trigger('focus')
+		expect(onFocus).toHaveBeenCalledTimes(1)
+
+		await wrapperEl.trigger('mouseenter')
+		const closeWrapper = wrapper.find('.px-select-close-wrapper .px-select-icon')
+		expect(closeWrapper.exists()).toBe(true)
+
+		await closeWrapper.trigger('mousedown')
+		await closeWrapper.trigger('click')
+		await wait(50)
+
+		expect(onUpdate).toBeCalledWith(null)
+
+		await expect(document.activeElement).toBe(content.element)
+		expect(onBlur).not.toHaveBeenCalled()
+	})
+
+	it('clicking the clear icon while dropdown is open closes the dropdown and keeps focus', async () => {
+		const onFocus = vi.fn()
+		const onBlur = vi.fn()
+		const initValue = 'Apple'
+		const onUpdate = vi.fn()
+		const wrapper = mountComponent({
+			modelValue: initValue,
+			onFocus,
+			onBlur,
+			clearable: true,
+			'onUpdate:modelValue': onUpdate
+		})
+
+		const wrapperEl = wrapper.find('.px-select')
+		await wrapperEl.trigger('mousedown')
+		await wait(20)
+
+		const popupWrapper = wrapper.findComponent({ name: 'Popup' })
+		expect(popupWrapper.props('visible')).toBe(true)
+
+		const input = wrapper.find('.px-select-content')
+		await input.trigger('focus')
+		expect(onFocus).toHaveBeenCalledTimes(1)
+
+		await wrapperEl.trigger('mouseenter')
+		const closeWrapper = wrapper.find('.px-select-close-wrapper .px-select-icon')
+		expect(closeWrapper.exists()).toBe(true)
+
+		await closeWrapper.trigger('mousedown')
+		await closeWrapper.trigger('click')
+		await wait(50)
+
+		expect(onUpdate).toBeCalledWith(null)
+
+		await wait(300)
+
+		expect(popupWrapper.props('visible')).toBe(false)
+
+		expect(document.activeElement).toBe(input.element)
+		expect(onBlur).not.toHaveBeenCalled()
 	})
 })

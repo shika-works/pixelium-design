@@ -49,20 +49,7 @@ const dfs = (
 	})
 }
 
-const newItems: string[] = [
-	'dialog',
-	'popconfirm',
-	'badge',
-	'back-top',
-	'progress',
-	'menu',
-	'i18n',
-	'drop-down',
-	'breadcrumb',
-	'scroll-bar',
-	'table',
-	'pagination'
-]
+const newItems: string[] = ['date-picker', 'date-time-picker', 'time-picker']
 
 const order = [
 	'guide',

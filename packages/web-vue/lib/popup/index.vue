@@ -18,7 +18,7 @@ import type { PopupContentGetter, PopupEvents, PopupProps, PopupProvide } from '
 import { isNullish, throttle } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
-import { inBrowser } from '../share/util/env'
+import { inBrowser, inVitest } from '../share/util/env'
 import { calcPixelSize } from '../share/util/plot'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { checkMouseInsideElement, checkMouseInsideElementFromEvent } from '../share/util/dom'
@@ -286,11 +286,12 @@ watch(
 	}
 )
 
-const resizeObserver = inBrowser()
-	? new ResizeObserver(() => {
-			updateRenderState()
-		})
-	: null
+const resizeObserver =
+	inBrowser() && !inVitest()
+		? new ResizeObserver(() => {
+				updateRenderState()
+			})
+		: null
 
 onMounted(() => {
 	nextTick(() => {

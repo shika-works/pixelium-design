@@ -137,7 +137,7 @@ export function createMocks4Focus() {
 			// @ts-ignore
 			delete document.activeElement
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
 		vi.clearAllMocks()
 	}

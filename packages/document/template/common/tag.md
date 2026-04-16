@@ -124,7 +124,4 @@ events.close: Close event.
 slots.default: Tag content.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]

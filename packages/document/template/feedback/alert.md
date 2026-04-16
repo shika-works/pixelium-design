@@ -142,7 +142,4 @@ slots.title: Title slot.
 slots.icon: Icon slot.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]

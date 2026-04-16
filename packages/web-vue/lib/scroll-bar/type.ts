@@ -21,6 +21,11 @@ export type ScrollBarProps = {
 	 * @version 0.1.0
 	 */
 	showScrollPadding?: boolean
+	/**
+	 * @property {boolean} [ghost=false]
+	 * @version 0.1.0
+	 */
+	ghost?: boolean
 }
 
 export type ScrollBarEvents = {
@@ -74,4 +79,24 @@ export type ScrollBarExpose = {
 		(options?: ScrollToOptions): void
 		(x: number, y: number): void
 	}
+	/**
+	 * @property {number} scrollHeight
+	 * @version 0.2.0
+	 */
+	scrollHeight: number
+	/**
+	 * @property {number} scrollWidth
+	 * @version 0.2.0
+	 */
+	scrollWidth: number
+	/**
+	 * @property {number} scrollTop
+	 * @version 0.2.0
+	 */
+	scrollTop: number
+	/**
+	 * @property {number} scrollLeft
+	 * @version 0.2.0
+	 */
+	scrollLeft: number
 }

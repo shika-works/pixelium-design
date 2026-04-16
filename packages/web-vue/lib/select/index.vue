@@ -70,6 +70,7 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
 import { useFocusMode } from '../share/hook/use-focus-mode'
+import { getScopedObj } from '../share/util/render'
 
 defineOptions({
 	name: 'Select',
@@ -347,21 +348,12 @@ const setupSelect = () => {
 	triggerPopover()
 }
 
-let mousedownTagPopupContentFlag = false
-
-const doBlur = () => {
+const clearDropdown = () => {
 	closePopover()
-	inputRef.value?.blur()
-	contentRef.value?.blur()
 	setTimeout(async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
-}
-
-const tagPopupContentMousedownHandler = (e: MouseEvent) => {
-	mousedownTagPopupContentFlag = true
-	popupMousedownHandler(e)
 }
 
 const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
@@ -374,35 +366,24 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 				if (disabledComputed.value || readonlyComputed.value) {
 					return
 				}
-
-				const target = e.target
-				
-				if (target instanceof HTMLElement || target instanceof SVGElement) {
-					if (!closeRef.value?.$el.contains(target) && !mousedownTagPopupContentFlag) {
-						setupSelect()
-					}
-				}
-				mousedownTagPopupContentFlag = false
 				emits('focus', e)
 			},
 			onBlur: (e) => {
-				doBlur()
+				clearDropdown()
 				emits('blur', e)
 				formItemProvide?.blurHandler()
 			},
-			onWrapperMousedown: (e, isFirstFocus) => {
-				if (!isFirstFocus) {
-					// When clicking select component again after select a option, we should display the dropdown.
-					const target = e.target
-					if (target instanceof HTMLElement || target instanceof SVGElement) {
-						if (!closeRef.value?.$el.contains(target)) {
-							setupSelect()
-						}
-					}
-					return false
-				}
+			onWrapperMousedown: (e) => {
 				if (disabledComputed.value || readonlyComputed.value) {
 					return false
+				}
+				const target = e.target
+				if (target instanceof HTMLElement || target instanceof SVGElement) {
+					if (!closeRef.value?.$el.contains(target)) {
+						setupSelect()
+					} else {
+						clearDropdown()
+					}
 				}
 			}
 		},
@@ -526,7 +507,7 @@ const expose: any = {
 		contentRef.value?.focus()
 	},
 	blur: () => {
-		doBlur()
+		clearDropdown()
 	},
 	clear: () => clearHandler(),
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
@@ -545,6 +526,14 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 		popoverVisible.value = value
 	}
 }
+
+watch(popoverVisible, () => {
+	if (popoverVisible.value) {
+		emits('dropdownOpen')
+	} else {
+		emits('dropdownClose')
+	}
+})
 
 const showPlaceholder = computed(() => {
 	return (
@@ -726,6 +715,8 @@ const popoverProps = computed(() => {
 	}
 })
 
+const scopedObj = getScopedObj(instance)
+
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -795,7 +786,7 @@ defineRender(() => {
 							<Popup
 								{...popoverProps.value}
 								contentProps={{
-									onMousedown: tagPopupContentMousedownHandler
+									onMousedown: popupMousedownHandler
 								}}
 							>
 								{{
@@ -933,16 +924,25 @@ defineRender(() => {
 			<canvas ref={canvasRef} class="px-select-canvas" />
 		</Fragment>
 	)
-	const scopeObj: Record<string, ''> = {}
-	const scopeId = instance?.vnode.scopeId
-	const parentScopeId = instance?.vnode.scopeId
-	if (scopeId) {
-		scopeObj[scopeId] = ''
-	}
-	if (parentScopeId) {
-		scopeObj[parentScopeId] = ''
-	}
-	const pixelSize = calcPixelSize()
+	const mergedProps = mergeProps(
+		{
+			ref: wrapperRef,
+			class: [
+				'pixelium px-select',
+				sizeComputed.value && `px-select__${sizeComputed.value}`,
+				shapeComputed.value && `px-select__${shapeComputed.value}`,
+				{ 'px-select__inner': !!inputGroupProvide },
+				{ 'px-select__disabled': disabledComputed.value }
+			],
+			onFocusin: focusHandler,
+			onFocusout: blurHandler,
+			onMousedown: wrapperMousedownHandler,
+			onMouseenter: mouseenterHandler,
+			onMouseleave: mouseleaveHandler
+		},
+		attrs,
+		scopedObj
+	)
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -952,38 +952,15 @@ defineRender(() => {
 			visible={popoverVisible.value}
 			onUpdate:visible={popoverVisibleUpdateHandler}
 			trigger="click"
-			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
 				onMousedown: popupMousedownHandler
 			}}
+			{...(props.dropdownProps || {})}
 		>
 			{{
-				default: () =>
-					h(
-						'div',
-						mergeProps(
-							{
-								ref: wrapperRef,
-								class: [
-									'pixelium px-select',
-									sizeComputed.value && `px-select__${sizeComputed.value}`,
-									shapeComputed.value && `px-select__${shapeComputed.value}`,
-									{ 'px-select__inner': !!inputGroupProvide },
-									{ 'px-select__disabled': disabledComputed.value }
-								],
-								onFocusin: focusHandler,
-								onFocusout: blurHandler,
-								onMousedown: wrapperMousedownHandler,
-								onMouseenter: mouseenterHandler,
-								onMouseleave: mouseleaveHandler,
-								...scopeObj
-							},
-							attrs
-						),
-						[Inner]
-					),
+				default: () => h('div', mergedProps, [Inner]),
 				content: () =>
 					optionsFiltered.value.length ? (
 						<OptionList

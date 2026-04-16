@@ -40,7 +40,7 @@
 			variant="dark"
 			v-bind="props.tooltipProps"
 			:content-props="{
-				onMousedown: numberDisplayMousedownHandler
+				onMousedown: thumbPopupMousedownHandler
 			}"
 			:visible="props.tooltip ? undefined : false"
 			v-if="!props.range"
@@ -76,7 +76,7 @@
 				variant="dark"
 				v-bind="props.tooltipStartProps"
 				:content-props="{
-					onMousedown: numberDisplayMousedownHandler
+					onMousedown: thumbStartPopupMousedownHandler
 				}"
 				:visible="props.tooltip ? undefined : false"
 			>
@@ -110,7 +110,7 @@
 				variant="dark"
 				v-bind="props.tooltipEndProps"
 				:content-props="{
-					onMousedown: numberDisplayMousedownHandler
+					onMousedown: thumbEndPopupMousedownHandler
 				}"
 				:visible="props.tooltip ? undefined : false"
 			>
@@ -171,12 +171,12 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import {
 	transformModelValue,
 	clampValue as clampValueImpl,
-	getTargetThumbEl,
 	calcValueFromEvent,
 	getRangeValue,
 	getSingleValue,
 	calcThumbLeft,
-	updateMarkPoints
+	updateMarkPoints,
+	getTargetThumbElWhenRange
 } from './util'
 import Popup from '../popup/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
@@ -377,6 +377,14 @@ const handleDrag = (e: MouseEvent | TouchEvent) => {
 	doUpdateThrottle(e)
 }
 
+const getTargetEl = (e: MouseEvent | TouchEvent) => {
+	if (!props.range) {
+		return { thumbEl: thumbRef.value, targetType: null }
+	} else {
+		return getTargetThumbElWhenRange(e, props.direction, thumbStartRef, thumbEndRef)
+	}
+}
+
 const preprocessBeforeUpdate = (e: MouseEvent | TouchEvent, clickFlag: boolean) => {
 	let targetType = draggingTarget.value
 	const sliderEl = sliderRef.value
@@ -393,12 +401,7 @@ const preprocessBeforeUpdate = (e: MouseEvent | TouchEvent, clickFlag: boolean) 
 		if (!props.range) {
 			thumbEl = thumbRef.value
 		} else {
-			const { thumbEl: el, targetType: type } = getTargetThumbEl(
-				e,
-				props.direction,
-				thumbStartRef,
-				thumbEndRef
-			)
+			const { thumbEl: el, targetType: type } = getTargetEl(e)
 			thumbEl = el
 			targetType = type
 		}
@@ -531,12 +534,15 @@ const focusSliderHandler = (e: MouseEvent) => {
 		} else if (thumbEndRef.value && thumbEndRef.value.contains(target)) {
 			thumbEndRef.value.focus()
 		} else {
-			;(thumbStartRef.value || thumbRef.value)?.focus()
+			const { thumbEl } = getTargetEl(e)
+			if (thumbEl) {
+				thumbEl.focus()
+			}
 		}
 	}, 0)
 }
 
-const { focusHandler, blurHandler, cancel } = useFocusMode({
+const { focusHandler, blurHandler } = useFocusMode({
 	onFocus: (e, isFirstFocus) => {
 		if (isFirstFocus) {
 			emits('focus', e)
@@ -551,27 +557,21 @@ const { focusHandler, blurHandler, cancel } = useFocusMode({
 const {
 	focusMode: thumbFocusMode,
 	focusHandler: thumbFocusHandler,
-	blurHandler: thumbBlurHandler
-} = useFocusMode()
+	blurHandler: thumbBlurHandler,
+	popupMousedownHandler: thumbPopupMousedownHandler
+} = useFocusMode({}, thumbRef)
 const {
 	focusMode: thumbStartFocusMode,
 	focusHandler: thumbStartFocusHandler,
-	blurHandler: thumbStartBlurHandler
-} = useFocusMode()
+	blurHandler: thumbStartBlurHandler,
+	popupMousedownHandler: thumbStartPopupMousedownHandler
+} = useFocusMode({}, thumbStartRef)
 const {
 	focusMode: thumbEndFocusMode,
 	focusHandler: thumbEndFocusHandler,
-	blurHandler: thumbEndBlurHandler
-} = useFocusMode()
-
-const numberDisplayMousedownHandler = () => {
-	setTimeout(() => {
-		cancel()
-		if (sliderRef.value) {
-			sliderRef.value.focus()
-		}
-	}, 0)
-}
+	blurHandler: thumbEndBlurHandler,
+	popupMousedownHandler: thumbEndPopupMousedownHandler
+} = useFocusMode({}, thumbEndRef)
 
 const darkMode = useDarkMode()
 

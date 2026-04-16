@@ -67,7 +67,10 @@ const additionMap = {
 	breadcrumb: '面包屑',
 	'scroll-bar': '滚动条',
 	table: '表格',
-	pagination: '分页'
+	pagination: '分页',
+	'date-picker': '日期选择器',
+	'date-time-picker': '日期时间选择器',
+	'time-picker': '时间选择器'
 }
 
 const sidebar = dfs4Md('zh', titleMap, additionMap)

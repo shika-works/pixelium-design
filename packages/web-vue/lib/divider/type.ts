@@ -19,4 +19,14 @@ export type DividerProps = {
 	 * @version 0.0.0-beta
 	 */
 	size?: number | string
+	/**
+	 * @property {boolean} [soft]
+	 * @version 0.2.0
+	 */
+	soft?: boolean
+	/**
+	 * @property {string} [color=false]
+	 * @version 0.2.0
+	 */
+	color?: string
 }

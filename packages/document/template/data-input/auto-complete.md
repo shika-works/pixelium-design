@@ -146,6 +146,9 @@ events.clear: 点击清除文本按钮，清除内容时的回调。
 events.blur: 自动填充输入框失焦时的回调。
 events.focus: 自动填充输入框聚焦时的回调。
 events.select: 选中选项的回调。
+events.dropdownOpen: 下拉面板展示的回调。
+events.dropdownClose: 下拉面板关闭的回调。
+
 slots.prefix: 前缀内容。
 slots.suffix: 后缀内容。
 slots.option: 选项内容。
@@ -187,6 +190,9 @@ events.clear: Callback fired when the clear button is clicked.
 events.blur: Callback fired when the input loses focus.
 events.focus: Callback fired when the input receives focus.
 events.select: Callback fired when an option is selected.
+events.dropdownOpen: Callback when the dropdown panel is opened.
+events.dropdownClose: Callback when the dropdown panel is closed.
+
 slots.prefix: Prefix content.
 slots.suffix: Suffix content.
 slots.option: Custom option content.

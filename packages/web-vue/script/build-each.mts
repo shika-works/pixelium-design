@@ -231,12 +231,12 @@ const cssConfigs: CssConfig = {
 	'scroll-bar': [
 		{
 			js: 'use-scroll-bar.js',
-			css: `import './index.css'\n`,
+			css: `import './index.css'\nimport '../index.css'\n`,
 			cssFileName: 'css-hook.js'
 		},
 		{
 			js: 'index.js',
-			css: `import './index.css'\n`,
+			css: `import './index.css'\nimport '../index.css'\n`,
 			cssFileName: 'css.js'
 		}
 	]

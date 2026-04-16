@@ -191,6 +191,9 @@ events.blur: 失焦时的回调。
 events.focus: 聚焦时的回调。
 events.select: 选中选项的回调。
 events.tagClose: 关闭标签时的回调。
+events.dropdownOpen: 下拉面板展示的回调。
+events.dropdownClose: 下拉面板关闭的回调。
+
 slots.prefix: 前缀内容。
 slots.suffix: 后缀内容。
 slots.option: 选项内容。
@@ -245,6 +248,9 @@ events.blur: Fired when the selector loses focus.
 events.focus: Fired when the selector gains focus.
 events.select: Fired when an option is selected.
 events.tagClose: Fired when a tag is closed.
+events.dropdownOpen: Callback when the dropdown panel is opened.
+events.dropdownClose: Callback when the dropdown panel is closed.
+
 slots.prefix: Prefix content.
 slots.suffix :Suffix content.
 slots.option: Custom option content.

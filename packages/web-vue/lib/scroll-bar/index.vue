@@ -128,7 +128,19 @@ const scrollBy: ScrollBy = (arg1?: ScrollToOptions | number, arg2?: number) => {
 
 defineExpose<ScrollBarExpose>({
 	scrollBy,
-	scrollTo
+	scrollTo,
+	get scrollHeight() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollHeight || 0
+	},
+	get scrollWidth() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollWidth || 0
+	},
+	get scrollLeft() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollLeft || 0
+	},
+	get scrollTop() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollTop || 0
+	}
 })
 
 const updateHandler = (ins: OverlayScrollbars) => {
@@ -173,6 +185,7 @@ const theme = computed(() => {
 		:class="{
 			'px-scroll': true,
 			'px-scroll__simple': props.variant === 'simple',
+			'px-scroll__ghost': props.ghost,
 			'px-scroll__x': props.showScrollPadding && showXScroll,
 			'px-scroll__y': props.showScrollPadding && showYScroll
 		}"

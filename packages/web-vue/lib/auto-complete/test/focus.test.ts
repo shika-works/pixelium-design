@@ -4,7 +4,7 @@ import { createMocks, createMocks4Focus } from '../../share/util/test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { wait } from 'parsnip-kit'
 import PopupWrapper from '../../popup-wrapper/index.vue'
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 
 const baseOptions = [
 	'Apple',
@@ -119,5 +119,95 @@ describe('AutoComplete focus/blur behavior', () => {
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
+	})
+
+	it('clicking the clear icon clears the value and keeps focus', async () => {
+		const onFocus = vi.fn()
+		const onUpdate = vi.fn((val) => (inputValue.value = val))
+		const onBlur = vi.fn()
+		const inputValue = ref('')
+		const wrapper = mountComponent({
+			modelValue: inputValue.value,
+			onFocus,
+			onBlur,
+			clearable: true,
+			'onUpdate:modelValue': onUpdate
+		})
+
+		const wrapperEl = wrapper.find('.px-auto-complete')
+
+		const input = wrapper.find('input.px-auto-complete-inner')
+		await input.setValue('a')
+		await nextTick()
+		wrapper.setProps({ modelValue: inputValue.value })
+		await nextTick()
+
+		await input.trigger('focus')
+		expect(onFocus).toHaveBeenCalledTimes(1)
+
+		await wrapperEl.trigger('mouseenter')
+		const closeWrapper = wrapper.find('.px-auto-complete-close-wrapper .px-auto-complete-icon')
+		expect(closeWrapper.exists()).toBe(true)
+
+		await closeWrapper.trigger('mousedown')
+		await closeWrapper.trigger('click')
+		await wait(50)
+
+		expect(onUpdate).toBeCalledWith('')
+		expect(inputValue.value).toBe('')
+
+		await wait(300)
+		expect(document.activeElement).toBe(input.element)
+		expect(onBlur).not.toHaveBeenCalled()
+	})
+
+	it('clicking the clear icon while dropdown is open closes the dropdown and keeps focus', async () => {
+		const onFocus = vi.fn()
+		const onBlur = vi.fn()
+		const inputValue = ref('')
+		const onUpdate = vi.fn((val) => (inputValue.value = val))
+		const wrapper = mountComponent({
+			modelValue: inputValue.value,
+			onFocus,
+			onBlur,
+			clearable: true,
+			'onUpdate:modelValue': onUpdate
+		})
+
+		const input = wrapper.find('input.px-auto-complete-inner')
+		await input.setValue('a')
+		await nextTick()
+		wrapper.setProps({ modelValue: inputValue.value })
+		await nextTick()
+
+		const wrapperEl = wrapper.find('.px-auto-complete')
+		await wrapperEl.trigger('mousedown')
+
+		await input.trigger('input', { value: 'a' })
+		await wait(20)
+
+		const popupWrapper = wrapper.findComponent({ name: 'Popup' })
+		expect(popupWrapper.props('visible')).toBe(true)
+
+		await input.trigger('focus')
+		expect(onFocus).toHaveBeenCalledTimes(1)
+
+		await wrapperEl.trigger('mouseenter')
+		const closeWrapper = wrapper.find('.px-auto-complete-close-wrapper .px-auto-complete-icon')
+		expect(closeWrapper.exists()).toBe(true)
+
+		await closeWrapper.trigger('mousedown')
+		await closeWrapper.trigger('click')
+		await wait(50)
+
+		expect(onUpdate).toBeCalledWith('')
+		expect(inputValue.value).toBe('')
+
+		await wait(300)
+
+		expect(popupWrapper.props('visible')).toBe(false)
+
+		expect(document.activeElement).toBe(input.element)
+		expect(onBlur).not.toHaveBeenCalled()
 	})
 })

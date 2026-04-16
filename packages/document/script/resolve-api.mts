@@ -55,6 +55,7 @@ const resolveJsDoc = (
 					params: [] as {
 						paramName: string
 						paramType: string
+						optional?: boolean
 					}[]
 				}
 			}
@@ -62,7 +63,8 @@ const resolveJsDoc = (
 			paramTags.forEach((tag) => {
 				data.events.params.push({
 					paramType: tag?.type || '',
-					paramName: tag?.name || ''
+					paramName: tag?.name || '',
+					optional: tag?.optional || false
 				})
 			})
 			container.push(data)
@@ -108,6 +110,7 @@ type PropItem = {
 		params: {
 			paramName: string
 			paramType: string
+			optional?: boolean
 		}[]
 	}
 	slots?: {
@@ -199,7 +202,7 @@ function propsToMarkdown(
 				return `| ${name} | \`${
 					item.events?.params
 						.map((param) => {
-							return `${param.paramName}: ${param.paramType}`
+							return `${param.paramName}${param.optional ? '?' : ''}: ${param.paramType}`
 						})
 						.join(', ')
 						.replaceAll('|', '\\|') || ' '
