@@ -89,7 +89,9 @@ const forward = forwardEmits(emits, [
 	'clear',
 	'blur',
 	'focus',
-	'select'
+	'select',
+	'dropdownOpen',
+	'dropdownClose'
 ])
 const instance = getCurrentInstance()
 const scopedObj = getScopedObj(instance)

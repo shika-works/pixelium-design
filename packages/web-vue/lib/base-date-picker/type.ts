@@ -57,6 +57,8 @@ export type BaseDatePickerEvents = {
 	yearNext: [referredDate: Date, event: MouseEvent]
 	referredDateSelect: [referredDate: Date, event: MouseEvent]
 	referredDateChange: [referredDate: Date, event: MouseEvent]
+	dropdownOpen: [event: Event]
+	dropdownClose: [event: Event]
 }
 
 export type BaseDatePickerSlots = {

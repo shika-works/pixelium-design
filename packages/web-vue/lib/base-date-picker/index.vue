@@ -285,12 +285,12 @@ watch(
 	{ immediate: true, deep: true }
 )
 
-const triggerPopover = async () => {
+const triggerPopover = async (visible = true) => {
 	if (props.needDropdown === false) {
 		popoverVisible.value = false
 		return
 	}
-	popoverVisible.value = true
+	popoverVisible.value = visible
 }
 
 const inputHandler = async (placement: 'single' | 'start' | 'end', e: Event) => {
@@ -402,7 +402,6 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 				if (isFirstFocus) {
 					emits('focus', e)
 				}
-				triggerPopover()
 			},
 			onBlur: (e) => {
 				const target = document.activeElement
@@ -421,7 +420,7 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 					return false
 				}
 			},
-			onWrapperMousedown(event, isFirstFocus) {
+			onWrapperMousedown(event) {
 				if (disabledComputed.value || readonlyComputed.value) {
 					return false
 				}
@@ -429,13 +428,12 @@ const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMous
 				const target = event.target as HTMLElement
 
 				// @ts-ignore
-				if (closeIconRef.value?.$el?.contains(target)) {
-					return false
+				if (!closeIconRef.value?.$el?.contains(target)) {
+					triggerPopover()
+				} else {
+					triggerPopover(false)
 				}
 
-				if (!isFirstFocus) {
-					triggerPopover()
-				}
 				if (target.tabIndex >= 0) {
 					target.focus()
 				} else if (inputRef.value && inputRef.value.contains(target)) {
@@ -676,7 +674,7 @@ const renderInner = () => {
 	)
 }
 
-const [renderDropDown, popupOpenHandler, dateTimePickerPanelControlList] = useDropdown(
+const [renderDropDown, triggerDropdown, dateTimePickerPanelControlList] = useDropdown(
 	modelValue,
 	updateModelValue,
 	popoverVisible,
@@ -689,6 +687,15 @@ const [renderDropDown, popupOpenHandler, dateTimePickerPanelControlList] = useDr
 provide<BaseDatePickerProvide>(BASE_DATE_PICKER_PROVIDE, {
 	popupMousedownHandler
 })
+
+const popupOpenHandler = (e: Event) => {
+	triggerDropdown()
+	emits('dropdownOpen', e)
+}
+const popupCloseHandler = (e?: Event) => {
+	// e is undefined only when Popup is in cascade mode
+	emits('dropdownClose', e as Event)
+}
 
 defineRender(() => {
 	const Inner = renderInner()
@@ -706,6 +713,7 @@ defineRender(() => {
 				class: 'px-base-date-picker-dropdown-content-wrapper'
 			}}
 			onOpen={popupOpenHandler}
+			onClose={popupCloseHandler}
 			{...(props.dropdownProps || {})}
 		>
 			{{

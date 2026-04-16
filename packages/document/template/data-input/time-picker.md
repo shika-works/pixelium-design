@@ -105,6 +105,8 @@ events.clear: 点击清除文本按钮，清除内容时的回调。
 events.blur: 时间选择器失焦时的回调。
 events.focus: 时间选择器聚焦时的回调。
 events.select: 通过下拉面板修改时间选择器值时的回调。
+events.dropdownOpen: 下拉面板展示的回调。
+events.dropdownClose: 下拉面板关闭的回调。
 
 slots.prefix: 前缀内容。
 slots.suffix: 后缀内容。
@@ -150,6 +152,8 @@ events.clear: Callback when the clear text button is clicked and content is clea
 events.blur: Callback when the time picker loses focus.
 events.focus: Callback when the time picker gains focus.
 events.select: Callback when the time picker value is changed via the dropdown panel.
+events.dropdownOpen: Callback when the dropdown panel is opened.
+events.dropdownClose: Callback when the dropdown panel is closed.
 
 slots.prefix: Prefix content.
 slots.suffix: Suffix content.

@@ -93,44 +93,30 @@ const timePickerRef = shallowRef<InstanceType<typeof TimePicker> | null>(null)
 const timePickerRangeRef = shallowRef<InstanceType<typeof TimePicker> | null>(null)
 
 const focusHandler = () => {
+	timePickerRef.value?.focus()
 	setTimeout(() => {
-		timePickerRef.value?.focus()
-		setTimeout(() => {
-			timePickerRef.value?.blur()
-		}, 2000)
-	}, 0)
+		timePickerRef.value?.blur()
+	}, 2000)
 }
 const clearHandler = () => {
-	setTimeout(() => {
-		timePickerRef.value?.clear()
-	}, 0)
+	timePickerRef.value?.clear()
 }
 const selectHandler = () => {
-	setTimeout(() => {
-		timePickerRef.value?.select()
-	}, 0)
+	timePickerRef.value?.select()
 }
 
 const focusStartHandler = () => {
-	setTimeout(() => {
-		timePickerRef.value?.focus('start')
-	}, 0)
+	timePickerRangeRef.value?.focus('start')
 }
 const focusEndHandler = () => {
-	setTimeout(() => {
-		timePickerRangeRef.value?.focus('end')
-	}, 0)
+	timePickerRangeRef.value?.focus('end')
 }
 
 const selectStartHandler = () => {
-	setTimeout(() => {
-		timePickerRangeRef.value?.select('start')
-	}, 0)
+	timePickerRangeRef.value?.select('start')
 }
 const selectEndHandler = () => {
-	setTimeout(() => {
-		timePickerRangeRef.value?.select('end')
-	}, 0)
+	timePickerRangeRef.value?.select('end')
 }
 
 const clearRangeHandler = () => {

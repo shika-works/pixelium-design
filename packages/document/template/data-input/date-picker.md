@@ -151,6 +151,8 @@ events.yearPrev: 日期选择面板中，年份向前移动的回调。
 events.yearNext: 日期选择面板中，年份向后移动的回调。
 events.referredDateSelect: 日期选择面板中，通过年月的下拉选项选择年月时的回调。
 events.referredDateChange: 日期选择面板中，年月改变的回调。
+events.dropdownOpen: 下拉面板展示的回调。
+events.dropdownClose: 下拉面板关闭的回调。
 
 slots.prefix: 前缀内容。
 slots.suffix: 后缀内容。
@@ -201,6 +203,8 @@ events.yearPrev: Callback when moving to the previous year in the date panel.
 events.yearNext: Callback when moving to the next year in the date panel.
 events.referredDateSelect: Callback when selecting a year/month via the dropdown options in the date panel.
 events.referredDateChange: Callback when the year/month changes in the date panel.
+events.dropdownOpen: Callback when the dropdown panel is opened.
+events.dropdownClose: Callback when the dropdown panel is closed.
 
 slots.prefix: Prefix content.
 slots.suffix: Suffix content.

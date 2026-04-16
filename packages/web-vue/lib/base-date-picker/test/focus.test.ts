@@ -108,4 +108,85 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
 	})
+
+	it('clicking the clear icon clears the value and keeps focus after 300ms', async () => {
+		const onFocus = vi.fn()
+		const onUpdate = vi.fn()
+		const onBlur = vi.fn()
+		const initialDate = new Date('2025-01-15')
+		const wrapper = mountComponent({
+			modelValue: initialDate,
+			mode: 'date',
+			onFocus,
+			onBlur,
+			clearable: true,
+			'onUpdate:modelValue': onUpdate
+		})
+
+		const wrapperEl = wrapper.find('.px-base-date-picker')
+		const input = wrapper.find('input.px-base-date-picker-inner')
+		await input.trigger('focus')
+		expect(onFocus).toHaveBeenCalledTimes(1)
+
+		await wrapperEl.trigger('mouseenter')
+		const closeWrapper = wrapper.find(
+			'.px-base-date-picker-close-wrapper .px-base-date-picker-icon'
+		)
+		expect(closeWrapper.exists()).toBe(true)
+
+		await closeWrapper.trigger('mousedown')
+		await closeWrapper.trigger('click')
+		await wait(50)
+
+		expect(onUpdate).toBeCalledWith(null)
+
+		await wait(300)
+		expect(document.activeElement).toBe(input.element)
+		expect(onBlur).not.toHaveBeenCalled()
+	})
+
+	it('clicking the clear icon while dropdown is open closes the dropdown and keeps focus after 300ms', async () => {
+		const onFocus = vi.fn()
+		const onBlur = vi.fn()
+		const initialDate = new Date('2025-01-15')
+		const onUpdate = vi.fn()
+		const wrapper = mountComponent({
+			modelValue: initialDate,
+			mode: 'date',
+			onFocus,
+			onBlur,
+			clearable: true,
+			'onUpdate:modelValue': onUpdate
+		})
+
+		const wrapperEl = wrapper.find('.px-base-date-picker')
+		await wrapperEl.trigger('mousedown')
+		await wait(20)
+
+		const popupWrapper = wrapper.findComponent({ name: 'Popup' })
+		expect(popupWrapper.props('visible')).toBe(true)
+
+		const input = wrapper.find('input.px-base-date-picker-inner')
+		await input.trigger('focus')
+		expect(onFocus).toHaveBeenCalledTimes(1)
+
+		await wrapperEl.trigger('mouseenter')
+		const closeWrapper = wrapper.find(
+			'.px-base-date-picker-close-wrapper .px-base-date-picker-icon'
+		)
+		expect(closeWrapper.exists()).toBe(true)
+
+		await closeWrapper.trigger('mousedown')
+		await closeWrapper.trigger('click')
+		await wait(50)
+
+		expect(onUpdate).toBeCalledWith(null)
+
+		await wait(300)
+
+		expect(popupWrapper.props('visible')).toBe(false)
+
+		expect(document.activeElement).toBe(input.element)
+		expect(onBlur).not.toHaveBeenCalled()
+	})
 })

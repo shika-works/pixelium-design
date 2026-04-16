@@ -95,7 +95,9 @@ const forward = forwardEmits(emits, [
 	'yearPrev',
 	'yearNext',
 	'referredDateSelect',
-	'referredDateChange'
+	'referredDateChange',
+	'dropdownOpen',
+	'dropdownClose'
 ])
 
 const instance = getCurrentInstance()

@@ -96,44 +96,30 @@ const dateTimePickerRef = shallowRef<InstanceType<typeof DateTimePicker> | null>
 const dateTimePickerRangeRef = shallowRef<InstanceType<typeof DateTimePicker> | null>(null)
 
 const focusHandler = () => {
+	dateTimePickerRef.value?.focus()
 	setTimeout(() => {
-		dateTimePickerRef.value?.focus()
-		setTimeout(() => {
-			dateTimePickerRef.value?.blur()
-		}, 2000)
-	}, 0)
+		dateTimePickerRef.value?.blur()
+	}, 2000)
 }
 const clearHandler = () => {
-	setTimeout(() => {
-		dateTimePickerRef.value?.clear()
-	}, 0)
+	dateTimePickerRef.value?.clear()
 }
 const selectHandler = () => {
-	setTimeout(() => {
-		dateTimePickerRef.value?.select()
-	}, 0)
+	dateTimePickerRef.value?.select()
 }
 
 const focusStartHandler = () => {
-	setTimeout(() => {
-		dateTimePickerRangeRef.value?.focus('start')
-	}, 0)
+	dateTimePickerRangeRef.value?.focus('start')
 }
 const focusEndHandler = () => {
-	setTimeout(() => {
-		dateTimePickerRangeRef.value?.focus('end')
-	}, 0)
+	dateTimePickerRangeRef.value?.focus('end')
 }
 
 const selectStartHandler = () => {
-	setTimeout(() => {
-		dateTimePickerRangeRef.value?.select('start')
-	}, 0)
+	dateTimePickerRangeRef.value?.select('start')
 }
 const selectEndHandler = () => {
-	setTimeout(() => {
-		dateTimePickerRangeRef.value?.select('end')
-	}, 0)
+	dateTimePickerRangeRef.value?.select('end')
 }
 
 const clearRangeHandler = () => {
