@@ -77,6 +77,16 @@ Pass `modelValue` to enter controlled mode. If not passed or `undefined`, it wil
 <preview path="./date-picker-week.vue"></preview>
 
 [[[zh
+## 快速跳转
+
+]]]
+[[[en
+## Quick Access
+
+]]]
+<preview path="./date-picker-quick.vue"></preview>
+
+[[[zh
 ## 自定义分隔符
 
 ]]]
@@ -137,6 +147,7 @@ dropdownDestroyOnHide: 下拉选择面板是否会在隐藏时销毁。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
 dropdownProps: 下拉选择面板的属性。
 needDropdown: 是否需要展示下拉选择面板。
+quickAccess: 快速跳转按钮的选项。
 
 events.input: 日期选择器输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。
@@ -157,6 +168,7 @@ events.dropdownClose: 下拉面板关闭的回调。
 slots.prefix: 前缀内容。
 slots.suffix: 后缀内容。
 slots.splitter: 范围选择时，分隔符的内容。
+slots.quick: 下拉面板的底部插槽。
 
 datePickerExpose.focus: 聚焦当前控件，范围选择时不传 `placement` 默认作用于开始时间。
 datePickerExpose.blur: 取消聚焦当前控件，范围选择时不传 `placement` 默认作用于开始时间。
@@ -189,6 +201,7 @@ dropdownDestroyOnHide: Whether the dropdown panel is destroyed when hidden.
 pollSizeChange: Enable polling for component size changes, may affect performance; typically used when the component's size is affected by a container element causing canvas rendering issues.
 dropdownProps: Props for the dropdown panel.
 needDropdown: Whether to show the dropdown panel.
+quickAccess: Options for the quick jump button.
 
 events.input: Callback when inputting in the date picker.
 events.update:modelValue: Callback for updating `modelValue`.
@@ -209,6 +222,7 @@ events.dropdownClose: Callback when the dropdown panel is closed.
 slots.prefix: Prefix content.
 slots.suffix: Suffix content.
 slots.splitter: Separator content for range selection.
+slots.quick: The bottom slot of the dropdown panel.
 
 datePickerExpose.focus: Focus the current control; for range selection, defaults to the start date if `placement` is not provided.
 datePickerExpose.blur: Blur the current control; for range selection, defaults to the start date if `placement` is not provided.
@@ -216,5 +230,6 @@ datePickerExpose.clear: Clear the current input content.
 datePickerExpose.select: Select the current input content; for range selection, defaults to the start date if `placement` is not provided.
 ]]]
 
+[[[slice quick-access-option]]]
 [[[slice percent]]]
 [[[slice rest-attrs]]]

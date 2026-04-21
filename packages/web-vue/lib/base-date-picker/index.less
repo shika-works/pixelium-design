@@ -179,7 +179,7 @@
 	}
 	&-dropdown-content-wrapper {
 		box-sizing: border-box;
-		padding: @px-interval-2;
+		padding: @px-interval-2 @px-interval-2 @px-interval-2 @px-interval-2;
 	}
 	&-date-time-panel-header {
 		box-sizing: border-box;
@@ -188,6 +188,65 @@
 		margin-bottom: @px-interval-2;
 		& .px-base-date-picker:first-of-type {
 			margin-right: @px-interval-2;
+		}
+	}
+
+	&-dropdown-wrapper {
+		min-width: @px-date-picker-dropdown-min-width;
+
+		&__year,
+		&__month,
+		&__quarter,
+		&__year-range {
+			max-width: @px-scroll-picker-medium-width * 2 + @px-interval-3 * 2 + @px-interval-mini-1;
+		}
+		&__month-range,
+		&__quarter-range {
+			max-width: @px-scroll-picker-medium-width * 4 + @px-interval-3 * 2 + @px-interval-mini-1;
+		}
+		&__time {
+			max-width: @px-scroll-picker-small-width * 3;
+			&.@{prefix}-dropdown-wrapper__use-12-hours {
+				max-width: @px-scroll-picker-small-width * 4;
+			}
+		}
+		&__time-range {
+			max-width: @px-scroll-picker-small-width * 6 + @px-interval-3 * 2 + @px-interval-mini-1;
+			&.@{prefix}-dropdown-wrapper__use-12-hours {
+				max-width: @px-scroll-picker-small-width * 8 + @px-interval-3 * 2 + @px-interval-mini-1;
+			}
+		}
+		&__date,
+		&__date-time,
+		&__week {
+			max-width: @px-date-picker-body-width;
+		}
+		&__date-range,
+		&__date-time-range,
+		&__week {
+			max-width: @px-date-picker-body-width * 2 + @px-interval-3 * 2 + @px-interval-mini-1;
+		}
+	}
+
+	&-dropdown-footer {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		list-style: none;
+
+		padding-left: 0;
+		margin-top: 0;
+		margin-bottom: 0;
+
+		margin: @px-interval-1 -(@px-interval-2) -(@px-interval-1) -(@px-interval-2);
+
+		font-size: @px-medium-font-size;
+
+		box-sizing: border-box;
+
+		& > * {
+			margin: @px-interval-1 @px-interval-2;
 		}
 	}
 }

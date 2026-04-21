@@ -267,7 +267,13 @@ const startInputRef = shallowRef<HTMLInputElement | null>(null)
 const endInputRef = shallowRef<HTMLInputElement | null>(null)
 
 watch(
-	[modelValue, () => props.format, () => props.template, () => props.mode],
+	[
+		modelValue,
+		() => props.format,
+		() => props.template,
+		() => props.mode,
+		() => props.use12Hours
+	],
 	() => {
 		const newValue = modelValue.value
 		if (multiple.value) {
@@ -681,7 +687,9 @@ const [renderDropDown, triggerDropdown, dateTimePickerPanelControlList] = useDro
 	multiple,
 	props,
 	emits,
-	panelForwardEvents
+	slots,
+	panelForwardEvents,
+	t
 )
 
 provide<BaseDatePickerProvide>(BASE_DATE_PICKER_PROVIDE, {
@@ -712,6 +720,7 @@ defineRender(() => {
 				onMousedown: popupMousedownHandler,
 				class: 'px-base-date-picker-dropdown-content-wrapper'
 			}}
+			cascade
 			{...(props.dropdownProps || {})}
 		>
 			{{

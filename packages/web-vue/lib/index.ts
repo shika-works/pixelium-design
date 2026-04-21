@@ -291,4 +291,6 @@ export type {
 	FilterValue
 } from './table/type.ts'
 
+export type { QuickAccessOption } from './base-date-picker/type.ts'
+
 export type { PaginationOption } from './pagination/type.ts'

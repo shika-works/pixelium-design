@@ -1,3 +1,4 @@
+import type { ButtonProps } from '../button/type'
 import type { PopoverEvents, PopoverProps } from '../popover/type'
 import type { EmitEvent, NumberOrPercentage } from '../share/type'
 
@@ -40,6 +41,14 @@ export type BaseDatePickerProps = {
 	pollSizeChange?: boolean
 	dropdownProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>
 	needDropdown?: boolean
+	quickAccess?: QuickAccessOption[]
+}
+
+export type QuickAccessOption = {
+	label: string
+	key?: string | number | symbol
+	targetTime: Date | Date[] | (() => Date | Date[])
+	buttonProps?: ButtonProps
 }
 
 export type BaseDatePickerEvents = {
@@ -65,6 +74,7 @@ export type BaseDatePickerSlots = {
 	prefix: {}
 	suffix: {}
 	splitter: {}
+	quick: {}
 }
 
 export type BaseDatePickerExpose = {

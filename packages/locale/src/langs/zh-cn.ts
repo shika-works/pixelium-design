@@ -29,6 +29,7 @@ export default {
 		Friday: '五',
 		Saturday: '六',
 		Sunday: '日',
-		'YYYY-Www': 'YYYY-ww 周'
+		'YYYY-Www': 'YYYY-ww 周',
+		current: '此时'
 	}
 }
