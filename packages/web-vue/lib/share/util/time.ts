@@ -32,7 +32,7 @@ const formatYear = (year: number, length: number) => {
 }
 
 // Algin to ISO 8601
-const getWeekOfYear = (date: Date): number => {
+export const getISOWeekOfYear = (date: Date): number => {
 	const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
 	const dayNum = d.getUTCDay() || 7
 	d.setUTCDate(d.getUTCDate() + 4 - dayNum)
@@ -42,7 +42,7 @@ const getWeekOfYear = (date: Date): number => {
 }
 
 // Algin to ISO 8601
-const getDateByISOWeek = (year: number, week: number): Date => {
+export const getDateByISOWeek = (year: number, week: number): Date => {
 	const jan4 = new Date(Date.UTC(year, 0, 4))
 	const dayOfWeek = jan4.getUTCDay() || 7
 	const firstMonday = new Date(jan4)
@@ -70,7 +70,7 @@ export function formaDate(date: Date, template: string) {
 		Q: Math.floor(month / 3) + 1,
 		MM: String(month + 1).padStart(2, '0'),
 		DD: String(d.getDate()).padStart(2, '0'),
-		ww: String(getWeekOfYear(d)).padStart(2, '0'),
+		ww: String(getISOWeekOfYear(d)).padStart(2, '0'),
 		HH: String(hours).padStart(2, '0'),
 		hh: String(hours % 12 || 12).padStart(2, '0'),
 		mm: String(d.getMinutes()).padStart(2, '0'),

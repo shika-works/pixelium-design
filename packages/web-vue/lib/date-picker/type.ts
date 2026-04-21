@@ -1,3 +1,4 @@
+import type { QuickAccessOption } from '../base-date-picker/type'
 import type { PopoverProps, PopoverEvents } from '../popover/type'
 import type { NumberOrPercentage, EmitEvent } from '../share/type'
 
@@ -131,6 +132,11 @@ export type DatePickerProps = {
 	 * @version 0.2.0
 	 */
 	needDropdown?: boolean
+	/**
+	 * @property {QuickAccessOption[]} [quickAccess]
+	 * @version 0.2.0
+	 */
+	quickAccess?: QuickAccessOption[]
 }
 
 export type DatePickerEvents = {
@@ -249,6 +255,12 @@ export type DatePickerSlots = {
 	 * @version 0.2.0
 	 */
 	splitter: {}
+	/**
+	 * @slot quick
+	 * @param {QuickAccessOption} quickAccess
+	 * @version 0.2.0
+	 */
+	quick: {}
 }
 
 export type DatePickerExpose = {

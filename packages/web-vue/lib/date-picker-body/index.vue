@@ -33,7 +33,7 @@
 import { computed, ref, watch } from 'vue'
 import type { DatePickerBodyEvents, DatePickerBodyProps } from './type'
 import { clone, isArray, isNullish } from 'parsnip-kit'
-import { getDateObj } from '../share/util/time'
+import { getDateByISOWeek, getDateObj, getISOWeekOfYear } from '../share/util/time'
 import { useLocale } from '../share/util/locale'
 
 defineOptions({
@@ -186,25 +186,46 @@ const isWithinRange = (item: CalendarItem): boolean => {
 	)
 }
 
-const isWithinWeek = (item: CalendarItem): boolean => {
+const dateOfFirstDayOfWeek = computed(() => {
 	if (!props.week || !startDate.value) {
+		return null
+	}
+	const startClone = clone(startDate.value)
+	startClone.setHours(0, 0, 0, 0)
+	if (startClone.getDay() === 1) {
+		return startClone
+	}
+	return getDateByISOWeek(startClone.getFullYear(), getISOWeekOfYear(startClone))
+})
+const dateOfFirstDayOfWeekForHover = computed(() => {
+	if (!props.week || !hoverDate.value) {
+		return null
+	}
+	const hoverDateClone = clone(hoverDate.value)
+	hoverDateClone.setHours(0, 0, 0, 0)
+	if (hoverDateClone.getDay() === 1) {
+		return hoverDateClone
+	}
+	return getDateByISOWeek(hoverDateClone.getFullYear(), getISOWeekOfYear(hoverDateClone))
+})
+
+const isWithinWeek = (item: CalendarItem): boolean => {
+	if (!dateOfFirstDayOfWeek.value) {
 		return false
 	}
 	const target = getDateObj(item.year, item.month, item.date)
 	const targetStamp = target.getTime()
-	const startClone = clone(startDate.value)
-	startClone.setHours(0, 0, 0, 0)
-	const startStamp = startClone.getTime()
+	const startStamp = dateOfFirstDayOfWeek.value.getTime()
 	return startStamp <= targetStamp && startStamp + 1000 * 60 * 60 * 24 * 7 > targetStamp
 }
 
 const isWithinWeekHover = (item: CalendarItem): boolean => {
-	if (!props.week || !hoverDate.value) {
+	if (!dateOfFirstDayOfWeekForHover.value) {
 		return false
 	}
 	const target = getDateObj(item.year, item.month, item.date)
 	const targetStamp = target.getTime()
-	const startStamp = hoverDate.value.getTime()
+	const startStamp = dateOfFirstDayOfWeekForHover.value.getTime()
 	return startStamp <= targetStamp && startStamp + 1000 * 60 * 60 * 24 * 7 > targetStamp
 }
 

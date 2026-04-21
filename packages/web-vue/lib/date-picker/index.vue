@@ -13,6 +13,9 @@
 		<template #splitter v-if="slots.splitter">
 			<slot name="splitter"></slot>
 		</template>
+		<template #quick="{ quickAccess }" v-if="slots.quick">
+			<slot name="quick" :quickAccess="quickAccess"></slot>
+		</template>
 	</BaseDatePicker>
 </template>
 

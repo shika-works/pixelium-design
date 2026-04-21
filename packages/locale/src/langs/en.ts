@@ -29,6 +29,7 @@ export default {
 		Friday: 'Fri',
 		Saturday: 'Sat',
 		Sunday: 'Sun',
-		'YYYY-Www': 'YYYY-Www'
+		'YYYY-Www': 'YYYY-Www',
+		current: 'Current'
 	}
 }
