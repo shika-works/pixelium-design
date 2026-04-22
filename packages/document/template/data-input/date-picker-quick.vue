@@ -1,12 +1,7 @@
 <template>
 	<px-space direction="vertical">
 		<px-select v-model="mode" :options="modeOptions"></px-select>
-		<px-date-picker
-			:mode="mode"
-			placeholder="Date"
-			:quick-access="quickAccess"
-			clearable
-		></px-date-picker>
+		<px-date-picker :mode="mode" :quick-access="quickAccess" clearable></px-date-picker>
 	</px-space>
 </template>
 <script setup lang="ts">

@@ -4,18 +4,15 @@ import { shallowRef, type Ref } from 'vue'
 import Divider from '../../divider/index.vue'
 import { processRangeNextValue } from './util'
 
-export const useRangeYearPicker = (
+export const useRangePicker = (
 	modelValue: Ref<Date | Date[] | null | undefined>,
-	updateModelValue: (value: Date | Date[] | null) => Promise<void>,
-	emits: (event: any, ...args: any[]) => void
+	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
 ) => {
 	const selectDateHandler = async (type: 'start' | 'end', value: Date, e: MouseEvent) => {
 		const next = value
 		const nextValue = processRangeNextValue(type, next, modelValue.value)
 
-		await updateModelValue(nextValue)
-		emits('select', nextValue, e)
-		emits('change', nextValue, e)
+		doSelect(nextValue, e)
 	}
 
 	const monthPickerStartRef = shallowRef<InstanceType<typeof DateScrollPicker> | null>(null)
@@ -26,7 +23,7 @@ export const useRangeYearPicker = (
 		monthPickerEndRef.value?.scrollToCurrent()
 	}
 
-	const render = () => {
+	const render = (mode: 'time' | 'quarter' | 'month' | 'year') => {
 		const start = isArray(modelValue.value) ? modelValue.value[0] || null : modelValue.value
 		const end = (isArray(modelValue.value) && modelValue.value[1]) || null
 		return (
@@ -36,7 +33,7 @@ export const useRangeYearPicker = (
 					class="px-date-picker-panel-dropdown"
 					current={start}
 					onSelect={(value: Date, e: MouseEvent) => selectDateHandler('start', value, e)}
-					mode="year"
+					mode={mode}
 				></DateScrollPicker>
 				<Divider soft direction="vertical"></Divider>
 				<DateScrollPicker
@@ -44,10 +41,10 @@ export const useRangeYearPicker = (
 					class="px-date-picker-panel-dropdown"
 					current={end}
 					onSelect={(value: Date, e: MouseEvent) => selectDateHandler('end', value, e)}
-					mode="year"
+					mode={mode}
 				></DateScrollPicker>
 			</div>
 		)
 	}
-	return [render, scrollToCurrent]
+	return [render, scrollToCurrent] as const
 }

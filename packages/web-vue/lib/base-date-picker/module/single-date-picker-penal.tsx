@@ -1,22 +1,20 @@
-import { ref, watch, type Ref } from 'vue'
+import { ref, shallowRef, watch, type Ref } from 'vue'
 import { clone, isArray } from 'parsnip-kit'
 import DatePickerPanel from '../../date-picker-panel/index.vue'
+import BaseDatePicker from '../index.vue'
+import type { BaseDatePickerProps } from '../type'
 
 export const useSingleDatePickerPanel = (
 	modelValue: Ref<Date | Date[] | null | undefined>,
-	updateModelValue: (value: Date | Date[] | null) => Promise<void>,
-	popoverVisible: Ref<boolean>,
 	multiple: Ref<boolean>,
+	popoverVisible: Ref<boolean>,
 	emits: (event: any, ...args: any[]) => void,
-	panelForwardEvents: Record<string, (...args: any[]) => void>
+	props: BaseDatePickerProps,
+	panelForwardEvents: Record<string, (...args: any[]) => void>,
+	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
 ) => {
-	const singleDateSelectHandler = async (value: Date | Date[], e: MouseEvent) => {
-		const next = clone(value)
-		await updateModelValue(next)
-		popoverVisible.value = false
-		emits('select', next, e)
-		emits('change', next, e)
-	}
+	const penalDatePickerRef = shallowRef<InstanceType<typeof BaseDatePicker> | null>(null)
+	const penalTimePickerRef = shallowRef<InstanceType<typeof BaseDatePicker> | null>(null)
 
 	const referredDate = ref<Date>()
 	watch(
@@ -36,17 +34,68 @@ export const useSingleDatePickerPanel = (
 		referredDate.value = refDate
 		emits('referredDateChange', refDate, e)
 	}
-	const render = () => {
+
+	const dateChangeHandler = async (value: Date | Date[] | null, e: Event | undefined) => {
+		if (isArray(modelValue.value) || isArray(value)) {
+			return
+		}
+		const next = clone(modelValue.value) || new Date()
+		if (value) {
+			next.setFullYear(value.getFullYear())
+			next.setMonth(value.getMonth())
+			next.setDate(value.getDate())
+		}
+		if (props.mode !== 'date-time') {
+			popoverVisible.value = false
+		}
+		doSelect(next, e as Event)
+	}
+
+	const timeChangeHandler = async (value: Date | Date[] | null, e: Event | undefined) => {
+		if (isArray(modelValue.value) || isArray(value)) {
+			return
+		}
+		const next = clone(modelValue.value) || new Date()
+		if (value) {
+			next.setHours(value.getHours(), value.getMinutes(), value.getSeconds())
+		}
+		doSelect(next, e as Event)
+	}
+
+	const render = (mode: 'date' | 'week' | 'date-time') => {
 		const current = isArray(modelValue.value) ? modelValue.value[0] : modelValue.value
 		return (
-			<DatePickerPanel
-				current={current}
-				onSelect={singleDateSelectHandler}
-				onReferredDateChange={referredDateChange}
-				referredDate={referredDate.value}
-				{...panelForwardEvents}
-			/>
+			<div>
+				{mode === 'date-time' && (
+					<div class="px-base-date-picker-date-time-panel-header">
+						<BaseDatePicker
+							onChange={dateChangeHandler}
+							modelValue={current}
+							ref={penalDatePickerRef}
+							needDropdown={false}
+							mode="date"
+							size="small"
+						></BaseDatePicker>
+						<BaseDatePicker
+							onChange={timeChangeHandler}
+							modelValue={current}
+							ref={penalTimePickerRef}
+							mode="time"
+							size="small"
+							use12Hours={props.use12Hours}
+						></BaseDatePicker>
+					</div>
+				)}
+				<DatePickerPanel
+					current={current}
+					onSelect={dateChangeHandler}
+					onReferredDateChange={referredDateChange}
+					referredDate={referredDate.value}
+					{...panelForwardEvents}
+					week={mode === 'week'}
+				/>
+			</div>
 		)
 	}
-	return [render]
+	return [render, [penalDatePickerRef, penalTimePickerRef]] as const
 }

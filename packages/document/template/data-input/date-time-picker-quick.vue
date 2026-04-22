@@ -5,7 +5,6 @@
 		<px-date-time-picker
 			:mode="mode"
 			:use-12-hours="use12Hours"
-			placeholder="Date Time"
 			:quick-access="quickAccess"
 			clearable
 		></px-date-time-picker>
