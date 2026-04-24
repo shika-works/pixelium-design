@@ -4,7 +4,7 @@ import { createMocks, createMocks4Focus } from '../../share/util/test'
 import Slider from '../index.vue'
 import { wait } from 'parsnip-kit'
 
-describe('Switch focus/blur behavior', () => {
+describe('Slider focus/blur behavior', () => {
 	const { pre, post } = createMocks()
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
