@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
-import Slider from '../index.vue'
+import Rate from '../index.vue'
 import { wait } from 'parsnip-kit'
 
-describe('Slider focus/blur behavior', () => {
+describe('Rate focus/blur behavior', () => {
 	const { pre, post } = createMocks()
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
@@ -20,7 +20,7 @@ describe('Slider focus/blur behavior', () => {
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
 		const onFocus = vi.fn()
 		const onBlur = vi.fn()
-		const wrapper = mount(Slider, {
+		const wrapper = mount(Rate, {
 			props: {
 				onFocus,
 				onBlur
@@ -28,7 +28,7 @@ describe('Slider focus/blur behavior', () => {
 			attachTo: 'body'
 		})
 
-		const input = wrapper.find('.px-slider-thumb')
+		const input = wrapper.find('.px-rate')
 		await input.trigger('focus')
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
@@ -39,7 +39,7 @@ describe('Slider focus/blur behavior', () => {
 
 	it('mousedown on wrapper does trigger focus callback directly', async () => {
 		const onFocus = vi.fn()
-		const wrapper = mount(Slider, {
+		const wrapper = mount(Rate, {
 			props: {
 				onFocus
 			},
@@ -54,7 +54,7 @@ describe('Slider focus/blur behavior', () => {
 	it('mousedown twice on wrapper trigger only one focus', async () => {
 		const onFocus = vi.fn()
 		const onBlur = vi.fn()
-		const wrapper = mount(Slider, {
+		const wrapper = mount(Rate, {
 			props: {
 				onFocus,
 				onBlur

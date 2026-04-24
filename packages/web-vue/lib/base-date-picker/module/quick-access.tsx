@@ -36,7 +36,7 @@ export const useQuickAccess = (
 	props: LooseRequired<BaseDatePickerProps>,
 	slots: Record<string, any>,
 	t: <T = string>(path: string, fallback?: string) => string | T,
-	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
+	doSelect: (value: Date | Date[], e: Event) => Promise<void>
 ) => {
 	const currentQuickAccess = computed(() => {
 		return {

@@ -23,6 +23,7 @@ import BaseDatePicker from '../../base-date-picker/index.vue'
 import DatePicker from '../../date-picker/index.vue'
 import TimePicker from '../../time-picker/index.vue'
 import DateTimePicker from '../../date-time-picker/index.vue'
+import Rate from '../../rate/index.vue'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -437,6 +438,25 @@ describe('Form Component', () => {
 				disabledTarget: 'input',
 				sizeTarget: '.px-date-time-picker',
 				sizeClass: 'px-base-date-picker__large'
+			},
+			{
+				name: 'Rate',
+				initial: '',
+				render: (form: any) =>
+					h(
+						FormItem,
+						{ field: 'input', label: 'Input' },
+						{
+							default: () =>
+								h(Rate, {
+									modelValue: form.value.input,
+									'onUpdate:modelValue': (e: number) => (form.value.input = e)
+								})
+						}
+					),
+				disabledTarget: '.px-rate',
+				disabledAttr: 'tabindex',
+				disabledValue: '-1'
 			}
 		]
 

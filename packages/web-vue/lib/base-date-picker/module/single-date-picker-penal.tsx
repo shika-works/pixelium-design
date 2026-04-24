@@ -11,7 +11,7 @@ export const useSingleDatePickerPanel = (
 	emits: (event: any, ...args: any[]) => void,
 	props: BaseDatePickerProps,
 	panelForwardEvents: Record<string, (...args: any[]) => void>,
-	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
+	doSelect: (value: Date | Date[], e: Event) => Promise<void>
 ) => {
 	const penalDatePickerRef = shallowRef<InstanceType<typeof BaseDatePicker> | null>(null)
 	const penalTimePickerRef = shallowRef<InstanceType<typeof BaseDatePicker> | null>(null)

@@ -154,9 +154,7 @@ export const useDraw = (
 			multiple
 		],
 		() => {
-			setTimeout(() => {
-				drawPixelDebounce()
-			})
+			drawPixelDebounce()
 		},
 		{ deep: true }
 	)

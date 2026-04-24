@@ -70,6 +70,7 @@ import Pagination from './pagination/index.vue'
 import DatePicker from './date-picker/index.vue'
 import DateTimePicker from './date-time-picker/index.vue'
 import TimePicker from './time-picker/index.vue'
+import Rate from './rate/index.vue'
 
 const components = [
 	Button,
@@ -132,7 +133,8 @@ const components = [
 	Pagination,
 	DatePicker,
 	DateTimePicker,
-	TimePicker
+	TimePicker,
+	Rate
 ]
 
 const defaultPrefix = 'Px'
@@ -236,7 +238,8 @@ export {
 	Pagination,
 	DatePicker,
 	DateTimePicker,
-	TimePicker
+	TimePicker,
+	Rate
 }
 export default {
 	install

@@ -12,7 +12,7 @@ export const useRangeDatePickerPanel = (
 	emits: (event: any, ...args: any[]) => void,
 	props: BaseDatePickerProps,
 	panelForwardEvents: Record<string, (...args: any[]) => void>,
-	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
+	doSelect: (value: Date | Date[], e: Event) => Promise<void>
 ) => {
 	const penalDatePickerStartRef = shallowRef<InstanceType<typeof BaseDatePicker> | null>(null)
 	const penalTimePickerStartRef = shallowRef<InstanceType<typeof BaseDatePicker> | null>(null)

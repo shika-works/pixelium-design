@@ -9,21 +9,15 @@ import { useRangeDatePickerPanel } from './range-date-picker-penal'
 
 export const useDropdown = (
 	modelValue: Ref<BaseDatePickerProps['modelValue']>,
-	updateModelValue: (nextValue: BaseDatePickerProps['modelValue']) => Promise<void>,
 	popoverVisible: Ref<boolean>,
 	multiple: ComputedRef<boolean>,
 	props: LooseRequired<BaseDatePickerProps>,
 	emits: (event: any, ...args: any[]) => void,
 	slots: Record<string, any>,
 	panelForwardEvents: Record<string, (...args: any[]) => void>,
-	t: <T = string>(path: string, fallback?: string) => string | T
+	t: <T = string>(path: string, fallback?: string) => string | T,
+	doSelect: (value: Date | Date[], e: Event) => Promise<void>
 ) => {
-	const doSelect = async (value: Date | Date[] | null, e: Event) => {
-		await updateModelValue(value)
-		emits('change', value)
-		emits('select', value, e)
-	}
-
 	const [renderRangeDatePickerPanel, rangeDatePickerPanelControlList] = useRangeDatePickerPanel(
 		modelValue,
 		multiple,
