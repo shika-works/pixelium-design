@@ -5,7 +5,7 @@ import { shallowRef, type Ref } from 'vue'
 export const useSinglePicker = (
 	modelValue: Ref<Date | Date[] | null | undefined>,
 	popoverVisible: Ref<boolean>,
-	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
+	doSelect: (value: Date | Date[], e: Event) => Promise<void>
 ) => {
 	const selectDateHandler = async (
 		mode: 'time' | 'quarter' | 'month' | 'year',

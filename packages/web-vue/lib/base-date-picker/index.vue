@@ -680,16 +680,23 @@ const renderInner = () => {
 	)
 }
 
+const doSelect = async (value: Date | Date[], e: Event) => {
+	await updateModelValue(value)
+	emits('select', value, e)
+	emits('change', value)
+	formItemProvide?.changeHandler()
+}
+
 const [renderDropDown, triggerDropdown, dateTimePickerPanelControlList] = useDropdown(
 	modelValue,
-	updateModelValue,
 	popoverVisible,
 	multiple,
 	props,
 	emits,
 	slots,
 	panelForwardEvents,
-	t
+	t,
+	doSelect
 )
 
 provide<BaseDatePickerProvide>(BASE_DATE_PICKER_PROVIDE, {

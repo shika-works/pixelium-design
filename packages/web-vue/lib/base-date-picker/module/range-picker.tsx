@@ -6,7 +6,7 @@ import { processRangeNextValue } from './util'
 
 export const useRangePicker = (
 	modelValue: Ref<Date | Date[] | null | undefined>,
-	doSelect: (value: Date | Date[] | null, e: Event) => Promise<void>
+	doSelect: (value: Date | Date[], e: Event) => Promise<void>
 ) => {
 	const selectDateHandler = async (type: 'start' | 'end', value: Date, e: MouseEvent) => {
 		const next = value
