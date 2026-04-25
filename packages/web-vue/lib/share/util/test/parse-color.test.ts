@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseColor } from '../color'
+import { parseColor, rgbaToHex, hsvToHsl } from '../color'
 
 describe('parseColor', () => {
 	it('parses rgb and rgba strings correctly', () => {
@@ -33,6 +33,26 @@ describe('parseColor', () => {
 		expect(parseColor('#1a2b3c80')).toStrictEqual({
 			color: { r: 26, g: 43, b: 60, a: 128 },
 			format: 'rgb'
+		})
+	})
+
+	it('formats rgba to hex correctly', () => {
+		expect(rgbaToHex({ r: 255, g: 128, b: 64, a: 255 })).toBe('#ff8040')
+		expect(rgbaToHex({ r: 255, g: 128, b: 64, a: 128 }, true)).toBe('#ff804080')
+	})
+
+	it('converts hsv values to hsl correctly', () => {
+		expect(hsvToHsl({ h: 0, s: 1, v: 1, a: 255 })).toStrictEqual({
+			h: 0,
+			s: 1,
+			l: 0.5,
+			a: 255
+		})
+		expect(hsvToHsl({ h: 120, s: 0.5, v: 0.5, a: 128 })).toStrictEqual({
+			h: 120,
+			s: 0.3333333333333333,
+			l: 0.375,
+			a: 128
 		})
 	})
 
@@ -71,6 +91,24 @@ describe('parseColor', () => {
 		expect(parseColor('#00ff00', 'hsv')).toStrictEqual({
 			color: { h: 120, s: 1, v: 1, a: 255 },
 			format: 'hsv'
+		})
+	})
+
+	it('parses hwb and hwba strings correctly', () => {
+		expect(parseColor('hwb(0, 0%, 0%)')).toStrictEqual({
+			color: { r: 255, g: 0, b: 0, a: 255 },
+			format: 'rgb'
+		})
+		expect(parseColor('hwba(0, 50%, 50%, 0.5)')).toStrictEqual({
+			color: { r: 128, g: 128, b: 128, a: 128 },
+			format: 'rgb'
+		})
+	})
+
+	it('returns hwb output when requested', () => {
+		expect(parseColor('rgb(255, 0, 0)', 'hwb')).toStrictEqual({
+			color: { h: 0, w: 0, b: 0, a: 255 },
+			format: 'hwb'
 		})
 	})
 

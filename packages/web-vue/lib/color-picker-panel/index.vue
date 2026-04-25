@@ -67,9 +67,9 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, shallowRef, watch } from 'vue'
-import type { ColorFormat, ColorPickerPanelEmits, ColorPickerPanelProps } from './type'
-import { hsvToRgba, parseColor } from '../share/util/color'
-import type { HsvaColor, RgbaColor } from '../share/type'
+import type { ColorPickerPanelEmits, ColorPickerPanelProps } from './type'
+import { hsvToHsl, hsvToRgba, parseColor, rgbaToHex } from '../share/util/color'
+import type { ColorFormat, HsvaColor } from '../share/type'
 import { clamp } from 'parsnip-kit'
 import { useDraw } from './draw'
 import Input from '../input/index.vue'
@@ -93,7 +93,7 @@ const parseColorString = (value: string): HsvaColor | null => {
 }
 
 const formatColor = (format: ColorFormat, hsv: HsvaColor, allowAlpha: boolean): string => {
-	const rgb = hsvToRgba(hsv.h, hsv.s, hsv.v, hsv.a)
+		const rgb = hsvToRgba(hsv)
 	const alpha = Number((hsv.a / 255).toFixed(2))
 	const rgbString = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
 	const rgbaString = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`
@@ -118,22 +118,16 @@ const formatColor = (format: ColorFormat, hsv: HsvaColor, allowAlpha: boolean): 
 			? `hsva(${Math.round(hsv.h)}, ${s}%, ${v}%, ${alpha})`
 			: `hsv(${Math.round(hsv.h)}, ${s}%, ${v}%)`
 	}
+	if (format === 'hwb') {
+		const w = parseFloat((Math.min(rgb.r, rgb.g, rgb.b) / 255).toFixed(2))
+		const b = parseFloat((1 - Math.max(rgb.r, rgb.g, rgb.b) / 255).toFixed(2))
+		const wPct = parseFloat((w * 100).toFixed(2))
+		const bPct = parseFloat((b * 100).toFixed(2))
+		return allowAlpha
+			? `hwba(${Math.round(hsv.h)}, ${wPct}%, ${bPct}%, ${alpha})`
+			: `hwb(${Math.round(hsv.h)}, ${wPct}%, ${bPct}%)`
+	}
 	return rgbaToHex(rgb, allowAlpha && hsv.a !== 255)
-}
-
-const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
-	const toHex = (n: number) => n.toString(16).padStart(2, '0')
-	const hex = `#${toHex(value.r)}${toHex(value.g)}${toHex(value.b)}`
-	return includeAlpha ? `${hex}${toHex(value.a)}` : hex
-}
-
-const hsvToHsl = (color: { h: number; s: number; v: number }) => {
-	const h = ((color.h % 360) + 360) % 360
-	const s = clamp(color.s / 100, 0, 1)
-	const v = clamp(color.v / 100, 0, 1)
-	const l = v * (1 - s / 2)
-	const sat = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l)
-	return { h, s: sat * 100, l: l * 100 }
 }
 
 const applyColor = (source: HsvaColor, allowAlpha: boolean) => {

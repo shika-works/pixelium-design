@@ -1,12 +1,26 @@
+import { clamp } from 'parsnip-kit'
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../const'
-import type { HslaColor, HsvaColor, RgbaColor, RgbColor, ParsedColorOutput } from '../type'
+import type { HslaColor, HsvaColor, HwbaColor, RgbaColor, RgbColor, ParsedColorOutput } from '../type'
 import { inBrowser } from './env'
 import { createLRU } from './lru-cache'
-type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl'
+type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl' | 'hwb'
 const colorCache = createLRU<string, RgbaColor>(120)
 
-function clamp(value: number, min: number, max: number) {
-	return Math.min(Math.max(value, min), max)
+
+
+export const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
+	const toHex = (n: number) => n.toString(16).padStart(2, '0')
+	const hex = `#${toHex(value.r)}${toHex(value.g)}${toHex(value.b)}`
+	return includeAlpha ? `${hex}${toHex(value.a)}` : hex
+}
+
+export const hsvToHsl = (color: { h: number; s: number; v: number, a: number }) => {
+	const h = ((color.h % 360) + 360) % 360
+	const s = clamp(color.s, 0, 1)
+	const v = clamp(color.v, 0, 1)
+	const l = v * (1 - s / 2)
+	const sat = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l)
+	return { h, s: sat, l: l , a: color.a }
 }
 
 function normalizeHue(h: number) {
@@ -73,11 +87,11 @@ function rgbaToHsl(rgba: RgbaColor): HslaColor {
 	}
 }
 
-export function hsvToRgba(h: number, s: number, v: number, a: number): RgbaColor {
-	h = normalizeHue(h)
-	const c = v * s
+export function hsvToRgba(color: HsvaColor): RgbaColor {
+	const h = normalizeHue(color.h)
+	const c = color.v * color.s
 	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
-	const m = v - c
+	const m = color.v - c
 
 	let rn = 0
 	let gn = 0
@@ -113,15 +127,15 @@ export function hsvToRgba(h: number, s: number, v: number, a: number): RgbaColor
 		r: Math.round((rn + m) * 255),
 		g: Math.round((gn + m) * 255),
 		b: Math.round((bn + m) * 255),
-		a
+		a: color.a
 	}
 }
 
-function hslToRgba(h: number, s: number, l: number, a: number): RgbaColor {
-	h = normalizeHue(h)
-	const c = (1 - Math.abs(2 * l - 1)) * s
+function hslToRgba(color: HslaColor): RgbaColor {
+	const h = normalizeHue(color.h)
+	const c = (1 - Math.abs(2 * color.l - 1)) * color.s
 	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
-	const m = l - c / 2
+	const m = color.l - c / 2
 
 	let rn = 0
 	let gn = 0
@@ -157,7 +171,71 @@ function hslToRgba(h: number, s: number, l: number, a: number): RgbaColor {
 		r: Math.round((rn + m) * 255),
 		g: Math.round((gn + m) * 255),
 		b: Math.round((bn + m) * 255),
-		a
+		a: color.a
+	}
+}
+function hwbToRgba(color: HwbaColor): RgbaColor {
+	const h = normalizeHue(color.h)
+	const roundedW = clamp(color.w, 0, 1)
+	const roundedB = clamp(color.b, 0, 1)
+
+	if (roundedW + roundedB >= 1) {
+		const gray = roundedW / (roundedW + roundedB)
+		const v = Math.round(gray * 255)
+		return { r: v, g: v, b: v, a: color.a }
+	}
+
+	const c = 1 - roundedW - roundedB
+	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
+
+	let rn = 0
+	let gn = 0
+	let bn = 0
+
+	if (h < 60) {
+		rn = c
+		gn = x
+		bn = 0
+	} else if (h < 120) {
+		rn = x
+		gn = c
+		bn = 0
+	} else if (h < 180) {
+		rn = 0
+		gn = c
+		bn = x
+	} else if (h < 240) {
+		rn = 0
+		gn = x
+		bn = c
+	} else if (h < 300) {
+		rn = x
+		gn = 0
+		bn = c
+	} else {
+		rn = c
+		gn = 0
+		bn = x
+	}
+
+	return {
+		r: Math.round((roundedW + rn) * 255),
+		g: Math.round((roundedW + gn) * 255),
+		b: Math.round((roundedW + bn) * 255),
+		a: color.a
+	}
+}
+function rgbaToHwb(rgba: RgbaColor): HwbaColor {
+	const rn = rgba.r / 255
+	const gn = rgba.g / 255
+	const bn = rgba.b / 255
+	const w = Math.min(rn, gn, bn)
+	const b = 1 - Math.max(rn, gn, bn)
+	return {
+		h: normalizeHue(rgbaToHsl(rgba).h),
+		w,
+		b,
+		a: rgba.a
 	}
 }
 function parseColorValue(color: string): RgbaColor | null {
@@ -215,7 +293,7 @@ function parseColorValue(color: string): RgbaColor | null {
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const l = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			rgba = hslToRgba(h, s, l, Math.round(alpha * 255))
+			rgba = hslToRgba({ h, s, l, a: Math.round(alpha * 255) })
 		}
 	} else if (normalized.startsWith('hsv(') || normalized.startsWith('hsva(')) {
 		const matches = normalized.match(
@@ -226,7 +304,18 @@ function parseColorValue(color: string): RgbaColor | null {
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const v = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			rgba = hsvToRgba(h, s, v, Math.round(alpha * 255))
+			rgba = hsvToRgba({ h, s, v, a: Math.round(alpha * 255) })
+		}
+	} else if (normalized.startsWith('hwb(') || normalized.startsWith('hwba(')) {
+		const matches = normalized.match(
+			/hwba?\(\s*([+-]?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
+		)
+		if (matches) {
+			const h = parseFloat(matches[1])
+			const w = clamp(parseFloat(matches[2]) / 100, 0, 1)
+			const b = clamp(parseFloat(matches[3]) / 100, 0, 1)
+			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
+			rgba = hwbToRgba({ h, w, b, a: Math.round(alpha * 255) })
 		}
 	}
 
@@ -257,6 +346,13 @@ export function parseColor(color: string, outputFormat: ColorOutputFormat = 'rgb
 		return {
 			color: rgbaToHsl(rgba),
 			format: 'hsl'
+		}
+	}
+
+	if (outputFormat === 'hwb') {
+		return {
+			color: rgbaToHwb(rgba),
+			format: 'hwb'
 		}
 	}
 
