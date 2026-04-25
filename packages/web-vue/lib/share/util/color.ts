@@ -1,60 +1,279 @@
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../const'
-import type { RgbaColor, RgbColor } from '../type'
+import type { HslaColor, HsvaColor, RgbaColor, RgbColor, ParsedColorOutput } from '../type'
 import { inBrowser } from './env'
 import { createLRU } from './lru-cache'
-
+type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl'
 const colorCache = createLRU<string, RgbaColor>(120)
 
-export function parseColor(color: string): RgbaColor | null {
-	const cached = colorCache.get(color)
-	if (cached) return { ...cached }
-	if (color.startsWith('rgb(') || color.startsWith('rgba(')) {
-		let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
-		const matches = color.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/i)
-		if (matches) {
-			result.r = parseInt(matches[1], 10)
-			result.g = parseInt(matches[2], 10)
-			result.b = parseInt(matches[3], 10)
-			if (matches[4]) {
-				result.a = Math.round(parseFloat(matches[4]) * 255)
-			}
+function clamp(value: number, min: number, max: number) {
+	return Math.min(Math.max(value, min), max)
+}
+
+function normalizeHue(h: number) {
+	const mod = h % 360
+	return mod < 0 ? mod + 360 : mod
+}
+
+function rgbaToHsv(rgba: RgbaColor): HsvaColor {
+	const rn = rgba.r / 255
+	const gn = rgba.g / 255
+	const bn = rgba.b / 255
+	const max = Math.max(rn, gn, bn)
+	const min = Math.min(rn, gn, bn)
+	const delta = max - min
+
+	let h = 0
+	if (delta !== 0) {
+		if (max === rn) {
+			h = 60 * (((gn - bn) / delta) % 6)
+		} else if (max === gn) {
+			h = 60 * ((bn - rn) / delta + 2)
+		} else {
+			h = 60 * ((rn - gn) / delta + 4)
 		}
-		colorCache.set(color, result)
-		return { ...result }
-	} else if (color.startsWith('#')) {
-		let result: RgbaColor = { r: 0, g: 0, b: 0, a: 255 }
-		color = color.slice(1)
-		if (color.length === 3) {
-			result.r = parseInt(color[0] + color[0], 16)
-			result.g = parseInt(color[1] + color[1], 16)
-			result.b = parseInt(color[2] + color[2], 16)
-		} else if (color.length === 4) {
-			result.r = parseInt(color[0] + color[0], 16)
-			result.g = parseInt(color[1] + color[1], 16)
-			result.b = parseInt(color[2] + color[2], 16)
-			result.a = parseInt(color[3] + color[3], 16)
-		} else if (color.length === 6) {
-			result.r = parseInt(color.slice(0, 2), 16)
-			result.g = parseInt(color.slice(2, 4), 16)
-			result.b = parseInt(color.slice(4, 6), 16)
-		} else if (color.length === 8) {
-			result.r = parseInt(color.slice(0, 2), 16)
-			result.g = parseInt(color.slice(2, 4), 16)
-			result.b = parseInt(color.slice(4, 6), 16)
-			result.a = parseInt(color.slice(6, 8), 16)
-		}
-		colorCache.set(color, result)
-		return { ...result }
 	}
-	return null
+	if (Number.isNaN(h) || !Number.isFinite(h)) h = 0
+
+	return {
+		h: normalizeHue(h),
+		s: max === 0 ? 0 : delta / max,
+		v: max,
+		a: rgba.a
+	}
+}
+
+function rgbaToHsl(rgba: RgbaColor): HslaColor {
+	const rn = rgba.r / 255
+	const gn = rgba.g / 255
+	const bn = rgba.b / 255
+	const max = Math.max(rn, gn, bn)
+	const min = Math.min(rn, gn, bn)
+	const delta = max - min
+
+	let h = 0
+	if (delta !== 0) {
+		if (max === rn) {
+			h = 60 * (((gn - bn) / delta) % 6)
+		} else if (max === gn) {
+			h = 60 * ((bn - rn) / delta + 2)
+		} else {
+			h = 60 * ((rn - gn) / delta + 4)
+		}
+	}
+	if (Number.isNaN(h) || !Number.isFinite(h)) h = 0
+
+	const l = (max + min) / 2
+	const s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
+
+	return {
+		h: normalizeHue(h),
+		s,
+		l,
+		a: rgba.a
+	}
+}
+
+export function hsvToRgba(h: number, s: number, v: number, a: number): RgbaColor {
+	h = normalizeHue(h)
+	const c = v * s
+	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
+	const m = v - c
+
+	let rn = 0
+	let gn = 0
+	let bn = 0
+
+	if (h < 60) {
+		rn = c
+		gn = x
+		bn = 0
+	} else if (h < 120) {
+		rn = x
+		gn = c
+		bn = 0
+	} else if (h < 180) {
+		rn = 0
+		gn = c
+		bn = x
+	} else if (h < 240) {
+		rn = 0
+		gn = x
+		bn = c
+	} else if (h < 300) {
+		rn = x
+		gn = 0
+		bn = c
+	} else {
+		rn = c
+		gn = 0
+		bn = x
+	}
+
+	return {
+		r: Math.round((rn + m) * 255),
+		g: Math.round((gn + m) * 255),
+		b: Math.round((bn + m) * 255),
+		a
+	}
+}
+
+function hslToRgba(h: number, s: number, l: number, a: number): RgbaColor {
+	h = normalizeHue(h)
+	const c = (1 - Math.abs(2 * l - 1)) * s
+	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
+	const m = l - c / 2
+
+	let rn = 0
+	let gn = 0
+	let bn = 0
+
+	if (h < 60) {
+		rn = c
+		gn = x
+		bn = 0
+	} else if (h < 120) {
+		rn = x
+		gn = c
+		bn = 0
+	} else if (h < 180) {
+		rn = 0
+		gn = c
+		bn = x
+	} else if (h < 240) {
+		rn = 0
+		gn = x
+		bn = c
+	} else if (h < 300) {
+		rn = x
+		gn = 0
+		bn = c
+	} else {
+		rn = c
+		gn = 0
+		bn = x
+	}
+
+	return {
+		r: Math.round((rn + m) * 255),
+		g: Math.round((gn + m) * 255),
+		b: Math.round((bn + m) * 255),
+		a
+	}
+}
+function parseColorValue(color: string): RgbaColor | null {
+	const normalized = color.trim().toLowerCase()
+	const cached = colorCache.get(normalized)
+	if (cached) return { ...cached }
+
+	let rgba: RgbaColor | null = null
+
+	if (normalized.startsWith('rgb(') || normalized.startsWith('rgba(')) {
+		const matches = normalized.match(
+			/rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
+		)
+		if (matches) {
+			const r = clamp(Math.round(parseFloat(matches[1])), 0, 255)
+			const g = clamp(Math.round(parseFloat(matches[2])), 0, 255)
+			const b = clamp(Math.round(parseFloat(matches[3])), 0, 255)
+			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
+			rgba = { r, g, b, a: Math.round(alpha * 255) }
+		}
+	} else if (normalized.startsWith('#')) {
+		const hex = normalized.slice(1)
+		let r = 0
+		let g = 0
+		let b = 0
+		let a = 255
+		if (hex.length === 3) {
+			r = parseInt(hex[0] + hex[0], 16)
+			g = parseInt(hex[1] + hex[1], 16)
+			b = parseInt(hex[2] + hex[2], 16)
+		} else if (hex.length === 4) {
+			r = parseInt(hex[0] + hex[0], 16)
+			g = parseInt(hex[1] + hex[1], 16)
+			b = parseInt(hex[2] + hex[2], 16)
+			a = parseInt(hex[3] + hex[3], 16)
+		} else if (hex.length === 6) {
+			r = parseInt(hex.slice(0, 2), 16)
+			g = parseInt(hex.slice(2, 4), 16)
+			b = parseInt(hex.slice(4, 6), 16)
+		} else if (hex.length === 8) {
+			r = parseInt(hex.slice(0, 2), 16)
+			g = parseInt(hex.slice(2, 4), 16)
+			b = parseInt(hex.slice(4, 6), 16)
+			a = parseInt(hex.slice(6, 8), 16)
+		}
+		if (hex.length === 3 || hex.length === 4 || hex.length === 6 || hex.length === 8) {
+			rgba = { r, g, b, a }
+		}
+	} else if (normalized.startsWith('hsl(') || normalized.startsWith('hsla(')) {
+		const matches = normalized.match(
+			/hsla?\(\s*([+-]?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
+		)
+		if (matches) {
+			const h = parseFloat(matches[1])
+			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
+			const l = clamp(parseFloat(matches[3]) / 100, 0, 1)
+			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
+			rgba = hslToRgba(h, s, l, Math.round(alpha * 255))
+		}
+	} else if (normalized.startsWith('hsv(') || normalized.startsWith('hsva(')) {
+		const matches = normalized.match(
+			/hsva?\(\s*([+-]?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
+		)
+		if (matches) {
+			const h = parseFloat(matches[1])
+			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
+			const v = clamp(parseFloat(matches[3]) / 100, 0, 1)
+			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
+			rgba = hsvToRgba(h, s, v, Math.round(alpha * 255))
+		}
+	}
+
+	if (rgba) {
+		colorCache.set(normalized, { ...rgba })
+	}
+
+	return rgba
+}
+
+export function parseColor<T extends ColorOutputFormat = 'rgb'>(
+	color: string,
+	outputFormat?: T
+): (ParsedColorOutput & { format: T }) | null
+export function parseColor(color: string, outputFormat: ColorOutputFormat = 'rgb') {
+	const normalized = color.trim().toLowerCase()
+	const rgba = parseColorValue(normalized)
+	if (!rgba) return null
+
+	if (outputFormat === 'rgb') {
+		return {
+			color: rgba,
+			format: 'rgb'
+		}
+	}
+
+	if (outputFormat === 'hsl') {
+		return {
+			color: rgbaToHsl(rgba),
+			format: 'hsl'
+		}
+	}
+
+	return {
+		color: rgbaToHsv(rgba),
+		format: 'hsv'
+	}
 }
 
 export const getGlobalThemeColor = (theme: string, level: number) => {
 	if (!inBrowser()) {
 		return TRANSPARENT_RGBA_COLOR_OBJECT
 	}
-	return parseColor(
-		getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
+	return (
+		parseColor(
+			getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
+		)?.color || null
 	)
 }
 

@@ -229,8 +229,9 @@ const drawPixel = () => {
 		const size = Math.min(width, height)
 		const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
 
-		if (backgroundColor) {
-			floodFill(ctx, fillStart, fillStart, parseColor(backgroundColor)!)
+		const parsedBackgroundColor = parseColor(backgroundColor)?.color
+		if (parsedBackgroundColor) {
+			floodFill(ctx, fillStart, fillStart, parsedBackgroundColor)
 		}
 
 		if (modelValue.value) {

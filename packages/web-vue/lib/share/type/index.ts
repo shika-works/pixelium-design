@@ -7,6 +7,15 @@ export type NumberOrPercentage = number | `${number}%`
 export type RgbaColor = { r: number; g: number; b: number; a: number }
 export type RgbColor = { r: number; g: number; b: number }
 
+export type ColorFormat = 'rgb' | 'hex' | 'hsv' | 'hsl'
+export type HsvaColor = { h: number; s: number; v: number; a: number }
+export type HslaColor = { h: number; s: number; l: number; a: number }
+
+export type ParsedColorOutput =
+	| { color: RgbaColor; format: 'rgb' }
+	| { color: HslaColor; format: 'hsl' }
+	| { color: HsvaColor; format: 'hsv' }
+
 export type ValidContent =
 	| string
 	| ((...args: any[]) => VNode | string | JSX.Element | null | void)

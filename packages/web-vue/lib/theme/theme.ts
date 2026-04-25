@@ -25,7 +25,7 @@ export const setThemeColor = (
 		dark: [] as string[]
 	}
 	if (isString(color)) {
-		const rgbaColor = parseColor(color)
+		const rgbaColor = parseColor(color)?.color
 		if (!rgbaColor) {
 			return
 		}

@@ -231,12 +231,12 @@ const getMainColor = () => {
 	}
 	return progress.value > MID_PROGRESS
 		? props.activeColor
-			? parseColor(props.activeColor)
+			? parseColor(props.activeColor)?.color
 			: disabledComputed.value
 				? getGlobalThemeColor('primary', 2)
 				: getGlobalThemeColor('primary', 6)
 		: props.inactiveColor
-			? parseColor(props.inactiveColor)
+			? parseColor(props.inactiveColor)?.color
 			: disabledComputed.value
 				? getGlobalThemeColor('neutral', 6)
 				: getGlobalThemeColor('neutral', 8)
