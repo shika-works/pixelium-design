@@ -42,12 +42,12 @@ import { useFocusMode } from '../share/hook/use-focus-mode'
 import { nextTick } from 'vue'
 
 defineOptions({
-	name: 'Rate',
-	activeColor: '#FFCC33'
+	name: 'Rate'
 })
 
 const props = withDefaults(defineProps<RateProps>(), {
-	count: 5
+	count: 5,
+	activeColor: '#FFCC33'
 })
 
 const emits = defineEmits<RateEvents>()
