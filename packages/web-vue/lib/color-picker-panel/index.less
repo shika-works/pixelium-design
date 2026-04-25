@@ -1,0 +1,120 @@
+@import url(../share/style/variable.less);
+.px-color-picker-panel {
+	width: @px-color-picker-body-width;
+	&-body,
+	&-footer {
+		display: grid;
+		gap: @px-interval-2;
+	}
+
+	&-footer {
+		margin-top: @px-interval-2;
+	}
+
+	&-preset {
+		width: @px-interval-4;
+		height: @px-interval-4;
+		cursor: pointer;
+		border-width: 0;
+		box-sizing: border-box;
+		border-color: transparent;
+		border-style: solid;
+		position: relative;
+	}
+
+	&-presets {
+		display: flex;
+		flex-wrap: wrap;
+		gap: @px-interval-4;
+		margin: var(--px-bit);
+		box-sizing: border-box;
+	}
+
+	&-slider {
+		position: relative;
+		height: @px-interval-3;
+		margin: var(--px-bit);
+		box-sizing: border-box;
+		cursor: pointer;
+		position: relative;
+	}
+
+	&-sliders {
+		display: grid;
+		gap: @px-interval-2;
+	}
+
+	&-container {
+		overflow: hidden;
+	}
+
+	&-hue-slider {
+		background: linear-gradient(
+			to right,
+			rgb(255, 0, 0),
+			rgb(255, 255, 0),
+			rgb(0, 255, 0),
+			rgb(0, 255, 255),
+			rgb(0, 0, 255),
+			rgb(255, 0, 255),
+			rgb(255, 0, 0)
+		);
+	}
+
+	&-alpha-slider {
+		background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+	}
+
+	&-thumb {
+		position: absolute;
+		top: 50%;
+		width: calc(@px-interval-3 + 3 * var(--px-bit));
+		height: calc(@px-interval-3 + 3 * var(--px-bit));
+		transform: translate(-50%, -50%);
+		z-index: 1;
+	}
+	&-thumb-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: -1;
+	}
+
+	&-color-field {
+		position: relative;
+		height: 220px;
+		cursor: crosshair;
+		margin: var(--px-bit);
+	}
+
+	&-color-overlay-light {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+	}
+
+	&-color-overlay-dark {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+	}
+
+	&-color-knob {
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		border: 2px solid #fff;
+		border-radius: 50%;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+		transform: translate(-50%, -50%);
+		z-index: 2;
+	}
+}
