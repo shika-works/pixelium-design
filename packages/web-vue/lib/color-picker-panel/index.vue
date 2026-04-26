@@ -55,12 +55,7 @@
 		</div>
 
 		<div class="px-color-picker-panel-footer">
-			<Input
-				size="small"
-				v-model="inputValue"
-				@blur="applyInput"
-				@keydown.enter.prevent="applyInput"
-			></Input>
+			<Input size="small" v-model="inputValue" @change="updateFromInput"></Input>
 			<div class="px-color-picker-panel-presets">
 				<button
 					type="button"
@@ -126,27 +121,36 @@ const parseColorString = (value: string): HsvaColor | null => {
 	return parseColor(value, 'hsv')?.color || null
 }
 
-const applyColor = (source: HsvaColor, allowAlpha: boolean) => {
+const applyColor = (source: HsvaColor, allowAlpha: boolean, inner: boolean = false) => {
+	let h = source.h % (inner ? 361 : 360)
+	if (!inner) {
+		if (Math.round(hsvColor.value.h) === 360 && h === 0) {
+			h = 360
+		}
+	}
 	hsvColor.value = {
-		h: source.h % 361,
+		h: h,
 		s: clamp(source.s, 0, 1),
 		v: clamp(source.v, 0, 1),
 		a: allowAlpha ? clamp(Math.round(source.a), 0, 255) : 255
 	}
 }
 
-const updateFromInput = async (event: Event) => {
+const updateFromInput = async (value: string, event?: Event) => {
 	const parsed = parseColorString(inputValue.value)
-	await nextTick()
+	console.log(value, inputValue.value, parsed)
+
 	if (!parsed) {
 		inputValue.value = formattedValue.value
 		return
 	}
-	emitValue(parsed, event)
+	emitValue(parsed, event as Event)
+	await nextTick()
+	inputValue.value = formattedValue.value
 }
 
-const emitValue = async (value: HsvaColor, event: Event) => {
-	await nextTick()
+const emitValue = (value: HsvaColor, event: Event) => {
+	applyColor(value, props.includeAlpha, true)
 	const calcColor = calcColorWithModel(value, props.includeAlpha)
 	const formatted = formatColor(props.format, calcColor, props.includeAlpha)
 	emits('change', getRgbaValue(value), formatted, calcColor, event)
@@ -319,10 +323,6 @@ watch(
 	},
 	{ immediate: true }
 )
-
-const applyInput = (event: Event) => {
-	updateFromInput(event)
-}
 
 const alphaThumbRef = shallowRef<HTMLDivElement | null>(null)
 const alphaThumbCanvasRef = shallowRef<HTMLCanvasElement | null>(null)

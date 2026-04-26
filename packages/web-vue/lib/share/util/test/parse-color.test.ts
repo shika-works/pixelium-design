@@ -93,6 +93,11 @@ describe('parseColor', () => {
 			color: { r: 128, g: 128, b: 0, a: 128 },
 			format: 'rgb'
 		})
+
+		expect(parseColor('hsva(20, 0%, 0%, 0.5)')).toStrictEqual({
+			color: { r: 0, g: 0, b: 0, a: 128 },
+			format: 'rgb'
+		})
 	})
 
 	it('returns hsl output when requested', () => {

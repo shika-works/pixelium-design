@@ -42,6 +42,9 @@ export const calcColorWithModel = (hsv: HsvaColor, allowAlpha: boolean): ColorWi
 	if (!allowAlpha) {
 		value.a = 255
 	}
+	if (Math.round(value.h) == 360) {
+		value.h = 0
+	}
 	const rgb = hsvToRgba(value)
 	const hsl = hsvToHsl(value)
 	const hwb = hsvToHwb(value)
