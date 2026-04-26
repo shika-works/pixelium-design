@@ -11,7 +11,7 @@ import type {
 import { inBrowser } from './env'
 import { createLRU } from './lru-cache'
 type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl' | 'hwb'
-const colorCache = createLRU<string, RgbaColor>(120)
+const colorCache = createLRU<string, ParseColorValueResult>(120)
 
 export const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
 	const toHex = (n: number) => n.toString(16).padStart(2, '0')
@@ -293,12 +293,25 @@ function rgbaToHwb(rgba: RgbaColor): HwbaColor {
 		a: rgba.a
 	}
 }
-function parseColorValue(color: string): RgbaColor | null {
+type ParseColorValueResult = {
+	rgba: RgbaColor
+	format: ColorOutputFormat
+	color: RgbaColor | HslaColor | HsvaColor | HwbaColor
+}
+function parseColorValue(color: string): ParseColorValueResult | null {
 	const normalized = color.trim().toLowerCase()
 	const cached = colorCache.get(normalized)
-	if (cached) return { ...cached }
+	if (cached) {
+		return {
+			rgba: { ...cached.rgba },
+			format: cached.format,
+			color: { ...cached.color }
+		}
+	}
 
 	let rgba: RgbaColor | null = null
+	let format: ColorOutputFormat = 'rgb'
+	let parsedColor: RgbaColor | HslaColor | HsvaColor | HwbaColor = { r: 0, g: 0, b: 0, a: 255 }
 
 	if (normalized.startsWith('rgb(') || normalized.startsWith('rgba(')) {
 		const matches = normalized.match(
@@ -310,6 +323,8 @@ function parseColorValue(color: string): RgbaColor | null {
 			const b = clamp(Math.round(parseFloat(matches[3])), 0, 255)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
 			rgba = { r, g, b, a: Math.round(alpha * 255) }
+			parsedColor = rgba
+			format = 'rgb'
 		}
 	} else if (normalized.startsWith('#')) {
 		const hex = normalized.slice(1)
@@ -338,6 +353,8 @@ function parseColorValue(color: string): RgbaColor | null {
 		}
 		if (hex.length === 3 || hex.length === 4 || hex.length === 6 || hex.length === 8) {
 			rgba = { r, g, b, a }
+			parsedColor = rgba
+			format = 'rgb'
 		}
 	} else if (normalized.startsWith('hsl(') || normalized.startsWith('hsla(')) {
 		const matches = normalized.match(
@@ -348,7 +365,9 @@ function parseColorValue(color: string): RgbaColor | null {
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const l = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			rgba = hslToRgba({ h, s, l, a: Math.round(alpha * 255) })
+			parsedColor = { h, s, l, a: Math.round(alpha * 255) }
+			rgba = hslToRgba(parsedColor)
+			format = 'hsl'
 		}
 	} else if (normalized.startsWith('hsv(') || normalized.startsWith('hsva(')) {
 		const matches = normalized.match(
@@ -359,7 +378,9 @@ function parseColorValue(color: string): RgbaColor | null {
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const v = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			rgba = hsvToRgba({ h, s, v, a: Math.round(alpha * 255) })
+			parsedColor = { h, s, v, a: Math.round(alpha * 255) }
+			rgba = hsvToRgba(parsedColor)
+			format = 'hsv'
 		}
 	} else if (normalized.startsWith('hwb(') || normalized.startsWith('hwba(')) {
 		const matches = normalized.match(
@@ -370,15 +391,26 @@ function parseColorValue(color: string): RgbaColor | null {
 			const w = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const b = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			rgba = hwbToRgba({ h, w, b, a: Math.round(alpha * 255) })
+			parsedColor = { h, w, b, a: Math.round(alpha * 255) }
+			rgba = hwbToRgba(parsedColor)
+			format = 'hwb'
 		}
 	}
 
 	if (rgba) {
-		colorCache.set(normalized, { ...rgba })
+		colorCache.set(normalized, {
+			rgba: { ...rgba },
+			format,
+			color: { ...parsedColor }
+		})
+		return {
+			rgba,
+			format,
+			color: parsedColor
+		}
 	}
 
-	return rgba
+	return null
 }
 
 export function parseColor<T extends ColorOutputFormat = 'rgb'>(
@@ -387,32 +419,39 @@ export function parseColor<T extends ColorOutputFormat = 'rgb'>(
 ): (ParsedColorOutput & { format: T }) | null
 export function parseColor(color: string, outputFormat: ColorOutputFormat = 'rgb') {
 	const normalized = color.trim().toLowerCase()
-	const rgba = parseColorValue(normalized)
-	if (!rgba) return null
+	const result = parseColorValue(normalized)
+	if (!result) return null
+
+	if (outputFormat === result.format) {
+		return {
+			color: result.color as any,
+			format: outputFormat
+		}
+	}
 
 	if (outputFormat === 'rgb') {
 		return {
-			color: rgba,
+			color: result.rgba,
 			format: 'rgb'
 		}
 	}
 
 	if (outputFormat === 'hsl') {
 		return {
-			color: rgbaToHsl(rgba),
+			color: rgbaToHsl(result.rgba),
 			format: 'hsl'
 		}
 	}
 
 	if (outputFormat === 'hwb') {
 		return {
-			color: rgbaToHwb(rgba),
+			color: rgbaToHwb(result.rgba),
 			format: 'hwb'
 		}
 	}
 
 	return {
-		color: rgbaToHsv(rgba),
+		color: rgbaToHsv(result.rgba),
 		format: 'hsv'
 	}
 }
