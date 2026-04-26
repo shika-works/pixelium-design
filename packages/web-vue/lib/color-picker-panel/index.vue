@@ -1,44 +1,54 @@
 <template>
 	<div class="px-color-picker-panel pixelium">
 		<div class="px-color-picker-panel-body">
-			<div class="px-color-picker-panel-container">
-				<div
-					class="px-color-picker-panel-color-field corner-gradient"
-					ref="colorFieldRef"
-					:style="{ background: fieldBackground }"
-					@pointerdown="startFieldDrag"
-				>
-					<div class="px-color-picker-panel-color-overlay-light"></div>
-					<div class="px-color-picker-panel-color-overlay-dark"></div>
-					<div class="px-color-picker-panel-thumb" ref="colorThumbRef" :style="knobStyle">
-						<canvas
-							class="px-color-picker-panel-thumb-canvas"
-							ref="colorThumbCanvasRef"
-						></canvas>
-					</div>
+			<div
+				class="px-color-picker-panel-color-field corner-gradient"
+				ref="colorFieldRef"
+				:style="{ background: fieldBackground }"
+				@pointerdown="startFieldDrag"
+			>
+				<div class="px-color-picker-panel-color-overlay-light"></div>
+				<div class="px-color-picker-panel-color-overlay-dark"></div>
+				<div class="px-color-picker-panel-thumb" ref="colorThumbRef" :style="knobStyle">
+					<canvas class="px-color-picker-panel-thumb-canvas" ref="colorThumbCanvasRef"></canvas>
 				</div>
 			</div>
 			<div class="px-color-picker-panel-sliders">
 				<div
-					class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-hue-slider"
+					class="px-color-picker-panel-container"
 					ref="hueSliderRef"
 					@pointerdown="startHueDrag"
 				>
-					<div ref="hueThumbRef" class="px-color-picker-panel-thumb" :style="hueThumbStyle">
-						<canvas class="px-color-picker-panel-thumb-canvas" ref="hueThumbCanvasRef"></canvas>
+					<div
+						class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-hue-slider"
+					>
+						<div ref="hueThumbRef" class="px-color-picker-panel-thumb" :style="hueThumbStyle">
+							<canvas
+								class="px-color-picker-panel-thumb-canvas"
+								ref="hueThumbCanvasRef"
+							></canvas>
+						</div>
 					</div>
 				</div>
 				<div
+					class="px-color-picker-panel-container"
 					v-if="props.includeAlpha"
-					class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-alpha-slider"
 					ref="alphaSliderRef"
 					@pointerdown="startAlphaDrag"
 				>
-					<div class="px-color-picker-panel-thumb" ref="alphaThumbRef" :style="alphaThumbStyle">
-						<canvas
-							class="px-color-picker-panel-thumb-canvas"
-							ref="alphaThumbCanvasRef"
-						></canvas>
+					<div
+						class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-alpha-slider"
+					>
+						<div
+							class="px-color-picker-panel-thumb"
+							ref="alphaThumbRef"
+							:style="alphaThumbStyle"
+						>
+							<canvas
+								class="px-color-picker-panel-thumb-canvas"
+								ref="alphaThumbCanvasRef"
+							></canvas>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -68,92 +78,78 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, shallowRef, watch } from 'vue'
 import type { ColorPickerPanelEmits, ColorPickerPanelProps } from './type'
-import { hsvToHsl, hsvToRgba, parseColor, rgbaToHex } from '../share/util/color'
-import type { ColorFormat, HsvaColor } from '../share/type'
-import { clamp } from 'parsnip-kit'
+import { hsvToRgba, parseColor } from '../share/util/color'
+import type { HsvaColor } from '../share/type'
+import { clamp, isEqual } from 'parsnip-kit'
 import { useDraw } from './draw'
 import Input from '../input/index.vue'
+import { calcColorWithModel, formatColor } from './util'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+
+defineOptions({
+	name: 'ColorPickerPanel'
+})
 
 const props = withDefaults(defineProps<ColorPickerPanelProps>(), {
-	format: 'hsv',
+	format: 'rgb',
 	includeAlpha: true
 })
 
 const emits = defineEmits<ColorPickerPanelEmits>()
 
-const defaultHsv: HsvaColor = { h: 0, s: 1, v: 1, a: 255 }
-const inputValue = ref(props.current || '')
+const defaultHsv: HsvaColor = { h: 0, s: 0, v: 0, a: 255 }
 const hsvColor = ref<HsvaColor>({ ...defaultHsv })
 const colorFieldRef = ref<HTMLElement | null>(null)
 const hueSliderRef = ref<HTMLElement | null>(null)
 const alphaSliderRef = ref<HTMLElement | null>(null)
 
+const pixelSize = usePixelSize()
+
+const calcColor = computed(() => {
+	return calcColorWithModel(hsvColor.value, props.includeAlpha)
+})
+const formattedValue = computed(() =>
+	formatColor(props.format, calcColor.value, props.includeAlpha)
+)
+
+const inputValue = ref(formattedValue.value || '')
+
+const getRgbaValue = (source: HsvaColor) => {
+	const res = hsvToRgba(source)
+	if (!props.includeAlpha) {
+		res.a = 255
+	}
+	return res
+}
+
 const parseColorString = (value: string): HsvaColor | null => {
 	return parseColor(value, 'hsv')?.color || null
 }
 
-const formatColor = (format: ColorFormat, hsv: HsvaColor, allowAlpha: boolean): string => {
-		const rgb = hsvToRgba(hsv)
-	const alpha = Number((hsv.a / 255).toFixed(2))
-	const rgbString = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
-	const rgbaString = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`
-	const hsl = hsvToHsl(hsv)
-	if (format === 'hex') {
-		return rgbaToHex(rgb, allowAlpha)
-	}
-	if (format === 'rgb') {
-		return allowAlpha ? rgbaString : rgbString
-	}
-	if (format === 'hsl') {
-		const s = parseFloat((hsl.s * 100).toFixed(2))
-		const l = parseFloat((hsl.l * 100).toFixed(2))
-		return allowAlpha
-			? `hsla(${Math.round(hsl.h)}, ${s}%, ${l}%, ${alpha})`
-			: `hsl(${Math.round(hsl.h)}, ${s}%, ${l}%)`
-	}
-	if (format === 'hsv') {
-		const s = parseFloat((hsv.s * 100).toFixed(2))
-		const v = parseFloat((hsv.v * 100).toFixed(2))
-		return allowAlpha
-			? `hsva(${Math.round(hsv.h)}, ${s}%, ${v}%, ${alpha})`
-			: `hsv(${Math.round(hsv.h)}, ${s}%, ${v}%)`
-	}
-	if (format === 'hwb') {
-		const w = parseFloat((Math.min(rgb.r, rgb.g, rgb.b) / 255).toFixed(2))
-		const b = parseFloat((1 - Math.max(rgb.r, rgb.g, rgb.b) / 255).toFixed(2))
-		const wPct = parseFloat((w * 100).toFixed(2))
-		const bPct = parseFloat((b * 100).toFixed(2))
-		return allowAlpha
-			? `hwba(${Math.round(hsv.h)}, ${wPct}%, ${bPct}%, ${alpha})`
-			: `hwb(${Math.round(hsv.h)}, ${wPct}%, ${bPct}%)`
-	}
-	return rgbaToHex(rgb, allowAlpha && hsv.a !== 255)
-}
-
 const applyColor = (source: HsvaColor, allowAlpha: boolean) => {
 	hsvColor.value = {
-		h: ((source.h % 360) + 360) % 360,
-		s: clamp(source.s, 0, 100),
-		v: clamp(source.v, 0, 100),
+		h: source.h % 361,
+		s: clamp(source.s, 0, 1),
+		v: clamp(source.v, 0, 1),
 		a: allowAlpha ? clamp(Math.round(source.a), 0, 255) : 255
 	}
 }
 
-const updateFromInput = (event: Event) => {
+const updateFromInput = async (event: Event) => {
 	const parsed = parseColorString(inputValue.value)
+	await nextTick()
 	if (!parsed) {
 		inputValue.value = formattedValue.value
 		return
 	}
-	applyColor(parsed, props.includeAlpha)
-	inputValue.value = formatColor(props.format, parsed, props.includeAlpha)
-	emitValue(event)
+	emitValue(parsed, event)
 }
 
-const emitValue = (event?: Event) => {
-	if (!event) return
-	const formatted = formattedValue.value
-	emits('change', formatted, event)
+const emitValue = async (value: HsvaColor, event: Event) => {
+	await nextTick()
+	const calcColor = calcColorWithModel(value, props.includeAlpha)
+	const formatted = formatColor(props.format, calcColor, props.includeAlpha)
+	emits('change', getRgbaValue(value), formatted, calcColor, event)
 }
 
 const alphaPercent = computed<number>({
@@ -164,42 +160,26 @@ const alphaPercent = computed<number>({
 	}
 })
 
-const hsvValue = computed({
-	get: () => hsvColor.value,
-	set: (value: { h: number; s: number; v: number }) => {
-		hsvColor.value = {
-			...hsvColor.value,
-			...value
-		}
+watch(formattedValue, async (newFormat) => {
+	if (newFormat) {
+		inputValue.value = formattedValue.value
 	}
 })
-const formattedValue = computed(() =>
-	formatColor(props.format, hsvValue.value, props.includeAlpha)
-)
-
-watch(
-	() => props.format,
-	(newFormat) => {
-		if (newFormat) {
-			inputValue.value = formatColor(props.format, hsvValue.value, props.includeAlpha)
-		}
-	}
-)
 
 const fieldBackground = computed(() => {
-	return `hsl(${hsvValue.value.h}, 100%, 50%)`
+	return `hsl(${hsvColor.value.h}, 100%, 50%)`
 })
 
 const knobStyle = computed(() => {
 	return {
-		left: `${hsvValue.value.s * 100}%`,
-		top: `${100 - hsvValue.value.v * 100}%`
+		left: `${hsvColor.value.s * 100}%`,
+		top: `${100 - hsvColor.value.v * 100}%`
 	}
 })
 
 const hueThumbStyle = computed(() => {
 	return {
-		left: `${(hsvValue.value.h / 360) * 100}%`
+		left: `${(hsvColor.value.h / 360) * 100}%`
 	}
 })
 
@@ -216,9 +196,27 @@ const getPointerPosition = (event: PointerEvent, element: HTMLElement) => {
 	return { x, y }
 }
 
+const getPointerPosition4Slider = (event: PointerEvent, element: HTMLElement) => {
+	let clientX = event.clientX
+	if (clientX < pixelSize.value) {
+		clientX = pixelSize.value
+	}
+	if (clientX > element.clientWidth - pixelSize.value) {
+		clientX = element.clientWidth - pixelSize.value
+	}
+
+	const rect = element.getBoundingClientRect()
+	let left = rect.left + pixelSize.value
+	let width = rect.width - 2 * pixelSize.value
+	let x = clamp((event.clientX - left) / width, 0, 1)
+	let y = clamp((event.clientY - rect.top) / rect.height, 0, 1)
+	return { x, y }
+}
+
 const startDrag = (
 	event: PointerEvent,
 	element: HTMLElement,
+	getPosition: (event: PointerEvent, element: HTMLElement) => { x: number; y: number },
 	handler: (
 		event: PointerEvent,
 		element: HTMLElement,
@@ -227,10 +225,10 @@ const startDrag = (
 ) => {
 	event.preventDefault()
 	element.setPointerCapture(event.pointerId)
-	handler(event, element, getPointerPosition(event, element))
+	handler(event, element, getPosition(event, element))
 
 	const move = (moveEvent: PointerEvent) => {
-		handler(moveEvent, element, getPointerPosition(moveEvent, element))
+		handler(moveEvent, element, getPosition(moveEvent, element))
 	}
 	const up = () => {
 		element.releasePointerCapture(event.pointerId)
@@ -248,13 +246,14 @@ const handleFieldPointer = (
 	_element: HTMLElement,
 	position: { x: number; y: number }
 ) => {
-	const hsv = hsvValue.value
-	hsvValue.value = {
+	const hsv = hsvColor.value
+	const next = {
 		h: hsv.h,
 		s: position.x,
-		v: 1 - position.y
+		v: 1 - position.y,
+		a: hsv.a
 	}
-	emitValue(event)
+	emitValue(next, event)
 }
 
 const handleHuePointer = (
@@ -262,13 +261,14 @@ const handleHuePointer = (
 	_element: HTMLElement,
 	position: { x: number; y: number }
 ) => {
-	const hsv = hsvValue.value
-	hsvValue.value = {
+	const hsv = hsvColor.value
+	const next = {
 		h: position.x * 360,
 		s: hsv.s,
-		v: hsv.v
+		v: hsv.v,
+		a: hsv.a
 	}
-	emitValue(event)
+	emitValue(next, event)
 }
 
 const handleAlphaPointer = (
@@ -276,65 +276,48 @@ const handleAlphaPointer = (
 	_element: HTMLElement,
 	position: { x: number; y: number }
 ) => {
-	hsvColor.value.a = clamp(Math.round(position.x * 255), 0, 255)
-	emitValue(event)
+	const hsv = hsvColor.value
+	const next = {
+		h: hsv.h,
+		s: hsv.s,
+		v: hsv.v,
+		a: clamp(Math.round(position.x * 255), 0, 255)
+	}
+	emitValue(next, event)
 }
 
 const startFieldDrag = (event: PointerEvent) => {
 	if (!colorFieldRef.value) return
-	startDrag(event, colorFieldRef.value, handleFieldPointer)
+	startDrag(event, colorFieldRef.value, getPointerPosition, handleFieldPointer)
 }
 
 const startHueDrag = (event: PointerEvent) => {
 	if (!hueSliderRef.value) return
-	startDrag(event, hueSliderRef.value, handleHuePointer)
+	startDrag(event, hueSliderRef.value, getPointerPosition4Slider, handleHuePointer)
 }
 
 const startAlphaDrag = (event: PointerEvent) => {
 	if (!alphaSliderRef.value) return
-	startDrag(event, alphaSliderRef.value, handleAlphaPointer)
+	startDrag(event, alphaSliderRef.value, getPointerPosition4Slider, handleAlphaPointer)
 }
 
-const selectPreset = (value: string, event: MouseEvent) => {
+const selectPreset = async (value: string, event: MouseEvent) => {
 	const parsed = parseColorString(value)
 	if (!parsed) return
-	applyColor(parsed, props.includeAlpha)
-	inputValue.value = formatColor(props.format, parsed, props.includeAlpha)
-	emitValue(event)
+	emitValue(parsed, event)
 }
 watch(
 	() => props.current,
 	(newValue) => {
-		if (newValue === inputValue.value) return
+		if (isEqual(newValue, hsvColor.value)) return
 		if (!newValue) {
 			applyColor(defaultHsv, props.includeAlpha)
 			inputValue.value = ''
 			return
 		}
-		const parsed = parseColorString(newValue)
-		if (parsed) {
-			applyColor(parsed, props.includeAlpha)
-			inputValue.value = formatColor(props.format, parsed, props.includeAlpha)
-		}
+		applyColor(newValue, props.includeAlpha)
 	},
 	{ immediate: true }
-)
-
-watch(
-	() => hsvColor.value,
-	() => {
-		nextTick(() => {
-			inputValue.value = formattedValue.value
-		})
-	},
-	{ deep: true }
-)
-
-watch(
-	() => props.format,
-	() => {
-		inputValue.value = formattedValue.value
-	}
 )
 
 const applyInput = (event: Event) => {
@@ -348,9 +331,9 @@ const hueThumbCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const colorThumbRef = shallowRef<HTMLDivElement | null>(null)
 const colorThumbCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 
-useDraw(alphaThumbRef, alphaThumbCanvasRef)
-useDraw(hueThumbRef, hueThumbCanvasRef)
-useDraw(colorThumbRef, colorThumbCanvasRef)
+useDraw(alphaThumbRef, alphaThumbCanvasRef, pixelSize)
+useDraw(hueThumbRef, hueThumbCanvasRef, pixelSize)
+useDraw(colorThumbRef, colorThumbCanvasRef, pixelSize, calcColor)
 </script>
 
 <style lang="less" src="./index.less"></style>

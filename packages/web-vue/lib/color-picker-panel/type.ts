@@ -1,12 +1,24 @@
-import type { ColorFormat } from "../share/type"
+import type { ColorFormat, HslaColor, HsvaColor, HwbaColor, RgbaColor } from '../share/type'
 
 export interface ColorPickerPanelProps {
-	current?: string | null
+	current?: HsvaColor
 	format?: ColorFormat
 	includeAlpha?: boolean
 	presets?: string[]
 }
 
 export type ColorPickerPanelEmits = {
-	change: [value: string, event: Event]
+	change: [
+		rgbaColor: RgbaColor,
+		colorString: string,
+		colorWithModel: ColorWithModel,
+		event: Event
+	]
+}
+
+export type ColorWithModel = {
+	rgb: RgbaColor
+	hsl: HslaColor
+	hwb: HwbaColor
+	hsv: HsvaColor
 }

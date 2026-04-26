@@ -1,16 +1,17 @@
 import { debounce } from 'parsnip-kit'
-import { onMounted, watch, type ShallowRef } from 'vue'
-import { usePixelSize } from '../share/hook/use-pixel-size'
+import { onMounted, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import {
 	calcBorderCornerCenter,
 	canvasPreprocess,
 	drawCircle,
+	floodFill,
 	getBorderRadius
 } from '../share/util/plot'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import type { ColorWithModel } from './type'
 
 const drawThumbBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -78,10 +79,10 @@ const drawThumbBorder = (
 
 export const useDraw = (
 	thumbRef: ShallowRef<HTMLDivElement | null>,
-	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>
+	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>,
+	pixelSize: Readonly<Ref<number, number>>,
+	calcColor?: ComputedRef<ColorWithModel>
 ) => {
-	const pixelSize = usePixelSize()
-
 	const draw = () => {
 		const data = canvasPreprocess(thumbRef, thumbCanvasRef)
 		if (!data) {
@@ -127,12 +128,16 @@ export const useDraw = (
 			borderColor,
 			pixelSize.value
 		)
+
+		if (calcColor?.value.rgb) {
+			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), calcColor.value.rgb)
+		}
 	}
 	const drawDebounce = debounce(draw, 0)
 
 	const darkMode = useDarkMode()
 
-	watch([pixelSize, darkMode], () => {
+	watch([pixelSize, darkMode, () => calcColor?.value.rgb], () => {
 		drawDebounce()
 	})
 
