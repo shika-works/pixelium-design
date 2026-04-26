@@ -15,25 +15,25 @@ export const formatColor = (
 		const s = parseFloat((cwm.hsl.s * 100).toFixed(2))
 		const l = parseFloat((cwm.hsl.l * 100).toFixed(2))
 		return allowAlpha
-			? `hsla(${Math.round(cwm.hsl.h)}, ${s}%, ${l}%, ${alpha})`
+			? `hsl(${Math.round(cwm.hsl.h)}, ${s}%, ${l}%, ${alpha})`
 			: `hsl(${Math.round(cwm.hsl.h)}, ${s}%, ${l}%)`
 	}
 	if (format === 'hsv') {
 		const s = parseFloat((cwm.hsv.s * 100).toFixed(2))
 		const v = parseFloat((cwm.hsv.v * 100).toFixed(2))
 		return allowAlpha
-			? `hsva(${Math.round(cwm.hsv.h)}, ${s}%, ${v}%, ${alpha})`
+			? `hsv(${Math.round(cwm.hsv.h)}, ${s}%, ${v}%, ${alpha})`
 			: `hsv(${Math.round(cwm.hsv.h)}, ${s}%, ${v}%)`
 	}
 	if (format === 'hwb') {
 		const w = parseFloat((cwm.hwb.w * 100).toFixed(2))
 		const b = parseFloat((cwm.hwb.b * 100).toFixed(2))
 		return allowAlpha
-			? `hwba(${Math.round(cwm.hwb.h)}, ${w}%, ${b}%, ${alpha})`
+			? `hwb(${Math.round(cwm.hwb.h)}, ${w}%, ${b}%, ${alpha})`
 			: `hwb(${Math.round(cwm.hwb.h)}, ${w}%, ${b}%)`
 	}
 	return allowAlpha
-		? `rgba(${cwm.rgb.r}, ${cwm.rgb.g}, ${cwm.rgb.b}, ${alpha})`
+		? `rgb(${cwm.rgb.r}, ${cwm.rgb.g}, ${cwm.rgb.b}, ${alpha})`
 		: `rgb(${cwm.rgb.r}, ${cwm.rgb.g}, ${cwm.rgb.b})`
 }
 

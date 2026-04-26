@@ -1,5 +1,5 @@
 import { debounce } from 'parsnip-kit'
-import { onMounted, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
+import { onMounted, watch, type Ref, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import {
 	calcBorderCornerCenter,
@@ -81,7 +81,7 @@ export const useDraw = (
 	thumbRef: ShallowRef<HTMLDivElement | null>,
 	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>,
 	pixelSize: Readonly<Ref<number, number>>,
-	calcColor?: ComputedRef<ColorWithModel>
+	calcColor?: Ref<ColorWithModel>
 ) => {
 	const draw = () => {
 		const data = canvasPreprocess(thumbRef, thumbCanvasRef)
