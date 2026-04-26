@@ -1,12 +1,17 @@
 import { clamp } from 'parsnip-kit'
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../const'
-import type { HslaColor, HsvaColor, HwbaColor, RgbaColor, RgbColor, ParsedColorOutput } from '../type'
+import type {
+	HslaColor,
+	HsvaColor,
+	HwbaColor,
+	RgbaColor,
+	RgbColor,
+	ParsedColorOutput
+} from '../type'
 import { inBrowser } from './env'
 import { createLRU } from './lru-cache'
 type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl' | 'hwb'
 const colorCache = createLRU<string, RgbaColor>(120)
-
-
 
 export const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
 	const toHex = (n: number) => n.toString(16).padStart(2, '0')
@@ -14,13 +19,63 @@ export const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
 	return includeAlpha ? `${hex}${toHex(value.a)}` : hex
 }
 
-export const hsvToHsl = (color: { h: number; s: number; v: number, a: number }) => {
+export const hsvToHsl = (color: { h: number; s: number; v: number; a: number }) => {
 	const h = ((color.h % 360) + 360) % 360
 	const s = clamp(color.s, 0, 1)
 	const v = clamp(color.v, 0, 1)
 	const l = v * (1 - s / 2)
 	const sat = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l)
-	return { h, s: sat, l: l , a: color.a }
+	return { h, s: sat, l, a: color.a }
+}
+
+export function hsvToHwb(color: HsvaColor): HwbaColor {
+	const h = normalizeHue(color.h)
+	const s = clamp(color.s, 0, 1)
+	const v = clamp(color.v, 0, 1)
+	const c = v * s
+	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
+	const m = v - c
+
+	let rn = 0
+	let gn = 0
+	let bn = 0
+
+	if (h < 60) {
+		rn = c
+		gn = x
+		bn = 0
+	} else if (h < 120) {
+		rn = x
+		gn = c
+		bn = 0
+	} else if (h < 180) {
+		rn = 0
+		gn = c
+		bn = x
+	} else if (h < 240) {
+		rn = 0
+		gn = x
+		bn = c
+	} else if (h < 300) {
+		rn = x
+		gn = 0
+		bn = c
+	} else {
+		rn = c
+		gn = 0
+		bn = x
+	}
+
+	const r = rn + m
+	const g = gn + m
+	const b = bn + m
+
+	return {
+		h,
+		w: Math.min(r, g, b),
+		b: 1 - Math.max(r, g, b),
+		a: color.a
+	}
 }
 
 function normalizeHue(h: number) {

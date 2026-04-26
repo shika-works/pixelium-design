@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseColor, rgbaToHex, hsvToHsl } from '../color'
+import { parseColor, rgbaToHex, hsvToHsl, hsvToHwb } from '../color'
 
 describe('parseColor', () => {
 	it('parses rgb and rgba strings correctly', () => {
@@ -52,6 +52,21 @@ describe('parseColor', () => {
 			h: 120,
 			s: 0.3333333333333333,
 			l: 0.375,
+			a: 128
+		})
+	})
+
+	it('converts hsv values to hwb correctly', () => {
+		expect(hsvToHwb({ h: 0, s: 1, v: 1, a: 255 })).toStrictEqual({
+			h: 0,
+			w: 0,
+			b: 0,
+			a: 255
+		})
+		expect(hsvToHwb({ h: 120, s: 0.5, v: 0.5, a: 128 })).toStrictEqual({
+			h: 120,
+			w: 0.25,
+			b: 0.5,
 			a: 128
 		})
 	})
