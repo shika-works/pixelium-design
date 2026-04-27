@@ -1,6 +1,6 @@
+import type { ColorWithModel } from '../color-picker/type'
 import type { ColorFormat, HsvaColor } from '../share/type'
 import { hsvToHsl, hsvToHwb, hsvToRgba, rgbaToHex } from '../share/util/color'
-import type { ColorWithModel } from './type'
 
 export const formatColor = (
 	format: ColorFormat,

@@ -8,10 +8,11 @@ import {
 	floodFill,
 	getBorderRadius
 } from '../share/util/plot'
-import type { RgbaColor } from '../share/type'
-import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
+import type { HsvaColor, RgbaColor } from '../share/type'
+import { getGlobalThemeColor, hsvToRgba, rgbaColor2string } from '../share/util/color'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
-import type { ColorWithModel } from './type'
+import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
 
 const drawThumbBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -81,7 +82,7 @@ export const useDraw = (
 	thumbRef: ShallowRef<HTMLDivElement | null>,
 	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>,
 	pixelSize: Readonly<Ref<number, number>>,
-	calcColor?: Ref<ColorWithModel>
+	hsvColor?: Ref<HsvaColor>
 ) => {
 	const draw = () => {
 		const data = canvasPreprocess(thumbRef, thumbCanvasRef)
@@ -129,15 +130,15 @@ export const useDraw = (
 			pixelSize.value
 		)
 
-		if (calcColor?.value.rgb) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), calcColor.value.rgb)
+		if (hsvColor?.value) {
+			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), hsvToRgba(hsvColor.value))
 		}
 	}
 	const drawDebounce = debounce(draw, 0)
 
 	const darkMode = useDarkMode()
 
-	watch([pixelSize, darkMode, () => calcColor?.value.rgb], () => {
+	watch([pixelSize, darkMode, () => hsvColor?.value], () => {
 		drawDebounce()
 	})
 
@@ -148,4 +149,8 @@ export const useDraw = (
 	watch([thumbCanvasRef, thumbRef], () => {
 		draw()
 	})
+	useWatchGlobalCssVal(drawDebounce)
+	useTransitionEnd(thumbRef, drawDebounce)
+
+	return drawDebounce
 }

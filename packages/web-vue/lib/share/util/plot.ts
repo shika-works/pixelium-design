@@ -513,15 +513,38 @@ const clockOrderSort = (points: [number, number][]) => {
 	})
 }
 
-export function floodFillEdge(
+type FillRegionResult = {
+	w: number
+	h: number
+	img: ImageData
+	data32: Uint32Array
+	filled: Uint8Array
+	targetColor: number
+}
+
+const getDistinctFillColor = (targetColor: number): RgbaColor => {
+	const r = targetColor & 0xff
+	const g = (targetColor >> 8) & 0xff
+	const b = (targetColor >> 16) & 0xff
+	const a = (targetColor >> 24) & 0xff
+	return {
+		r: r === 255 ? 254 : 255,
+		g,
+		b,
+		a
+	}
+}
+
+function collectFloodFillRegion(
 	ctx: CanvasRenderingContext2D,
 	startX: number,
 	startY: number,
 	fillColor: RgbaColor
-): [number, number][] {
+): FillRegionResult | null {
 	const w = ctx.canvas.width
 	const h = ctx.canvas.height
-	if (w <= 0 || h <= 0) return []
+	if (w <= 0 || h <= 0) return null
+	if (startX < 0 || startX >= w || startY < 0 || startY >= h) return null
 
 	const img = ctx.getImageData(0, 0, w, h)
 	const data32 = new Uint32Array(img.data.buffer)
@@ -530,7 +553,7 @@ export function floodFillEdge(
 
 	const startPos = startY * w + startX
 	const targetColor = data32[startPos]
-	if (targetColor === uint32Color) return []
+	if (targetColor === uint32Color) return null
 
 	const filled = new Uint8Array(w * h)
 	type Span = { y: number; left: number; right: number; dy: number }
@@ -592,6 +615,10 @@ export function floodFillEdge(
 		}
 	}
 
+	return { w, h, img, data32, filled, targetColor }
+}
+
+function getEdgePointsFromFilled(filled: Uint8Array, w: number, h: number): [number, number][] {
 	const edgePoints = new Set<number>()
 	for (let y = 0; y < h; y++) {
 		for (let x = 0; x < w; x++) {
@@ -626,6 +653,112 @@ export function floodFillEdge(
 	clockOrderSort(points)
 
 	return filterLine(points)
+}
+
+export function floodFillEdge(
+	ctx: CanvasRenderingContext2D,
+	startX: number,
+	startY: number,
+	fillColor: RgbaColor
+): [number, number][] {
+	const result = collectFloodFillRegion(ctx, startX, startY, fillColor)
+	if (!result) return []
+	return getEdgePointsFromFilled(result.filled, result.w, result.h)
+}
+
+export function floodFillEdgePadding(
+	ctx: CanvasRenderingContext2D,
+	startX: number,
+	startY: number,
+	color: RgbaColor,
+	padding: number
+): void {
+	if (padding <= 0) return
+	const w = ctx.canvas.width
+	const h = ctx.canvas.height
+	if (w <= 0 || h <= 0) return
+	if (startX < 0 || startX >= w || startY < 0 || startY >= h) return
+
+	const img = ctx.getImageData(0, 0, w, h)
+	const data32 = new Uint32Array(img.data.buffer)
+	const fillColor = getDistinctFillColor(data32[startY * w + startX])
+	const result = collectFloodFillRegion(ctx, startX, startY, fillColor)
+	if (!result) return
+
+	const bandColor = (color.a << 24) | (color.b << 16) | (color.g << 8) | color.r
+	const bandMask = new Uint8Array(w * h)
+	const distances = new Uint16Array(w * h)
+	const queue: [number, number][] = []
+
+	// restore original region color before drawing the padding band
+	for (let i = 0; i < result.w * result.h; i++) {
+		if (result.filled[i] === 1) {
+			data32[i] = result.targetColor
+		}
+	}
+
+	for (let y = 0; y < h; y++) {
+		for (let x = 0; x < w; x++) {
+			const pos = y * w + x
+			if (result.filled[pos] !== 1) continue
+
+			const left = x === 0 || result.filled[pos - 1] === 0
+			const right = x === w - 1 || result.filled[pos + 1] === 0
+			const top = y === 0 || result.filled[pos - w] === 0
+			const bottom = y === h - 1 || result.filled[pos + w] === 0
+			const topLeft = x === 0 || y === 0 || result.filled[pos - w - 1] === 0
+			const topRight = x === w - 1 || y === 0 || result.filled[pos - w + 1] === 0
+			const bottomLeft = x === 0 || y === h - 1 || result.filled[pos + w - 1] === 0
+			const bottomRight = x === w - 1 || y === h - 1 || result.filled[pos + w + 1] === 0
+			if (left || right || top || bottom || topLeft || topRight || bottomLeft || bottomRight) {
+				queue.push([x, y])
+				bandMask[pos] = 1
+				distances[pos] = 0
+			}
+		}
+	}
+
+	const dirs = [
+		[0, 1],
+		[0, -1],
+		[1, 0],
+		[-1, 0],
+		[1, 1],
+		[1, -1],
+		[-1, 1],
+		[-1, -1]
+	] as const
+
+	let head = 0
+	while (head < queue.length) {
+		const [x, y] = queue[head++]!
+		const pos = y * w + x
+		const distance = distances[pos]
+		if (distance >= padding - 1) {
+			continue
+		}
+
+		for (const [dx, dy] of dirs) {
+			const nx = x + dx
+			const ny = y + dy
+			if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue
+
+			const npos = ny * w + nx
+			if (result.filled[npos] !== 1 || bandMask[npos] === 1) continue
+
+			bandMask[npos] = 1
+			distances[npos] = distance + 1
+			queue.push([nx, ny])
+		}
+	}
+
+	for (let i = 0; i < bandMask.length; i++) {
+		if (bandMask[i] === 1) {
+			data32[i] = bandColor
+		}
+	}
+
+	ctx.putImageData(img, 0, 0)
 }
 
 export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number][] {

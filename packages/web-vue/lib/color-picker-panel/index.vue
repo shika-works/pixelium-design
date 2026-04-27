@@ -22,7 +22,11 @@
 					<div
 						class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-hue-slider"
 					>
-						<div ref="hueThumbRef" class="px-color-picker-panel-thumb" :style="hueThumbStyle">
+						<div
+							ref="hueThumbRef"
+							class="px-color-picker-panel-thumb px-color-picker-panel-thumb-hue"
+							:style="hueThumbStyle"
+						>
 							<canvas
 								class="px-color-picker-panel-thumb-canvas"
 								ref="hueThumbCanvasRef"
@@ -40,7 +44,7 @@
 						class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-alpha-slider"
 					>
 						<div
-							class="px-color-picker-panel-thumb"
+							class="px-color-picker-panel-thumb px-color-picker-panel-thumb-alpha"
 							ref="alphaThumbRef"
 							:style="alphaThumbStyle"
 						>
@@ -55,10 +59,9 @@
 		</div>
 
 		<div class="px-color-picker-panel-footer">
-			<Input size="small" v-model="inputValue" @change="updateFromInput"></Input>
+			<Input size="small" v-model="inputValue" @change="updateFromInput" ref="inputRef"></Input>
 			<div class="px-color-picker-panel-presets">
 				<button
-					type="button"
 					class="px-color-picker-panel-preset corner-gradient"
 					v-for="preset in props.presets"
 					:key="preset"
@@ -73,12 +76,11 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, shallowRef, watch } from 'vue'
 import type { ColorPickerPanelEmits, ColorPickerPanelProps } from './type'
-import { hsvToRgba, parseColor } from '../share/util/color'
+import { parseColor } from '../share/util/color'
 import type { HsvaColor } from '../share/type'
 import { clamp, isEqual } from 'parsnip-kit'
 import { useDraw } from './draw'
 import Input from '../input/index.vue'
-import { calcColorWithModel, formatColor } from './util'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 
 defineOptions({
@@ -100,33 +102,17 @@ const alphaSliderRef = ref<HTMLElement | null>(null)
 
 const pixelSize = usePixelSize()
 
-const calcColor = computed(() => {
-	return calcColorWithModel(hsvColor.value, props.includeAlpha)
-})
-const formattedValue = computed(() =>
-	formatColor(props.format, calcColor.value, props.includeAlpha)
-)
-
-const inputValue = ref(formattedValue.value || '')
-
-const getRgbaValue = (source: HsvaColor) => {
-	const res = hsvToRgba(source)
-	if (!props.includeAlpha) {
-		res.a = 255
-	}
-	return res
-}
+const inputValue = ref(props.formatted || '')
 
 const parseColorString = (value: string): HsvaColor | null => {
 	return parseColor(value, 'hsv')?.color || null
 }
 
-const applyColor = (source: HsvaColor, allowAlpha: boolean, inner: boolean = false) => {
-	let h = source.h % (inner ? 361 : 360)
-	if (!inner) {
-		if (Math.round(hsvColor.value.h) === 360 && h === 0) {
-			h = 360
-		}
+let endFlag = false
+const applyColor = (source: HsvaColor, allowAlpha: boolean) => {
+	let h = source.h % (endFlag ? 361 : 360)
+	if (endFlag) {
+		endFlag = false
 	}
 	hsvColor.value = {
 		h: h,
@@ -136,24 +122,23 @@ const applyColor = (source: HsvaColor, allowAlpha: boolean, inner: boolean = fal
 	}
 }
 
-const updateFromInput = async (value: string, event?: Event) => {
+const updateFromInput = async (_value: string, event?: Event) => {
 	const parsed = parseColorString(inputValue.value)
-	console.log(value, inputValue.value, parsed)
 
 	if (!parsed) {
-		inputValue.value = formattedValue.value
+		inputValue.value = props.formatted || ''
 		return
 	}
 	emitValue(parsed, event as Event)
 	await nextTick()
-	inputValue.value = formattedValue.value
+	inputValue.value = props.formatted || ''
 }
 
 const emitValue = (value: HsvaColor, event: Event) => {
-	applyColor(value, props.includeAlpha, true)
-	const calcColor = calcColorWithModel(value, props.includeAlpha)
-	const formatted = formatColor(props.format, calcColor, props.includeAlpha)
-	emits('change', getRgbaValue(value), formatted, calcColor, event)
+	if (value.h === 360) {
+		endFlag = true
+	}
+	emits('change', value, event)
 }
 
 const alphaPercent = computed<number>({
@@ -164,11 +149,14 @@ const alphaPercent = computed<number>({
 	}
 })
 
-watch(formattedValue, async (newFormat) => {
-	if (newFormat) {
-		inputValue.value = formattedValue.value
+watch(
+	() => props.formatted,
+	async (newFormat) => {
+		if (newFormat) {
+			inputValue.value = newFormat
+		}
 	}
-})
+)
 
 const fieldBackground = computed(() => {
 	return `hsl(${hsvColor.value.h}, 100%, 50%)`
@@ -331,9 +319,21 @@ const hueThumbCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const colorThumbRef = shallowRef<HTMLDivElement | null>(null)
 const colorThumbCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 
-useDraw(alphaThumbRef, alphaThumbCanvasRef, pixelSize)
-useDraw(hueThumbRef, hueThumbCanvasRef, pixelSize)
-useDraw(colorThumbRef, colorThumbCanvasRef, pixelSize, calcColor)
+const renderAlphaThumb = useDraw(alphaThumbRef, alphaThumbCanvasRef, pixelSize)
+const renderHueThumb = useDraw(hueThumbRef, hueThumbCanvasRef, pixelSize)
+const renderColorThumb = useDraw(colorThumbRef, colorThumbCanvasRef, pixelSize, hsvColor)
+
+const inputRef = shallowRef<InstanceType<typeof Input> | null>(null)
+defineExpose({
+	getInputEl: () => {
+		return inputRef.value?.$el
+	},
+	rerender: () => {
+		renderAlphaThumb()
+		renderHueThumb()
+		renderColorThumb()
+	}
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

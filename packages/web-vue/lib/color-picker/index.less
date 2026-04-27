@@ -1,0 +1,122 @@
+@import url(../share/style/variable.less);
+
+.px-color-picker {
+	@prefix: px-color-picker;
+	@px-medium-padding-x: @px-interval-2;
+	@px-large-padding-x: @px-interval-3;
+	@px-small-padding-x: @px-interval-2;
+
+	--color-picker-size: var(--px-medium-size);
+
+	z-index: 0;
+	position: relative;
+	background-color: transparent;
+	border-color: transparent;
+	border-width: var(--px-bit);
+	border-style: solid;
+	color: var(--px-neutral-10);
+	display: flex;
+	box-sizing: border-box;
+	height: var(--color-picker-size);
+	cursor: pointer;
+
+	transition: 0.25s all;
+
+	flex-grow: 1;
+
+	&__circle,
+	&__square {
+		width: var(--color-picker-size);
+	}
+
+	&-inner {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		&__black {
+			color: var(--px-neutral-1);
+			.@{prefix}-icon {
+				fill: var(--px-neutral-1);
+			}
+		}
+		&__white {
+			color: var(--px-neutral-10);
+			.@{prefix}-icon {
+				fill: var(--px-neutral-10);
+			}
+		}
+		&:focus {
+			outline: none;
+		}
+	}
+
+	&-icon-wrapper {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		padding-top: @px-interval-mini-1;
+		&:last-child {
+			margin-left: @px-interval-2;
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+	}
+
+	@sizes: small, medium, large;
+
+	each(@sizes, {
+  &.@{prefix}__@{value} {
+    @paddingVar: ~"px-@{value}-padding-x";
+    &.@{prefix}__inner {
+      padding-right: calc(@@paddingVar + 1px + 1 * var(--px-bit));
+      &:last-child {
+        padding-right: @@paddingVar;
+      }
+    }
+  }
+});
+
+	&__large {
+		font-size: @px-large-font-size;
+		--color-picker-size: var(--px-large-size);
+	}
+	&__small {
+		font-size: @px-small-font-size;
+		--color-picker-size: var(--px-small-size);
+	}
+	&__disabled {
+		cursor: not-allowed;
+		.@{prefix}-inner:disabled {
+			cursor: not-allowed;
+			color: var(--px-neutral-8);
+		}
+	}
+
+	each(@sizes, {
+  &.@{prefix}__@{value} {
+    @fontVar: ~"px-@{value}-font-size";
+    
+		.@{prefix}-inner {
+			font-size: @@fontVar;
+		}
+		
+    .@{prefix}-icon-wrapper {
+      .@{prefix}-icon {
+        width: @@fontVar;
+        height: @@fontVar;
+      }
+    }
+  }
+});
+
+	&-canvas {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: -1;
+		pointer-events: none;
+	}
+}

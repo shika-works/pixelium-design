@@ -1,8 +1,7 @@
 @import url(../share/style/variable.less);
 .px-color-picker-panel {
 	width: @px-color-picker-body-width;
-	&-body,
-	&-footer {
+	&-body {
 		display: grid;
 		gap: @px-interval-2;
 	}
@@ -23,10 +22,11 @@
 	}
 
 	&-presets {
+		margin-top: @px-interval-2;
 		display: flex;
 		flex-wrap: wrap;
 		gap: @px-interval-4;
-		margin: var(--px-bit);
+		padding: var(--px-bit);
 		box-sizing: border-box;
 	}
 

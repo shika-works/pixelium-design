@@ -13,6 +13,32 @@ import { createLRU } from './lru-cache'
 type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl' | 'hwb'
 const colorCache = createLRU<string, ParseColorValueResult>(120)
 
+function rgbToGray(r: number, g: number, b: number): number {
+	const gray = 0.299 * r + 0.587 * g + 0.114 * b
+	return Math.min(255, Math.max(0, Math.round(gray)))
+}
+function alphaBlend(fg: RgbaColor, bg: RgbColor): RgbColor {
+	const alpha = (fg.a !== undefined ? fg.a : 255) / 255
+	const invAlpha = 1 - alpha
+
+	const r = fg.r * alpha + bg.r * invAlpha
+	const g = fg.g * alpha + bg.g * invAlpha
+	const b = fg.b * alpha + bg.b * invAlpha
+
+	return {
+		r: Math.min(255, Math.max(0, Math.round(r))),
+		g: Math.min(255, Math.max(0, Math.round(g))),
+		b: Math.min(255, Math.max(0, Math.round(b)))
+	}
+}
+export function computeGrayWithBackground(
+	rgba: RgbaColor,
+	background: RgbColor = { r: 255, g: 255, b: 255 }
+): number {
+	const blended = alphaBlend(rgba, background)
+	return rgbToGray(blended.r, blended.g, blended.b)
+}
+
 export const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
 	const toHex = (n: number) => n.toString(16).padStart(2, '0')
 	const hex = `#${toHex(value.r)}${toHex(value.g)}${toHex(value.b)}`
@@ -83,7 +109,7 @@ function normalizeHue(h: number) {
 	return mod < 0 ? mod + 360 : mod
 }
 
-function rgbaToHsv(rgba: RgbaColor): HsvaColor {
+export function rgbaToHsv(rgba: RgbaColor): HsvaColor {
 	const rn = rgba.r / 255
 	const gn = rgba.g / 255
 	const bn = rgba.b / 255
@@ -111,7 +137,33 @@ function rgbaToHsv(rgba: RgbaColor): HsvaColor {
 	}
 }
 
-function rgbaToHsl(rgba: RgbaColor): HslaColor {
+export function hslToHsv(color: HslaColor): HsvaColor {
+	const h = normalizeHue(color.h)
+	const s = clamp(color.s, 0, 1)
+	const l = clamp(color.l, 0, 1)
+	const v = l + s * Math.min(l, 1 - l)
+	return {
+		h,
+		s: v === 0 ? 0 : clamp(1 - Math.min(l, 1 - l) / v, 0, 1),
+		v,
+		a: color.a
+	}
+}
+
+export function hwbToHsv(color: HwbaColor): HsvaColor {
+	const h = normalizeHue(color.h)
+	const w = clamp(color.w, 0, 1)
+	const b = clamp(color.b, 0, 1)
+	const v = 1 - b
+	return {
+		h,
+		s: v === 0 || w + b >= 1 ? 0 : clamp(1 - w / v, 0, 1),
+		v,
+		a: color.a
+	}
+}
+
+export function rgbaToHsl(rgba: RgbaColor): HslaColor {
 	const rn = rgba.r / 255
 	const gn = rgba.g / 255
 	const bn = rgba.b / 255
@@ -186,7 +238,7 @@ export function hsvToRgba(color: HsvaColor): RgbaColor {
 	}
 }
 
-function hslToRgba(color: HslaColor): RgbaColor {
+export function hslToRgba(color: HslaColor): RgbaColor {
 	const h = normalizeHue(color.h)
 	const c = (1 - Math.abs(2 * color.l - 1)) * color.s
 	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
@@ -229,7 +281,7 @@ function hslToRgba(color: HslaColor): RgbaColor {
 		a: color.a
 	}
 }
-function hwbToRgba(color: HwbaColor): RgbaColor {
+export function hwbToRgba(color: HwbaColor): RgbaColor {
 	const h = normalizeHue(color.h)
 	const roundedW = clamp(color.w, 0, 1)
 	const roundedB = clamp(color.b, 0, 1)
@@ -280,7 +332,7 @@ function hwbToRgba(color: HwbaColor): RgbaColor {
 		a: color.a
 	}
 }
-function rgbaToHwb(rgba: RgbaColor): HwbaColor {
+export function rgbaToHwb(rgba: RgbaColor): HwbaColor {
 	const rn = rgba.r / 255
 	const gn = rgba.g / 255
 	const bn = rgba.b / 255
@@ -361,7 +413,7 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			/hsla?\(\s*([+-]?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
 		)
 		if (matches) {
-			const h = parseFloat(matches[1])
+			const h = normalizeHue(parseFloat(matches[1]))
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const l = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
@@ -374,7 +426,7 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			/hsva?\(\s*([+-]?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
 		)
 		if (matches) {
-			const h = parseFloat(matches[1])
+			const h = normalizeHue(parseFloat(matches[1]))
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const v = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
@@ -387,7 +439,7 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			/hwba?\(\s*([+-]?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
 		)
 		if (matches) {
-			const h = parseFloat(matches[1])
+			const h = normalizeHue(parseFloat(matches[1]))
 			const w = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const b = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
