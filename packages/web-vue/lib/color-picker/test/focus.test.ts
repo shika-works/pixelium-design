@@ -33,7 +33,7 @@ describe('ColorPicker focus/blur behavior', () => {
 		const onFocus = vi.fn()
 		const onBlur = vi.fn()
 		const wrapper = mountComponent({ onFocus, onBlur })
-		const content = wrapper.find('.px-color-picker-content')
+		const content = wrapper.find('.px-color-picker-inner')
 
 		await content.trigger('focus')
 
@@ -75,7 +75,7 @@ describe('ColorPicker focus/blur behavior', () => {
 	it('internal element focus does not trigger blur on wrapper', async () => {
 		const onBlur = vi.fn()
 		const wrapper = mountComponent({ onBlur })
-		const content = wrapper.find('.px-color-picker-content')
+		const content = wrapper.find('.px-color-picker-inner')
 
 		await content.trigger('focus')
 		await content.trigger('focus')

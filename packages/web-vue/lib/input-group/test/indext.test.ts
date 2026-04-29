@@ -14,6 +14,7 @@ import BaseDatePicker from '../../base-date-picker/index.vue'
 import DatePicker from '../../date-picker/index.vue'
 import DateTimePicker from '../../date-time-picker/index.vue'
 import TimePicker from '../../time-picker/index.vue'
+import ColorPicker from '../../color-picker/index.vue'
 
 describe('InputGroup', () => {
 	const { post, pre } = createMocks()
@@ -76,6 +77,10 @@ describe('InputGroup', () => {
 			},
 			{
 				component: DateTimePicker,
+				getter: specialStateGetter
+			},
+			{
+				component: ColorPicker,
 				getter: specialStateGetter
 			}
 		]

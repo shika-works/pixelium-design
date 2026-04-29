@@ -24,6 +24,7 @@ import DatePicker from '../../date-picker/index.vue'
 import TimePicker from '../../time-picker/index.vue'
 import DateTimePicker from '../../date-time-picker/index.vue'
 import Rate from '../../rate/index.vue'
+import ColorPicker from '../../color-picker/index.vue'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -455,6 +456,25 @@ describe('Form Component', () => {
 						}
 					),
 				disabledTarget: '.px-rate',
+				disabledAttr: 'tabindex',
+				disabledValue: '-1'
+			},
+			{
+				name: 'ColorPicker',
+				initial: '',
+				render: (form: any) =>
+					h(
+						FormItem,
+						{ field: 'input', label: 'Input' },
+						{
+							default: () =>
+								h(ColorPicker, {
+									modelValue: form.value.input,
+									'onUpdate:modelValue': (e: string) => (form.value.input = e)
+								})
+						}
+					),
+				disabledTarget: '.px-color-picker-inner',
 				disabledAttr: 'tabindex',
 				disabledValue: '-1'
 			}
