@@ -40,7 +40,7 @@
 		"dev": "vite",
 		"build": "node script/build.mts",
 		"lint": "oxlint lib",
-		"lint:fix": "oxlint ./ --fix && prettier ./ --write",
+		"format": "oxlint ./ --fix && prettier ./ --write",
 		"preview": "vite preview",
 		"release": "npm run test && npm run build && npm publish --access public",
 		"release:dry-run": "npm run build && npm publish --dry-run",
