@@ -5,7 +5,7 @@ export interface ColorPickerPanelProps {
 	formatted?: string
 	format?: ColorFormat
 	includeAlpha?: boolean
-	presets?: string[]
+	preset?: string[]
 }
 
 export type ColorPickerPanelEmits = {

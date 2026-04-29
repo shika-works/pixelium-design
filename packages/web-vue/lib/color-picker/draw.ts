@@ -1,14 +1,14 @@
-import { nextTick, onMounted, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
+import { alphaBlend, getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import {
 	canvasPreprocess,
 	getBorderRadius,
 	calcBorderCornerCenter,
-	floodFill,
 	drawCircle,
-	floodFillEdgePadding
+	floodFillEdgePadding,
+	floodFillEdge
 } from '../share/util/plot'
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
 import { debounce } from 'parsnip-kit'
@@ -19,6 +19,8 @@ import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { usePolling } from '../share/hook/use-polling'
+import { INTERVAL } from '../share/const/style'
+import { offsetOutward } from '../share/util/common'
 
 export const drawBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -90,6 +92,60 @@ export const drawBorder = (
 		}
 		ctx.fillRect(width - 2 * pixelSize - 1, 0, length, height)
 	}
+}
+
+const DARK_DIV = { r: 192, g: 192, b: 192 } // #c0c0c0
+const LIGHT_DIV = { r: 229, g: 229, b: 229 } // #e5e5e5
+
+const drawTransparencyGridInPolygon = (
+	color: RgbaColor,
+	ctx: CanvasRenderingContext2D,
+	cellSize: number = 4,
+	polygon: Array<[number, number]>
+) => {
+	if (!polygon.length) return
+
+	const canvas = ctx.canvas
+	const { width, height } = canvas
+	if (width === 0 || height === 0) return
+
+	const patternCanvas = document.createElement('canvas')
+	const patternSize = cellSize * 2
+	patternCanvas.width = patternSize
+	patternCanvas.height = patternSize
+	const patternCtx = patternCanvas.getContext('2d')!
+
+	const dark = alphaBlend(color, DARK_DIV)
+	const light = alphaBlend(color, LIGHT_DIV)
+
+	patternCtx.fillStyle = `rgb(${dark.r},${dark.g},${dark.b})`
+	patternCtx.fillRect(0, 0, cellSize, cellSize)
+	patternCtx.fillRect(cellSize, cellSize, cellSize, cellSize)
+
+	patternCtx.fillStyle = `rgb(${light.r},${light.g},${light.b})`
+	patternCtx.fillRect(cellSize, 0, cellSize, cellSize)
+	patternCtx.fillRect(0, cellSize, cellSize, cellSize)
+
+	const pattern = ctx.createPattern(patternCanvas, 'repeat')
+	if (!pattern) return
+
+	ctx.save()
+
+	ctx.beginPath()
+
+	if (polygon.length < 3) return
+
+	const first = polygon[0]
+	ctx.moveTo(first[0], first[1])
+	for (let i = 1; i < polygon.length; i++) {
+		ctx.lineTo(polygon[i][0], polygon[i][1])
+	}
+	ctx.closePath()
+
+	ctx.fillStyle = pattern
+	ctx.fill()
+
+	ctx.restore()
 }
 
 type UseDrawOptions = {
@@ -164,6 +220,9 @@ export const useDraw = (
 			drawPixel()
 		})
 	})
+
+	const polygon = ref('')
+
 	const drawPixel = () => {
 		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
 		if (!preprocessData) {
@@ -213,8 +272,7 @@ export const useDraw = (
 			)
 		}
 		const bg = getGlobalThemeColor('neutral', 1)
-		const bg2 = getGlobalThemeColor('neutral', 10)
-		if (bg && bg2) {
+		if (bg) {
 			floodFillEdgePadding(
 				ctx,
 				Math.round(width / 2),
@@ -222,11 +280,20 @@ export const useDraw = (
 				bg,
 				pixelSize.value / 2
 			)
+			let polygon = floodFillEdge(ctx, Math.round(width / 2), Math.round(height / 2), bg)
+			polygon = offsetOutward(
+				[Math.round(width / 2), Math.round(height / 2)],
+				polygon,
+				0.5
+			).map((e) => {
+				return [e[0] + 0.5, e[1] + 0.5]
+			})
+
+			drawTransparencyGridInPolygon(rgbColor.value, ctx, INTERVAL * 2, polygon)
 		}
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), rgbColor.value)
 	}
 	const drawPixelDebounce = debounce(drawPixel, 0)
-	useResizeObserver(wrapperRef, drawPixelDebounce)
+	useResizeObserver(wrapperRef, drawPixel)
 	useWatchGlobalCssVal(drawPixelDebounce)
 	useTransitionEnd(wrapperRef, drawPixelDebounce)
 
@@ -247,5 +314,5 @@ export const useDraw = (
 			}
 		}
 	})
-	return drawPixelDebounce
+	return [polygon]
 }

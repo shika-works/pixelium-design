@@ -2,9 +2,6 @@
 
 .px-color-picker {
 	@prefix: px-color-picker;
-	@px-medium-padding-x: @px-interval-2;
-	@px-large-padding-x: @px-interval-3;
-	@px-small-padding-x: @px-interval-2;
 
 	--color-picker-size: var(--px-medium-size);
 
@@ -68,11 +65,10 @@
 
 	each(@sizes, {
   &.@{prefix}__@{value} {
-    @paddingVar: ~"px-@{value}-padding-x";
     &.@{prefix}__inner {
-      padding-right: calc(@@paddingVar + 1px + 1 * var(--px-bit));
+      padding-right: calc( 1px + 1 * var(--px-bit));
       &:last-child {
-        padding-right: @@paddingVar;
+        padding-right: 0;
       }
     }
   }
@@ -88,10 +84,9 @@
 	}
 	&__disabled {
 		cursor: not-allowed;
-		.@{prefix}-inner:disabled {
-			cursor: not-allowed;
-			color: var(--px-neutral-8);
-		}
+	}
+	&__readonly {
+		cursor: default;
 	}
 
 	each(@sizes, {

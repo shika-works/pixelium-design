@@ -41,8 +41,9 @@
 					@pointerdown="startAlphaDrag"
 				>
 					<div
-						class="px-color-picker-panel-slider corner-gradient px-color-picker-panel-alpha-slider"
+						class="px-color-picker-panel-checkerboard px-color-picker-panel-slider corner-gradient px-color-picker-panel-alpha-slider"
 					>
+						<div class="px-color-picker-panel-alpha"></div>
 						<div
 							class="px-color-picker-panel-thumb px-color-picker-panel-thumb-alpha"
 							ref="alphaThumbRef"
@@ -63,7 +64,7 @@
 			<div class="px-color-picker-panel-presets">
 				<button
 					class="px-color-picker-panel-preset corner-gradient"
-					v-for="preset in props.presets"
+					v-for="preset in props.preset"
 					:key="preset"
 					:style="{ background: preset }"
 					@click="selectPreset(preset, $event)"

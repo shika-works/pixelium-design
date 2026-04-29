@@ -17,7 +17,7 @@ function rgbToGray(r: number, g: number, b: number): number {
 	const gray = 0.299 * r + 0.587 * g + 0.114 * b
 	return Math.min(255, Math.max(0, Math.round(gray)))
 }
-function alphaBlend(fg: RgbaColor, bg: RgbColor): RgbColor {
+export function alphaBlend(fg: RgbaColor, bg: RgbColor): RgbColor {
 	const alpha = (fg.a !== undefined ? fg.a : 255) / 255
 	const invAlpha = 1 - alpha
 
@@ -42,7 +42,7 @@ export function computeGrayWithBackground(
 export const rgbaToHex = (value: RgbaColor, includeAlpha = false) => {
 	const toHex = (n: number) => n.toString(16).padStart(2, '0')
 	const hex = `#${toHex(value.r)}${toHex(value.g)}${toHex(value.b)}`
-	return includeAlpha ? `${hex}${toHex(value.a)}` : hex
+	return (includeAlpha ? `${hex}${toHex(value.a)}` : hex).toUpperCase()
 }
 
 export const hsvToHsl = (color: { h: number; s: number; v: number; a: number }) => {

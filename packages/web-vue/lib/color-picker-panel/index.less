@@ -62,7 +62,19 @@
 	}
 
 	&-alpha-slider {
-		background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+		z-index: 0;
+	}
+	&-checkerboard {
+		background-image: repeating-conic-gradient(
+			#c0c0c0 0deg 90deg,
+			#e8e8e8 90deg 180deg,
+			#c0c0c0 180deg 270deg,
+			#e8e8e8 270deg 360deg
+		);
+
+		background-size: @px-interval-3 @px-interval-3;
+
+		background-repeat: repeat;
 	}
 
 	&-thumb {
@@ -116,5 +128,17 @@
 		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
 		transform: translate(-50%, -50%);
 		z-index: 2;
+	}
+
+	&-alpha {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: @px-interval-3;
+
+		z-index: -1;
+
+		background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
 	}
 }

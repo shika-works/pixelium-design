@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<ColorPickerProps>(), {
 	status: 'normal',
 	mode: 'rgb',
 	includeAlpha: true,
-	showColorString: true
+	showIcon: true
 })
 
 const pixelSize = usePixelSize()
@@ -86,7 +86,7 @@ const sizeComputed = createProvideComputed(
 )
 const shapeComputed = createProvideComputed(
 	'shape',
-	[inputGroupProvide, props],
+	() => [props.shape && props, inputGroupProvide, props],
 	'nullish',
 	(val) => (!val || (val as any) === 'default' ? 'rect' : val)
 ) as ComputedRef<ColorPickerProps['shape']>
@@ -190,99 +190,119 @@ const formattedColorString = computed(() => {
 	return formatColor(props.mode, colorWithModel.value, props.includeAlpha)
 })
 
-watch([colorValue, modelValue, colorModel, () => props.includeAlpha], async (value, old) => {
-	const [colorValue, modelValue, colorModel, includeAlpha] = value
-	const [oldColorValue, oldModelValue, oldColorModel, oldIncludeAlpha] = old
+const updateHsvColorFromColor = async (colorValue: ColorValue | Nullish) => {
+	if (!colorValue) {
+		hsvColor.value = getDefaultValue<'hsv'>('hsv')
+		await nextTick()
+		updateModelValue(formattedColorString.value)
+		return
+	} else {
+		let nextRgbValue
+		switch (colorValue.format) {
+			case 'hwb':
+				nextRgbValue = hwbToRgba(colorValue.color as HwbaColor)
+				break
+			case 'hsl':
+				nextRgbValue = hslToRgba(colorValue.color as HslaColor)
+				break
+			case 'hsv':
+				nextRgbValue = hsvToRgba(colorValue.color as HsvaColor)
+				break
+			default:
+			case 'rgb':
+				nextRgbValue = colorValue.color
+		}
 
-	if (modelValue !== oldModelValue) {
-		if (!modelValue) {
-			hsvColor.value = getDefaultValue('hsv')
+		const innerRgbValue = rgbColor.value
+		if (isEqual(omit(innerRgbValue, ['a']), omit(nextRgbValue, ['a']))) {
+			if (innerRgbValue.a !== nextRgbValue.a) {
+				hsvColor.value.a = nextRgbValue.a
+				await nextTick()
+				updateModelValue(formattedColorString.value)
+			}
+			return
+		}
+		switch (colorValue.format) {
+			case 'hwb':
+				hsvColor.value = hwbToHsv(colorValue.color as HwbaColor)
+				break
+			case 'hsl':
+				hsvColor.value = hslToHsv(colorValue.color as HslaColor)
+				break
+			case 'hsv':
+				hsvColor.value = colorValue.color as HsvaColor
+				break
+			default:
+			case 'rgb':
+				hsvColor.value = rgbaToHsv(colorValue.color as RgbaColor)
+		}
+		await nextTick()
+		updateModelValue(formattedColorString.value)
+	}
+}
+
+const updateHsvColorFromModelValue = async (
+	modelValue: string | Nullish,
+	colorModel: 'rgb' | 'hsv' | 'hsl' | 'hwb'
+) => {
+	if (!modelValue) {
+		hsvColor.value = getDefaultValue('hsv')
+		await nextTick()
+		updateColorValue({
+			format: colorModel,
+			color: { ...colorWithModel.value[colorModel] }
+		})
+		return
+	}
+	const parsed = (modelValue && parseColor(modelValue, 'rgb')?.color) || getDefaultValue('rgb')
+	const rgbValue = rgbColor.value
+	if (isEqual(omit(parsed, ['a']), omit(rgbValue, ['a']))) {
+		if (parsed.a !== rgbValue.a) {
+			hsvColor.value.a = parsed.a
 			await nextTick()
 			updateColorValue({
 				format: colorModel,
 				color: { ...colorWithModel.value[colorModel] }
 			})
-			return
 		}
-		const parsed =
-			(modelValue && parseColor(modelValue, 'rgb')?.color) || getDefaultValue('rgb')
-		const rgbValue = rgbColor.value
-		if (isEqual(omit(parsed, ['a']), omit(rgbValue, ['a']))) {
-			if (parsed.a !== rgbValue.a) {
-				hsvColor.value.a = parsed.a
-				await nextTick()
-				updateColorValue({
-					format: colorModel,
-					color: { ...colorWithModel.value[colorModel] }
-				})
-			}
-			return
-		}
-		hsvColor.value =
-			(modelValue && parseColor(modelValue, 'hsv')?.color) || getDefaultValue<'hsv'>('hsv')
-		await nextTick()
-		updateColorValue({
-			format: colorModel,
-			color: { ...colorWithModel.value[colorModel] }
-		})
-	} else if (!isEqual(colorValue, oldColorValue)) {
-		if (!colorValue) {
-			hsvColor.value = getDefaultValue<'hsv'>('hsv')
-			await nextTick()
-			updateModelValue(formattedColorString.value)
-			return
-		} else {
-			let nextRgbValue
-			switch (colorModel) {
-				case 'hwb':
-					nextRgbValue = hwbToRgba(colorValue.color as HwbaColor)
-					break
-				case 'hsl':
-					nextRgbValue = hslToRgba(colorValue.color as HslaColor)
-					break
-				case 'hsv':
-					nextRgbValue = hsvToRgba(colorValue.color as HsvaColor)
-					break
-				default:
-				case 'rgb':
-					nextRgbValue = colorValue.color
-			}
-			const innerRgbValue = rgbColor.value
-			if (isEqual(omit(innerRgbValue, ['a']), omit(nextRgbValue, ['a']))) {
-				if (innerRgbValue.a !== nextRgbValue.a) {
-					hsvColor.value.a = nextRgbValue.a
-					await nextTick()
-					updateModelValue(formattedColorString.value)
-				}
-				return
-			}
-			switch (colorModel) {
-				case 'hwb':
-					hsvColor.value = hwbToHsv(colorValue.color as HwbaColor)
-					break
-				case 'hsl':
-					hsvColor.value = hslToHsv(colorValue.color as HslaColor)
-					break
-				case 'hsv':
-					hsvColor.value = colorValue.color as HsvaColor
-					break
-				default:
-				case 'rgb':
-					hsvColor.value = rgbaToHsv(colorValue.color as RgbaColor)
-			}
-			await nextTick()
-			updateModelValue(formattedColorString.value)
-		}
-	} else if (colorModel !== oldColorModel || includeAlpha !== oldIncludeAlpha) {
-		await nextTick()
-
-		updateColorValue({
-			format: colorModel,
-			color: { ...colorWithModel.value[colorModel] }
-		})
-		updateModelValue(formattedColorString.value)
+		return
 	}
-})
+	hsvColor.value =
+		(modelValue && parseColor(modelValue, 'hsv')?.color) || getDefaultValue<'hsv'>('hsv')
+	await nextTick()
+	updateColorValue({
+		format: colorModel,
+		color: { ...colorWithModel.value[colorModel] }
+	})
+}
+
+if (modelValue.value) {
+	updateHsvColorFromModelValue(modelValue.value, colorModel.value)
+} else if (!isNullish(colorValue.value)) {
+	updateHsvColorFromColor(colorValue.value)
+}
+
+watch(
+	[colorValue, modelValue, () => props.mode, () => props.includeAlpha],
+	async (value, old) => {
+		const [colorValue, modelValue, colorMode, includeAlpha] = value
+		const [oldColorValue, oldModelValue, oldColorMode, oldIncludeAlpha] = old
+		const currentColorModel = colorModel.value
+		if (modelValue !== oldModelValue) {
+			updateHsvColorFromModelValue(modelValue, currentColorModel)
+		} else if (!isEqual(colorValue, oldColorValue)) {
+			updateHsvColorFromColor(colorValue)
+		} else if (colorMode !== oldColorMode || includeAlpha !== oldIncludeAlpha) {
+			await nextTick()
+
+			updateColorValue({
+				format: currentColorModel,
+				color: { ...colorWithModel.value[currentColorModel] }
+			})
+			updateModelValue(formattedColorString.value)
+		}
+	}
+)
 
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
@@ -370,7 +390,7 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 	}
 }
 
-useDraw(wrapperRef, canvasRef, pixelSize, {
+const [polygon] = useDraw(wrapperRef, canvasRef, pixelSize, {
 	first,
 	last,
 	borderRadiusComputed,
@@ -399,7 +419,8 @@ const renderContent = (inner: JSX.Element) => {
 				sizeComputed.value && `px-color-picker__${sizeComputed.value}`,
 				shapeComputed.value && `px-color-picker__${shapeComputed.value}`,
 				{ 'px-color-picker__inner': !!inputGroupProvide },
-				{ 'px-color-picker__disabled': disabledComputed.value }
+				{ 'px-color-picker__disabled': disabledComputed.value },
+				{ 'px-color-picker__readonly': readonlyComputed.value }
 			],
 			onMousedown: wrapperMousedownHandler,
 			onMouseenter: mouseenterHandler,
@@ -417,12 +438,8 @@ const gray = computed(() => {
 	return computeGrayWithBackground(rgbColor.value)
 })
 
-const showColorString = computed(() => {
-	return (
-		props.showColorString &&
-		shapeComputed.value !== 'circle' &&
-		shapeComputed.value !== 'square'
-	)
+const showText = computed(() => {
+	return shapeComputed.value !== 'circle' && shapeComputed.value !== 'square'
 })
 
 const renderInner = () => {
@@ -432,18 +449,24 @@ const renderInner = () => {
 				class={{
 					'px-color-picker-inner': true,
 					'px-color-picker-inner__black': gray.value < 128,
-					'px-color-picker-inner__white': gray.value >= 128
+					'px-color-picker-inner__white': gray.value >= 128,
+					checkerboard: true
 				}}
 				tabindex={disabledComputed.value || readonlyComputed.value ? -1 : 0}
 				ref={contentRef}
+				style={{
+					clipPath: `polygon(${polygon.value})`
+				}}
 			>
-				{showColorString.value ? <span>{formattedColorString.value}</span> : null}
-				<div class="px-color-picker-icon-wrapper">
-					{
-						// @ts-ignore
-						<IconAngleDown class="px-color-picker-icon"></IconAngleDown>
-					}
-				</div>
+				{showText.value && <span>{formattedColorString.value}</span>}
+				{props.showIcon && (
+					<div class="px-color-picker-icon-wrapper">
+						{
+							// @ts-ignore
+							<IconAngleDown class="px-color-picker-icon"></IconAngleDown>
+						}
+					</div>
+				)}
 			</div>
 			<canvas ref={canvasRef} class="px-color-picker-canvas" />
 		</Fragment>
@@ -477,7 +500,7 @@ const renderDropDown = () => {
 			format={props.mode}
 			includeAlpha={props.includeAlpha}
 			onChange={pickerChangeHandler}
-			presets={props.presets}
+			preset={props.preset}
 			ref={panelRef}
 		></ColorPickerPanel>
 	)

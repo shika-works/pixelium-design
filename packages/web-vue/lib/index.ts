@@ -71,6 +71,7 @@ import DatePicker from './date-picker/index.vue'
 import DateTimePicker from './date-time-picker/index.vue'
 import TimePicker from './time-picker/index.vue'
 import Rate from './rate/index.vue'
+import ColorPicker from './color-picker/index.vue'
 
 const components = [
 	Button,
@@ -134,7 +135,8 @@ const components = [
 	DatePicker,
 	DateTimePicker,
 	TimePicker,
-	Rate
+	Rate,
+	ColorPicker
 ]
 
 const defaultPrefix = 'Px'
@@ -239,7 +241,8 @@ export {
 	DatePicker,
 	DateTimePicker,
 	TimePicker,
-	Rate
+	Rate,
+	ColorPicker
 }
 export default {
 	install
@@ -297,3 +300,6 @@ export type {
 export type { QuickAccessOption } from './base-date-picker/type.ts'
 
 export type { PaginationOption } from './pagination/type.ts'
+
+export type { ColorValue, ColorWithModel } from './color-picker/type.ts'
+export type { HslaColor, HsvaColor, HwbaColor, RgbaColor } from './share/type'
