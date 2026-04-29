@@ -191,7 +191,7 @@ export const useDrawPixel = (
 		}
 	)
 
-	useResizeObserver(wrapperRef, debounceDraw)
+	useResizeObserver(wrapperRef, debounceDraw, drawPixel)
 
 	useWatchGlobalCssVal(debounceDraw)
 

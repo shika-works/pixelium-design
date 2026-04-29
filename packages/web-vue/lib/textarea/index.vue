@@ -301,7 +301,7 @@ onMounted(() => {
 	})
 })
 
-useResizeObserver(wrapperRef, drawPixelDebounce)
+useResizeObserver(wrapperRef, drawPixelDebounce, drawPixel)
 
 useWatchGlobalCssVal(drawPixelDebounce)
 

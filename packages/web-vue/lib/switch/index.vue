@@ -352,7 +352,10 @@ const refresh = () => {
 	updateSize()
 }
 
-useResizeObserver(canvasWrapperRef, refresh)
+useResizeObserver(canvasWrapperRef, refresh, () => {
+	drawPixel()
+	updateSize()
+})
 useWatchGlobalCssVal(refresh)
 useTransitionEnd(canvasWrapperRef, refresh)
 

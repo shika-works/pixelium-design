@@ -149,7 +149,7 @@ export const useTextareaHeight = (
 	}
 	if (inBrowser()) {
 		recordTextareaMounted()
-		useResizeObserver(textareaRef, callback, true)
+		useResizeObserver(textareaRef, callback, undefined, true)
 		onBeforeUnmount(() => {
 			destroyHiddenTextarea()
 		})
