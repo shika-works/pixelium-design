@@ -8,6 +8,7 @@
 [[[zh
 ## v0.2.0
 - 新增：
+  - 新增数据输入组件：ColorPicker、Rate。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
   - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
   - Divider 组件新增属性 `soft` 和 `color`。
@@ -24,6 +25,7 @@
 [[[en
 ## v0.2.0
 - New Features:
+  - New data input components: ColorPicker, Rate.
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
   - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
   - Divider component adds `soft` and `color` properties.

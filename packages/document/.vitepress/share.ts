@@ -1,4 +1,4 @@
-const newItems = ['date-picker', 'date-time-picker', 'time-picker', 'rate']
+const newItems = ['date-picker', 'date-time-picker', 'time-picker', 'rate', 'color-picker']
 
 const titleMapEn = {
 	starting: 'Quickly Starting',
@@ -78,6 +78,7 @@ const additionMapZh = {
 	'date-picker': '日期选择器',
 	'date-time-picker': '日期时间选择器',
 	'time-picker': '时间选择器',
-	rate: '评分'
+	rate: '评分',
+	'color-picker': '颜色选择器'
 }
 export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh }
