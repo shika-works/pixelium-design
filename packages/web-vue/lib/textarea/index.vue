@@ -5,6 +5,7 @@
 		:class="{
 			[`px-textarea__${sizeComputed}`]: !!sizeComputed,
 			'px-textarea__disabled': !!disabledComputed,
+			'px-textarea__readonly': !!readonlyComputed,
 			'px-textarea__resize': !!props.resize
 		}"
 		@mousedown="wrapperMousedownHandler"

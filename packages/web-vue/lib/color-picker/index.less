@@ -82,11 +82,12 @@
 		font-size: @px-small-font-size;
 		--color-picker-size: var(--px-small-size);
 	}
-	&__disabled {
-		cursor: not-allowed;
-	}
+
 	&__readonly {
 		cursor: default;
+	}
+	&__disabled {
+		cursor: not-allowed;
 	}
 
 	each(@sizes, {

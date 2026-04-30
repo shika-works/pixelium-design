@@ -476,7 +476,8 @@ defineRender(() => {
 				sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
 				shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
 				{ 'px-auto-complete__inner': !!inputGroupProvide },
-				{ 'px-auto-complete__disabled': disabledComputed.value }
+				{ 'px-auto-complete__disabled': disabledComputed.value },
+				{ 'px-auto-complete__readonly': readonlyComputed.value }
 			],
 			onMousedown: wrapperMousedownHandler,
 			onMouseenter: mouseenterHandler,

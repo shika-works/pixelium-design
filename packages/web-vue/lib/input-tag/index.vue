@@ -6,7 +6,8 @@
 			[`px-input-tag__${sizeComputed}`]: !!sizeComputed,
 			[`px-input-tag__${shapeComputed}`]: !!shapeComputed,
 			'px-input-tag__inner': !!inputGroupProvide,
-			'px-input-tag__disabled': !!disabledComputed
+			'px-input-tag__disabled': !!disabledComputed,
+			'px-input-tag__readonly': !!readonlyComputed
 		}"
 		@mousedown="focusInputHandler"
 		@mouseenter="mouseenterHandler"
