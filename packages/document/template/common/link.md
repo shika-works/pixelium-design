@@ -77,11 +77,11 @@ Links have two style variants: `'underline'` (default) and `'normal'`.
 
 [[[en
 ## Custom Color
-Custom primary color: similar to the button component, the component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. It supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
+Custom primary color: similar to the button component, the component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. See [Supported Color Parsing](../config/supported-color-parsing).
 ]]]
 [[[zh
 ## 自定义颜色
-与按钮组件类似，自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'`字符串和 3、4、6、8位长度的十六位数字表示。 
+与按钮组件类似，自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。详见 [支持的颜色解析](../config/supported-color-parsing)。
 ]]]
 <preview path="./link-color.vue"></preview>
 
@@ -91,7 +91,7 @@ Custom primary color: similar to the button component, the component will genera
 disabled: 是否禁用。
 loading: 是否加载状态。
 theme: 链接主题。
-color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+color: 自定义主色。详见 [支持的颜色解析](../config/supported-color-parsing)。
 href: HTML `<a>` 原生 `href` 属性。
 target: HTML `<a>` 原生 `target` 属性。
 slots.icon: 链接图标。
@@ -101,7 +101,7 @@ slots.default: 链接内容。
 disabled: Whether the link is disabled.
 loading: Whether the link is in a loading state.
 theme: Link theme.
-color: Custom primary color: the component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. It supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
+color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 href: Native HTML `<a>` `href` attribute.
 target: Native HTML `<a>` `target` attribute.
 slots.icon: The link's icon.

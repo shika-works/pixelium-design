@@ -4,7 +4,8 @@ const titleMapEn = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
 	theme: 'Custom Theme',
-	i18n: 'Internationalization'
+	i18n: 'Internationalization',
+	'supported-color-parsing': 'Supported Color Parsing'
 }
 const additionMapEn = {}
 
@@ -20,7 +21,8 @@ const titleMapZh = {
 	changelog: '更新日志',
 	'controlled-and-uncontrolled': '受控 & 非受控模式',
 	example: '组件示例',
-	i18n: '多语言国际化'
+	i18n: '多语言国际化',
+	'supported-color-parsing': '支持的颜色解析'
 }
 const additionMapZh = {
 	button: '按钮',

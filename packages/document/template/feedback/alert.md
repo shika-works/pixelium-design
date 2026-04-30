@@ -71,11 +71,11 @@ Set the icon position via `iconPlacement`: `'start'` or `'text-leading'`; contro
 
 [[[en
 ## Custom Color
-Set `color` to provide a custom primary color: the component generates a complete palette from it and the palette will take precedence over preset theme palettes. Supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hex strings.
+Set `color` to provide a custom primary color: the component generates a complete palette from it and the palette will take precedence over preset theme palettes. See [Supported Color Parsing](../config/supported-color-parsing).
 ]]]
 [[[zh
 ## 自定义颜色
-设置 `color` 可以自定义主色，组件会基于此生成完整色板，该色板优先于主题预设。支持类似 CSS 的 `'rgb(r, g, b)'`、`'rgba(r, g, b, a)'` 字符串，和 3、4、6、8 位十六进制。
+设置 `color` 可以自定义主色，组件会基于此生成完整色板，该色板优先于主题预设。详见 [支持的颜色解析](../config/supported-color-parsing)。
 ]]]
 <preview path="./alert-color.vue"></preview>
 
@@ -112,7 +112,7 @@ variant: 样式变体，`'primary'` 或 `'plain'`。
 type: 警告的类型（主题）。
 textAlign: 文本对齐，`'start'` / `'center'` / `'end'`。
 title: 标题文本或通过 `title` 插槽提供。
-color: 自定义主色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 closable: 是否显示关闭图标。
 iconPlacement: 图标位置，`'start'` 或 `'text-leading'`。
 showIcon: 是否显示图标。
@@ -130,7 +130,7 @@ variant: Style variant, `'primary'` or `'plain'`.
 type: Type (theme).
 textAlign: Text alignment, `'start'` / `'center'` / `'end'`.
 title: Title text or provided via `title` slot.
-color: Custom primary color. It supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
+color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 closable: Whether to show close icon.
 iconPlacement: Icon placement, `'start'` or `'text-leading'`.
 showIcon: Whether to show icon.
