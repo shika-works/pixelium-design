@@ -92,7 +92,7 @@ onMounted(() => {
 
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
-	const color = parseColor(props.color)
+	const color = parseColor(props.color)?.color
 	if (!color) {
 		return null
 	}

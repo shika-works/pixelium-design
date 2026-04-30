@@ -95,8 +95,8 @@ inactiveLabel: The text label when not selected, located outside the switch.
 activeLabel: The text label when selected, located outside the switch.
 inactiveTip: The text tip when not selected, located inside the switch.
 activeTip: The text tip when selected, located inside the switch.
-activeColor: The label color when selected, supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3, 4, 6, or 8-digit hexadecimal number representations.
-inactiveColor: The label color when not selected, supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3, 4, 6, or 8-digit hexadecimal number representations.
+activeColor: The label color when selected. See [Supported Color Parsing](../config/supported-color-parsing).
+inactiveColor: The label color when not selected. See [Supported Color Parsing](../config/supported-color-parsing).
 
 pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
 
@@ -125,8 +125,8 @@ inactiveLabel: 未选中时的文本标签，位于开关外侧。
 activeLabel: 选中时的文本标签，位于开关外侧。
 inactiveTip: 未选中时的文本提示，位于开关内侧。
 activeTip: 选中时的文本提示，位于开关内侧。
-activeColor: 选中时标签颜色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
-inactiveColor: 未选中时标签颜色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+activeColor: 选中时标签颜色，详见 [支持的颜色解析](../config/supported-color-parsing)。
+inactiveColor: 未选中时标签颜色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
 

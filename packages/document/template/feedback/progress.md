@@ -80,7 +80,7 @@ theme: 进度条的主题。
 size: 进度条的尺寸，输入数字时单位为 px。
 gap: 留白间隔（px），用于边框内间距。
 indicatorPlacement: 提示内容的位置，位于进度条填充部分的内侧还是外侧。
-color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 trackColor: 进度条轨道背景色。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
 
@@ -95,7 +95,7 @@ theme: The theme of the progress bar.
 size: The size of the progress bar, measured in px when a number is input.
 gap: Gap spacing (px) inside the border.
 indicatorPlacement: The position of the indicator content, located inside or outside the filled portion of the progress bar.
-color: Custom primary color. A complete color palette is generated internally based on this, taking precedence over the preset palette provided by `theme`. Supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3, 4, 6, or 8-digit hexadecimal representations.
+color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 trackColor: The background color of the progress bar track.
 pollSizeChange: Enables polling for component size changes, which may affect performance. Often used when the component's size is influenced by its container element, causing abnormal canvas rendering.
 

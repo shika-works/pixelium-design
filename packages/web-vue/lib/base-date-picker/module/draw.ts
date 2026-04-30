@@ -221,7 +221,7 @@ export const useDraw = (
 		}
 	}
 	const drawPixelDebounce = debounce(drawPixel, 0)
-	useResizeObserver(wrapperRef, drawPixelDebounce)
+	useResizeObserver(wrapperRef, drawPixelDebounce, drawPixel)
 	useWatchGlobalCssVal(drawPixelDebounce)
 	useTransitionEnd(wrapperRef, drawPixelDebounce)
 

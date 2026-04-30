@@ -27,7 +27,7 @@ const darkMode = useDarkMode()
 
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.activeColor) return null
-	const color = parseColor(props.activeColor)
+	const color = parseColor(props.activeColor)?.color
 	if (!color) {
 		return null
 	}

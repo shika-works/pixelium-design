@@ -570,7 +570,8 @@ const renderContent = (inner: JSX.Element) => {
 				sizeComputed.value && `px-base-date-picker__${sizeComputed.value}`,
 				shapeComputed.value && `px-base-date-picker__${shapeComputed.value}`,
 				{ 'px-base-date-picker__inner': !!inputGroupProvide },
-				{ 'px-base-date-picker__disabled': disabledComputed.value }
+				{ 'px-base-date-picker__disabled': disabledComputed.value },
+				{ 'px-base-date-picker__readonly': readonlyComputed.value }
 			],
 			onMousedown: wrapperMousedownHandler,
 			onMouseenter: mouseenterHandler,

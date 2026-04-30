@@ -12,3 +12,59 @@
 	word-wrap: break-word;
 	word-break: normal;
 }
+
+.corner-gradient::after {
+	width: calc(var(--px-bit) * 2 + 100%);
+	height: calc(var(--px-bit) * 2 + 100%);
+	z-index: 0;
+	content: '';
+	display: block;
+	position: absolute;
+
+	left: calc(var(--px-bit) * -1);
+	top: calc(var(--px-bit) * -1);
+
+	pointer-events: none;
+
+	background:
+		linear-gradient(
+				to right,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-10) var(--px-bit),
+				var(--px-neutral-10) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			top left / 100% var(--px-bit) no-repeat,
+		linear-gradient(
+				to right,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-10) var(--px-bit),
+				var(--px-neutral-10) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			bottom left / 100% var(--px-bit) no-repeat,
+		linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-10) var(--px-bit),
+				var(--px-neutral-10) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			top left / var(--px-bit) 100% no-repeat,
+		linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-10) var(--px-bit),
+				var(--px-neutral-10) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			top right / var(--px-bit) 100% no-repeat;
+}

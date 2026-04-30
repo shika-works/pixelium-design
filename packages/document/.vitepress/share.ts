@@ -1,10 +1,11 @@
-const newItems = ['date-picker', 'date-time-picker', 'time-picker', 'rate']
+const newItems = ['date-picker', 'date-time-picker', 'time-picker', 'rate', 'color-picker']
 
 const titleMapEn = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
 	theme: 'Custom Theme',
-	i18n: 'Internationalization'
+	i18n: 'Internationalization',
+	'supported-color-parsing': 'Supported Color Parsing'
 }
 const additionMapEn = {}
 
@@ -20,7 +21,8 @@ const titleMapZh = {
 	changelog: '更新日志',
 	'controlled-and-uncontrolled': '受控 & 非受控模式',
 	example: '组件示例',
-	i18n: '多语言国际化'
+	i18n: '多语言国际化',
+	'supported-color-parsing': '支持的颜色解析'
 }
 const additionMapZh = {
 	button: '按钮',
@@ -78,6 +80,7 @@ const additionMapZh = {
 	'date-picker': '日期选择器',
 	'date-time-picker': '日期时间选择器',
 	'time-picker': '时间选择器',
-	rate: '评分'
+	rate: '评分',
+	'color-picker': '颜色选择器'
 }
 export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh }

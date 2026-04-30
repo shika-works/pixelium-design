@@ -74,7 +74,7 @@ readonly: 是否只读。
 clearable: 是否可清除。
 count: 可选择图案的数量。
 allowHalf: 是否可选择半颗星。
-activeColor: 激活时的颜色。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+activeColor: 激活时的颜色。详见 [支持的颜色解析](../config/supported-color-parsing)。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
 
 events.update:modelValue: 更新 `modelValue` 的回调。
@@ -93,7 +93,7 @@ readonly: Whether the component is read-only.
 clearable: Whether the value can be cleared.
 count: The number of selectable icons.
 allowHalf: Whether half-star selection is allowed.
-activeColor: The color when active. Supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings and 3, 4, 6, 8-digit hexadecimal representations.
+activeColor: The color when active. See [Supported Color Parsing](../config/supported-color-parsing).
 pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
 
 events.update:modelValue: Callback fired when `modelValue` needs to be updated.

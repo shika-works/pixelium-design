@@ -123,7 +123,7 @@ const drawPixel = () => {
 	drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
 
 	const backgroundColor =
-		(props.color && parseColor(props.color)) || getGlobalThemeColor(props.theme, 6)
+		(props.color && parseColor(props.color)?.color) || getGlobalThemeColor(props.theme, 6)
 	if (backgroundColor) {
 		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
 	}

@@ -83,15 +83,17 @@ Set the message icon with `icon`.
 Message content supports JSX or render functions.
 ]]]
 <preview path="./message-content.vue"></preview>
+
 [[[zh
 ## 自定义颜色
-自定义主色，内部基于此生成完整色板，该色板优先级高于 `info` 属性提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'`字符串和 3、4、6、8位长度的十六位数字表示。 
+自定义主色，内部基于此生成完整色板，该色板优先级高于 `type` 属性提供的预设色版。详见 [支持的颜色解析](../config/supported-color-parsing)。
 ]]]
 [[[en
 ## Custom Colors
-Customize the primary color. The internal system generates a complete color palette based on this, which has a higher priority than the preset color palette provided by the `info` property. It supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, and 8-digit hexadecimal numbers.
+Customize the primary color. The internal system generates a complete color palette based on this, which has a higher priority than the preset color palette provided by the `type` property. See [Supported Color Parsing](../config/supported-color-parsing).
 ]]]
 <preview path="./message-color.vue"></preview>
+
 [[[zh
 ## 消息容器
 MessageBox 组件是消息的容器，消息出现的位置由容器的 `placement` 决定。在以函数式创建的消息中，出现位置相同的消息都是同一个 MessageBox 的子组件。我们也提供了 MessageBox 的导出。
@@ -124,7 +126,7 @@ messageOptions.content: Message content.
 messageOptions.icon: Message icon.
 messageOptions.duration: Duration (ms).
 messageOptions.type: Message type.
-messageOptions.color: Custom primary color. The internal system generates a complete color palette based on this, which has a higher priority than the preset color palette provided by `info` property. It supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, and 8-digit hexadecimal numbers.
+messageOptions.color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 messageOptions.closable: Whether the message can be closed.
 messageOptions.position: <Badge type="warning" text="Deprecated" /> The position where the message appears.
 messageOptions.placement: The position where the message appears.
@@ -145,7 +147,7 @@ messageOptions.content: 消息内容。
 messageOptions.icon: 消息图标。
 messageOptions.duration: 持续时间（ms）。
 messageOptions.type: 消息类型。
-messageOptions.color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `info` 属性提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+messageOptions.color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 messageOptions.closable: 是否可以关闭消息。
 messageOptions.position: <Badge type="warning" text="Deprecated" /> 消息出现位置。
 messageOptions.placement: 消息出现位置。
@@ -166,7 +168,7 @@ content: Message content.
 icon: Message icon.
 duration: Duration (ms).
 type: Message type.
-color: Custom primary color. The internal system generates a complete color palette based on this, which has a higher priority than the preset color palette provided by `info` property. It supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, and 8-digit hexadecimal numbers.
+color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 closable: Whether the message can be closed.
 id: The unique identifier for the message. A random nanoid is used by default.
 ]]]
@@ -175,7 +177,7 @@ content: 消息内容。
 icon: 消息图标。
 duration: 持续时间（ms）。
 type: 消息类型。
-color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `info` 属性提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 closable: 是否可以关闭消息。
 id: 消息的唯一标识，默认使用随机的 nanoid。
 ]]]

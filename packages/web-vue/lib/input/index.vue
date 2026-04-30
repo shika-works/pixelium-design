@@ -6,7 +6,8 @@
 			[`px-input__${sizeComputed}`]: !!sizeComputed,
 			[`px-input__${shapeComputed}`]: !!shapeComputed,
 			'px-input__inner': innerInputGroup,
-			'px-input__disabled': !!disabledComputed
+			'px-input__disabled': !!disabledComputed,
+			'px-input__readonly': !!readonlyComputed
 		}"
 		@mousedown="wrapperMousedownHandler"
 		@mouseenter="mouseenterHandler"

@@ -932,7 +932,8 @@ defineRender(() => {
 				sizeComputed.value && `px-select__${sizeComputed.value}`,
 				shapeComputed.value && `px-select__${shapeComputed.value}`,
 				{ 'px-select__inner': !!inputGroupProvide },
-				{ 'px-select__disabled': disabledComputed.value }
+				{ 'px-select__disabled': disabledComputed.value },
+				{ 'px-select__readonly': readonlyComputed.value }
 			],
 			onFocusin: focusHandler,
 			onFocusout: blurHandler,
