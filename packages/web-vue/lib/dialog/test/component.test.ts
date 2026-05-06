@@ -58,7 +58,6 @@ describe('Dialog (wrapped component)', () => {
 		expect(wrapper.emitted('close')?.length).toBe(1)
 
 		wrapper.unmount()
-		
 	})
 
 	it('clicking confirm emits ok and closes dialog', async () => {

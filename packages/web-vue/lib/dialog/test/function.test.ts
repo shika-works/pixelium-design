@@ -89,7 +89,7 @@ describe('Dialog functional calls (index.ts)', () => {
 		expect(document.querySelector(`[id="${container!.id}"]`)).toBeNull()
 	})
 
-	it("calling promise.close removes container but doesn't resolve the promise", async () => {
+	it('calling promise.close removes container and resolves the promise', async () => {
 		const promise = Dialog.info('close test')
 		await nextTick()
 
