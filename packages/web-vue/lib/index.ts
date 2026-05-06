@@ -72,6 +72,7 @@ import DateTimePicker from './date-time-picker/index.vue'
 import TimePicker from './time-picker/index.vue'
 import Rate from './rate/index.vue'
 import ColorPicker from './color-picker/index.vue'
+import Drawer from './drawer/index.ts'
 
 const components = [
 	Button,
@@ -136,7 +137,8 @@ const components = [
 	DateTimePicker,
 	TimePicker,
 	Rate,
-	ColorPicker
+	ColorPicker,
+	Drawer
 ]
 
 const defaultPrefix = 'Px'
@@ -157,6 +159,7 @@ const install = (
 		app.config.globalProperties.PixeliumVue = {
 			message: Message,
 			dialog: Dialog,
+			drawer: Drawer,
 			useThemeMode: useThemeMode
 		}
 	}
@@ -165,6 +168,8 @@ const install = (
 		window.$message = Message
 		// @ts-ignore
 		window.$dialog = Dialog
+		// @ts-ignore
+		window.$drawer = Drawer
 	}
 }
 export { install }
@@ -242,7 +247,8 @@ export {
 	DateTimePicker,
 	TimePicker,
 	Rate,
-	ColorPicker
+	ColorPicker,
+	Drawer
 }
 export default {
 	install
@@ -303,3 +309,5 @@ export type { PaginationOption } from './pagination/type.ts'
 
 export type { ColorValue, ColorWithModel } from './color-picker/type.ts'
 export type { HslaColor, HsvaColor, HwbaColor, RgbaColor } from './share/type'
+
+export type { DrawerReturn, DrawerOptions } from './drawer/type.ts'
