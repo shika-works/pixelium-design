@@ -113,8 +113,6 @@ describe('BaseDatePicker Quick Access', () => {
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none')
 
-		console.log(popupWrapper.findAll('.px-base-date-picker-dropdown-footer button'))
-
 		const rangeButton = popupWrapper
 			.findAll('.px-base-date-picker-dropdown-footer button')
 			.find((button) => button.text() === 'Range Now')

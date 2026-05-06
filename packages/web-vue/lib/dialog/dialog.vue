@@ -151,8 +151,6 @@ watch(
 		} else {
 			emits('close')
 		}
-	}, {
-		immediate: true
 	}
 )
 

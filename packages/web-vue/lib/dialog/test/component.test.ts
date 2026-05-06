@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils'
 import Dialog from '../index.ts'
 import { nextTick } from 'vue'
 import { cleanState } from '../../popup-wrapper/use-popup-wrapper-manager.ts'
-import { wait } from 'parsnip-kit'
 
 describe('Dialog (wrapped component)', () => {
 	const { pre, post } = createMocks()
@@ -53,8 +52,7 @@ describe('Dialog (wrapped component)', () => {
 		// dialog should be hidden (v-show -> display: none)
 		expect(container.element.getAttribute('style')).include('display: none')
 
-		await wait(300)
-		expect(wrapper.emitted('open')?.length).toBe(1)
+		expect(wrapper.emitted('open')).toBe(undefined)
 		expect(wrapper.emitted('close')?.length).toBe(1)
 
 		wrapper.unmount()
