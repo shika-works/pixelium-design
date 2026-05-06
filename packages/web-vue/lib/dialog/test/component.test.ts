@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils'
 import Dialog from '../index.ts'
 import { nextTick } from 'vue'
 import { cleanState } from '../../popup-wrapper/use-popup-wrapper-manager.ts'
+import { wait } from 'parsnip-kit'
 
 describe('Dialog (wrapped component)', () => {
 	const { pre, post } = createMocks()
@@ -31,7 +32,7 @@ describe('Dialog (wrapped component)', () => {
 		wrapper.unmount()
 	})
 
-	it('clicking cancel emits cancel and hides the dialog', async () => {
+	it('clicking cancel emits cancel and hides the dialog & event should be triggered', async () => {
 		const wrapper = mount(Dialog, {
 			props: { defaultVisible: true },
 			attachTo: document.body
@@ -52,10 +53,15 @@ describe('Dialog (wrapped component)', () => {
 		// dialog should be hidden (v-show -> display: none)
 		expect(container.element.getAttribute('style')).include('display: none')
 
+		await wait(300)
+		expect(wrapper.emitted('open')?.length).toBe(1)
+		expect(wrapper.emitted('close')?.length).toBe(1)
+
 		wrapper.unmount()
+		
 	})
 
-	it('clicking confirm emits ok and keeps the dialog open', async () => {
+	it('clicking confirm emits ok and closes dialog', async () => {
 		const wrapper = mount(Dialog, {
 			props: { defaultVisible: true },
 			attachTo: document.body

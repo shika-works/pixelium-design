@@ -18,7 +18,6 @@
 		>
 			<div
 				class="px-dialog px-dialog-wrapper pixelium"
-				tabindex="-1"
 				v-show="props.visible"
 				ref="dialogWrapper"
 			>
@@ -54,7 +53,7 @@
 							}"
 							@click="closeHandler"
 						>
-							<Times tabindex="0" class="px-dialog-close-icon"></Times>
+							<Times class="px-dialog-close-icon"></Times>
 						</div>
 					</div>
 					<div class="px-dialog-body" v-bind="props.bodyProps">
@@ -152,6 +151,8 @@ watch(
 		} else {
 			emits('close')
 		}
+	}, {
+		immediate: true
 	}
 )
 
