@@ -88,6 +88,7 @@ type DialogReturn = Promise<boolean> & {
 }
 
 // ...
+// Dialog
 {
 	[key in DialogOptions['type'] & string]: (
 		options:
@@ -96,6 +97,8 @@ type DialogReturn = Promise<boolean> & {
 	) => DialogReturn
 }
 ```
+
+### Attrs
 
 [[[zh
 就像上面栗子所展示的那样🌰，作为组件时你可以直接传入 `class` 和 `style` 等 attrs 穿透到对话框容器元素上。
@@ -113,7 +116,7 @@ dialogOptions.type: 对话框类型。
 dialogOptions.closable: 是否展示右上角关闭按钮。
 dialogOptions.mask: 是否展示遮罩层。
 dialogOptions.maskClosable: 点击遮罩层是否可以关闭对话框。
-dialogOptions.escToClose: 是否可以按 ESC 键关闭对话框，需要聚焦到对话框中。
+dialogOptions.escToClose: 是否可以按 ESC 键关闭对话框。
 dialogOptions.showCancel: 是否展示取消按钮，不设置时，受 `type` 字段影响，仅 `'confirm'` 时展示。
 dialogOptions.okText: 确认按钮文本内容。
 dialogOptions.cancelText: 取消按钮文本内容。
@@ -134,7 +137,7 @@ title: 对话框标题。
 closable: 是否展示右上角关闭按钮。
 mask: 是否展示遮罩层。
 maskClosable: 点击遮罩层是否可以关闭对话框。
-escToClose: 是否可以按 ESC 键关闭对话框，需要聚焦到对话框中。
+escToClose: 是否可以按 ESC 键关闭对话框。
 showCancel: 是否展示取消按钮，不设置时，受 `type` 字段影响，仅 `'confirm'` 时展示。
 okText: 确认按钮文本内容。
 cancelText: 取消按钮文本内容。
@@ -178,7 +181,7 @@ dialogOptions.type: Dialog type.
 dialogOptions.closable: Whether to display the close button in the top-right corner.
 dialogOptions.mask: Whether to display the mask layer.
 dialogOptions.maskClosable: Whether the dialog can be closed by clicking the mask layer.
-dialogOptions.escToClose: Whether the dialog can be closed by pressing the ESC key (requires focus to be within the dialog).
+dialogOptions.escToClose: Whether the dialog can be closed by pressing the ESC key.
 dialogOptions.showCancel: Whether to display the cancel button. If not set, it is influenced by the `type` field—only displayed when the type is `'confirm'`.
 dialogOptions.okText: Text content of the confirm button.
 dialogOptions.cancelText: Text content of the cancel button.
@@ -199,7 +202,7 @@ title: Dialog title.
 closable: Whether to display the close button in the top-right corner.
 mask: Whether to display the mask layer.
 maskClosable: Whether the dialog can be closed by clicking the mask layer.
-escToClose: Whether the dialog can be closed by pressing the ESC key (requires focus to be within the dialog).
+escToClose: Whether the dialog can be closed by pressing the ESC key.
 showCancel: Whether to display the cancel button. If not set, it is influenced by the `type` field—only displayed when the type is `'confirm'`.
 okText: Text content of the confirm button.
 cancelText: Text content of the cancel button.
