@@ -18,9 +18,13 @@ import CheckCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/che
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { isString } from 'parsnip-kit'
 import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
 import { calcPixelSize, canvasPreprocess } from '../share/util/plot'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
+import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
+
+defineOptions({
+	name: 'MessageItem'
+})
 
 const props = withDefaults(defineProps<MessageProps>(), {
 	duration: 3000,
@@ -241,7 +245,7 @@ defineRender(() => {
 					</span>
 					{props.closable && (
 						<div class="px-message-close-wrapper">
-							<TimesCircleSolid
+							<Times
 								// @ts-ignore
 								class="px-message-icon"
 								style={{
@@ -252,7 +256,7 @@ defineRender(() => {
 								onMousedown={toggleActive(true)}
 								onMouseup={toggleActive(false)}
 								onClick={close}
-							></TimesCircleSolid>
+							></Times>
 						</div>
 					)}
 					<canvas
