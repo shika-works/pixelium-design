@@ -2,14 +2,12 @@
 	<div>
 		<px-message-box v-model:messages="messages"></px-message-box>
 		<px-button @click="pushMessage">Add Message</px-button>
-		<div>
-			{{ messages.map((e: MessageProps) => e.content).join('\n') }}
-		</div>
+		<div>Message count: {{ messages.length }}</div>
 	</div>
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { MessageProps } from '@pixelium/web-vue/es/message/type.d.ts'
+import type { MessageProps } from '@pixelium/web-vue'
 const messages = ref<MessageProps[]>([])
 
 let id = 0
