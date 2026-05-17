@@ -27,7 +27,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<NotificationProps>(), {
-	duration: 3000,
+	duration: 5000,
 	type: 'normal',
 	content: '',
 	placement: 'top-right'

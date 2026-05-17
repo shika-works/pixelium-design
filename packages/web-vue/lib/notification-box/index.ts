@@ -97,7 +97,7 @@ const notificationCall = (options: ValidContent | NotificationOptions): Notifica
 		content: options.content,
 		title: options.title,
 		icon: options.icon,
-		duration: options.duration || 3000,
+		duration: options.duration,
 		type: options.type || 'normal',
 		color: options.color,
 		closable: options.closable,

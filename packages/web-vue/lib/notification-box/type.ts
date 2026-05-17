@@ -18,7 +18,7 @@ export type NotificationOptions = {
 	 */
 	icon?: ValidVNodeContent
 	/**
-	 * @property {number} [duration=3000]
+	 * @property {number} [duration=5000]
 	 * @version 0.2.0
 	 */
 	duration?: number
