@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { ref, onMounted, computed, watch, onBeforeUnmount, Transition, shallowRef } from 'vue'
-import type { MessageProps } from './type'
+import type { NotificationProps } from './type'
 import {
 	generatePalette,
 	getGlobalThemeColor,
@@ -23,13 +23,14 @@ import { useTransitionEnd } from '../share/hook/use-transition-end'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 
 defineOptions({
-	name: 'MessageItem'
+	name: 'NotificationItem'
 })
 
-const props = withDefaults(defineProps<MessageProps>(), {
-	duration: 3000,
+const props = withDefaults(defineProps<NotificationProps>(), {
+	duration: 5000,
 	type: 'normal',
-	content: ''
+	content: '',
+	placement: 'top-right'
 })
 
 const hoverFlag = ref(false)
@@ -71,9 +72,9 @@ const afterLeaveHandler = () => {
 	clearTimer()
 }
 const canvasRef = shallowRef<null | HTMLCanvasElement>(null)
-const messageRef = shallowRef<null | HTMLDivElement>(null)
+const notificationRef = shallowRef<null | HTMLDivElement>(null)
 
-const themeMap = (type: MessageProps['type']) => {
+const themeMap = (type: NotificationProps['type']) => {
 	if (!type) {
 		return 'normal'
 	}
@@ -110,7 +111,10 @@ const closeIconColor = computed(() => {
 			? rgbaColor2string(palette.value[4])
 			: rgbaColor2string(palette.value[5])
 })
-function getBorderColor(type: MessageProps['type'] = 'normal', palette: RgbaColor[] | null) {
+function getBorderColor(
+	type: NotificationProps['type'] = 'normal',
+	palette: RgbaColor[] | null
+) {
 	if (palette) {
 		return palette[5]
 	} else {
@@ -143,7 +147,7 @@ const draw = (
 	ctx.fillRect(pixelSize, pixelSize, width - 2 * pixelSize, height - 2 * pixelSize)
 }
 const drawPixel = () => {
-	const preprocessData = canvasPreprocess(messageRef, canvasRef)
+	const preprocessData = canvasPreprocess(notificationRef, canvasRef)
 	if (!preprocessData) {
 		return
 	}
@@ -158,9 +162,9 @@ const drawPixel = () => {
 	}
 }
 
-useResizeObserver(messageRef, drawPixel)
+useResizeObserver(notificationRef, drawPixel)
 useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(messageRef, drawPixel)
+useTransitionEnd(notificationRef, drawPixel)
 
 watch([() => props.type, palette, darkMode], () => {
 	setTimeout(() => {
@@ -173,27 +177,28 @@ defineExpose({
 
 defineRender(() => {
 	return (
-		<Transition name="px-message-fade" onAfterLeave={afterLeaveHandler}>
+		<Transition name="px-notification-fade" onAfterLeave={afterLeaveHandler}>
 			{visible.value && (
 				<div
-					ref={(node: any) => (messageRef.value = node)}
+					ref={(node: any) => (notificationRef.value = node)}
 					onMouseenter={clearTimer}
 					onMouseleave={startTimer}
 					class={{
-						'px-message': true,
+						'px-notification': true,
 						pixelium: true,
-						[`px-message__${props.type || 'normal'}`]: true
+						[`px-notification__${props.type || 'normal'}`]: true,
+						[`px-notification__${props.placement || 'top-right'}`]: true
 					}}
 				>
 					{(!!props.icon ||
 						(props.type && props.type !== 'normal' && props.type !== 'sakura')) && (
-						<div class="px-message-icon-wrapper">
+						<div class="px-notification-icon-wrapper">
 							{props.icon ? (
 								props.icon()
 							) : props.type === 'info' || props.type === 'notice' ? (
 								<InfoCircleSolid
 									// @ts-ignore
-									class="px-message-icon"
+									class="px-notification-icon"
 									style={{
 										fill: textColor.value
 									}}
@@ -201,7 +206,7 @@ defineRender(() => {
 							) : props.type === 'success' ? (
 								<CheckCircleSolid
 									// @ts-ignore
-									class="px-message-icon"
+									class="px-notification-icon"
 									style={{
 										fill: textColor.value
 									}}
@@ -209,7 +214,7 @@ defineRender(() => {
 							) : props.type === 'warning' ? (
 								<ExclamationTriangleSolid
 									// @ts-ignore
-									class="px-message-icon"
+									class="px-notification-icon"
 									style={{
 										fill: textColor.value
 									}}
@@ -217,7 +222,7 @@ defineRender(() => {
 							) : props.type === 'error' ? (
 								<OctagonTimesSolid
 									// @ts-ignore
-									class="px-message-icon"
+									class="px-notification-icon"
 									style={{
 										fill: textColor.value
 									}}
@@ -226,7 +231,7 @@ defineRender(() => {
 								props.type === 'loading' && (
 									<SpinnerThirdSolid
 										// @ts-ignore
-										class="px-message-icon px-animation__loading"
+										class="px-notification-icon px-animation__loading"
 										style={{
 											fill: textColor.value
 										}}
@@ -235,19 +240,44 @@ defineRender(() => {
 							)}
 						</div>
 					)}
-					<span
-						class="px-message-content"
-						style={{
-							color: textColor.value
+					<div
+						class={{
+							'px-notification-main': true,
+							'px-notification-main__single': !props.content || !props.title
 						}}
 					>
-						{isString(props.content) ? props.content : props.content()}
-					</span>
+						{props.title && (
+							<div
+								class={{
+									'px-word-wrap': true,
+									'px-notification-title': true
+								}}
+								style={{
+									color: textColor.value
+								}}
+							>
+								{isString(props.title) ? props.title : props.title()}
+							</div>
+						)}
+						{props.content && (
+							<div
+								class={{
+									'px-word-wrap': true,
+									'px-notification-content': true
+								}}
+								style={{
+									color: textColor.value
+								}}
+							>
+								{isString(props.content) ? props.content : props.content()}
+							</div>
+						)}
+					</div>
 					{props.closable && (
-						<div class="px-message-close-wrapper">
+						<div class="px-notification-close-wrapper">
 							<Times
 								// @ts-ignore
-								class="px-message-icon"
+								class="px-notification-icon"
 								style={{
 									fill: closeIconColor.value
 								}}
@@ -261,7 +291,7 @@ defineRender(() => {
 					)}
 					<canvas
 						ref={(node: any) => (canvasRef.value = node)}
-						class="px-message-canvas"
+						class="px-notification-canvas"
 					></canvas>
 				</div>
 			)}

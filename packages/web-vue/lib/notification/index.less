@@ -1,6 +1,6 @@
 @import url(../share/style/variable.less);
 
-.px-message-canvas {
+.px-notification-canvas {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -9,8 +9,8 @@
 	z-index: -1;
 }
 
-.px-message {
-	@prefix: px-message;
+.px-notification {
+	@prefix: px-notification;
 
 	--text-color: var(--px-neutral-10);
 
@@ -19,43 +19,81 @@
 	border-color: transparent;
 	border-width: var(--px-bit);
 	border-style: solid;
-	padding: 4px 8px;
+	padding: @px-interval-1 + @px-interval-mini-1 @px-interval-2;
 	display: flex;
 	transition: 0.25s;
 	pointer-events: auto;
 
-	min-height: @px-medium-font-size;
+	width: @px-notification-width;
+
+	font-size: @px-medium-font-size;
+
+	box-sizing: border-box;
+
+	&-title {
+		font-size: @px-title-font-size;
+		width: 100%;
+	}
+	&-content {
+		width: 100%;
+		&:nth-child(2) {
+			margin-top: @px-interval-2;
+		}
+	}
+	&-main {
+		min-width: 0;
+		min-height: @px-interval-7;
+		flex-shrink: 1;
+		flex-basis: 0;
+		flex-grow: 1;
+
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		&__single {
+			min-height: @px-interval-7;
+		}
+	}
 
 	&-fade-enter-to,
 	&-fade-leave-from {
+		transform: translateX(0);
 		opacity: 1;
-		transform: translateY(0);
 	}
 	&-fade-enter-from,
 	&-fade-leave-to {
 		opacity: 0;
-		transform: translateY(-20px);
+		&.@{prefix}__top-right,
+		&.@{prefix}__bottom-right {
+			transform: translateX(100%);
+		}
+		&.@{prefix}__top-left,
+		&.@{prefix}__bottom-left {
+			transform: translateX(-100%);
+		}
 	}
 	&-icon-wrapper {
 		display: flex;
 		align-items: center;
 		flex-shrink: 0;
 		margin-right: 8px;
+		height: @px-interval-7;
 		svg {
-			width: 16px;
-			height: 16px;
+			width: @px-interval-7;
+			height: @px-interval-7;
 			fill: var(--text-color);
 		}
 	}
 	&-close-wrapper {
+		margin-left: auto;
 		display: flex;
 		align-items: center;
 		flex-shrink: 0;
-		margin-left: @px-interval-2;
+		height: @px-interval-7;
 		.@{prefix}-icon {
 			cursor: pointer;
-			width: @px-medium-font-size - @px-interval-1;
-			height: @px-medium-font-size - @px-interval-1;
+			width: @px-medium-font-size;
+			height: @px-medium-font-size;
 			fill: var(--text-color);
 			transition: 0.25s;
 		}

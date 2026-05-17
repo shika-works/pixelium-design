@@ -73,6 +73,8 @@ import TimePicker from './time-picker/index.vue'
 import Rate from './rate/index.vue'
 import ColorPicker from './color-picker/index.vue'
 import Drawer from './drawer/index.ts'
+import NotificationBox from './notification-box/notification-box-wrapped.vue'
+import Notification from './notification-box/index.ts'
 
 const components = [
 	Button,
@@ -138,7 +140,9 @@ const components = [
 	TimePicker,
 	Rate,
 	ColorPicker,
-	Drawer
+	Drawer,
+	Notification,
+	NotificationBox
 ]
 
 const defaultPrefix = 'Px'
@@ -160,6 +164,7 @@ const install = (
 			message: Message,
 			dialog: Dialog,
 			drawer: Drawer,
+			notification: Notification,
 			useThemeMode: useThemeMode
 		}
 	}
@@ -170,6 +175,8 @@ const install = (
 		window.$dialog = Dialog
 		// @ts-ignore
 		window.$drawer = Drawer
+		// @ts-ignore
+		window.$notification = Notification
 	}
 }
 export { install }
@@ -248,7 +255,9 @@ export {
 	TimePicker,
 	Rate,
 	ColorPicker,
-	Drawer
+	Drawer,
+	Notification,
+	NotificationBox
 }
 export default {
 	install
@@ -266,6 +275,8 @@ export type {
 export type { RestAttrs, VueStyleValue, VueClassValue, EmitEvent } from './share/type/index.ts'
 
 export type { MessageOptions, MessageReturn } from './message-box/type.ts'
+export type { MessageProps } from './message/type.ts'
+
 export type { DialogReturn, DialogOptions } from './dialog/type.ts'
 
 export type { AutoCompleteOption, AutoCompleteGroupOption } from './auto-complete/type.ts'
@@ -311,3 +322,6 @@ export type { ColorValue, ColorWithModel } from './color-picker/type.ts'
 export type { HslaColor, HsvaColor, HwbaColor, RgbaColor } from './share/type'
 
 export type { DrawerReturn, DrawerOptions } from './drawer/type.ts'
+
+export type { NotificationOptions, NotificationBoxEvents } from './notification-box/type.ts'
+export type { NotificationProps } from './notification/type.ts'

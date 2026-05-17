@@ -23,6 +23,7 @@
   - 修复 Slider 组件的聚焦逻辑，现在在调节器 thumb 外按下鼠标会聚焦到最近的 thumb。
   - 滚动条和它的 hook 按需导入时，现在也会导入公共样式。
   - 修复了输入框样式的组件，只读时，边框区域鼠标指针样式不正确的问题。
+  - 修复 Message 旧属性 position 不生效的问题。
 ]]]
 [[[en
 ## v0.2.0
@@ -42,6 +43,7 @@
   - Fixed focus logic in the Slider component: now when pressing the mouse outside the thumb, it focuses on the nearest thumb.
   - When scrollbar and its hooks are imported on demand, the public styles are now also imported.
   - Fixed an issue where the mouse pointer style in the border area of the input-style component was incorrect when it was read-only.
+  - Fix the issue where the old position property of Message does not take effect.
 ]]]
 
 [[[zh
