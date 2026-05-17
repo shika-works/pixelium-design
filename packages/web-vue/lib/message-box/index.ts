@@ -105,7 +105,11 @@ const messageCall = (options: ValidContent | MessageOptions): MessageReturn => {
 	})
 	return {
 		close: () => currentManager.close(id),
-		clear: () => currentManager.clear()
+		clear: () => currentManager.clear(),
+		unmount: () => {
+			currentManager.unmount()
+			delete messageManagers[placement]
+		}
 	}
 }
 

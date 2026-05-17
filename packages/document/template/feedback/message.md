@@ -133,7 +133,8 @@ messageOptions.placement: The position where the message appears.
 messageOptions.root: The element where the message is mounted.
 messageReturn.close: Close the current message.
 messageReturn.clear: Clear all messages in the current MessageBox.
-messageBoxProps.messages: All messages in the current MessageBox.
+messageReturn.unmount: Unmount current MessageBox.
+messageBoxProps.messages: All messages of the current MessageBox need to use `v-model`.
 messageBoxProps.position: <Badge type="warning" text="Deprecated" /> The position where the message appears.
 messageBoxProps.placement: The position where the message appears.
 messageBoxProps.zIndex: The `z-index` style of MessageBox.
@@ -154,7 +155,8 @@ messageOptions.placement: 消息出现位置。
 messageOptions.root: 消息挂载元素。
 messageReturn.close: 关闭当前消息。
 messageReturn.clear: 清空当前 MessageBox 的所有消息。
-messageBoxProps.messages: 当前 MessageBox 的所有消息。
+messageReturn.unmount: 卸载当前 MessageBox。
+messageBoxProps.messages: 当前 MessageBox 的所有消息，需要使用 `v-model`。
 messageBoxProps.position: <Badge type="warning" text="Deprecated" /> 消息出现位置。
 messageBoxProps.placement: 消息出现位置。
 messageBoxProps.zIndex: MessageBox 的 `z-index` 样式。

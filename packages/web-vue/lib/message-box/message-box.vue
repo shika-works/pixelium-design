@@ -31,51 +31,44 @@
 <script setup lang="ts">
 import { isNullish } from 'parsnip-kit'
 import Message from '../message/index.vue'
-import type { MessageProps } from '../message/type'
 import type { MessageBoxEvents, MessageBoxExpose, MessageBoxProps } from './type'
-import { computed, shallowRef, useModel } from 'vue'
+import { computed, shallowRef } from 'vue'
 import { nanoid } from 'nanoid'
 import { useZIndex } from '../share/hook/use-z-index'
+import { useControlledMode } from '../share/hook/use-controlled-mode'
 
 defineOptions({
 	name: 'MessageBoxInner'
 })
 
-const props = withDefaults(
-	defineProps<MessageBoxProps & { 'onUpdate:messages': (value: MessageProps[]) => any }>(),
-	{
-		position: 'top',
-		placement: 'top'
-	}
-)
+const props = withDefaults(defineProps<MessageBoxProps>(), {})
 
-const [currentZIndex] = useZIndex('message')
-
-const messages = useModel(props, 'messages')
-
-const emits = defineEmits<Pick<MessageBoxEvents, 'close'>>()
+const emits = defineEmits<MessageBoxEvents>()
+const [messages, updateMessages] = useControlledMode('messages', props, emits)
 
 const clone = computed(() => {
-	return messages.value.map((e) => {
+	return (messages.value || []).map((e) => {
 		return {
 			...e,
 			id: e.id ?? nanoid()
 		}
 	})
 })
-const closeHandler = (id?: number | string | symbol) => {
+
+const [currentZIndex] = useZIndex('message')
+
+const closeHandler = async (id?: number | string | symbol) => {
 	if (isNullish(id)) {
 		return
 	}
-
-	if (props['onUpdate:messages']) {
-		const idx = clone.value.findIndex((item) => item.id === id)
-		if (idx >= 0) {
-			const cur = [...clone.value]
-			cur.splice(idx, 1)
-			messages.value = cur
-		}
+	const pre = clone.value
+	const idx = pre.findIndex((item) => item.id === id)
+	if (idx >= 0) {
+		const cur = [...pre]
+		cur.splice(idx, 1)
+		await updateMessages(cur)
 	}
+
 	emits('close', id)
 }
 
