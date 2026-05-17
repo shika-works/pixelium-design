@@ -240,10 +240,18 @@ defineRender(() => {
 							)}
 						</div>
 					)}
-					<div>
+					<div
+						class={{
+							'px-notification-main': true,
+							'px-notification-main__single': !props.content || !props.title
+						}}
+					>
 						{props.title && (
 							<div
-								class="px-notification-title"
+								class={{
+									'px-word-wrap': true,
+									'px-notification-title': true
+								}}
 								style={{
 									color: textColor.value
 								}}
@@ -251,14 +259,19 @@ defineRender(() => {
 								{isString(props.title) ? props.title : props.title()}
 							</div>
 						)}
-						<div
-							class="px-notification-content"
-							style={{
-								color: textColor.value
-							}}
-						>
-							{isString(props.content) ? props.content : props.content()}
-						</div>
+						{props.content && (
+							<div
+								class={{
+									'px-word-wrap': true,
+									'px-notification-content': true
+								}}
+								style={{
+									color: textColor.value
+								}}
+							>
+								{isString(props.content) ? props.content : props.content()}
+							</div>
+						)}
 					</div>
 					{props.closable && (
 						<div class="px-notification-close-wrapper">
