@@ -6,6 +6,7 @@
     "pixelium",
     "Popconfirm",
     "rowspan",
-    "Vitest"
+    "Vitest",
+    "vnode"
   ]
 }

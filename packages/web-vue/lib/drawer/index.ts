@@ -1,40 +1,40 @@
-import { defineComponent, h, nextTick, reactive, render, type Reactive, type VNode } from 'vue'
+import { defineComponent, h, reactive } from 'vue'
 import type { DrawerOptions, DrawerReturn, DrawerEvents } from './type'
 import { isFunction, isString } from 'parsnip-kit'
 import type { EmitEvent, ValidContent } from '../share/type'
 import Drawer from './drawer.vue'
-import { nanoid } from 'nanoid'
 
 import DrawerWrapped from './drawer-wrapped.vue'
 import { logError } from '../share/util/console'
-
-const ANIMATION_DURATION = 250
-const DELAY = 150
+import { ModalOverlayManager } from '../overlay/modal-overlay'
 
 type DrawerManagerOptions = Required<Pick<DrawerOptions, 'content' | 'root'>> &
 	Omit<DrawerOptions, 'content' | 'root'> &
 	EmitEvent<DrawerEvents>
 
-class DrawerManager {
-	drawer: VNode
-	container: HTMLElement | null = null
-	state: Reactive<DrawerManagerOptions & { visible: boolean }>
-	timer: any = null
+type DrawerManagerState = DrawerManagerOptions & { visible: boolean }
+class DrawerManager extends ModalOverlayManager<DrawerManagerOptions, DrawerManagerState> {
 	constructor(options: DrawerManagerOptions) {
-		this.state = reactive({
-			...options,
+		super(options)
+		this.renderVNode()
+	}
+	protected getContainerClass(): string {
+		return 'px-drawer-wrapper'
+	}
+	protected initState() {
+		return reactive({
+			...this.options,
 			visible: true
 		})
-
-		const contentRender = options.content
-		const titleRender = options.title
-		const footerRender = options.footer
-
-		const that = this
+	}
+	protected createVNode() {
+		const contentRender = this.options.content
+		const titleRender = this.options.title
+		const footerRender = this.options.footer
 		const component = defineComponent({
-			setup() {
+			setup: () => {
 				return () =>
-					h(Drawer, that.state as any, {
+					h(Drawer, this.state as any, {
 						title: isString(titleRender) ? () => titleRender : titleRender,
 						default: isString(contentRender) ? () => contentRender : contentRender,
 						footer: isString(footerRender) ? () => footerRender : footerRender
@@ -42,36 +42,7 @@ class DrawerManager {
 			}
 		})
 
-		this.drawer = h(component)
-		const root =
-			(isString(options.root) ? document.querySelector(options.root) : options.root) ||
-			document.body
-		const id = nanoid()
-		this.container = document.createElement('div')
-		this.container.id = id
-		this.container.className = `px-drawer-wrapper`
-		root.appendChild(this.container)
-		render(this.drawer, this.container)
-	}
-	close() {
-		if (this.timer) {
-			return
-		}
-		this.state.visible = false
-		this.timer = setTimeout(() => {
-			this.unmount()
-			this.timer = null
-		}, ANIMATION_DURATION + DELAY)
-	}
-	unmount() {
-		if (this.container) {
-			const container = this.container
-			render(null, container)
-			nextTick(() => {
-				container.remove()
-				this.container = null
-			})
-		}
+		return h(component)
 	}
 }
 
