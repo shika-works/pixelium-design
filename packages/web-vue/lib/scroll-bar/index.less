@@ -263,3 +263,69 @@
 body > .os-scrollbar {
 	z-index: 500;
 }
+
+.px-scroll-mask {
+	position: absolute;
+	z-index: 2px;
+	opacity: 0.6;
+}
+.px-scroll-mask__x-start {
+	height: 100%;
+	left: 0;
+	top: 0;
+	width: calc(var(--px-bit) * 2);
+
+	background: linear-gradient(
+		90deg,
+		var(--px-neutral-4) 0,
+		var(--px-neutral-4) var(--px-bit),
+		var(--px-neutral-2) var(--px-bit),
+		var(--px-neutral-2) calc(var(--px-bit) * 2)
+	);
+}
+.px-scroll-mask__y-start {
+	height: calc(var(--px-bit) * 2);
+	left: 0;
+	top: 0;
+	width: 100%;
+
+	background: linear-gradient(
+		180deg,
+		var(--px-neutral-4) 0,
+		var(--px-neutral-4) var(--px-bit),
+		var(--px-neutral-2) var(--px-bit),
+		var(--px-neutral-2) calc(var(--px-bit) * 2)
+	);
+}
+.px-scroll-mask__x-end {
+	height: 100%;
+	left: 0;
+	top: 0;
+	width: calc(var(--px-bit) * 2);
+	margin-right: calc(var(--px-bit) * -2);
+	margin-left: calc(var(--px-bit) * -2);
+
+	background: linear-gradient(
+		90deg,
+		var(--px-neutral-2) 0,
+		var(--px-neutral-2) var(--px-bit),
+		var(--px-neutral-4) var(--px-bit),
+		var(--px-neutral-4) calc(var(--px-bit) * 2)
+	);
+}
+.px-scroll-mask__y-end {
+	height: calc(var(--px-bit) * 2);
+	left: 0;
+	top: 0;
+	width: 100%;
+	margin-bottom: calc(var(--px-bit) * -2);
+	margin-top: calc(var(--px-bit) * -2);
+
+	background: linear-gradient(
+		180deg,
+		var(--px-neutral-2) 0,
+		var(--px-neutral-2) var(--px-bit),
+		var(--px-neutral-4) var(--px-bit),
+		var(--px-neutral-4) calc(var(--px-bit) * 2)
+	);
+}

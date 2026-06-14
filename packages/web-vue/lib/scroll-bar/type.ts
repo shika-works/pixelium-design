@@ -26,6 +26,16 @@ export type ScrollBarProps = {
 	 * @version 0.1.0
 	 */
 	ghost?: boolean
+	/**
+	 * @property {boolean} [edgeMask=false]
+	 * @version 0.2.0
+	 */
+	edgeMask?: boolean | boolean[]
+	/**
+	 * @property {boolean} [visible=true]
+	 * @version 0.2.0
+	 */
+	visible?: boolean
 }
 
 export type ScrollBarEvents = {
