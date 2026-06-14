@@ -73,6 +73,9 @@ import TimePicker from './time-picker/index.vue'
 import Rate from './rate/index.vue'
 import ColorPicker from './color-picker/index.vue'
 import Drawer from './drawer/index.ts'
+import Tab from './tab/index.vue'
+import TabPanel from './tab-panel/index.vue'
+import TabItem from './tab-item/index.vue'
 import NotificationBox from './notification-box/notification-box-wrapped.vue'
 import Notification from './notification-box/index.ts'
 
@@ -142,7 +145,10 @@ const components = [
 	ColorPicker,
 	Drawer,
 	Notification,
-	NotificationBox
+	NotificationBox,
+	Tab,
+	TabPanel,
+	TabItem
 ]
 
 const defaultPrefix = 'Px'
@@ -257,7 +263,10 @@ export {
 	ColorPicker,
 	Drawer,
 	Notification,
-	NotificationBox
+	NotificationBox,
+	Tab,
+	TabPanel,
+	TabItem
 }
 export default {
 	install

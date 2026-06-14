@@ -5,7 +5,8 @@ const newItems = [
 	'time-picker',
 	'rate',
 	'color-picker',
-	'notification'
+	'notification',
+	'tab'
 ]
 
 const titleMapEn = {
@@ -91,6 +92,7 @@ const additionMapZh = {
 	rate: '评分',
 	'color-picker': '颜色选择器',
 	drawer: '抽屉',
-	notification: '通知'
+	notification: '通知',
+	tab: '标签页'
 }
 export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh }

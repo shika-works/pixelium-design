@@ -10,10 +10,11 @@
 - 新增：
   - 新增数据输入组件：ColorPicker、Rate。
   - 新增反馈组件：Drawer。
+  - 新增导航组件：Tab、TabItem、TabPanel。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
   - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
   - Divider 组件新增属性 `soft` 和 `color`。
-  - ScrollBar 组件新增 expose `scrollHeight`、`scrollWidth`、`scrollTop`、`scrollLeft` 用于获取当前滚动状态。
+  - ScrollBar 组件新增 expose `scrollHeight`、`scrollWidth`、`scrollTop`、`scrollLeft` 用于获取当前滚动状态，新增属性 `visible` 控制是否显示滚动条，`edgeMask` 控制是否展示边缘遮罩。
 - 调整：
   - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
   - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
@@ -30,10 +31,11 @@
 - New Features:
   - New data input components: ColorPicker, Rate.
   - New feedback components: Drawer.
+  - New navigation  components: Tab, TabItem, TabPanel.
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
   - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
   - Divider component adds `soft` and `color` properties.
-  - ScrollBar component adds expose `scrollHeight`, `scrollWidth`, `scrollTop`, `scrollLeft` for getting the current scroll state.
+  - ScrollBar component added exposes `scrollHeight`, `scrollWidth`, `scrollTop`, `scrollLeft` to retrieve the current scroll state, added property `visible` to control whether the scrollbar is shown, and `edgeMask` to control whether the edge mask is displayed.
 - Adjustment:
   - Consolidated focus-related logic for form input components, improving maintainability and readability, and added related test cases.
   - ⚠️ Note ⚠️ Removed tabindex from Slider component tick marks and labels; only the slider thumb can receive focus, and focus styles were added to the thumb.
