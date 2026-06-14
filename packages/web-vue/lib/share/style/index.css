@@ -2,6 +2,9 @@
 @import url(./layout.css);
 @import url(./animation.css);
 
+@import url(../../icons/style-hn.css);
+@import url(../../icons/style-pa.css);
+
 .pixelium {
 	font-family: var(--px-font);
 	line-height: var(--px-line-height);
