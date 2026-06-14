@@ -101,6 +101,8 @@ scrollOffset: 滚动的偏移量，受控模式，支持 `v-model`。
 defaultScrollOffset: 滚动的偏移量默认值，非受控模式。
 variant: 滚动的样式变体。
 showScrollPadding: 是否在滚动条出现一侧增加 padding。
+edgeMask: 边缘遮罩。当内容可滚动时，在滚动容器的边缘显示遮罩层，指示还有更多内容可滚动。取值范围：`true`（四边均显示遮罩），`false`（不显示遮罩），或由至多 4 个布尔值组成的数组（按 `[top, right, bottom, left]` 顺序分别控制各边）。数组长度规则与 CSS padding 简写一致，支持 1～4 个值。
+visible: 滚动条是否可见。默认可见，设置为 `false` 时隐藏滚动条，但内容仍可滚动。
 
 events.update:scrollOffset: 更新 `scrollOffset` 的回调。
 events.initialize: 滚动条初始化的回调。接收 OverlayScrollbars 实例作为入参，具体参数见 OverlayScrollbars 文档。
@@ -118,6 +120,8 @@ scrollOffset: Scroll offset, controlled mode, supports `v-model`.
 defaultScrollOffset: Default value for scroll offset, uncontrolled mode.
 variant: The style variant of the scrollbar.
 showScrollPadding: Whether to add padding on the side where the scrollbar appears.
+edgeMask: Edge mask. When content is scrollable, displays a mask overlay at the edges of the scroll container to indicate there is more content to scroll. Accepts `true` (show masks on all four sides), `false` (hide masks), or an array of up to 4 booleans (controlling each side in `[top, right, bottom, left]` order). The array length rules follow CSS padding shorthand, supporting 1 to 4 values.
+visible: Whether the scrollbar is visible. Defaults to `true`. Set to `false` to hide the scrollbar while keeping the content scrollable.
 
 events.update:scrollOffset: Callback when `scrollOffset` updates.
 events.initialize: Callback when the scrollbar initializes. Receives an OverlayScrollbars instance as the parameter. For specific details, refer to the OverlayScrollbars documentation.
