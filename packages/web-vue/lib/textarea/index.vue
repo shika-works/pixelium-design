@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="pixelium px-textarea"
+		class="pixelium px-textarea px-input-box"
 		ref="wrapperRef"
 		:class="{
 			[`px-textarea__${sizeComputed}`]: !!sizeComputed,
