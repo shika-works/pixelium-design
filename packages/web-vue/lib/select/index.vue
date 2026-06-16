@@ -928,7 +928,9 @@ defineRender(() => {
 		{
 			ref: wrapperRef,
 			class: [
-				'pixelium px-select',
+				'pixelium',
+				'px-input-box',
+				'px-select',
 				sizeComputed.value && `px-select__${sizeComputed.value}`,
 				shapeComputed.value && `px-select__${shapeComputed.value}`,
 				{ 'px-select__inner': !!inputGroupProvide },

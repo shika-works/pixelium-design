@@ -16,6 +16,11 @@
 	word-break: normal;
 }
 
+.px-input-box input,
+.px-input-box textarea {
+	color: inherit;
+}
+
 .corner-gradient::after {
 	width: calc(var(--px-bit) * 2 + 100%);
 	height: calc(var(--px-bit) * 2 + 100%);
