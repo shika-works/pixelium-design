@@ -86,10 +86,13 @@ const slots = useSlots()
 		<slot></slot>
 		<template #content>
 			<DropDownList :options="props.options" @select="selectHandler">
-				<template v-if="slots.option" #option="{ option }: {  option: string | DropDownOption}">
+				<template v-if="slots.option" #option="{ option }: { option: string | DropDownOption }">
 					<slot name="option" :option="option"></slot>
 				</template>
-				<template v-if="slots['group-label']" #group-label="{ option }: {  option: DropDownGroupOption}">
+				<template
+					v-if="slots['group-label']"
+					#group-label="{ option }: { option: DropDownGroupOption }"
+				>
 					<slot name="group-label" :option="option"></slot>
 				</template>
 			</DropDownList>
