@@ -105,6 +105,19 @@ Set `disabled` to disable the component. Trigger actions will be ignored and the
 
 <preview path="./drop-down-disabled.vue"></preview>
 
+[[[zh
+## 插槽用法
+
+Dropdown 提供 `option` 和 `group-label` 插槽，用于自定义选项和分组标题的渲染内容。
+]]]
+[[[en
+## Slot Usage
+
+Dropdown provides `option` and `group-label` slots for customizing the rendering of menu items and group headers.
+]]]
+
+<preview path="./drop-down-slot.vue"></preview>
+
 ## API
 
 [[[api zh
