@@ -59,6 +59,11 @@ export type DropDownProps = {
 	 */
 	zIndex?: PopoverProps['zIndex']
 	/**
+	 * @property {number} [animationDuration=250]
+	 * @version 0.1.5
+	 */
+	animationDuration?: number
+	/**
 	 * @property {boolean} [destroyOnHide=false]
 	 * @version 0.1.0
 	 */
@@ -113,12 +118,14 @@ export type DropDownSlots = {
 	default: {}
 	/**
 	 * @slot option
-	 * @version 0.1.0
+	 * @param {string | DropDownOption} item
+	 * @version 0.1.5
 	 */
 	option: {}
 	/**
 	 * @slot group-label
-	 * @version 0.1.0
+	 * @param {DropDownGroupOption} item
+	 * @version 0.1.5
 	 */
 	'group-label': {}
 }

@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { mergeProps, shallowRef } from 'vue'
+import { mergeProps, shallowRef, useSlots } from 'vue'
 import Popover from '../popover/index.vue'
 import type { DropDownEvents, DropDownExpose, DropDownProps } from './type'
 import { forwardEmits } from '../share/util/reactivity'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import DropDownList from '../drop-down-list/index.vue'
-import type { DropDownOption } from '../drop-down-list/type'
+import type { DropDownGroupOption, DropDownOption } from '../drop-down-list/type'
 
 defineOptions({
-	name: 'DropDown'
+	name: 'DropDown',
+	inheritAttrs: true
 })
 
 const props = withDefaults(defineProps<DropDownProps>(), {
@@ -62,6 +63,8 @@ const selectHandler = async (
 const visibleUpdateHandler = (value: boolean) => {
 	setVisible(value)
 }
+
+const slots = useSlots()
 </script>
 <template>
 	<Popover
@@ -77,11 +80,19 @@ const visibleUpdateHandler = (value: boolean) => {
 		:border-radius="0"
 		:offset="props.offset"
 		:variant="props.variant"
+		:animation-duration="props.animationDuration"
 		v-bind="mergeProps(forward, props.popoverProps || {})"
 	>
 		<slot></slot>
 		<template #content>
-			<DropDownList :options="props.options" @select="selectHandler"></DropDownList>
+			<DropDownList :options="props.options" @select="selectHandler">
+				<template v-if="slots.option" #option="{ option }: {  option: string | DropDownOption}">
+					<slot name="option" :option="option"></slot>
+				</template>
+				<template v-if="slots['group-label']" #group-label="{ option }: {  option: DropDownGroupOption}">
+					<slot name="group-label" :option="option"></slot>
+				</template>
+			</DropDownList>
 		</template>
 	</Popover>
 </template>

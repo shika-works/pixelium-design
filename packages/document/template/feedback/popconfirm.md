@@ -104,6 +104,7 @@ variant: 组件样式变体。
 arrow: 是否展示箭头。
 disabled: 是否禁用。
 zIndex: 弹出层 `z-index`。
+animationDuration: 弹出 / 收起动画时长。
 root: 挂载元素。
 destroyOnHide: 隐藏时是否销毁内容。
 loading: 传入 `loading` 则用于控制确认按钮 loading 状态。
@@ -146,6 +147,7 @@ variant: Component style variant (light/dark).
 arrow: Whether to show arrow.
 disabled: Whether disabled.
 zIndex: `z-index` of the popup layer.
+animationDuration: Duration of the popup show/hide animation.
 root: Mount element.
 destroyOnHide: Whether to destroy content when hidden.
 loading: Pass `loading` to control the loading state of the confirm button.

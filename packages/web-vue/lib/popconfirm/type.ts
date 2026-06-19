@@ -91,6 +91,11 @@ export type PopconfirmProps = {
 	 */
 	zIndex?: number
 	/**
+	 * @property {number} [animationDuration=250]
+	 * @version 0.1.5
+	 */
+	animationDuration?: number
+	/**
 	 * @property { HTMLElement | string} [root='body']
 	 * @version 0.1.0
 	 */
