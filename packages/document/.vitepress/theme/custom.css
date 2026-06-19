@@ -313,6 +313,14 @@ html.dark {
 .px-menu-item__active {
 	background-color: var(--px-primary-1) !important;
 }
+
+.px-menu-item:hover {
+	background-color: var(--px-neutral-3) !important;
+}
+.px-menu-item:hover.px-menu-item__active {
+	background-color: var(--px-primary-1) !important;
+}
+
 .px-menu-item__disabled:hover,
 .px-menu-item__disabled:focus {
 	background-color: var(--px-neutral-1) !important;
