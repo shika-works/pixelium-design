@@ -25,7 +25,7 @@ describe('ColorPickerPanel component', () => {
 	it('renders preset buttons and emits change when preset clicked', async () => {
 		const wrapper = mount(ColorPickerPanel, {
 			props: {
-				presets: ['#ff0000'],
+				preset: ['#ff0000'],
 				formatted: 'rgb(255,0,0)',
 				includeAlpha: true
 			},
