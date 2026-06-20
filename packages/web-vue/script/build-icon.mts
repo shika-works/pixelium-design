@@ -25,7 +25,7 @@ const iconSources: IconSource[] = [
 		outputTypeFile: 'dist/icon-hn.d.ts',
 		outputTypeFileEs: 'es/icons/icon-hn.d.ts',
 		defaultPrefix: 'Hn',
-		styleFilePath: './style-hn.css'
+		styleFilePath: './style-hn.less'
 	},
 	{
 		name: 'pixelarticons',
@@ -35,7 +35,7 @@ const iconSources: IconSource[] = [
 		outputTypeFile: 'dist/icon-pa.d.ts',
 		outputTypeFileEs: 'es/icons/icon-pa.d.ts',
 		defaultPrefix: 'Pa',
-		styleFilePath: './style-pa.css'
+		styleFilePath: './style-pa.less'
 	}
 ]
 

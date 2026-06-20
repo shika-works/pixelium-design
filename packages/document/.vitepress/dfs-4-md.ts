@@ -8,8 +8,7 @@ const dfs = (
 	prefix: string[],
 	container: any[],
 	titleMap: Record<string, string>,
-	additionMap: Record<string, string>,
-	newItems: string[]
+	additionMap?: Record<string, string>
 ) => {
 	files.forEach((file) => {
 		if (['.vitepress', 'index.md', 'template', 'script'].includes(file)) {
@@ -29,7 +28,7 @@ const dfs = (
 				collapsible: true,
 				collapsed: false
 			})
-			dfs(curFiles, prefix, curContainer, titleMap, additionMap, newItems)
+			dfs(curFiles, prefix, curContainer, titleMap, additionMap)
 			prefix.pop()
 		} else {
 			const [fileName, ext] = file.split('.')
@@ -49,6 +48,21 @@ const dfs = (
 		}
 	})
 }
+
+const newItems: string[] = [
+	'dialog',
+	'popconfirm',
+	'badge',
+	'back-top',
+	'progress',
+	'menu',
+	'i18n',
+	'drop-down',
+	'breadcrumb',
+	'scroll-bar',
+	'table',
+	'pagination'
+]
 
 const order = [
 	'guide',
@@ -75,12 +89,11 @@ const guideOrder = [
 export const dfs4Md = (
 	lang: string,
 	titleMap: Record<string, string>,
-	additionMap: Record<string, string>,
-	newItems: string[]
+	additionMap?: Record<string, string>
 ) => {
 	const ans: any[] = []
 	const files = fs.readdirSync(lang)
-	dfs(files, [lang], ans, titleMap, additionMap, newItems)
+	dfs(files, [lang], ans, titleMap, additionMap)
 	const orderedAns: any[] = []
 	order.forEach((e) => {
 		const entity = ans.find((item) => item.key?.toLowerCase() === e)

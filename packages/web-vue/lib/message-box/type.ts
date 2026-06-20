@@ -60,19 +60,14 @@ export type MessageReturn = {
 	 * @version 0.0.0-beta
 	 */
 	clear: () => void
-	/**
-	 * @property {() => void} unmount
-	 * @version 0.2.0
-	 */
-	unmount: () => void
 }
 
 export type MessageBoxProps = {
 	/**
-	 * @property {MessageProps[]} [messages]
+	 * @property {MessageProps[]} messages
 	 * @version 0.0.0-beta
 	 */
-	messages?: MessageProps[]
+	messages: MessageProps[]
 	/**
 	 * @property {'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'} [placement='top']
 	 * @version 0.0.2

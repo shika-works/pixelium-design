@@ -155,7 +155,7 @@ const drawPixel = () => {
 	}
 
 	const backgroundColor =
-		(props.backgroundColor && parseColor(props.backgroundColor)?.color) ||
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
 		getGlobalThemeColor('neutral', 3)
 	if (backgroundColor) {
 		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)

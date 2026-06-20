@@ -122,7 +122,7 @@ export type DialogProps = {
 	 */
 	visible?: boolean | null
 	/**
-	 * @property {boolean | null} [defaultVisible]
+	 * @property {boolean | null} [visible]
 	 * @version 0.1.0
 	 */
 	defaultVisible?: boolean | null

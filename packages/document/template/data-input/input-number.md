@@ -175,4 +175,7 @@ inputNumberExpose.clear: Clear the number input.
 inputNumberExpose.select: Select all text in the number input.
 ]]]
 
-[[[slice percent]]]
+### NumberOrPercentage
+```ts
+export type NumberOrPercentage = number | `${number}%`
+```

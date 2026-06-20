@@ -97,7 +97,7 @@ dot: 是否以小圆点显示。
 theme: 角标的主题。
 visible: 是否可见。
 offset: 角标标记的偏移。
-color: 自定义背景色，详见 [支持的颜色解析](../config/supported-color-parsing)。
+color: 自定义背景色，支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
 borderColor: 自定义边框颜色。
 contentProps: 透传给角标内容容器 DOM 的额外属性。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
@@ -112,7 +112,8 @@ dot: Whether to display as a small dot.
 theme: Badge's theme.
 visible: Whether it is visible.
 offset: The offset of the badge marker.
-color: Custom background color. See [Supported Color Parsing](../config/supported-color-parsing).
+color: Custom background color, supporting CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, and hexadecimal numbers with lengths of 3, 4, 6, or 8 digits.
+borderColor: Custom border color.
 contentProps: Additional properties passed through to the badge content container DOM.
 pollSizeChange: Enable polling for component size changes, which may affect performance. Commonly used when the size is affected by container elements, leading to abnormal canvas rendering.
 slots.default: The slot for the wrapped attached element.

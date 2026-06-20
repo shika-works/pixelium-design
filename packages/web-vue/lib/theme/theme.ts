@@ -25,7 +25,7 @@ export const setThemeColor = (
 		dark: [] as string[]
 	}
 	if (isString(color)) {
-		const rgbaColor = parseColor(color)?.color
+		const rgbaColor = parseColor(color)
 		if (!rgbaColor) {
 			return
 		}
@@ -105,8 +105,7 @@ export const calcSizes = (pixelSize: number, borderSize: number) => {
 		'--px-small-compat-size': smallSize - INTERVAL,
 		'--px-large-compat-base-size': largeSubSize - 2 * borderSize,
 		'--px-medium-compat-base-size': mediumSubSize - 2 * borderSize,
-		'--px-small-compat-base-size': smallSubSize - 2 * borderSize,
-		'--px-half-bit': pixelSize / 2
+		'--px-small-compat-base-size': smallSubSize - 2 * borderSize
 	}
 }
 

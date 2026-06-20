@@ -347,6 +347,10 @@ describe('Slider Component', () => {
 				onFocus: focus,
 				onBlur: blur
 			},
+			attrs: {
+				onfocus: focus,
+				onblur: blur
+			},
 			attachTo: 'body'
 		})
 		const thumb = wrapper.find('.px-slider-thumb')
@@ -355,6 +359,12 @@ describe('Slider Component', () => {
 		await new Promise((res) => setTimeout(res, 300))
 		expect(focus).toBeCalledTimes(1)
 		expect(blur).toBeCalledTimes(1)
+
+		wrapper.trigger('focus')
+		wrapper.trigger('blur')
+		await new Promise((res) => setTimeout(res, 250))
+		expect(focus).toBeCalledTimes(2)
+		expect(blur).toBeCalledTimes(2)
 	})
 
 	it('value should not exceed max and min', async () => {

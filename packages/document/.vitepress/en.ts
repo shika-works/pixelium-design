@@ -1,8 +1,14 @@
 import { defineConfig } from 'vitepress'
 import { dfs4Md } from './dfs-4-md'
-import { newItems, titleMapEn, additionMapEn } from './share'
 
-const sidebar = dfs4Md('en', titleMapEn, additionMapEn, newItems)
+const titleMap = {
+	starting: 'Quickly Starting',
+	intro: 'Introduction',
+	theme: 'Custom Theme',
+	i18n: 'Internationalization'
+}
+const additionMap = {}
+const sidebar = dfs4Md('en', titleMap, additionMap)
 
 export default defineConfig({
 	title: 'Pixelium Design',

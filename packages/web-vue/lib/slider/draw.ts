@@ -197,28 +197,20 @@ export const drawThumbBorder = (
 export const drawThumb = (
 	thumbRef: ShallowRef<HTMLDivElement | null>,
 	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>,
-	thumbFocus: boolean,
 	thumbStartRef: ShallowRef<HTMLDivElement | null>,
 	thumbStartCanvasRef: ShallowRef<HTMLCanvasElement | null>,
-	thumbStartFocus: boolean,
 	thumbEndRef: ShallowRef<HTMLDivElement | null>,
 	thumbEndCanvasRef: ShallowRef<HTMLCanvasElement | null>,
-	thumbEndFocus: boolean,
 	range: boolean,
 	rad: [number, number][],
 	pixelSize: number,
-	thumbColor: RgbaColor
+	thumbColor: RgbaColor,
+	borderColor: RgbaColor
 ) => {
 	if (range) {
 		const thumbStartPreprocessData = canvasPreprocess(thumbStartRef, thumbStartCanvasRef)
-		const startBorderColor = !thumbStartFocus
-			? getGlobalThemeColor('neutral', 10)
-			: getGlobalThemeColor('primary', 6)
 		const thumbEndPreprocessData = canvasPreprocess(thumbEndRef, thumbEndCanvasRef)
-		const endBorderColor = !thumbEndFocus
-			? getGlobalThemeColor('neutral', 10)
-			: getGlobalThemeColor('primary', 6)
-		if (thumbStartPreprocessData && startBorderColor) {
+		if (thumbStartPreprocessData) {
 			const { ctx, width, height, canvas } = thumbStartPreprocessData
 
 			const borderRadius = getBorderRadius(
@@ -232,19 +224,10 @@ export const drawThumb = (
 				false
 			)
 			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-			drawThumbBorder(
-				ctx,
-				width,
-				height,
-				center,
-				borderRadius,
-				rad,
-				startBorderColor,
-				pixelSize
-			)
+			drawThumbBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
 		}
-		if (thumbEndPreprocessData && endBorderColor) {
+		if (thumbEndPreprocessData) {
 			const { ctx, width, height, canvas } = thumbEndPreprocessData
 
 			const borderRadius = getBorderRadius(
@@ -258,15 +241,12 @@ export const drawThumb = (
 				false
 			)
 			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-			drawThumbBorder(ctx, width, height, center, borderRadius, rad, endBorderColor, pixelSize)
+			drawThumbBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
 		}
 	} else {
 		const thumbPreprocessData = canvasPreprocess(thumbRef, thumbCanvasRef)
-		const borderColor = !thumbFocus
-			? getGlobalThemeColor('neutral', 10)
-			: getGlobalThemeColor('primary', 6)
-		if (thumbPreprocessData && borderColor) {
+		if (thumbPreprocessData) {
 			const { ctx, width, height, canvas } = thumbPreprocessData
 			const borderRadius = getBorderRadius(
 				canvas,

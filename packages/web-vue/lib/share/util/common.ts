@@ -2,7 +2,7 @@ import { clamp, isObject } from 'parsnip-kit'
 import type { GroupOption, Option } from '../type'
 import { GROUP_OPTION_TYPE } from '../const'
 
-export const fillArr = <T = number>(val: T, size: number) => Array(size).fill(val) as T[]
+export const fillArr = (val: number, size: number) => Array(size).fill(val) as number[]
 
 export const defaultFilter = <T extends string | Option | GroupOption>(
 	keyword: string,

@@ -10,11 +10,6 @@ import InputTag from '../../input-tag/index.vue'
 import InputGroupLabel from '../../input-group-label/index.vue'
 import Select from '../../select/index.vue'
 import { createMocks } from '../../share/util/test'
-import BaseDatePicker from '../../base-date-picker/index.vue'
-import DatePicker from '../../date-picker/index.vue'
-import DateTimePicker from '../../date-time-picker/index.vue'
-import TimePicker from '../../time-picker/index.vue'
-import ColorPicker from '../../color-picker/index.vue'
 
 describe('InputGroup', () => {
 	const { post, pre } = createMocks()
@@ -62,26 +57,6 @@ describe('InputGroup', () => {
 			{
 				component: Select,
 				getter: specialStateGetter
-			},
-			{
-				component: BaseDatePicker,
-				getter: specialStateGetter
-			},
-			{
-				component: DatePicker,
-				getter: specialStateGetter
-			},
-			{
-				component: TimePicker,
-				getter: specialStateGetter
-			},
-			{
-				component: DateTimePicker,
-				getter: specialStateGetter
-			},
-			{
-				component: ColorPicker,
-				getter: specialStateGetter
 			}
 		]
 
@@ -108,8 +83,9 @@ describe('InputGroup', () => {
 
 				const curs = wrapper.findAllComponents(cur)
 
-				await nextTick()
 				expect(curs.length).toBe(3)
+
+				await nextTick()
 
 				const curInstances = curs.map((cur) => getter(cur))
 

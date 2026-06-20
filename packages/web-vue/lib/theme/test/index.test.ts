@@ -19,8 +19,7 @@ describe('calcSizes', () => {
 			'--px-small-compat-size': 24,
 			'--px-small-size': 28,
 			'--px-small-sub-base-size': 12,
-			'--px-small-sub-size': 20,
-			'--px-half-bit': 2
+			'--px-small-sub-size': 20
 		})
 	})
 
@@ -41,8 +40,7 @@ describe('calcSizes', () => {
 			'--px-small-compat-size': 24,
 			'--px-small-size': 28,
 			'--px-small-sub-base-size': 16,
-			'--px-small-sub-size': 20,
-			'--px-half-bit': 2
+			'--px-small-sub-size': 20
 		})
 	})
 
@@ -63,8 +61,7 @@ describe('calcSizes', () => {
 			'--px-small-compat-size': 20,
 			'--px-small-size': 24,
 			'--px-small-sub-base-size': 12,
-			'--px-small-sub-size': 16,
-			'--px-half-bit': 1
+			'--px-small-sub-size': 16
 		})
 	})
 })

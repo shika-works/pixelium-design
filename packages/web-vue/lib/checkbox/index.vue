@@ -10,7 +10,7 @@
 		}"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
-		@mousedown="wrapperMousedownHandler"
+		@mousedown="focusInputHandler"
 		@focusout="blurHandler"
 		@focusin="focusHandler"
 	>
@@ -55,7 +55,7 @@ import type { CheckboxGroupProvide } from '../checkbox-group/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
 import { usePolling } from '../share/hook/use-polling'
-import { useFocusMode } from '../share/hook/use-focus-mode'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 defineOptions({
 	name: 'Checkbox'
 })
@@ -114,9 +114,15 @@ const pollSizeChangeComputed = createProvideComputed(
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const boxRef = shallowRef<HTMLDivElement | null>(null)
 
+const focusFlag = ref(false)
 const hoverFlag = ref(false)
 
 const checkboxRef = shallowRef<HTMLInputElement | null>(null)
+const focusInputHandler = () => {
+	setTimeout(() => {
+		checkboxRef.value?.focus()
+	}, 0)
+}
 
 const mouseenterHandler = () => {
 	hoverFlag.value = true
@@ -126,20 +132,26 @@ const mouseleaveHandler = () => {
 	hoverFlag.value = false
 }
 
-const { focusMode, focusHandler, blurHandler, wrapperMousedownHandler } = useFocusMode(
-	{
-		onFocus: (e, isFirstFocus) => {
-			if (isFirstFocus) {
-				emits('focus', e)
-			}
-		},
-		onBlur: (e) => {
-			emits('blur', e)
-			formItemProvide?.blurHandler()
-		}
-	},
-	checkboxRef
-)
+const [wait, cancel] = useCancelableDelay()
+
+const blurHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
+	emits('blur', e)
+	focusFlag.value = false
+	formItemProvide?.blurHandler()
+}
+
+const focusHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusFlag.value
+	focusFlag.value = true
+	if (!currentFocus) {
+		emits('focus', e)
+	}
+}
 
 const inputHandler = async (e: InputEvent) => {
 	const target = e.target as HTMLInputElement
@@ -236,7 +248,7 @@ watch(
 	[
 		darkMode,
 		hoverFlag,
-		focusMode,
+		focusFlag,
 		modelValue,
 		() => props.indeterminate,
 		disabledComputed,
