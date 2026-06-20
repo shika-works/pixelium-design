@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { titleCase } from 'parsnip-kit'
+import { order, guideOrder } from './share'
 
 const badge = `<span class="VPBadge tip" style="background-color: rgba(203, 231, 202, 1);color: rgba(0, 180, 42, 1)">NEW!</span>`
 
@@ -8,7 +9,8 @@ const dfs = (
 	prefix: string[],
 	container: any[],
 	titleMap: Record<string, string>,
-	additionMap?: Record<string, string>
+	additionMap: Record<string, string>,
+	newItems: string[]
 ) => {
 	files.forEach((file) => {
 		if (['.vitepress', 'index.md', 'template', 'script'].includes(file)) {
@@ -28,7 +30,7 @@ const dfs = (
 				collapsible: true,
 				collapsed: false
 			})
-			dfs(curFiles, prefix, curContainer, titleMap, additionMap)
+			dfs(curFiles, prefix, curContainer, titleMap, additionMap, newItems)
 			prefix.pop()
 		} else {
 			const [fileName, ext] = file.split('.')
@@ -49,51 +51,15 @@ const dfs = (
 	})
 }
 
-const newItems: string[] = [
-	'dialog',
-	'popconfirm',
-	'badge',
-	'back-top',
-	'progress',
-	'menu',
-	'i18n',
-	'drop-down',
-	'breadcrumb',
-	'scroll-bar',
-	'table',
-	'pagination'
-]
-
-const order = [
-	'guide',
-	'config',
-	'common',
-	'layout',
-	'data-input',
-	'data-display',
-	'navigation',
-	'feedback',
-	'base',
-	'fabulous-idea'
-]
-
-const guideOrder = [
-	'intro',
-	'starting',
-	'controlled-and-uncontrolled',
-	'update-plan',
-	'changelog',
-	'example'
-]
-
 export const dfs4Md = (
 	lang: string,
 	titleMap: Record<string, string>,
-	additionMap?: Record<string, string>
+	additionMap: Record<string, string>,
+	newItems: string[]
 ) => {
 	const ans: any[] = []
 	const files = fs.readdirSync(lang)
-	dfs(files, [lang], ans, titleMap, additionMap)
+	dfs(files, [lang], ans, titleMap, additionMap, newItems)
 	const orderedAns: any[] = []
 	order.forEach((e) => {
 		const entity = ans.find((item) => item.key?.toLowerCase() === e)
