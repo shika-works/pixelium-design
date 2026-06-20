@@ -8,9 +8,10 @@
 			[`px-switch__active`]: progress > MID_PROGRESS,
 			[`px-switch__inactive`]: progress <= MID_PROGRESS
 		}"
-		@mousedown="wrapperMousedownHandler"
-		@focusin="focusHandler"
-		@focusout="blurHandler"
+		ref="switchRef"
+		@mousedown="mousedownHandler"
+		@focusin="focusinHandler"
+		@focusout="focusoutHandler"
 	>
 		<div
 			class="px-switch-prefix-wrapper"
@@ -101,7 +102,7 @@ import { inBrowser } from '../share/util/env'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
 import { usePolling } from '../share/hook/use-polling'
-import { useFocusMode } from '../share/hook/use-focus-mode'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { debounce, isNullish } from 'parsnip-kit'
 
 const MID_PROGRESS = 0.5
@@ -127,7 +128,7 @@ const darkMode = useDarkMode()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const buttonCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const switchButtonRef = shallowRef<HTMLDivElement | null>(null)
+const switchButtonRef = shallowRef<HTMLLabelElement | null>(null)
 const canvasWrapperRef = shallowRef<HTMLDivElement | null>(null)
 
 const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
@@ -175,22 +176,34 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
+const [wait, cancel] = useCancelableDelay()
+const focusState = ref(false)
 const checkboxRef = shallowRef<HTMLInputElement | null>(null)
 
-const { focusHandler, blurHandler, wrapperMousedownHandler } = useFocusMode(
-	{
-		onFocus: (e, isFirstFocus) => {
-			if (isFirstFocus) {
-				emits('focus', e)
-			}
-		},
-		onBlur: (e) => {
-			emits('blur', e)
-			formItemProvide?.blurHandler()
-		}
-	},
-	checkboxRef
-)
+const mousedownHandler = () => {
+	setTimeout(() => {
+		checkboxRef.value?.focus()
+	}, 0)
+}
+
+const focusoutHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
+
+	emits('blur', e)
+	formItemProvide?.blurHandler()
+}
+
+const focusinHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusState.value
+	focusState.value = true
+	if (!currentFocus) {
+		emits('focus', e)
+	}
+}
 
 onMounted(() => {
 	nextTick(() => {
@@ -231,12 +244,12 @@ const getMainColor = () => {
 	}
 	return progress.value > MID_PROGRESS
 		? props.activeColor
-			? parseColor(props.activeColor)?.color
+			? parseColor(props.activeColor)
 			: disabledComputed.value
 				? getGlobalThemeColor('primary', 2)
 				: getGlobalThemeColor('primary', 6)
 		: props.inactiveColor
-			? parseColor(props.inactiveColor)?.color
+			? parseColor(props.inactiveColor)
 			: disabledComputed.value
 				? getGlobalThemeColor('neutral', 6)
 				: getGlobalThemeColor('neutral', 8)
@@ -352,10 +365,7 @@ const refresh = () => {
 	updateSize()
 }
 
-useResizeObserver(canvasWrapperRef, refresh, () => {
-	drawPixel()
-	updateSize()
-})
+useResizeObserver(canvasWrapperRef, refresh)
 useWatchGlobalCssVal(refresh)
 useTransitionEnd(canvasWrapperRef, refresh)
 

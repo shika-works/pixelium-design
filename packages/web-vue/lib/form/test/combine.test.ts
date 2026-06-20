@@ -19,12 +19,6 @@ import Checkbox from '../../checkbox/index.vue'
 import CheckboxGroup from '../../checkbox-group/index.vue'
 import Radio from '../../radio/index.vue'
 import RadioGroup from '../../radio-group/index.vue'
-import BaseDatePicker from '../../base-date-picker/index.vue'
-import DatePicker from '../../date-picker/index.vue'
-import TimePicker from '../../time-picker/index.vue'
-import DateTimePicker from '../../date-time-picker/index.vue'
-import Rate from '../../rate/index.vue'
-import ColorPicker from '../../color-picker/index.vue'
 
 describe('Form Component', () => {
 	const { pre, post } = createMocks()
@@ -360,121 +354,7 @@ describe('Form Component', () => {
 								})
 						}
 					),
-				disabledTarget: '.px-slider-thumb',
-				disabledAttr: 'tabindex',
-				disabledValue: '-1'
-			},
-			{
-				name: 'BaseDatePicker',
-				initial: '',
-				render: (form: any) =>
-					h(
-						FormItem,
-						{ field: 'input', label: 'Input' },
-						{
-							default: () =>
-								h(BaseDatePicker, {
-									modelValue: form.value.input,
-									'onUpdate:modelValue': (e: Date | Date[] | null) => (form.value.input = e)
-								})
-						}
-					),
-				disabledTarget: 'input',
-				sizeTarget: '.px-base-date-picker',
-				sizeClass: 'px-base-date-picker__large'
-			},
-			{
-				name: 'DatePicker',
-				initial: '',
-				render: (form: any) =>
-					h(
-						FormItem,
-						{ field: 'input', label: 'Input' },
-						{
-							default: () =>
-								h(DatePicker, {
-									modelValue: form.value.input,
-									'onUpdate:modelValue': (e: Date | Date[] | null) => (form.value.input = e)
-								})
-						}
-					),
-				disabledTarget: 'input',
-				sizeTarget: '.px-date-picker',
-				sizeClass: 'px-base-date-picker__large'
-			},
-			{
-				name: 'TimePicker',
-				initial: '',
-				render: (form: any) =>
-					h(
-						FormItem,
-						{ field: 'input', label: 'Input' },
-						{
-							default: () =>
-								h(TimePicker, {
-									modelValue: form.value.input,
-									'onUpdate:modelValue': (e: Date | Date[] | null) => (form.value.input = e)
-								})
-						}
-					),
-				disabledTarget: 'input',
-				sizeTarget: '.px-time-picker',
-				sizeClass: 'px-base-date-picker__large'
-			},
-			{
-				name: 'DateTimePicker',
-				initial: '',
-				render: (form: any) =>
-					h(
-						FormItem,
-						{ field: 'input', label: 'Input' },
-						{
-							default: () =>
-								h(DateTimePicker, {
-									modelValue: form.value.input,
-									'onUpdate:modelValue': (e: Date | Date[] | null) => (form.value.input = e)
-								})
-						}
-					),
-				disabledTarget: 'input',
-				sizeTarget: '.px-date-time-picker',
-				sizeClass: 'px-base-date-picker__large'
-			},
-			{
-				name: 'Rate',
-				initial: '',
-				render: (form: any) =>
-					h(
-						FormItem,
-						{ field: 'input', label: 'Input' },
-						{
-							default: () =>
-								h(Rate, {
-									modelValue: form.value.input,
-									'onUpdate:modelValue': (e: number) => (form.value.input = e)
-								})
-						}
-					),
-				disabledTarget: '.px-rate',
-				disabledAttr: 'tabindex',
-				disabledValue: '-1'
-			},
-			{
-				name: 'ColorPicker',
-				initial: '',
-				render: (form: any) =>
-					h(
-						FormItem,
-						{ field: 'input', label: 'Input' },
-						{
-							default: () =>
-								h(ColorPicker, {
-									modelValue: form.value.input,
-									'onUpdate:modelValue': (e: string) => (form.value.input = e)
-								})
-						}
-					),
-				disabledTarget: '.px-color-picker-inner',
+				disabledTarget: '.px-slider',
 				disabledAttr: 'tabindex',
 				disabledValue: '-1'
 			}

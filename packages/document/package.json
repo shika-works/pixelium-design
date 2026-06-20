@@ -5,14 +5,14 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"docs:dev": "npm run format && node script/gen-doc-watch.mts",
-		"docs:build": "npm run format && npm run build && vitepress build",
+		"docs:dev": "npm run lint:fix && npm run build && vitepress dev",
+		"docs:build": "npm run lint:fix && npm run build && vitepress build",
 		"docs:preview": "vitepress preview",
 		"build": "node script/gen-doc.mts",
-		"format": "oxlint ./ --fix && prettier ./ --write --no-cache"
+		"lint:fix": "oxlint ./ --fix && prettier ./ --write --no-cache"
 	},
 	"devDependencies": {
-		"parsnip-kit": "^0.1.0",
+		"parsnip-kit": "^0.0.7",
 		"vitepress": "2.0.0-alpha.12"
 	},
 	"dependencies": {

@@ -116,12 +116,11 @@ const drawPixel = () => {
 	)
 
 	const backgroundColor =
-		(props.backgroundColor && parseColor(props.backgroundColor)?.color) ||
+		(props.backgroundColor && parseColor(props.backgroundColor)) ||
 		getGlobalThemeColor('neutral', 7)
 
 	const borderColor = props.bordered
-		? (props.borderColor && parseColor(props.borderColor)?.color) ||
-			getGlobalThemeColor('neutral', 10)
+		? (props.borderColor && parseColor(props.borderColor)) || getGlobalThemeColor('neutral', 10)
 		: backgroundColor
 	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 	const rad = BORDER_CORNER_RAD_RANGE

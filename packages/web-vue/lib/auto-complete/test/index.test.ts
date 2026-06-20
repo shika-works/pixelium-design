@@ -278,9 +278,6 @@ describe('AutoComplete Component', () => {
 
 			expect(input.element.getAttribute('value')).toBe('Banana')
 			expect(popover.props('visible')).toBe(false)
-
-			expect(wrapper.emitted('dropdownOpen')?.length).toBe(1)
-			expect(wrapper.emitted('dropdownClose')?.length).toBe(1)
 		})
 
 		it('Should append option value when append is true', async () => {

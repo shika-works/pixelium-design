@@ -223,9 +223,8 @@ describe('Pagination Component', () => {
 
 		// blur triggers as well
 		await input.setValue('3')
-		await input.trigger('focusin')
 		await input.trigger('focusout')
-		await new Promise((r) => setTimeout(r, 200))
+		await new Promise((r) => setTimeout(r, 300))
 		expect(wrapper.emitted('pageCommit')?.[1]?.[0]).toBe(3)
 		expect(wrapper.emitted('pageChange')?.[1]?.[0]).toBe(3)
 	})

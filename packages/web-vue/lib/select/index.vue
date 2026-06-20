@@ -53,8 +53,7 @@ import {
 	isNumber,
 	isObject,
 	isString,
-	isUndefined,
-	wait
+	isUndefined
 } from 'parsnip-kit'
 import {
 	BORDER_CORNER_RAD_RANGE,
@@ -66,11 +65,10 @@ import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
-import { useFocusMode } from '../share/hook/use-focus-mode'
-import { getScopedObj } from '../share/util/render'
 
 defineOptions({
 	name: 'Select',
@@ -332,6 +330,11 @@ const changeHandler = (e: Event) => {
 	const target = e.target as HTMLInputElement
 	emits('inputChange', target.value, e)
 }
+
+const [wait, cancel] = useCancelableDelay()
+
+const focusMode = ref(false)
+
 const setupSelect = () => {
 	nextTick(() => {
 		if (inputRef.value && props.filterable) {
@@ -348,47 +351,88 @@ const setupSelect = () => {
 	triggerPopover()
 }
 
-const clearDropdown = () => {
+let clickTagPopupContentFlag = false
+
+const focusHandler = async (e: FocusEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
+		return
+	}
+	cancel()
+	const currentFocusMode = focusMode.value
+	focusMode.value = true
+
+	const target = e.target
+	if (target instanceof HTMLElement || target instanceof SVGElement) {
+		if (!closeRef.value?.$el.contains(target) && !clickTagPopupContentFlag) {
+			setupSelect()
+		}
+		if (clickTagPopupContentFlag) {
+			clickTagPopupContentFlag = false
+		}
+	}
+
+	if (!currentFocusMode) {
+		emits('focus', e)
+	}
+}
+
+const mousedownHandler = async (e: MouseEvent) => {
+	if (disabledComputed.value || readonlyComputed.value) {
+		return
+	}
+	const target = e.target
+	if (target instanceof HTMLElement || target instanceof SVGElement) {
+		if (closeRef.value?.$el.contains(target)) {
+			return
+		}
+	}
+	if (focusMode.value && !popoverVisible.value) {
+		setupSelect()
+	}
+	setTimeout(() => {
+		contentRef.value?.focus()
+	}, 0)
+}
+
+const blurSelectImpl = async () => {
+	const next = await wait()
+	if (!next) {
+		return next
+	}
+
+	focusMode.value = false
 	closePopover()
+	inputRef.value?.blur()
+	contentRef.value?.blur()
 	setTimeout(async () => {
 		await updateInputValue('')
 		emits('inputChange', '')
 	}, ANIMATION_DURATION)
+	return next
 }
 
-const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
-	useFocusMode(
-		{
-			onFocus: async (e, isFirstFocus) => {
-				if (!isFirstFocus) {
-					return
-				}
-				if (disabledComputed.value || readonlyComputed.value) {
-					return
-				}
-				emits('focus', e)
-			},
-			onBlur: (e) => {
-				clearDropdown()
-				emits('blur', e)
-				formItemProvide?.blurHandler()
-			},
-			onWrapperMousedown: (e) => {
-				if (disabledComputed.value || readonlyComputed.value) {
-					return false
-				}
-				const target = e.target
-				if (target instanceof HTMLElement || target instanceof SVGElement) {
-					if (!closeRef.value?.$el.contains(target)) {
-						setupSelect()
-					} else {
-						clearDropdown()
-					}
-				}
-			}
-		},
-		contentRef
-	)
+const blurSelect = async (e: FocusEvent) => {
+	const next = await blurSelectImpl()
+	if (!next) {
+		return
+	}
+	emits('blur', e)
+	formItemProvide?.blurHandler()
+}
+
+const focusoutHandler = (e: FocusEvent) => {
+	const relatedTarget = e.relatedTarget as Node
+	const triggerEl = popoverRef.value?.triggerContent?.content
+	const containEl = popoverRef.value?.triggerContent?.content
+
+	if (relatedTarget && triggerEl?.contains(relatedTarget)) {
+		return
+	}
+	if (relatedTarget && containEl?.contains(relatedTarget)) {
+		return
+	}
+	blurSelect(e)
+}
 
 const hoverFlag = ref(false)
 const mouseenterHandler = () => {
@@ -423,16 +467,18 @@ const getNextModelValue = (value: any) => {
 }
 
 const selectHandler = async (value: any, option: string | SelectOption, e: MouseEvent) => {
-	await wait(0)
+	await new Promise((res) => setTimeout(res))
 	const nextValue = getNextModelValue(value)
-	const nextInputValue = isString(option) ? option : option.label
+	const nextInputValue = ''
 	await updateModelValue(nextValue)
 	if (!props.multiple) {
 		closePopover()
 		emits('select', nextValue, option, e)
 		emits('change', nextValue)
 		formItemProvide?.changeHandler()
-		await updateInputValue(nextInputValue)
+		setTimeout(async () => {
+			await updateInputValue(nextInputValue)
+		}, ANIMATION_DURATION)
 	}
 }
 
@@ -507,7 +553,7 @@ const expose: any = {
 		contentRef.value?.focus()
 	},
 	blur: () => {
-		clearDropdown()
+		blurSelectImpl()
 	},
 	clear: () => clearHandler(),
 	[GET_ELEMENT_RENDERED]: () => wrapperRef.value
@@ -526,14 +572,6 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 		popoverVisible.value = value
 	}
 }
-
-watch(popoverVisible, () => {
-	if (popoverVisible.value) {
-		emits('dropdownOpen')
-	} else {
-		emits('dropdownClose')
-	}
-})
 
 const showPlaceholder = computed(() => {
 	return (
@@ -705,6 +743,21 @@ usePolling(pollSizeChangeComputed, () => {
 	}
 })
 
+const popupContentMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		contentRef.value?.focus()
+	}, 0)
+}
+
+const tagPopupContentMousedownHandler = () => {
+	setTimeout(() => {
+		clickTagPopupContentFlag = true
+		cancel()
+		contentRef.value?.focus()
+	}, 0)
+}
+
 const popoverProps = computed(() => {
 	return {
 		...props.popoverProps,
@@ -714,8 +767,6 @@ const popoverProps = computed(() => {
 		}
 	}
 })
-
-const scopedObj = getScopedObj(instance)
 
 defineRender(() => {
 	const Inner = (
@@ -786,7 +837,7 @@ defineRender(() => {
 							<Popup
 								{...popoverProps.value}
 								contentProps={{
-									onMousedown: popupMousedownHandler
+									onMousedown: tagPopupContentMousedownHandler
 								}}
 							>
 								{{
@@ -924,26 +975,16 @@ defineRender(() => {
 			<canvas ref={canvasRef} class="px-select-canvas" />
 		</Fragment>
 	)
-	const mergedProps = mergeProps(
-		{
-			ref: wrapperRef,
-			class: [
-				'pixelium px-select',
-				sizeComputed.value && `px-select__${sizeComputed.value}`,
-				shapeComputed.value && `px-select__${shapeComputed.value}`,
-				{ 'px-select__inner': !!inputGroupProvide },
-				{ 'px-select__disabled': disabledComputed.value },
-				{ 'px-select__readonly': readonlyComputed.value }
-			],
-			onFocusin: focusHandler,
-			onFocusout: blurHandler,
-			onMousedown: wrapperMousedownHandler,
-			onMouseenter: mouseenterHandler,
-			onMouseleave: mouseleaveHandler
-		},
-		attrs,
-		scopedObj
-	)
+	const scopeObj: Record<string, ''> = {}
+	const scopeId = instance?.vnode.scopeId
+	const parentScopeId = instance?.vnode.scopeId
+	if (scopeId) {
+		scopeObj[scopeId] = ''
+	}
+	if (parentScopeId) {
+		scopeObj[parentScopeId] = ''
+	}
+	const pixelSize = calcPixelSize()
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -953,15 +994,38 @@ defineRender(() => {
 			visible={popoverVisible.value}
 			onUpdate:visible={popoverVisibleUpdateHandler}
 			trigger="click"
+			contentStyle={{ padding: `${pixelSize}px` }}
 			ref={popoverRef}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
-				onMousedown: popupMousedownHandler
+				onMousedown: popupContentMousedownHandler
 			}}
-			{...(props.dropdownProps || {})}
 		>
 			{{
-				default: () => h('div', mergedProps, [Inner]),
+				default: () =>
+					h(
+						'div',
+						mergeProps(
+							{
+								ref: wrapperRef,
+								class: [
+									'pixelium px-select',
+									sizeComputed.value && `px-select__${sizeComputed.value}`,
+									shapeComputed.value && `px-select__${shapeComputed.value}`,
+									{ 'px-select__inner': !!inputGroupProvide },
+									{ 'px-select__disabled': disabledComputed.value }
+								],
+								onFocusin: focusHandler,
+								onFocusout: focusoutHandler,
+								onMousedown: mousedownHandler,
+								onMouseenter: mouseenterHandler,
+								onMouseleave: mouseleaveHandler,
+								...scopeObj
+							},
+							attrs
+						),
+						[Inner]
+					),
 				content: () =>
 					optionsFiltered.value.length ? (
 						<OptionList

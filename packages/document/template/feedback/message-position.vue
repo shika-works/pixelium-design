@@ -14,7 +14,7 @@
 </template>
 <script lang="ts" setup>
 const textMap: Record<string, string> = {
-	'top-left': 'Top Left',
+	'top-eft': 'Top Left',
 	top: 'Top',
 	'top-right': 'Top Right',
 	'bottom-left': 'Bottom Left',

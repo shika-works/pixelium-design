@@ -7,13 +7,11 @@
 			marginTop: props.direction === 'horizontal' ? marginComputed : undefined,
 			marginBottom: props.direction === 'horizontal' ? marginComputed : undefined,
 			borderBottomWidth: props.direction === 'horizontal' ? sizeComputed : undefined,
-			borderRightWidth: props.direction === 'vertical' ? sizeComputed : undefined,
-			borderColor: props.color
+			borderRightWidth: props.direction === 'vertical' ? sizeComputed : undefined
 		}"
 		:class="{
 			[`px-divider__${props.direction}`]: true,
-			[`px-divider__${props.variant}`]: true,
-			[`px-divider__soft`]: props.soft
+			[`px-divider__${props.variant}`]: true
 		}"
 	></div>
 </template>

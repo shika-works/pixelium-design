@@ -184,7 +184,6 @@ useResizeObserver(
 			width: labelRef.value.clientWidth
 		})
 	},
-	undefined,
 	true
 )
 onBeforeUnmount(() => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, mergeProps, useAttrs } from 'vue'
+import { useAttrs } from 'vue'
 import Dialog from './dialog.vue'
 import type { DialogEvents, DialogExpose, DialogProps } from './type'
 import { forwardEmits } from '../share/util/reactivity'
@@ -56,14 +56,15 @@ defineExpose<DialogExpose>({
 		setVisible(true)
 	}
 })
-
-const mergedProps = computed(() => {
-	return mergeProps(props, forward, attrs)
-})
 </script>
 
 <template>
-	<Dialog v-bind="mergedProps" :visible="visible" @ok="okHandler" @cancel="cancelHandler">
+	<Dialog
+		v-bind="{ ...props, ...forward, ...attrs }"
+		:visible="visible"
+		@ok="okHandler"
+		@cancel="cancelHandler"
+	>
 		<template #title>
 			<slot name="title" />
 		</template>

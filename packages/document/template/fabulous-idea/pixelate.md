@@ -27,11 +27,9 @@ function pixelateImage(imageSource: string | HTMLImageElement, pixelSize: number
 [[[zh
 `options.palette` 限制像素化后可用的调色板，`options.background` 是涉及透明度时，对比颜色之间的距离的参考背景色，默认 #FFF，该参数 alpha 通道会被忽略。
 
-这两个参数的格式详见 [支持的颜色解析](../config/supported-color-parsing)。
+这两个参数都支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
 ]]]
-
 [[[en
 `options.palette` restricts the available palette after pixelation, and `options.background` is the reference background color for the distance between contrasting colors when transparency is involved, defaulting to #FFF, with the alpha channel being ignored.
 
-For the format of these two parameters, see [Supported Color Parsing](../config/supported-color-parsing).
-]]]
+Both parameters support CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values. ]]]

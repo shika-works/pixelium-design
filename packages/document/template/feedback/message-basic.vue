@@ -14,7 +14,7 @@ const callByWindow = () => {
 	$message('Global Message')
 }
 const callByCurrentInstance = () => {
-	instance?.appContext.config.globalProperties.PixeliumVue.message('Global Message')
+	instance.appContext.config.globalProperties.PixeliumVue.message('Global Message')
 }
 const callByOnDemandImport = () => {
 	Message('Global Message')

@@ -11,8 +11,9 @@
 		ref="sliderRef"
 		@click.self="selectSliderHandler"
 		@mousedown="focusSliderHandler"
-		@focusin="focusHandler"
-		@focusout="blurHandler"
+		:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+		@focusin="focusinHandler"
+		@focusout="focusoutHandler"
 	>
 		<div class="px-slider-mark-wrapper" ref="markWrapperRef">
 			<template v-if="markPoints.length">
@@ -40,10 +41,9 @@
 			variant="dark"
 			v-bind="props.tooltipProps"
 			:content-props="{
-				onMousedown: thumbPopupMousedownHandler
+				onMousedown: numberDisplayMousedownHandler
 			}"
-			:visible="props.tooltip ? undefined : false"
-			v-if="!props.range"
+			v-if="props.tooltip && !props.range"
 		>
 			<div
 				class="px-slider-thumb"
@@ -53,8 +53,6 @@
 				}"
 				@mousedown="startDrag"
 				@touchstart.passive="startDrag"
-				@focusin="thumbFocusHandler"
-				@focusout="thumbBlurHandler"
 				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 				ref="thumbRef"
 			>
@@ -69,16 +67,31 @@
 				</div>
 			</template>
 		</Popup>
-		<template v-else>
+		<div
+			v-if="!props.range && !props.tooltip"
+			class="px-slider-thumb"
+			:style="{
+				left: props.direction === 'horizontal' ? thumbLeft + 'px' : undefined,
+				bottom: props.direction === 'horizontal' ? undefined : thumbLeft + 'px'
+			}"
+			@mousedown="startDrag"
+			@touchstart.passive="startDrag"
+			:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+			ref="thumbRef"
+		>
+			<slot name="thumb"></slot>
+			<canvas ref="thumbCanvasRef" class="px-slider-canvas"></canvas>
+		</div>
+		<template v-if="props.range">
 			<Popup
 				:arrow="false"
 				:placement="props.direction === 'horizontal' ? 'top' : 'right'"
 				variant="dark"
 				v-bind="props.tooltipStartProps"
 				:content-props="{
-					onMousedown: thumbStartPopupMousedownHandler
+					onMousedown: numberDisplayMousedownHandler
 				}"
-				:visible="props.tooltip ? undefined : false"
+				v-if="props.tooltip"
 			>
 				<div
 					class="px-slider-thumb px-slider-thumb-start"
@@ -89,8 +102,6 @@
 					@mousedown="(e) => startDrag(e, 'start')"
 					@touchstart.passive="(e) => startDrag(e, 'start')"
 					:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
-					@focusin="thumbStartFocusHandler"
-					@focusout="thumbStartBlurHandler"
 					ref="thumbStartRef"
 				>
 					<slot name="thumb-start"></slot>
@@ -104,15 +115,31 @@
 					</div>
 				</template>
 			</Popup>
+			<div
+				v-else
+				class="px-slider-thumb px-slider-thumb-start"
+				:style="{
+					left: props.direction === 'horizontal' ? thumbLeftStart + 'px' : undefined,
+					bottom: props.direction === 'horizontal' ? undefined : thumbLeftStart + 'px'
+				}"
+				@mousedown="(e) => startDrag(e, 'start')"
+				@touchstart.passive="(e) => startDrag(e, 'start')"
+				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				ref="thumbStartRef"
+			>
+				<slot name="thumb-start"></slot>
+				<canvas ref="thumbStartCanvasRef" class="px-slider-canvas"></canvas>
+			</div>
+
 			<Popup
 				:arrow="false"
 				:placement="props.direction === 'horizontal' ? 'top' : 'right'"
 				variant="dark"
 				v-bind="props.tooltipEndProps"
 				:content-props="{
-					onMousedown: thumbEndPopupMousedownHandler
+					onMousedown: numberDisplayMousedownHandler
 				}"
-				:visible="props.tooltip ? undefined : false"
+				v-if="props.tooltip"
 			>
 				<div
 					class="px-slider-thumb px-slider-thumb-end"
@@ -123,8 +150,6 @@
 					@mousedown="(e) => startDrag(e, 'end')"
 					@touchstart.passive="(e) => startDrag(e, 'end')"
 					:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
-					@focusin="thumbEndFocusHandler"
-					@focusout="thumbEndBlurHandler"
 					ref="thumbEndRef"
 				>
 					<slot name="thumb-end"></slot>
@@ -138,6 +163,21 @@
 					</div>
 				</template>
 			</Popup>
+			<div
+				v-else
+				class="px-slider-thumb px-slider-thumb-end"
+				:style="{
+					left: props.direction === 'horizontal' ? thumbLeftEnd + 'px' : undefined,
+					bottom: props.direction === 'horizontal' ? undefined : thumbLeftEnd + 'px'
+				}"
+				@mousedown="(e) => startDrag(e, 'end')"
+				@touchstart.passive="(e) => startDrag(e, 'end')"
+				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				ref="thumbEndRef"
+			>
+				<slot name="thumb-end"></slot>
+				<canvas ref="thumbEndCanvasRef" class="px-slider-canvas"></canvas>
+			</div>
 		</template>
 		<canvas ref="canvasRef" class="px-slider-canvas"></canvas>
 		<canvas ref="dotCanvasRef" class="px-slider-canvas"></canvas>
@@ -148,9 +188,9 @@
 import {
 	clone,
 	isArray,
+	isNullish,
 	isNumber,
 	isUndefined,
-	range,
 	throttle,
 	type Nullish
 } from 'parsnip-kit'
@@ -171,17 +211,17 @@ import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import {
 	transformModelValue,
 	clampValue as clampValueImpl,
+	getTargetThumbEl,
 	calcValueFromEvent,
 	getRangeValue,
 	getSingleValue,
 	calcThumbLeft,
-	updateMarkPoints,
-	getTargetThumbElWhenRange
+	updateMarkPoints
 } from './util'
 import Popup from '../popup/index.vue'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
-import { useFocusMode } from '../share/hook/use-focus-mode'
+import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 
 defineOptions({
 	name: 'Slider'
@@ -220,6 +260,7 @@ const [modelValue, updateModelValue] = useControlledMode('modelValue', props, em
 const thumbRef = shallowRef<null | HTMLDivElement>(null)
 const thumbStartRef = shallowRef<null | HTMLDivElement>(null)
 const thumbEndRef = shallowRef<null | HTMLDivElement>(null)
+const markWrapperRef = shallowRef<null | HTMLDivElement>(null)
 
 const thumbCanvasRef = shallowRef<null | HTMLCanvasElement>(null)
 const thumbStartCanvasRef = shallowRef<null | HTMLCanvasElement>(null)
@@ -377,14 +418,6 @@ const handleDrag = (e: MouseEvent | TouchEvent) => {
 	doUpdateThrottle(e)
 }
 
-const getTargetEl = (e: MouseEvent | TouchEvent) => {
-	if (!props.range) {
-		return { thumbEl: thumbRef.value, targetType: null }
-	} else {
-		return getTargetThumbElWhenRange(e, props.direction, thumbStartRef, thumbEndRef)
-	}
-}
-
 const preprocessBeforeUpdate = (e: MouseEvent | TouchEvent, clickFlag: boolean) => {
 	let targetType = draggingTarget.value
 	const sliderEl = sliderRef.value
@@ -401,7 +434,12 @@ const preprocessBeforeUpdate = (e: MouseEvent | TouchEvent, clickFlag: boolean) 
 		if (!props.range) {
 			thumbEl = thumbRef.value
 		} else {
-			const { thumbEl: el, targetType: type } = getTargetEl(e)
+			const { thumbEl: el, targetType: type } = getTargetThumbEl(
+				e,
+				props.direction,
+				thumbStartRef,
+				thumbEndRef
+			)
 			thumbEl = el
 			targetType = type
 		}
@@ -525,53 +563,65 @@ const focusSliderHandler = (e: MouseEvent) => {
 	}
 	const target = e.target as HTMLElement
 	setTimeout(() => {
-		if (target.tabIndex >= 0) {
+		if (!isNullish(target.tabIndex)) {
 			target.focus()
+		} else if (target === sliderRef.value && sliderRef.value) {
+			sliderRef.value.focus()
+		} else if (
+			markWrapperRef.value &&
+			markWrapperRef.value.contains(target) &&
+			target !== markWrapperRef.value
+		) {
+			;[...markWrapperRef.value.children]
+				.filter((e) => e instanceof HTMLDivElement && !isNullish(e.tabIndex))
+				.some((e) => {
+					if (e.contains(target)) {
+						;(e as HTMLDivElement).focus()
+						return true
+					}
+				})
 		} else if (thumbRef.value && thumbRef.value.contains(target)) {
 			thumbRef.value.focus()
 		} else if (thumbStartRef.value && thumbStartRef.value.contains(target)) {
 			thumbStartRef.value.focus()
 		} else if (thumbEndRef.value && thumbEndRef.value.contains(target)) {
 			thumbEndRef.value.focus()
-		} else {
-			const { thumbEl } = getTargetEl(e)
-			if (thumbEl) {
-				thumbEl.focus()
-			}
+		} else if (sliderRef.value) {
+			sliderRef.value.focus()
 		}
 	}, 0)
 }
 
-const { focusHandler, blurHandler } = useFocusMode({
-	onFocus: (e, isFirstFocus) => {
-		if (isFirstFocus) {
-			emits('focus', e)
-		}
-	},
-	onBlur: (e) => {
-		emits('blur', e)
-		formItemProvide?.blurHandler()
-	}
-})
+const [wait, cancel] = useCancelableDelay()
 
-const {
-	focusMode: thumbFocusMode,
-	focusHandler: thumbFocusHandler,
-	blurHandler: thumbBlurHandler,
-	popupMousedownHandler: thumbPopupMousedownHandler
-} = useFocusMode({}, thumbRef)
-const {
-	focusMode: thumbStartFocusMode,
-	focusHandler: thumbStartFocusHandler,
-	blurHandler: thumbStartBlurHandler,
-	popupMousedownHandler: thumbStartPopupMousedownHandler
-} = useFocusMode({}, thumbStartRef)
-const {
-	focusMode: thumbEndFocusMode,
-	focusHandler: thumbEndFocusHandler,
-	blurHandler: thumbEndBlurHandler,
-	popupMousedownHandler: thumbEndPopupMousedownHandler
-} = useFocusMode({}, thumbEndRef)
+const focusState = ref(false)
+
+const focusinHandler = (e: FocusEvent) => {
+	cancel()
+	const currentFocus = focusState.value
+	focusState.value = true
+	if (!currentFocus) {
+		emits('focus', e)
+	}
+}
+const focusoutHandler = async (e: FocusEvent) => {
+	const next = await wait()
+	if (!next) {
+		return
+	}
+	focusState.value = false
+	emits('blur', e)
+	formItemProvide?.blurHandler()
+}
+
+const numberDisplayMousedownHandler = () => {
+	setTimeout(() => {
+		cancel()
+		if (sliderRef.value) {
+			sliderRef.value.focus()
+		}
+	}, 0)
+}
 
 const darkMode = useDarkMode()
 
@@ -588,16 +638,6 @@ onMounted(() => {
 	})
 })
 
-watch([range, disabledComputed, readonlyComputed], (v, o) => {
-	const [range, disabled, readonly] = v
-	const [rangeOld] = o
-	if (disabled || readonly || range !== rangeOld) {
-		thumbFocusMode.value = false
-		thumbStartFocusMode.value = false
-		thumbEndFocusMode.value = false
-	}
-})
-
 watch(
 	[
 		disabledComputed,
@@ -611,10 +651,7 @@ watch(
 		markPoints,
 		modelValue,
 		() => props.direction,
-		() => props.reverse,
-		thumbFocusMode,
-		thumbStartFocusMode,
-		thumbEndFocusMode
+		() => props.reverse
 	],
 	() => {
 		nextTick(() => {
@@ -676,17 +713,15 @@ const drawPixel = () => {
 		drawThumb(
 			thumbRef,
 			thumbCanvasRef,
-			thumbFocusMode.value,
 			thumbStartRef,
 			thumbStartCanvasRef,
-			thumbStartFocusMode.value,
 			thumbEndRef,
 			thumbEndCanvasRef,
-			thumbEndFocusMode.value,
 			props.range,
 			rad,
 			pixelSize,
-			thumbColor
+			thumbColor,
+			borderColor
 		)
 	}
 

@@ -20,16 +20,5 @@ export default {
 		total: (total: number) => `Total ${total}`,
 		goto: 'Go to',
 		perPage: ' / Page'
-	},
-	'date-picker': {
-		Monday: 'Mon',
-		Tuesday: 'Tue',
-		Wednesday: 'Wed',
-		Thursday: 'Thu',
-		Friday: 'Fri',
-		Saturday: 'Sat',
-		Sunday: 'Sun',
-		'YYYY-Www': 'YYYY-Www',
-		current: 'Current'
 	}
 }
