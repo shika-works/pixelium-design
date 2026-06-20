@@ -1,12 +1,16 @@
 const newItems = [
-	'drawer',
-	'date-picker',
-	'date-time-picker',
-	'time-picker',
-	'rate',
-	'color-picker',
-	'notification',
-	'tab'
+	'dialog',
+	'popconfirm',
+	'badge',
+	'back-top',
+	'progress',
+	'menu',
+	'i18n',
+	'drop-down',
+	'breadcrumb',
+	'scroll-bar',
+	'table',
+	'pagination'
 ]
 
 const titleMapEn = {
