@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { titleCase } from 'parsnip-kit'
+import { order, guideOrder } from './share'
 
 const badge = `<span class="VPBadge tip" style="background-color: rgba(203, 231, 202, 1);color: rgba(0, 180, 42, 1)">NEW!</span>`
 
@@ -49,28 +50,6 @@ const dfs = (
 		}
 	})
 }
-
-const order = [
-	'guide',
-	'config',
-	'common',
-	'layout',
-	'data-input',
-	'data-display',
-	'navigation',
-	'feedback',
-	'base',
-	'fabulous-idea'
-]
-
-const guideOrder = [
-	'intro',
-	'starting',
-	'controlled-and-uncontrolled',
-	'update-plan',
-	'changelog',
-	'example'
-]
 
 export const dfs4Md = (
 	lang: string,
