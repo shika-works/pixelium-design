@@ -29,7 +29,7 @@ export default defineConfig({
 	},
 	// @ts-ignore
 	test: {
-		maxWorkers: 4,
+		maxWorkers: 6,
 		environment: 'jsdom',
 		testTimeout: 20 * 1000,
 		coverage: {
