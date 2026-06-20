@@ -566,7 +566,9 @@ const renderContent = (inner: JSX.Element) => {
 		{
 			ref: wrapperRef,
 			class: [
-				'pixelium px-base-date-picker',
+				'pixelium',
+				'px-base-date-picker',
+				'px-input-box',
 				sizeComputed.value && `px-base-date-picker__${sizeComputed.value}`,
 				shapeComputed.value && `px-base-date-picker__${shapeComputed.value}`,
 				{ 'px-base-date-picker__inner': !!inputGroupProvide },

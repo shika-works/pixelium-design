@@ -1,6 +1,5 @@
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
-import { useDarkMode } from '../share/hook/use-dark-mode'
 import { alphaBlend, getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import {
 	canvasPreprocess,
@@ -149,6 +148,7 @@ const drawTransparencyGridInPolygon = (
 }
 
 type UseDrawOptions = {
+	darkMode: Ref<boolean>
 	first: Ref<boolean>
 	last: Ref<boolean>
 	borderRadiusComputed: ComputedRef<ColorPickerProps['borderRadius']>
@@ -172,9 +172,8 @@ export const useDraw = (
 	pixelSize: Ref<number>,
 	options: UseDrawOptions
 ) => {
-	const darkMode = useDarkMode()
-
 	const {
+		darkMode,
 		first,
 		last,
 		borderRadiusComputed,

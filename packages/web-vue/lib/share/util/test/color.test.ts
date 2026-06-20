@@ -18,8 +18,8 @@ const {
 
 describe('color util functions', () => {
 	it('formats rgba to hex correctly', () => {
-		expect(rgbaToHex({ r: 255, g: 128, b: 64, a: 255 })).toBe('#ff8040')
-		expect(rgbaToHex({ r: 255, g: 128, b: 64, a: 128 }, true)).toBe('#ff804080')
+		expect(rgbaToHex({ r: 255, g: 128, b: 64, a: 255 })).toBe('#FF8040')
+		expect(rgbaToHex({ r: 255, g: 128, b: 64, a: 128 }, true)).toBe('#FF804080')
 	})
 
 	it('computes gray value after alpha blending against a background', () => {

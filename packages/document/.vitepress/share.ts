@@ -12,6 +12,7 @@ const newItems = [
 const titleMapEn = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
+	skill: 'AI Agent Skill',
 	theme: 'Custom Theme',
 	i18n: 'Internationalization',
 	'supported-color-parsing': 'Supported Color Parsing'
@@ -22,6 +23,7 @@ const titleMapZh = {
 	starting: '快速开始',
 	guide: '开始',
 	intro: '简介',
+	skill: 'AI Agent Skill',
 	font: '字体',
 	theme: '自定义主题',
 	'dark-mode': '暗黑模式',
@@ -95,4 +97,27 @@ const additionMapZh = {
 	notification: '通知',
 	tab: '标签页'
 }
-export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh }
+const order = [
+	'guide',
+	'config',
+	'common',
+	'layout',
+	'data-input',
+	'data-display',
+	'navigation',
+	'feedback',
+	'base',
+	'fabulous-idea'
+]
+
+const guideOrder = [
+	'intro',
+	'starting',
+	'controlled-and-uncontrolled',
+	'update-plan',
+	'changelog',
+	'example',
+	'skill'
+]
+
+export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh, order, guideOrder }

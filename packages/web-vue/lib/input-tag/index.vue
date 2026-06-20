@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="pixelium px-input-tag"
+		class="pixelium px-input-tag px-input-box"
 		ref="wrapperRef"
 		:class="{
 			[`px-input-tag__${sizeComputed}`]: !!sizeComputed,

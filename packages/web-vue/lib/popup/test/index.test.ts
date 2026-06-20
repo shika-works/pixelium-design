@@ -204,4 +204,41 @@ describe('Popup Component', () => {
 			expect(popupWrapperComp.find('.px-popup-content').exists()).toBe(true)
 		})
 	})
+
+	describe('animationDuration', () => {
+		it('sets default animation duration CSS variable', () => {
+			const wrapper = mount(Popup, {
+				props: {
+					defaultVisible: false
+				},
+				slots: {
+					default: () => h('span', 'Trigger')
+				},
+				attachTo: 'body'
+			})
+
+			const popupWrapperComp = wrapper.findComponent(PopupWrapper)
+			const popupContent = popupWrapperComp.find('.px-popup-content')
+			expect(popupContent.exists()).toBe(true)
+			expect(popupContent.attributes('style')).include('--px-animation-duration: 250ms')
+		})
+
+		it('uses custom animationDuration prop value', () => {
+			const wrapper = mount(Popup, {
+				props: {
+					defaultVisible: false,
+					animationDuration: 500
+				},
+				slots: {
+					default: () => h('span', 'Trigger')
+				},
+				attachTo: 'body'
+			})
+
+			const popupWrapperComp = wrapper.findComponent(PopupWrapper)
+			const popupContent = popupWrapperComp.find('.px-popup-content')
+			expect(popupContent.exists()).toBe(true)
+			expect(popupContent.attributes('style')).include('--px-animation-duration: 500ms')
+		})
+	})
 })

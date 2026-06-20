@@ -49,6 +49,29 @@
 ]]]
 
 [[[zh
+## v0.1.5
+> fix
+- 新增
+  - Popover、Tooltip、Popconfirm、DropDown 新增属性 `animationDuration` 控制进入、退出的动画时间。
+- 修复
+  - 修复了 Input、InputNumber、InputTag、Textarea、Select 等有输入框的组件，在暗黑模式下输入字体会变成黑色的问题。
+  - 修复了 DropDown 组件，`option` 和 `group-label` 插槽失效的问题。
+  - 修复了 DropDown、Select、AutoComplete、Menu 系列等有选项的组件，选项高度固定，影响插槽渲染的问题。
+- 相关 issue：[#116](https://github.com/shika-works/pixelium-design/issues/116)、[#118](https://github.com/shika-works/pixelium-design/issues/118)
+]]]
+[[[en
+## v0.1.5
+> fix
+- New Features
+  - Added `animationDuration` property to Popover, Tooltip, Popconfirm, and DropDown to control the enter/exit animation duration.
+- Fixes
+  - Fixed an issue where Input, InputNumber, InputTag, Textarea, Select, and other input-containing components had black input text in dark mode.
+  - Fixed an issue in DropDown where the `option` and `group-label` slots were not working.
+  - Fixed an issue in DropDown, Select, AutoComplete, Menu, and other components with options where the fixed option height affected slot rendering.
+- Related issues: [#116](https://github.com/shika-works/pixelium-design/issues/116), [#118](https://github.com/shika-works/pixelium-design/issues/118)
+]]]
+
+[[[zh
 ## v0.1.4
 > fix
 - 新增：

@@ -385,6 +385,7 @@ defineRender(() => {
 				arrow={props.arrow}
 				offset={props.offset}
 				borderRadius={props.borderRadius ?? pixelSize * 4}
+				animationDuration={props.animationDuration}
 				root={props.root}
 				widthEqual={props.widthEqual}
 				target={checkCurrentTrigger(currentTrigger.value) ? currentTrigger.value : null}

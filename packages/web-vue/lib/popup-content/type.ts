@@ -27,6 +27,11 @@ export type PopupContentProps = {
 	widthEqual?: boolean
 	contentStyle?: CSSProperties
 	destroyOnHide?: boolean
+	/**
+	 * @property {number} [animationDuration=250]
+	 * @version 0.1.5
+	 */
+	animationDuration?: number
 }
 
 export type PopupContentEvents = {

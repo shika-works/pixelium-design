@@ -472,7 +472,9 @@ defineRender(() => {
 		{
 			ref: wrapperRef,
 			class: [
-				'pixelium px-auto-complete',
+				'pixelium',
+				'px-auto-complete',
+				'px-input-box',
 				sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
 				shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
 				{ 'px-auto-complete__inner': !!inputGroupProvide },

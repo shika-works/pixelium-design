@@ -3,7 +3,7 @@
 		<PopupWrapper
 			:zIndex="props.zIndex"
 			:visible="props.visible"
-			:close-delay="ANIMATION_DURATION"
+			:close-delay="props.animationDuration"
 			:destroy-on-hide="props.destroyOnHide"
 		>
 			<Transition
@@ -25,6 +25,7 @@
 						visibility: show ? 'visible' : 'hidden',
 						pointerEvents: show ? 'auto' : 'none',
 						width: isNumber(contentWidth) ? `${contentWidth}px` : undefined,
+						'--px-animation-duration': `${props.animationDuration}ms`,
 						...props.contentStyle
 					}"
 					v-bind="$attrs"
@@ -80,10 +81,9 @@ const props = withDefaults(defineProps<PopupContentProps>(), {
 	variant: 'light',
 	visible: undefined,
 	widthEqual: false,
-	destroyOnHide: false
+	destroyOnHide: false,
+	animationDuration: 250
 })
-
-const ANIMATION_DURATION = 250
 
 const show = ref(false)
 
@@ -218,7 +218,7 @@ async function closeHandler() {
 	closeTimer = setTimeout(() => {
 		show.value = false
 		popupFinalPlacement.value = undefined
-	}, ANIMATION_DURATION)
+	}, props.animationDuration)
 }
 
 const doOpen = () => {

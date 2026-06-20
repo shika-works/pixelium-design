@@ -47,6 +47,7 @@ import {
 	parseColor,
 	rgbaToHsv
 } from '../share/util/color'
+import { useDarkMode } from '../share/hook/use-dark-mode.ts'
 
 defineOptions({
 	name: 'ColorPicker',
@@ -390,7 +391,9 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 	}
 }
 
+const darkMode = useDarkMode()
 const [polygon] = useDraw(wrapperRef, canvasRef, pixelSize, {
+	darkMode,
 	first,
 	last,
 	borderRadiusComputed,
@@ -435,7 +438,8 @@ const renderContent = (inner: JSX.Element) => {
 }
 
 const gray = computed(() => {
-	return computeGrayWithBackground(rgbColor.value)
+	const gray = computeGrayWithBackground(rgbColor.value)
+	return darkMode.value ? 255 - gray : gray
 })
 
 const showText = computed(() => {
