@@ -67,6 +67,17 @@ import ScrollBar from './scroll-bar/index.vue'
 import { useScrollBar } from './scroll-bar/use-scroll-bar.ts'
 import Table from './table/index.vue'
 import Pagination from './pagination/index.vue'
+import DatePicker from './date-picker/index.vue'
+import DateTimePicker from './date-time-picker/index.vue'
+import TimePicker from './time-picker/index.vue'
+import Rate from './rate/index.vue'
+import ColorPicker from './color-picker/index.vue'
+import Drawer from './drawer/index.ts'
+import Tab from './tab/index.vue'
+import TabPanel from './tab-panel/index.vue'
+import TabItem from './tab-item/index.vue'
+import NotificationBox from './notification-box/notification-box-wrapped.vue'
+import Notification from './notification-box/index.ts'
 
 const components = [
 	Button,
@@ -126,7 +137,18 @@ const components = [
 	BreadcrumbItem,
 	ScrollBar,
 	Table,
-	Pagination
+	Pagination,
+	DatePicker,
+	DateTimePicker,
+	TimePicker,
+	Rate,
+	ColorPicker,
+	Drawer,
+	Notification,
+	NotificationBox,
+	Tab,
+	TabPanel,
+	TabItem
 ]
 
 const defaultPrefix = 'Px'
@@ -147,6 +169,8 @@ const install = (
 		app.config.globalProperties.PixeliumVue = {
 			message: Message,
 			dialog: Dialog,
+			drawer: Drawer,
+			notification: Notification,
 			useThemeMode: useThemeMode
 		}
 	}
@@ -155,6 +179,10 @@ const install = (
 		window.$message = Message
 		// @ts-ignore
 		window.$dialog = Dialog
+		// @ts-ignore
+		window.$drawer = Drawer
+		// @ts-ignore
+		window.$notification = Notification
 	}
 }
 export { install }
@@ -227,7 +255,18 @@ export {
 	ScrollBar,
 	useScrollBar,
 	Table,
-	Pagination
+	Pagination,
+	DatePicker,
+	DateTimePicker,
+	TimePicker,
+	Rate,
+	ColorPicker,
+	Drawer,
+	Notification,
+	NotificationBox,
+	Tab,
+	TabPanel,
+	TabItem
 }
 export default {
 	install
@@ -245,6 +284,8 @@ export type {
 export type { RestAttrs, VueStyleValue, VueClassValue, EmitEvent } from './share/type/index.ts'
 
 export type { MessageOptions, MessageReturn } from './message-box/type.ts'
+export type { MessageProps } from './message/type.ts'
+
 export type { DialogReturn, DialogOptions } from './dialog/type.ts'
 
 export type { AutoCompleteOption, AutoCompleteGroupOption } from './auto-complete/type.ts'
@@ -282,4 +323,14 @@ export type {
 	FilterValue
 } from './table/type.ts'
 
+export type { QuickAccessOption } from './base-date-picker/type.ts'
+
 export type { PaginationOption } from './pagination/type.ts'
+
+export type { ColorValue, ColorWithModel } from './color-picker/type.ts'
+export type { HslaColor, HsvaColor, HwbaColor, RgbaColor } from './share/type'
+
+export type { DrawerReturn, DrawerOptions } from './drawer/type.ts'
+
+export type { NotificationOptions, NotificationBoxEvents } from './notification-box/type.ts'
+export type { NotificationProps } from './notification/type.ts'

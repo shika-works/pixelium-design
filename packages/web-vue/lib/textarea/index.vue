@@ -5,9 +5,10 @@
 		:class="{
 			[`px-textarea__${sizeComputed}`]: !!sizeComputed,
 			'px-textarea__disabled': !!disabledComputed,
+			'px-textarea__readonly': !!readonlyComputed,
 			'px-textarea__resize': !!props.resize
 		}"
-		@mousedown="focusInputHandler"
+		@mousedown="wrapperMousedownHandler"
 		@mouseenter="mouseenterHandler"
 		@mouseleave="mouseleaveHandler"
 		@focusout="blurHandler"
@@ -76,7 +77,7 @@ import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
 	name: 'Textarea'
@@ -183,8 +184,6 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
-const focusMode = ref(false)
-
 const setHeight = () => {
 	if (props.autoResize && inputRef.value && height.value) {
 		inputRef.value.style.height = height.value + 'px'
@@ -195,28 +194,22 @@ watch(height, () => {
 	setHeight()
 })
 
-const [wait, cancel] = useCancelableDelay()
-
-const blurHandler = async (e: FocusEvent) => {
-	const next = await wait()
-	if (!next) {
-		return next
-	}
-	setHeight()
-	focusMode.value = false
-	emits('blur', e)
-	formItemProvide?.blurHandler()
-}
-
-const focusHandler = (e: FocusEvent) => {
-	cancel()
-	setHeight()
-	const currentFocusMode = focusMode.value
-	focusMode.value = true
-	if (!currentFocusMode) {
-		emits('focus', e)
-	}
-}
+const { focusMode, focusHandler, blurHandler, wrapperMousedownHandler } = useFocusMode(
+	{
+		onFocus: (e, isFirstFocus) => {
+			setHeight()
+			if (isFirstFocus) {
+				emits('focus', e)
+			}
+		},
+		onBlur: (e) => {
+			setHeight()
+			emits('blur', e)
+			formItemProvide?.blurHandler()
+		}
+	},
+	inputRef
+)
 
 const showClose = computed(() => {
 	return (
@@ -227,12 +220,6 @@ const showClose = computed(() => {
 		!!modelValue.value
 	)
 })
-
-const focusInputHandler = () => {
-	setTimeout(() => {
-		inputRef.value?.focus()
-	}, 0)
-}
 
 const hoverFlag = ref(false)
 const mouseenterHandler = () => {
@@ -303,7 +290,7 @@ const drawPixel = () => {
 	}
 }
 const drawPixelDebounce = debounce(drawPixel, 0, {
-	maxWait: 50
+	maxWait: 25
 })
 
 onMounted(() => {
@@ -315,7 +302,7 @@ onMounted(() => {
 	})
 })
 
-useResizeObserver(wrapperRef, drawPixelDebounce)
+useResizeObserver(wrapperRef, drawPixelDebounce, drawPixel)
 
 useWatchGlobalCssVal(drawPixelDebounce)
 

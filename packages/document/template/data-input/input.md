@@ -236,7 +236,4 @@ inputExpose.clear: Clear the current input box.
 inputExpose.select: Select the content of the current input box.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]

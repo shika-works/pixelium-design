@@ -20,5 +20,16 @@ export default {
 		total: (total: number) => `共 ${total} 条`,
 		goto: '前往',
 		perPage: ' 条 / 页'
+	},
+	'date-picker': {
+		Monday: '一',
+		Tuesday: '二',
+		Wednesday: '三',
+		Thursday: '四',
+		Friday: '五',
+		Saturday: '六',
+		Sunday: '日',
+		'YYYY-Www': 'YYYY-ww周',
+		current: '此时'
 	}
 }

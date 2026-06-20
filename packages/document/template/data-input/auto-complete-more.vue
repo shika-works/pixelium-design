@@ -92,13 +92,13 @@
 
 <script setup lang="ts">
 import { IconBolt } from '@pixelium/web-vue/icon-hn/es'
-import { ref } from 'vue'
+import { shallowRef, ref } from 'vue'
 import { AutoComplete } from '@pixelium/web-vue'
 
 // If on-demand import
 // import { AutoComplete } from '@pixelium/web-vue/es'
 
-const autoCompleteRef = ref<InstanceType<typeof AutoComplete>>(null)
+const autoCompleteRef = shallowRef<InstanceType<typeof AutoComplete> | null>(null)
 
 const focusHandler = () => {
 	autoCompleteRef.value?.focus()

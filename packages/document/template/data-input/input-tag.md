@@ -182,10 +182,7 @@ inputNumberExpose.clear: Clear the current input box.
 inputNumberExpose.select: Select the content of the current input box.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]
 
 [[[slice rest-attrs]]]
 [[[slice emit-event]]]

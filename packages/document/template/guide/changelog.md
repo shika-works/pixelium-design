@@ -6,6 +6,49 @@
 ]]]
 
 [[[zh
+## v0.2.0
+- 新增：
+  - 新增数据输入组件：ColorPicker、Rate。
+  - 新增反馈组件：Drawer。
+  - 新增导航组件：Tab、TabItem、TabPanel。
+  - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
+  - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
+  - Divider 组件新增属性 `soft` 和 `color`。
+  - ScrollBar 组件新增 expose `scrollHeight`、`scrollWidth`、`scrollTop`、`scrollLeft` 用于获取当前滚动状态，新增属性 `visible` 控制是否显示滚动条，`edgeMask` 控制是否展示边缘遮罩。
+- 调整：
+  - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
+  - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
+  - ⚠️需要注意⚠️Select、AutoComplete 组件增加事件 `dropdownOpen`、`dropdownClose`，建议通过 `dropdownOpen` 监听下拉选项展示。通过 `focus` 和 `select` 方法不再回触发下拉选项。原有通过 `focus` 监听的方式对用户操作和触发的下拉展示依然可用。
+- 修复：
+  - 修复多语言切换不会触发响应式更新的问题。
+  - 修复 Slider 组件的聚焦逻辑，现在在调节器 thumb 外按下鼠标会聚焦到最近的 thumb。
+  - 滚动条和它的 hook 按需导入时，现在也会导入公共样式。
+  - 修复了输入框样式的组件，只读时，边框区域鼠标指针样式不正确的问题。
+  - 修复 Message 旧属性 position 不生效的问题。
+]]]
+[[[en
+## v0.2.0
+- New Features:
+  - New data input components: ColorPicker, Rate.
+  - New feedback components: Drawer.
+  - New navigation  components: Tab, TabItem, TabPanel.
+  - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
+  - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
+  - Divider component adds `soft` and `color` properties.
+  - ScrollBar component added exposes `scrollHeight`, `scrollWidth`, `scrollTop`, `scrollLeft` to retrieve the current scroll state, added property `visible` to control whether the scrollbar is shown, and `edgeMask` to control whether the edge mask is displayed.
+- Adjustment:
+  - Consolidated focus-related logic for form input components, improving maintainability and readability, and added related test cases.
+  - ⚠️ Note ⚠️ Removed tabindex from Slider component tick marks and labels; only the slider thumb can receive focus, and focus styles were added to the thumb.
+  - ⚠️ Note ⚠️: Select and AutoComplete now emit `dropdownOpen` and `dropdownClose` events. Use `dropdownOpen` to listen for the dropdown being shown. Calling the `focus` or `select` methods will no longer trigger the dropdown. However, listening to the `focus` event for user-initiated interactions will still cause the dropdown to appear.
+- Fixes
+  - Fixed an issue where language switching did not trigger reactive updates.
+  - Fixed focus logic in the Slider component: now when pressing the mouse outside the thumb, it focuses on the nearest thumb.
+  - When scrollbar and its hooks are imported on demand, the public styles are now also imported.
+  - Fixed an issue where the mouse pointer style in the border area of the input-style component was incorrect when it was read-only.
+  - Fix the issue where the old position property of Message does not take effect.
+]]]
+
+[[[zh
 ## v0.1.4
 > fix
 - 新增：

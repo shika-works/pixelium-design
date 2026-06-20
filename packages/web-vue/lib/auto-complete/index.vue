@@ -11,7 +11,8 @@ import {
 	watch,
 	useAttrs,
 	Fragment,
-	h
+	h,
+	mergeProps
 } from 'vue'
 import type {
 	AutoCompleteEvents,
@@ -53,7 +54,8 @@ import type { FormItemProvide } from '../form-item/type'
 import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
-import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
+import { useFocusMode } from '../share/hook/use-focus-mode'
+import { getScopedObj } from '../share/util/render'
 
 defineOptions({
 	name: 'AutoComplete',
@@ -67,7 +69,6 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
 	clearable: false,
 	loading: false,
 	readonly: false,
-	showCount: false,
 	status: 'normal',
 	options: () => [],
 	showPopoverEmpty: false,
@@ -127,8 +128,6 @@ const pollSizeChangeComputed = createProvideComputed(
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
 
-const [wait, cancel] = useCancelableDelay()
-
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
 		return inputGroupProvide
@@ -153,7 +152,7 @@ const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 
-const triggerPopover = async () => {
+const triggerPopover = async (visible: boolean = true) => {
 	await nextTick()
 	if (props.shouldShowPopover) {
 		popoverVisible.value = !!props.shouldShowPopover(
@@ -166,7 +165,7 @@ const triggerPopover = async () => {
 		modelValue.value &&
 		((!props.showPopoverEmpty && optionsFiltered.value.length) || props.showPopoverEmpty)
 	) {
-		popoverVisible.value = true
+		popoverVisible.value = visible
 	} else {
 		popoverVisible.value = false
 	}
@@ -204,34 +203,36 @@ const changeHandler = (e: Event) => {
 	formItemProvide?.changeHandler()
 }
 
-const focusMode = ref(false)
+const closeIconRef = shallowRef<SVGElement | null>(null)
+
+const { focusMode, focusHandler, blurHandler, popupMousedownHandler, wrapperMousedownHandler } =
+	useFocusMode(
+		{
+			onFocus: (e, isFirstFocus) => {
+				if (isFirstFocus) {
+					emits('focus', e)
+				}
+			},
+			onBlur: (e) => {
+				closePopover()
+				emits('blur', e)
+				formItemProvide?.blurHandler()
+			},
+			onWrapperMousedown(event) {
+				const target = event.target as Element
+				// @ts-ignore
+				if (!closeIconRef.value?.$el?.contains(target)) {
+					triggerPopover()
+				} else {
+					triggerPopover(false)
+				}
+			}
+		},
+		inputRef
+	)
 
 const closePopover = async () => {
 	popoverVisible.value = false
-}
-
-const blurHandler = async (e: FocusEvent) => {
-	const next = await wait()
-	if (!next) {
-		return
-	}
-	focusMode.value = false
-	closePopover()
-	emits('blur', e)
-	formItemProvide?.blurHandler()
-}
-
-const focusHandler = (e: FocusEvent) => {
-	cancel()
-	const currentFocusMode = focusMode.value
-	focusMode.value = true
-	if (!currentFocusMode) {
-		emits('focus', e)
-	}
-}
-
-const focusInputHandler = () => {
-	inputRef.value?.focus()
 }
 
 const hoverFlag = ref(false)
@@ -297,12 +298,6 @@ const popoverVisibleUpdateHandler = (value: boolean) => {
 	if (!value) {
 		popoverVisible.value = value
 	}
-}
-
-const popupContentMousedownHandler = () => {
-	setTimeout(() => {
-		cancel()
-	}, 0)
 }
 
 const darkMode = useDarkMode()
@@ -418,6 +413,16 @@ usePolling(pollSizeChangeComputed, () => {
 	}
 })
 
+const scopedObj = getScopedObj(instance)
+
+watch(popoverVisible, () => {
+	if (popoverVisible.value) {
+		emits('dropdownOpen')
+	} else {
+		emits('dropdownClose')
+	}
+})
+
 defineRender(() => {
 	const Inner = (
 		<Fragment>
@@ -440,6 +445,8 @@ defineRender(() => {
 					{hoverFlag.value && modelValue.value ? (
 						<TimesCircleSolid
 							// @ts-ignore
+							ref={closeIconRef}
+							// @ts-ignore
 							class="px-auto-complete-icon"
 							onClick={clearHandler}
 						/>
@@ -460,16 +467,27 @@ defineRender(() => {
 			<canvas ref={canvasRef} class="px-auto-complete-canvas" />
 		</Fragment>
 	)
-	const scopeObj: Record<string, ''> = {}
-	const scopeId = instance?.vnode.scopeId
-	const parentScopeId = instance?.vnode.scopeId
-	if (scopeId) {
-		scopeObj[scopeId] = ''
-	}
-	if (parentScopeId) {
-		scopeObj[parentScopeId] = ''
-	}
-	const pixelSize = calcPixelSize()
+
+	const mergedProps = mergeProps(
+		{
+			ref: wrapperRef,
+			class: [
+				'pixelium px-auto-complete',
+				sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
+				shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
+				{ 'px-auto-complete__inner': !!inputGroupProvide },
+				{ 'px-auto-complete__disabled': disabledComputed.value },
+				{ 'px-auto-complete__readonly': readonlyComputed.value }
+			],
+			onMousedown: wrapperMousedownHandler,
+			onMouseenter: mouseenterHandler,
+			onMouseleave: mouseleaveHandler,
+			onFocusout: blurHandler,
+			onFocusin: focusHandler
+		},
+		scopedObj,
+		attrs
+	)
 	const Render = (
 		<Popup
 			placement="bottom"
@@ -479,35 +497,14 @@ defineRender(() => {
 			visible={popoverVisible.value}
 			onUpdate:visible={popoverVisibleUpdateHandler}
 			trigger="click"
-			contentStyle={{ padding: `${pixelSize}px` }}
 			destroyOnHide={props.optionsDestroyOnHide}
 			contentProps={{
-				onMousedown: popupContentMousedownHandler
+				onMousedown: popupMousedownHandler
 			}}
+			{...(props.dropdownProps || {})}
 		>
 			{{
-				default: () =>
-					h(
-						'div',
-						{
-							ref: wrapperRef,
-							class: [
-								'pixelium px-auto-complete',
-								sizeComputed.value && `px-auto-complete__${sizeComputed.value}`,
-								shapeComputed.value && `px-auto-complete__${shapeComputed.value}`,
-								{ 'px-auto-complete__inner': !!inputGroupProvide },
-								{ 'px-auto-complete__disabled': disabledComputed.value }
-							],
-							onClick: focusInputHandler,
-							onMouseenter: mouseenterHandler,
-							onMouseleave: mouseleaveHandler,
-							onFocusout: blurHandler,
-							onFocusin: focusHandler,
-							...scopeObj,
-							...attrs
-						},
-						[Inner]
-					),
+				default: () => h('div', mergedProps, [Inner]),
 				content: () =>
 					optionsFiltered.value.length ? (
 						<OptionList

@@ -31,7 +31,7 @@ describe('Dialog (wrapped component)', () => {
 		wrapper.unmount()
 	})
 
-	it('clicking cancel emits cancel and hides the dialog', async () => {
+	it('clicking cancel emits cancel and hides the dialog & event should be triggered', async () => {
 		const wrapper = mount(Dialog, {
 			props: { defaultVisible: true },
 			attachTo: document.body
@@ -52,10 +52,13 @@ describe('Dialog (wrapped component)', () => {
 		// dialog should be hidden (v-show -> display: none)
 		expect(container.element.getAttribute('style')).include('display: none')
 
+		expect(wrapper.emitted('open')).toBe(undefined)
+		expect(wrapper.emitted('close')?.length).toBe(1)
+
 		wrapper.unmount()
 	})
 
-	it('clicking confirm emits ok and keeps the dialog open', async () => {
+	it('clicking confirm emits ok and closes dialog', async () => {
 		const wrapper = mount(Dialog, {
 			props: { defaultVisible: true },
 			attachTo: document.body

@@ -1,9 +1,8 @@
-import { defineComponent, h, nextTick, reactive, render, type Reactive, type VNode } from 'vue'
+import { defineComponent, h, reactive } from 'vue'
 import type { DialogOptions, DialogReturn, DialogEvents } from './type'
 import { isFunction, isString } from 'parsnip-kit'
 import type { EmitEvent, ValidContent } from '../share/type'
 import Dialog from './dialog.vue'
-import { nanoid } from 'nanoid'
 
 // @ts-ignore
 import InfoCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/info-circle-solid.svg'
@@ -16,35 +15,36 @@ import CheckCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/che
 
 import DialogWrapped from './dialog-wrapped.vue'
 import { t } from '../share/util/locale'
-
-const ANIMATION_DURATION = 250
-const DELAY = 150
+import { ModalOverlayManager } from '../overlay/modal-overlay'
 
 type DialogManagerOptions = Required<Pick<DialogOptions, 'content' | 'root'>> &
 	Omit<DialogOptions, 'content' | 'root'> &
 	EmitEvent<DialogEvents>
-
-class DialogManager {
-	dialog: VNode
-	container: HTMLElement | null = null
-	state: Reactive<DialogManagerOptions & { visible: boolean; loading: boolean }>
-	timer: any = null
+type DialogManagerState = DialogManagerOptions & { visible: boolean; loading: boolean }
+class DialogManager extends ModalOverlayManager<DialogManagerOptions, DialogManagerState> {
 	constructor(options: DialogManagerOptions) {
-		this.state = reactive({
-			...options,
+		super(options)
+		this.renderVNode()
+	}
+	protected getContainerClass(): string {
+		return 'px-dialog-wrapper'
+	}
+	protected initState() {
+		return reactive({
+			...this.options,
 			visible: true,
 			loading: false
 		})
+	}
+	protected createVNode() {
+		const contentRender = this.options.content
+		const titleRender = this.options.title
+		const footerRender = this.options.footer
 
-		const footerRender = options.footer
-		const contentRender = options.content
-		const titleRender = options.title
-
-		const that = this
 		const component = defineComponent({
-			setup() {
+			setup: () => {
 				return () =>
-					h(Dialog, that.state as any, {
+					h(Dialog, this.state as any, {
 						title: isString(titleRender) ? undefined : titleRender ? titleRender : undefined,
 						default: isString(contentRender) ? () => contentRender : contentRender,
 						footer: isString(footerRender)
@@ -52,41 +52,12 @@ class DialogManager {
 							: footerRender
 								? footerRender
 								: undefined,
-						icon: options.icon ? options.icon : undefined
+						icon: this.options.icon ? this.options.icon : undefined
 					})
 			}
 		})
 
-		this.dialog = h(component)
-		const root =
-			(isString(options.root) ? document.querySelector(options.root) : options.root) ||
-			document.body
-		const id = nanoid()
-		this.container = document.createElement('div')
-		this.container.id = id
-		this.container.className = `px-dialog-wrapper`
-		root.appendChild(this.container)
-		render(this.dialog, this.container)
-	}
-	close() {
-		if (this.timer) {
-			return
-		}
-		this.state.visible = false
-		this.timer = setTimeout(() => {
-			this.unmount()
-			this.timer = null
-		}, ANIMATION_DURATION + DELAY)
-	}
-	unmount() {
-		if (this.container) {
-			const container = this.container
-			render(null, container)
-			nextTick(() => {
-				container.remove()
-				this.container = null
-			})
-		}
+		return h(component)
 	}
 }
 

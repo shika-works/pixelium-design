@@ -71,3 +71,16 @@ export function traverseParent(
 		current = current.parent
 	}
 }
+
+export const getScopedObj = (instance: ComponentInternalInstance | null) => {
+	const scopeObj: Record<string, ''> = {}
+	const scopeId = instance?.vnode.scopeId
+	const parentScopeId = instance?.vnode.scopeId
+	if (scopeId) {
+		scopeObj[scopeId] = ''
+	}
+	if (parentScopeId) {
+		scopeObj[parentScopeId] = ''
+	}
+	return scopeObj
+}

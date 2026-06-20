@@ -1,11 +1,13 @@
 {
   "cSpell.words": [
+    "cornerless",
     "Dblclick",
     "Mouseleave",
     "overlayscrollbars",
     "pixelium",
     "Popconfirm",
     "rowspan",
-    "Vitest"
+    "Vitest",
+    "vnode"
   ]
 }

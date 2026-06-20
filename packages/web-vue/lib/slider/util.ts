@@ -129,7 +129,7 @@ export const transformModelValue = (
 	}
 }
 
-export const getTargetThumbEl = (
+export const getTargetThumbElWhenRange = (
 	e: MouseEvent | TouchEvent,
 	direction: SliderProps['direction'],
 	thumbStartRef: ShallowRef<HTMLDivElement | null>,

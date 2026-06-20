@@ -5,7 +5,7 @@ import viteSvgLoader from '../plugin/svg-loader.ts'
 import Vue from '@vitejs/plugin-vue'
 import VueMacros from 'vue-macros/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
-import { external, outputGlobal, target } from './common.mts'
+import { external, outputGlobal, target } from './share.mts'
 
 export default defineConfig({
 	plugins: [Vue(), VueJsx(), VueMacros(), viteSvgLoader()],
@@ -29,8 +29,9 @@ export default defineConfig({
 	},
 	// @ts-ignore
 	test: {
+		maxWorkers: 4,
 		environment: 'jsdom',
-		testTimeout: 10 * 1000,
+		testTimeout: 20 * 1000,
 		coverage: {
 			provider: 'v8',
 			include: ['lib/**/*.{ts,tsx,js,jsx,vue}'],

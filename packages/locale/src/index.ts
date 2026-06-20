@@ -60,7 +60,7 @@ class LocaleManager {
 		}
 	}
 
-	t<T=string>(path: string, fallback: string = path): T | string {
+	t<T = string>(path: string, fallback: string = path): T | string {
 		const keys = path.split('.')
 		let msg: any = messages[this.currentLang]
 		for (const key of keys) {

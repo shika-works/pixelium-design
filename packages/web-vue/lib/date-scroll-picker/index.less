@@ -1,0 +1,16 @@
+@import url(../share/style/variable.less);
+
+.px-date-scroll-picker {
+	display: flex;
+
+	&-item {
+		width: @px-scroll-picker-small-width;
+		flex: 0 0 @px-scroll-picker-small-width;
+		&-year,
+		&-month,
+		&-quarter {
+			width: @px-scroll-picker-medium-width;
+			flex: 0 0 @px-scroll-picker-medium-width;
+		}
+	}
+}

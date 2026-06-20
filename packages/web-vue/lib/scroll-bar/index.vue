@@ -5,10 +5,11 @@ import { initScroll } from '../share/util/scroll'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
 import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
 import type { ScrollBarEvents, ScrollBarExpose, ScrollBarProps } from './type'
-import { debounce, isNullish, isNumber, isObject } from 'parsnip-kit'
+import { debounce, isArray, isNullish, isNumber, isObject, throttle } from 'parsnip-kit'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { inBrowser, inVitest } from '../share/util/env'
 import type { OverlayScrollbars } from 'overlayscrollbars'
+import { fillArr } from '../share/util/common'
 
 initScroll()
 
@@ -18,7 +19,8 @@ defineOptions({
 
 const props = withDefaults(defineProps<ScrollBarProps>(), {
 	showScrollPadding: true,
-	variant: 'pixel'
+	variant: 'pixel',
+	visible: true
 })
 
 const osRef = shallowRef<OverlayScrollbarsComponentRef>()
@@ -55,6 +57,10 @@ watch(scrollOffset, () => {
 const showYScroll = ref(false)
 const showXScroll = ref(false)
 
+const scrollAreaSize = ref({ x: 0, y: 0 })
+const visibleAreaSize = ref({ x: 0, y: 0 })
+const innerScrollOffset = ref({ x: 0, y: 0 })
+
 const initializeHandler = (ins: OverlayScrollbars) => {
 	const state = ins.state()
 
@@ -66,10 +72,24 @@ const initializeHandler = (ins: OverlayScrollbars) => {
 		...transform(scrollOffset.value)
 	})
 
+	const { scrollOffsetElement } = ins.elements()
+	const { scrollWidth, scrollHeight, clientWidth, clientHeight } = scrollOffsetElement
+	scrollAreaSize.value = {
+		x: scrollWidth,
+		y: scrollHeight
+	}
+	visibleAreaSize.value = {
+		x: clientWidth,
+		y: clientHeight
+	}
+
 	emits('initialize', ins)
 }
 
 const updateScrollOffsetDebounce = debounce(updateScrollOffset, 100)
+const updateInnerScrollOffsetThrottle = throttle((x: number, y: number) => {
+	innerScrollOffset.value = { x, y }
+}, 0)
 
 const scrollHandler = (_: any, event: Event) => {
 	const target = event.target
@@ -79,6 +99,7 @@ const scrollHandler = (_: any, event: Event) => {
 			left: scrollLeft,
 			top: scrollTop
 		})
+		updateInnerScrollOffsetThrottle(scrollLeft, scrollTop)
 	}
 
 	emits('scroll', event)
@@ -128,7 +149,19 @@ const scrollBy: ScrollBy = (arg1?: ScrollToOptions | number, arg2?: number) => {
 
 defineExpose<ScrollBarExpose>({
 	scrollBy,
-	scrollTo
+	scrollTo,
+	get scrollHeight() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollHeight || 0
+	},
+	get scrollWidth() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollWidth || 0
+	},
+	get scrollLeft() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollLeft || 0
+	},
+	get scrollTop() {
+		return osRef?.value?.osInstance()?.elements().scrollOffsetElement?.scrollTop || 0
+	}
 })
 
 const updateHandler = (ins: OverlayScrollbars) => {
@@ -137,12 +170,21 @@ const updateHandler = (ins: OverlayScrollbars) => {
 	showYScroll.value = state.hasOverflow.y
 
 	const { scrollOffsetElement } = ins.elements()
-	const { scrollLeft, scrollTop } = scrollOffsetElement
+	const { scrollLeft, scrollTop, scrollWidth, scrollHeight, clientWidth, clientHeight } =
+		scrollOffsetElement
 
 	updateScrollOffset({
 		left: scrollLeft,
 		top: scrollTop
 	})
+	scrollAreaSize.value = {
+		x: scrollWidth,
+		y: scrollHeight
+	}
+	visibleAreaSize.value = {
+		x: clientWidth,
+		y: clientHeight
+	}
 
 	emits('update', {
 		left: scrollLeft,
@@ -150,8 +192,56 @@ const updateHandler = (ins: OverlayScrollbars) => {
 	})
 }
 
+const THRESHOLD = 4
+
+const xAtEnd = computed(() => {
+	const x = innerScrollOffset.value.x
+	return x + visibleAreaSize.value.x >= scrollAreaSize.value.x - THRESHOLD
+})
+const xAtStart = computed(() => {
+	const x = innerScrollOffset.value.x
+	return x <= THRESHOLD
+})
+const yAtStart = computed(() => {
+	const y = innerScrollOffset.value.y
+
+	return y <= THRESHOLD
+})
+const yAtEnd = computed(() => {
+	const y = innerScrollOffset.value.y
+	return y + visibleAreaSize.value.y >= scrollAreaSize.value.y - THRESHOLD
+})
+
 const theme = computed(() => {
 	return props.variant === 'simple' ? 'px-scroll-simple-theme' : 'px-scroll-theme'
+})
+
+const getPlacement = (value: boolean | boolean[] | undefined) => {
+	if (!value) return fillArr(false, 4)
+	if (!isArray(value)) {
+		return fillArr(value, 4)
+	}
+	switch (value.length) {
+		case 1:
+			return fillArr(value[0], 4)
+		case 2: {
+			const t = value[0]
+			const b = value[1]
+			return [t, b, t, b]
+		}
+		case 3: {
+			const t = value[0]
+			const b = value[2]
+			const rest = value[1]
+			return [t, rest, b, rest]
+		}
+		default:
+			return value
+	}
+}
+
+const shouldShowMask = computed(() => {
+	return getPlacement(props.edgeMask)
 })
 </script>
 
@@ -161,7 +251,8 @@ const theme = computed(() => {
 		:options="{
 			scrollbars: {
 				theme: theme,
-				clickScroll: true
+				clickScroll: true,
+				visibility: props.visible ? 'auto' : 'hidden'
 			}
 		}"
 		:events="{
@@ -173,11 +264,40 @@ const theme = computed(() => {
 		:class="{
 			'px-scroll': true,
 			'px-scroll__simple': props.variant === 'simple',
+			'px-scroll__ghost': props.ghost,
 			'px-scroll__x': props.showScrollPadding && showXScroll,
 			'px-scroll__y': props.showScrollPadding && showYScroll
 		}"
 	>
 		<slot></slot>
+		<div
+			class="px-scroll-mask px-scroll-mask__x-start"
+			v-if="shouldShowMask[3] && !xAtStart"
+			:style="{
+				left: innerScrollOffset.x + 'px'
+			}"
+		></div>
+		<div
+			class="px-scroll-mask px-scroll-mask__y-start"
+			v-if="shouldShowMask[0] && !yAtStart"
+			:style="{
+				top: innerScrollOffset.y + 'px'
+			}"
+		></div>
+		<div
+			class="px-scroll-mask px-scroll-mask__x-end"
+			v-if="shouldShowMask[1] && !xAtEnd"
+			:style="{
+				left: innerScrollOffset.x + visibleAreaSize.x + 'px'
+			}"
+		></div>
+		<div
+			class="px-scroll-mask px-scroll-mask__y-end"
+			v-if="shouldShowMask[2] && !yAtEnd"
+			:style="{
+				top: innerScrollOffset.y + visibleAreaSize.y + 'px'
+			}"
+		></div>
 	</OverlayScrollbarsComponent>
 </template>
 

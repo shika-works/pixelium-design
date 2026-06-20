@@ -84,11 +84,11 @@ The close button is disabled when the tag is disabled.
 
 [[[zh
 ## 自定义颜色
-自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'`字符串和 3、4、6、8位长度的十六位数字表示。 
+自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。详见 [支持的颜色解析](../config/supported-color-parsing)。
 ]]]
 [[[en
 ## Custom Color
-You can customize the main color. A complete color palette will be generated based on this color, which takes precedence over the preset palette provided by `theme`. Supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, or 8-digit hexadecimal values.
+You can customize the main color. A complete color palette will be generated based on this color, which takes precedence over the preset palette provided by `theme`. See [Supported Color Parsing](../config/supported-color-parsing).
 ]]]
 <preview path="./tag-color.vue"></preview>
 
@@ -100,8 +100,7 @@ size: 标签尺寸。
 disabled: 是否禁用。
 variant: 标签样式变体。
 theme: 标签主题。
-color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
-closable: 标签可关闭。
+color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
 
@@ -115,7 +114,7 @@ size: Tag size.
 disabled: Whether the tag is disabled.
 variant: Tag style variant.
 theme: Tag theme.
-color: Custom main color. A complete color palette will be generated based on this color, which takes precedence over the preset palette provided by `theme`. Supports CSS-like `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'` strings, as well as 3, 4, 6, or 8-digit hexadecimal values.
+color: Custom main color. See [Supported Color Parsing](../config/supported-color-parsing).
 closable: Whether the tag can be closed.
 
 pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
@@ -124,7 +123,4 @@ events.close: Close event.
 slots.default: Tag content.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]

@@ -1,0 +1,43 @@
+@import url(../share/style/variable.less);
+
+.px-rate-item-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+	pointer-events: none;
+}
+.px-rate-item-inner {
+	box-sizing: border-box;
+	position: relative;
+
+	height: 28px;
+	width: 28px;
+}
+
+.px-rate {
+	font-size: 0;
+	display: inline-block;
+	&-inner {
+		font-size: @px-medium-font-size;
+		display: inline-flex;
+		align-items: center;
+		flex-wrap: wrap;
+		margin: -1 * @px-interval-1 -1 * @px-interval-1;
+	}
+	&-item {
+		box-sizing: content-box;
+		border-width: 0 @px-interval-1;
+		border-style: solid;
+		border-color: transparent;
+		margin: @px-interval-1 0;
+		cursor: pointer;
+	}
+	&__readonly .px-rate-item {
+		cursor: default;
+	}
+	&__disabled .px-rate-item {
+		cursor: not-allowed;
+	}
+}

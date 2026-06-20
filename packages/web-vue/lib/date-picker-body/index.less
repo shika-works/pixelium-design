@@ -1,0 +1,202 @@
+@import url(../share/style/variable.less);
+
+.px-date-picker-body {
+	@prefix: px-date-picker-body;
+	user-select: none;
+	border: 0;
+	padding: 0;
+	background: var(--px-neutral-1);
+	color: var(--px-neutral-10);
+
+	font-size: @px-medium-font-size;
+
+	width: @px-date-picker-body-width;
+
+	&-weeks {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		padding-bottom: @px-interval-1;
+		margin-bottom: @px-interval-1;
+
+		box-sizing: border-box;
+
+		border-width: 0;
+		border-bottom-width: @px-interval-mini-1;
+		border-bottom-color: var(--px-neutral-8);
+		border-style: solid;
+	}
+	&-week-item {
+		text-align: center;
+	}
+	&-grid {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+	}
+	&-day-item {
+		height: @px-interval-8;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+
+		&::after {
+			content: '';
+			height: @px-interval-6;
+			flex: 1 0 0;
+			background-color: transparent;
+			transition: background 0.25s;
+		}
+		&::before {
+			content: '';
+			height: @px-interval-6;
+			background-color: transparent;
+			transition: background 0.25s;
+			flex: 1 0 0;
+		}
+
+		&:hover {
+			.@{prefix}-day-number {
+				background-color: var(--px-neutral-4);
+			}
+		}
+		&__today {
+			color: var(--px-neutral-1);
+			.@{prefix}-day-number {
+				background-color: var(--px-primary-6);
+			}
+			&:hover {
+				.@{prefix}-day-number {
+					background-color: var(--px-primary-5);
+				}
+			}
+			&-start {
+				&::after {
+					background-color: var(--px-primary-1);
+				}
+			}
+			&-end {
+				&::before {
+					background-color: var(--px-primary-1);
+				}
+			}
+			&.@{prefix}-day-item__today-start.@{prefix}-day-item__today-end {
+				&::after {
+					background-color: transparent;
+				}
+				&::before {
+					background-color: transparent;
+				}
+			}
+		}
+		&__within {
+			&:hover {
+				.@{prefix}-day-number {
+					background-color: var(--px-primary-2);
+				}
+			}
+			.@{prefix}-day-number {
+				background-color: var(--px-primary-1);
+			}
+			&::after {
+				background-color: var(--px-primary-1);
+			}
+			&::before {
+				background-color: var(--px-primary-1);
+			}
+		}
+		&__week {
+			color: var(--px-neutral-1);
+			.@{prefix}-day-number {
+				background-color: var(--px-primary-6);
+			}
+			&.@{prefix}-day-item__week-hover {
+				.@{prefix}-day-number {
+					background-color: var(--px-primary-5);
+				}
+				&::after {
+					background-color: var(--px-primary-5);
+				}
+				&::before {
+					background-color: var(--px-primary-5);
+				}
+			}
+			&:hover {
+				.@{prefix}-day-number {
+					background-color: var(--px-primary-5);
+				}
+			}
+			&::after {
+				background-color: var(--px-primary-6);
+			}
+			&::before {
+				background-color: var(--px-primary-6);
+			}
+		}
+		&__week-hover {
+			.@{prefix}-day-number {
+				background-color: var(--px-neutral-4);
+			}
+			&::after {
+				background-color: var(--px-neutral-4);
+			}
+			&::before {
+				background-color: var(--px-neutral-4);
+			}
+		}
+		&__not-current {
+			color: var(--px-neutral-7);
+			&:hover {
+				.@{prefix}-day-number {
+					background-color: var(--px-neutral-2);
+				}
+			}
+			&.@{prefix}-day-item__week-hover {
+				.@{prefix}-day-number {
+					background-color: var(--px-neutral-2);
+				}
+				&::after {
+					background-color: transparent;
+				}
+				&::before {
+					background-color: transparent;
+				}
+			}
+			.@{prefix}-day-number {
+				background-color: transparent;
+			}
+			&.@{prefix}-day-item__today {
+				color: var(--px-neutral-1);
+				.@{prefix}-day-number {
+					background-color: var(--px-primary-4);
+				}
+			}
+			&.@{prefix}-day-item__week {
+				color: var(--px-neutral-1);
+				.@{prefix}-day-number {
+					background-color: var(--px-primary-4);
+				}
+			}
+
+			&::after {
+				background-color: transparent;
+			}
+			&::before {
+				background-color: transparent;
+			}
+		}
+	}
+	&-day-number {
+		height: @px-interval-6;
+		width: @px-interval-6;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background 0.25s;
+		background-color: var(--px-neutral-1);
+
+		cursor: pointer;
+
+		flex: 0 0 @px-interval-6;
+	}
+}

@@ -6,7 +6,7 @@ import VueMacros from 'vue-macros/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import { promises as fs } from 'node:fs'
 import { isArray } from 'parsnip-kit'
-import { external, outputGlobal, target } from './common.mts'
+import { cssConfigs, external, outputGlobal, target } from './share.mts'
 
 const __dirname = process.cwd()
 
@@ -199,47 +199,6 @@ async function handleJsCss(
 	if (!shouldHandle) return
 	await prependImport(jsPath, `import './${cssFileName || 'css.js'}'`)
 	await fs.writeFile(cssPath, cssContent)
-}
-
-type CssConfig = Record<
-	string,
-	| { js: string; css: string; cssFileName?: string; cssFilePath?: string }
-	| { js: string; css: string; cssFileName?: string; cssFilePath?: string }[]
->
-
-const cssConfigs: CssConfig = {
-	icons: [
-		{
-			js: 'icon-hn.js',
-			css: `import './icon-hn.css'\n`,
-			cssFileName: 'css-hn.js'
-		},
-		{
-			js: 'icon-pa.js',
-			css: `import './icon-pa.css'\n`,
-			cssFileName: 'css-pa.js'
-		}
-	],
-	share: [
-		{
-			js: 'util/scroll.js',
-			css: `import '../../public/overlayscrollbars.css'\n`,
-			cssFileName: 'css-scroll.js',
-			cssFilePath: 'util/css-scroll.js'
-		}
-	],
-	'scroll-bar': [
-		{
-			js: 'use-scroll-bar.js',
-			css: `import './index.css'\n`,
-			cssFileName: 'css-hook.js'
-		},
-		{
-			js: 'index.js',
-			css: `import './index.css'\n`,
-			cssFileName: 'css.js'
-		}
-	]
 }
 
 async function handleCssImports() {

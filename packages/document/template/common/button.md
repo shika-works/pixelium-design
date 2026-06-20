@@ -91,11 +91,11 @@ Setting the `block` property makes the button take up the full line.
 
 [[[en
 ## Custom Color
-Custom primary color: the component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. It supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
+Custom primary color: the component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. See [Supported Color Parsing](../config/supported-color-parsing).
 ]]]
 [[[zh
 ## 自定义颜色
-自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'`字符串和 3、4、6、8位长度的十六位数字表示。 
+自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。详见 [支持的颜色解析](../config/supported-color-parsing)。
 ]]]
 <preview path="./button-color.vue"></preview>
 
@@ -138,7 +138,7 @@ disabled: 是否禁用。
 loading: 是否加载状态。
 variant: 按钮样式变体。
 theme: 按钮主题。
-color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。支持类似 CSS 的 `'rgb(r, g, b)'` 和 `'rgba(r, g, b, a)'` 字符串和 3、4、6、8 位长度的十六位数字表示。
+color: 自定义主色，内部基于此生成完整色板，该色板优先级高于 `theme` 提供的预设色版。详见 [支持的颜色解析](../config/supported-color-parsing)。
 block: 是否占据整行。
 nativeType: HTML `<button>` 原生 `type` 属性。
 autofocus: HTML `<button>` 原生 `autofocus` 属性。
@@ -156,7 +156,7 @@ disabled: Whether the button is disabled.
 loading: Whether the button is in a loading state.
 variant: Button style variant.
 theme: Button theme.
-color: Custom primary color: the component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. It supports CSS-like strings such as `'rgb(r, g, b)'` and `'rgba(r, g, b, a)'`, as well as 3-, 4-, 6-, and 8-digit hexadecimal values.
+color: Custom primary color. The component will generate a complete color palette based on it, and this palette takes precedence over the preset palettes provided by `theme`. See [Supported Color Parsing](../config/supported-color-parsing).
 nativeType: Native HTML `<button>` `type` attribute.
 autofocus: Native HTML `<button>` `autofocus` attribute.
 block: Whether to take up the full line.
@@ -189,7 +189,4 @@ pollSizeChange: Enables polling for component size changes. This also affects th
 slots.default: The sub-buttons.
 ]]]
 
-### NumberOrPercentage
-```ts
-export type NumberOrPercentage = number | `${number}%`
-```
+[[[slice percent]]]
