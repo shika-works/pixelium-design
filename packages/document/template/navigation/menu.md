@@ -100,6 +100,19 @@ Control the selected menu and expanded menus by passing `active` and `expanded`.
 
 <preview path="./menu-controlled.vue"></preview>
 
+[[[zh
+## 自定义插槽内容
+
+Menu、MenuItem、Submenu 和 MenuGroup 组件提供了多个插槽用于自定义内容。使用 `default` 插槽（MenuItem）或 `label` 插槽（Submenu、MenuGroup）可以展示带有标题和描述的复杂菜单项，实现多行展示效果。
+]]]
+[[[en
+## Custom Slot Content
+
+Menu, MenuItem, Submenu, and MenuGroup components provide multiple slots for customizing content. Use the `default` slot (MenuItem) or the `label` slot (Submenu, MenuGroup) to display complex menu items with a title and description, achieving a multi-line display effect.
+]]]
+
+<preview path="./menu-slot.vue"></preview>
+
 ## API
 [[[api zh
 direction: 菜单的方向

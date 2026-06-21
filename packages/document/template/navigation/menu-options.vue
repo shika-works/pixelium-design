@@ -21,23 +21,23 @@ const optionsVertical = ref([
 		label: 'Home',
 		index: 'Home',
 		href: '/pixelium-design/',
-		icon: h(IconHome)
+		icon: () => h(IconHome)
 	},
 	{
 		label: 'Components',
 		index: 'Components',
-		icon: h(IconBars),
+		icon: () => h(IconBars),
 		type: 'submenu',
 		children: [
 			{
 				label: 'Button',
 				index: 'Button',
-				icon: h(IconArrowAltCircleUp)
+				icon: () => h(IconArrowAltCircleUp)
 			},
 			{
 				label: 'Input',
 				index: 'Input',
-				icon: h(IconPencil)
+				icon: () => h(IconPencil)
 			}
 		]
 	},
@@ -49,14 +49,14 @@ const optionsVertical = ref([
 			{
 				label: 'About',
 				index: 'About',
-				icon: h(IconLink)
+				icon: () => h(IconLink)
 			},
 			{
 				label: 'Github',
 				index: 'Github',
 				href: 'https://github.com/shika-works/pixelium-design',
 				target: '_blank',
-				icon: h(IconGithub)
+				icon: () => h(IconGithub)
 			},
 			'Contact us'
 		]
@@ -67,12 +67,12 @@ const optionsHorizontal = ref([
 		label: 'Home',
 		index: 'Home',
 		href: '/pixelium-design/',
-		icon: h(IconHome)
+		icon: () => h(IconHome)
 	},
 	{
 		label: 'Components',
 		index: 'Components',
-		icon: h(IconBars),
+		icon: () => h(IconBars),
 		type: 'submenu',
 		children: [
 			{
@@ -82,12 +82,12 @@ const optionsHorizontal = ref([
 					{
 						label: 'Button',
 						index: 'Button',
-						icon: h(IconArrowAltCircleUp)
+						icon: () => h(IconArrowAltCircleUp)
 					},
 					{
 						label: 'Input',
 						index: 'Input',
-						icon: h(IconPencil)
+						icon: () => h(IconPencil)
 					}
 				]
 			}
@@ -106,14 +106,14 @@ const optionsHorizontal = ref([
 					{
 						label: 'About',
 						index: 'About',
-						icon: h(IconLink)
+						icon: () => h(IconLink)
 					},
 					{
 						label: 'Github',
 						index: 'Github',
 						href: 'https://github.com/shika-works/pixelium-design',
 						target: '_blank',
-						icon: h(IconGithub)
+						icon: () => h(IconGithub)
 					},
 					'Contact us'
 				]

@@ -105,6 +105,19 @@ Set `disabled` to disable the component. Trigger actions will be ignored and the
 
 <preview path="./drop-down-disabled.vue"></preview>
 
+[[[zh
+## 插槽用法
+
+Dropdown 提供 `option` 和 `group-label` 插槽，用于自定义选项和分组标题的渲染内容。
+]]]
+[[[en
+## Slot Usage
+
+Dropdown provides `option` and `group-label` slots for customizing the rendering of menu items and group headers.
+]]]
+
+<preview path="./drop-down-slot.vue"></preview>
+
 ## API
 
 [[[api zh
@@ -118,6 +131,7 @@ variant: 组件样式变体。
 arrow: 是否展示箭头。
 disabled: 是否禁用。
 zIndex: 弹出层 `z-index`。
+animationDuration: 弹出 / 收起动画时长。
 root: 挂载元素。
 destroyOnHide: 隐藏时是否销毁内容。
 popoverProps: 透传给内部 Popover 的属性。
@@ -146,10 +160,11 @@ offset: Popup offset in pixels.
 variant: Component style variant.  
 arrow: Whether to show an arrow.  
 disabled: Whether the component is disabled.  
-zIndex: `z-index` for the popup.  
-root: Mount element.  
-destroyOnHide: Whether to destroy content when hidden.  
-popoverProps: Props forwarded to the internal Popover.  
+zIndex: `z-index` for the popup.
+animationDuration: Duration of the popup show/hide animation.
+root: Mount element.
+destroyOnHide: Whether to destroy content when hidden.
+popoverProps: Props forwarded to the internal Popover.
 dividerProps: DOM attributes forwarded to the divider element.
 
 events.update:visible: Callback for updating `visible`.  
