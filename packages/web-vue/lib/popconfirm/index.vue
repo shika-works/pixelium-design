@@ -161,6 +161,7 @@ defineRender(() => {
 			arrow={props.arrow}
 			zIndex={props.zIndex}
 			disabled={props.disabled}
+			animationDuration={props.animationDuration}
 			destroyOnHide={props.destroyOnHide}
 			visible={visible.value}
 			onUpdate:visible={updateVisibleHandler}

@@ -77,6 +77,11 @@ export type TooltipProps = {
 	 */
 	borderRadius?: number
 	/**
+	 * @property {number} [animationDuration=250]
+	 * @version 0.1.5
+	 */
+	animationDuration?: number
+	/**
 	 * @property {boolean} [cascade=false]
 	 * @version 0.1.0
 	 */

@@ -12,3 +12,8 @@
 	word-wrap: break-word;
 	word-break: normal;
 }
+
+.px-input-box input,
+.px-input-box textarea {
+	color: inherit;
+}
