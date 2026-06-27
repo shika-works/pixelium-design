@@ -1,7 +1,17 @@
-import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
+import { nextTick, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
+import { TRANSPARENT_RGBA_COLOR_OBJECT, BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { calcWhenLeaveBaseline, drawCircle } from '../share/util/plot'
+import {
+	calcBorderCornerCenter,
+	calcPixelSize,
+	calcWhenLeaveBaseline,
+	canvasPreprocess,
+	drawCircle,
+	floodFill,
+	getBorderRadius
+} from '../share/util/plot'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import type { ButtonProps } from './type'
 
 export function getBackgroundColor(
@@ -419,4 +429,147 @@ export const getTextColorWithPalette = (
 		default:
 			return undefined
 	}
+}
+
+type UseDrawOptions = {
+	borderRadiusComputed: ComputedRef<ButtonProps['borderRadius']>
+	shapeComputed: ComputedRef<ButtonProps['shape']>
+	sizeComputed: ComputedRef<ButtonProps['size']>
+	disabledComputed: ComputedRef<ButtonProps['disabled']>
+	loadingComputed: ComputedRef<ButtonProps['loading']>
+	typeComputed: ComputedRef<ButtonProps['variant']>
+	themeComputed: ComputedRef<ButtonProps['theme']>
+	palette: ComputedRef<RgbaColor[] | null>
+	hoverFlag: Ref<boolean>
+	activeFlag: Ref<boolean>
+	innerButtonGroup: Ref<boolean>
+	innerInputGroup: Ref<boolean>
+	first: Ref<boolean>
+	last: Ref<boolean>
+	nextIsTextButton: ComputedRef<boolean>
+	pollSizeChangeComputed: ComputedRef<ButtonProps['pollSizeChange']>
+}
+
+export const useDraw = (
+	wrapperRef: ShallowRef<HTMLButtonElement | null>,
+	canvasRef: ShallowRef<HTMLCanvasElement | null>,
+	options: UseDrawOptions
+) => {
+	const drawPixel = () => {
+		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
+		if (!preprocessData) {
+			return
+		}
+
+		const pixelSize = calcPixelSize()
+		const { ctx, width, height, canvas } = preprocessData
+
+		const borderRadius = getBorderRadius(
+			canvas,
+			pixelSize,
+			options.borderRadiusComputed.value,
+			options.shapeComputed.value || 'rect',
+			options.sizeComputed.value || 'medium',
+			options.innerButtonGroup.value || options.innerInputGroup.value,
+			options.first.value,
+			options.last.value
+		)
+
+		const borderColor = getBorderColor(
+			!!options.disabledComputed.value,
+			!!options.loadingComputed.value,
+			options.typeComputed.value || 'primary',
+			options.themeComputed.value || 'primary',
+			options.palette.value,
+			options.hoverFlag.value,
+			options.activeFlag.value
+		)
+		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
+		const rad = BORDER_CORNER_RAD_RANGE
+
+		if (!options.typeComputed.value || options.typeComputed.value === 'primary') {
+			drawGradient(
+				ctx,
+				width,
+				height,
+				center,
+				borderRadius,
+				rad,
+				pixelSize,
+				!!options.disabledComputed.value,
+				!!options.loadingComputed.value,
+				options.themeComputed.value,
+				options.palette.value,
+				options.innerButtonGroup.value || options.innerInputGroup.value,
+				options.first.value,
+				options.last.value,
+				options.hoverFlag.value,
+				options.activeFlag.value
+			)
+		}
+		if (borderColor) {
+			drawBorder(
+				ctx,
+				width,
+				height,
+				center,
+				borderRadius,
+				rad,
+				borderColor,
+				pixelSize,
+				options.typeComputed.value || 'primary',
+				options.innerButtonGroup.value || options.innerInputGroup.value,
+				options.first.value,
+				options.last.value,
+				options.nextIsTextButton.value
+			)
+		}
+		const backgroundColor = getBackgroundColor(
+			!!options.disabledComputed.value,
+			!!options.loadingComputed.value,
+			options.typeComputed.value || 'primary',
+			options.themeComputed.value || 'primary',
+			options.palette.value,
+			options.hoverFlag.value,
+			options.activeFlag.value
+		)
+
+		if (backgroundColor) {
+			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+		}
+	}
+
+	const { debouncedTrigger, triggerDraw } = useDrawCanvas(wrapperRef, drawPixel, {
+		pollSizeChange: options.pollSizeChangeComputed
+	})
+
+	watch(canvasRef, () => {
+		triggerDraw()
+	})
+
+	watch(
+		[
+			options.borderRadiusComputed,
+			options.shapeComputed,
+			options.disabledComputed,
+			options.loadingComputed,
+			options.typeComputed,
+			options.themeComputed,
+			options.palette,
+			options.hoverFlag,
+			options.activeFlag,
+			options.nextIsTextButton,
+			options.first,
+			options.last
+		],
+		() => {
+			if (canvasRef.value) {
+				nextTick(() => {
+					debouncedTrigger()
+				})
+			}
+		}
+	)
+
+	return { triggerDraw, debouncedTrigger }
 }
