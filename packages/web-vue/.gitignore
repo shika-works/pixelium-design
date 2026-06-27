@@ -32,3 +32,5 @@ lib/**/*.d.ts
 es
 
 coverage
+
+.npmrc

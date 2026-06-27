@@ -1,9 +1,4 @@
-import { throttle } from 'parsnip-kit'
-import { nextTick, onMounted, watch, type ComputedRef, type ShallowRef } from 'vue'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
+import { watch, type ComputedRef, type ShallowRef } from 'vue'
 import {
 	calcBorderCornerCenter,
 	canvasPreprocess,
@@ -14,6 +9,7 @@ import { usePixelSize } from '../share/hook/use-pixel-size'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import type { RgbaColor } from '../share/type'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 
 const drawCorners = (
 	ctx: CanvasRenderingContext2D,
@@ -164,48 +160,17 @@ export const useDraw = (
 			)
 		}
 	}
-	onMounted(() => {
-		nextTick(() => {
-			draw()
-		})
-	})
-	const drawThrottle = throttle(draw, 0, {
-		trailing: true
+	const { debouncedTrigger, triggerDraw } = useDrawCanvas(wrapperRef, draw, {
+		pollSizeChange: options.pollSizeChange
 	})
 
 	watch(canvasRef, () => {
-		drawThrottle()
+		triggerDraw()
 	})
 
 	watch([pixelSize, options.active, options.placement], () => {
 		if (canvasRef.value) {
-			drawThrottle()
-		}
-	})
-
-	useResizeObserver(wrapperRef, drawThrottle, draw)
-
-	useWatchGlobalCssVal(drawThrottle)
-
-	useTransitionEnd(wrapperRef, draw, (event) => {
-		return event.propertyName === 'color'
-	})
-
-	let wrapperSize = {
-		width: 0,
-		height: 0
-	}
-	usePolling(options.pollSizeChange, () => {
-		const wrapper = wrapperRef.value
-		if (wrapper) {
-			const rect = wrapper.getBoundingClientRect()
-			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-				wrapperSize = {
-					width: rect.width,
-					height: rect.height
-				}
-				draw()
-			}
+			debouncedTrigger()
 		}
 	})
 }

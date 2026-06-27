@@ -148,10 +148,12 @@
 import {
 	clone,
 	isArray,
+	isEqual,
 	isNumber,
 	isUndefined,
 	range,
 	throttle,
+	wait,
 	type Nullish
 } from 'parsnip-kit'
 import { ref, computed, onUnmounted, watch, shallowRef, onMounted, nextTick, inject } from 'vue'
@@ -160,8 +162,7 @@ import { calcBorderCornerCenter, calcPixelSize, canvasPreprocess } from '../shar
 import { getGlobalThemeColor } from '../share/util/color'
 import { fillArr } from '../share/util/common'
 import { drawBorder, drawMark, drawRange, drawThumb, getMarkStyle, getDotStyle } from './draw'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import type { SliderEvent, SliderProps } from './type'
 import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
@@ -179,8 +180,6 @@ import {
 	getTargetThumbElWhenRange
 } from './util'
 import Popup from '../popup/index.vue'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
@@ -501,7 +500,10 @@ watch(
 	],
 	() => {
 		nextTick(() => {
-			markPoints.value = updateMarkPoints(sliderRect.value, valueRange.value, props)
+			const nextMarks = updateMarkPoints(sliderRect.value, valueRange.value, props)
+			if (!isEqual(markPoints.value, nextMarks)) {
+				markPoints.value = nextMarks
+			}
 		})
 	},
 	{ deep: true }
@@ -524,7 +526,7 @@ const focusSliderHandler = (e: MouseEvent) => {
 		return
 	}
 	const target = e.target as HTMLElement
-	setTimeout(() => {
+	wait(0, () => {
 		if (target.tabIndex >= 0) {
 			target.focus()
 		} else if (thumbRef.value && thumbRef.value.contains(target)) {
@@ -539,7 +541,7 @@ const focusSliderHandler = (e: MouseEvent) => {
 				thumbEl.focus()
 			}
 		}
-	}, 0)
+	})
 }
 
 const { focusHandler, blurHandler } = useFocusMode({
@@ -580,10 +582,7 @@ const sliderRef = shallowRef<HTMLDivElement | null>(null)
 
 onMounted(() => {
 	nextTick(() => {
-		drawPixel()
 		updateSliderRect()
-		updateThumbRect()
-		updateThumbLeft()
 		markPoints.value = updateMarkPoints(sliderRect.value, valueRange.value, props)
 	})
 })
@@ -598,31 +597,6 @@ watch([range, disabledComputed, readonlyComputed], (v, o) => {
 	}
 })
 
-watch(
-	[
-		disabledComputed,
-		darkMode,
-		trackLeft,
-		trackWidth,
-		() => props.range,
-		thumbLeft,
-		thumbLeftStart,
-		thumbLeftEnd,
-		markPoints,
-		modelValue,
-		() => props.direction,
-		() => props.reverse,
-		thumbFocusMode,
-		thumbStartFocusMode,
-		thumbEndFocusMode
-	],
-	() => {
-		nextTick(() => {
-			drawPixel()
-		})
-	},
-	{ deep: true }
-)
 const drawPixel = () => {
 	const pixelSize = calcPixelSize()
 	const preprocessData = canvasPreprocess(
@@ -706,34 +680,40 @@ const drawPixel = () => {
 }
 
 const refresh = () => {
+	console.trace()
+
 	drawPixel()
 	updateSliderRect()
 	updateThumbRect()
 }
 
-useResizeObserver(sliderRef, refresh)
-useWatchGlobalCssVal(refresh)
-useTransitionEnd(sliderRef, refresh)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = sliderRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-			updateSliderRect()
-			updateThumbRect()
-		}
-	}
+const { debouncedTrigger } = useDrawCanvas(sliderRef, refresh, {
+	pollSizeChange: pollSizeChangeComputed
 })
+
+watch(
+	[
+		disabledComputed,
+		darkMode,
+		trackLeft,
+		trackWidth,
+		() => props.range,
+		thumbLeft,
+		thumbLeftStart,
+		thumbLeftEnd,
+		markPoints,
+		modelValue,
+		() => props.direction,
+		() => props.reverse,
+		thumbFocusMode,
+		thumbStartFocusMode,
+		thumbEndFocusMode
+	],
+	() => {
+		debouncedTrigger()
+	},
+	{ deep: true }
+)
 </script>
 
 <style lang="less" src="./index.less"></style>

@@ -1,12 +1,4 @@
-import {
-	nextTick,
-	onMounted,
-	ref,
-	watch,
-	type ComputedRef,
-	type Ref,
-	type ShallowRef
-} from 'vue'
+import { nextTick, ref, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { BORDER_CORNER_RAD_RANGE } from '../../share/const'
 import { getGlobalThemeColorString, getGlobalThemeColor } from '../../share/util/color'
 import { fillArr, offsetOutward } from '../../share/util/common'
@@ -17,13 +9,9 @@ import {
 	floodFill,
 	floodFillEdge
 } from '../../share/util/plot'
-import { debounce } from 'parsnip-kit'
 import type { TableProps } from '../type'
 import type { LooseRequired } from '../../share/type'
-import { useResizeObserver } from '../../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../../share/hook/use-watch-global-css-var'
-import { useTransitionEnd } from '../../share/hook/use-transition-end'
-import { usePolling } from '../../share/hook/use-polling'
+import { useDrawCanvas } from '../../share/hook/use-draw-canvas'
 
 export const drawBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -163,6 +151,8 @@ export const useDrawPixel = (
 ) => {
 	const polygon = ref('')
 	const drawPixel = () => {
+		console.log('?')
+
 		drawTableBorder(
 			wrapperRef,
 			canvasRef,
@@ -172,18 +162,16 @@ export const useDrawPixel = (
 			props.borderRadius
 		)
 	}
-	const debounceDraw = debounce(drawPixel, 20, { maxWait: 50, immediate: true })
-	onMounted(() => {
-		nextTick(() => {
-			drawPixel()
-		})
+
+	const { debouncedTrigger } = useDrawCanvas(wrapperRef, drawPixel, {
+		pollSizeChange: () => props.pollSizeChange
 	})
 
 	watch(
 		[() => props.borderRadius, bordered, pixelSize],
 		() => {
 			nextTick(() => {
-				debounceDraw()
+				debouncedTrigger()
 			})
 		},
 		{
@@ -191,30 +179,5 @@ export const useDrawPixel = (
 		}
 	)
 
-	useResizeObserver(wrapperRef, debounceDraw, drawPixel)
-
-	useWatchGlobalCssVal(debounceDraw)
-
-	useTransitionEnd(wrapperRef, debounceDraw, (e) => e.propertyName === 'background-color')
-	let wrapperSize = {
-		width: 0,
-		height: 0
-	}
-	usePolling(
-		() => props.pollSizeChange,
-		() => {
-			const wrapper = wrapperRef.value
-			if (wrapper) {
-				const rect = wrapper.getBoundingClientRect()
-				if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-					wrapperSize = {
-						width: rect.width,
-						height: rect.height
-					}
-					drawPixel()
-				}
-			}
-		}
-	)
 	return [polygon] as const
 }

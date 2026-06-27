@@ -1,5 +1,4 @@
-import { debounce } from 'parsnip-kit'
-import { onMounted, watch, type Ref, type ShallowRef } from 'vue'
+import { watch, type Ref, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import {
 	calcBorderCornerCenter,
@@ -11,8 +10,7 @@ import {
 import type { HsvaColor, RgbaColor } from '../share/type'
 import { getGlobalThemeColor, hsvToRgba, rgbaColor2string } from '../share/util/color'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 
 const drawThumbBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -134,23 +132,17 @@ export const useDraw = (
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), hsvToRgba(hsvColor.value))
 		}
 	}
-	const drawDebounce = debounce(draw, 0)
-
 	const darkMode = useDarkMode()
 
-	watch([pixelSize, darkMode, () => hsvColor?.value], () => {
-		drawDebounce()
-	})
+	const { triggerDraw, debouncedTrigger } = useDrawCanvas(thumbRef, draw)
 
-	onMounted(() => {
-		draw()
+	watch([pixelSize, darkMode, () => hsvColor?.value], () => {
+		debouncedTrigger()
 	})
 
 	watch([thumbCanvasRef, thumbRef], () => {
-		draw()
+		triggerDraw()
 	})
-	useWatchGlobalCssVal(drawDebounce)
-	useTransitionEnd(thumbRef, drawDebounce)
 
-	return drawDebounce
+	return triggerDraw
 }

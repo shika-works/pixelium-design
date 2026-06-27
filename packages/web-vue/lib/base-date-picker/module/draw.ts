@@ -1,4 +1,4 @@
-import { nextTick, onMounted, watch } from 'vue'
+import { watch } from 'vue'
 import { BORDER_CORNER_RAD_RANGE } from '../../share/const'
 import { useDarkMode } from '../../share/hook/use-dark-mode'
 import { getGlobalThemeColor, rgbaColor2string } from '../../share/util/color'
@@ -10,14 +10,10 @@ import {
 	drawCircle
 } from '../../share/util/plot'
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
-import { debounce } from 'parsnip-kit'
 import type { BaseDatePickerProps } from '../type'
 import type { InputGroupProvide } from '../../input-group/type'
 import type { RgbaColor } from '../../share/type'
-import { useResizeObserver } from '../../share/hook/use-resize-observer'
-import { useTransitionEnd } from '../../share/hook/use-transition-end'
-import { useWatchGlobalCssVal } from '../../share/hook/use-watch-global-css-var'
-import { usePolling } from '../../share/hook/use-polling'
+import { useDrawCanvas } from '../../share/hook/use-draw-canvas'
 
 export const drawBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -135,34 +131,6 @@ export const useDraw = (
 		pollSizeChangeComputed
 	} = options
 
-	watch(
-		[
-			pixelSize,
-			first,
-			last,
-			borderRadiusComputed,
-			shapeComputed,
-			sizeComputed,
-			disabledComputed,
-			() => slots,
-			darkMode,
-			focusMode,
-			hoverFlag,
-			readonlyComputed,
-			statusComputed,
-			nextIsTextButton,
-			multiple
-		],
-		() => {
-			drawPixelDebounce()
-		},
-		{ deep: true }
-	)
-	onMounted(() => {
-		nextTick(() => {
-			drawPixel()
-		})
-	})
 	const drawPixel = () => {
 		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
 		if (!preprocessData) {
@@ -220,27 +188,34 @@ export const useDraw = (
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
 		}
 	}
-	const drawPixelDebounce = debounce(drawPixel, 0)
-	useResizeObserver(wrapperRef, drawPixelDebounce, drawPixel)
-	useWatchGlobalCssVal(drawPixelDebounce)
-	useTransitionEnd(wrapperRef, drawPixelDebounce)
 
-	let wrapperSize = {
-		width: 0,
-		height: 0
-	}
-	usePolling(pollSizeChangeComputed, () => {
-		const wrapper = wrapperRef.value
-		if (wrapper) {
-			const rect = wrapper.getBoundingClientRect()
-			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-				wrapperSize = {
-					width: rect.width,
-					height: rect.height
-				}
-				drawPixel()
-			}
-		}
+	const { debouncedTrigger } = useDrawCanvas(wrapperRef, drawPixel, {
+		pollSizeChange: pollSizeChangeComputed
 	})
-	return drawPixelDebounce
+
+	watch(
+		[
+			pixelSize,
+			first,
+			last,
+			borderRadiusComputed,
+			shapeComputed,
+			sizeComputed,
+			disabledComputed,
+			() => slots,
+			darkMode,
+			focusMode,
+			hoverFlag,
+			readonlyComputed,
+			statusComputed,
+			nextIsTextButton,
+			multiple
+		],
+		() => {
+			debouncedTrigger()
+		},
+		{ deep: true }
+	)
+
+	return debouncedTrigger
 }
