@@ -1,4 +1,4 @@
-import { nextTick, ref, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
+import { ref, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { BORDER_CORNER_RAD_RANGE } from '../../share/const'
 import { getGlobalThemeColorString, getGlobalThemeColor } from '../../share/util/color'
 import { fillArr, offsetOutward } from '../../share/util/common'
@@ -151,8 +151,6 @@ export const useDrawPixel = (
 ) => {
 	const polygon = ref('')
 	const drawPixel = () => {
-		console.log('?')
-
 		drawTableBorder(
 			wrapperRef,
 			canvasRef,
@@ -170,9 +168,7 @@ export const useDrawPixel = (
 	watch(
 		[() => props.borderRadius, bordered, pixelSize],
 		() => {
-			nextTick(() => {
-				debouncedTrigger()
-			})
+			debouncedTrigger()
 		},
 		{
 			deep: true

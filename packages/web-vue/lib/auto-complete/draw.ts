@@ -174,10 +174,6 @@ export const useDraw = (
 		pollSizeChange: options.pollSizeChangeComputed
 	})
 
-	watch(canvasRef, () => {
-		triggerDraw()
-	})
-
 	watch(
 		[
 			options.first,
