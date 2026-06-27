@@ -113,7 +113,7 @@ const pollSizeChangeComputed = createProvideComputed(
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
-const innerInputGroup = computed(() => !!inputGroupProvide)
+const innerInputGroup = !!inputGroupProvide
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {

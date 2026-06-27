@@ -98,7 +98,7 @@ type UseDrawOptions = {
 	first: Ref<boolean>
 	last: Ref<boolean>
 	nextIsTextButton: ComputedRef<boolean>
-	innerInputGroup: Ref<boolean>
+	innerInputGroup: boolean
 	pollSizeChangeComputed: ComputedRef<AutoCompleteProps['pollSizeChange']>
 	slots: Slots
 }
@@ -125,7 +125,7 @@ export const useDraw = (
 			options.borderRadiusComputed.value,
 			options.shapeComputed.value || 'rect',
 			options.sizeComputed.value || 'medium',
-			options.innerInputGroup.value,
+			options.innerInputGroup,
 			options.first.value,
 			options.last.value
 		)
@@ -154,7 +154,7 @@ export const useDraw = (
 				rad,
 				borderColor,
 				pixelSize,
-				options.innerInputGroup.value,
+				options.innerInputGroup,
 				options.first.value,
 				options.last.value,
 				options.nextIsTextButton.value
