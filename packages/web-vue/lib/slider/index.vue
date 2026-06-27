@@ -680,8 +680,6 @@ const drawPixel = () => {
 }
 
 const refresh = () => {
-	console.trace()
-
 	drawPixel()
 	updateSliderRect()
 	updateThumbRect()
