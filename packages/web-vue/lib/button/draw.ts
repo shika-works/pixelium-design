@@ -1,4 +1,5 @@
-import { nextTick, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
+import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
+import { useDarkMode } from '../share/hook/use-dark-mode'
 import { TRANSPARENT_RGBA_COLOR_OBJECT, BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
@@ -13,6 +14,7 @@ import {
 } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import type { ButtonProps } from './type'
+import type { Slots } from 'vue'
 
 export function getBackgroundColor(
 	disabled: boolean,
@@ -448,6 +450,7 @@ type UseDrawOptions = {
 	last: Ref<boolean>
 	nextIsTextButton: ComputedRef<boolean>
 	pollSizeChangeComputed: ComputedRef<ButtonProps['pollSizeChange']>
+	slots: Slots
 }
 
 export const useDraw = (
@@ -455,6 +458,8 @@ export const useDraw = (
 	canvasRef: ShallowRef<HTMLCanvasElement | null>,
 	options: UseDrawOptions
 ) => {
+	const darkMode = useDarkMode()
+
 	const drawPixel = () => {
 		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
 		if (!preprocessData) {
@@ -558,16 +563,14 @@ export const useDraw = (
 			options.palette,
 			options.hoverFlag,
 			options.activeFlag,
+			darkMode,
 			options.nextIsTextButton,
+			() => options.slots,
 			options.first,
 			options.last
 		],
 		() => {
-			if (canvasRef.value) {
-				nextTick(() => {
-					debouncedTrigger()
-				})
-			}
+			debouncedTrigger()
 		}
 	)
 

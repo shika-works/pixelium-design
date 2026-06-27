@@ -322,7 +322,8 @@ useDraw(buttonRef, canvasRef, {
 	first,
 	last,
 	nextIsTextButton,
-	pollSizeChangeComputed
+	pollSizeChangeComputed,
+	slots
 })
 </script>
 
