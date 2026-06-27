@@ -125,8 +125,8 @@ importers:
         specifier: ^0.5.9
         version: 0.5.9(overlayscrollbars@2.13.0)(vue@3.5.26(typescript@5.8.3))
       parsnip-kit:
-        specifier: ^0.0.7
-        version: 0.0.7
+        specifier: ^0.1.0
+        version: 0.1.0
       vue:
         specifier: ^3.5.17
         version: 3.5.26(typescript@5.8.3)
@@ -2776,6 +2776,9 @@ packages:
 
   parsnip-kit@0.0.7:
     resolution: {integrity: sha512-a8O/pghd0iirEe916C1pYBpkulE6ayNa//hoO4hYt76E0AtkgKkzU5iqwxYmVWI2R9qSpEpVkOvxxqXYhV3x7Q==}
+
+  parsnip-kit@0.1.0:
+    resolution: {integrity: sha512-qDkWxGxrRo+mhoAOAKvxYSJ1FFY72Fuw46EewvDfUuAuI01sOpwGdBOvlc5vvyX/ppTa4fhmMLOt9n+k1qBQ8A==}
 
   path-browserify@1.0.1:
     resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
@@ -6138,6 +6141,8 @@ snapshots:
       entities: 6.0.1
 
   parsnip-kit@0.0.7: {}
+
+  parsnip-kit@0.1.0: {}
 
   path-browserify@1.0.1: {}
 
