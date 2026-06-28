@@ -15,7 +15,7 @@ const colorCache = createLRU<string, ParseColorValueResult>(120)
 
 function rgbToGray(r: number, g: number, b: number): number {
 	const gray = 0.299 * r + 0.587 * g + 0.114 * b
-	return Math.min(255, Math.max(0, Math.round(gray)))
+	return Math.min(255, Math.max(0, gray))
 }
 export function alphaBlend(fg: RgbaColor, bg: RgbColor): RgbColor {
 	const alpha = (fg.a !== undefined ? fg.a : 255) / 255
@@ -26,9 +26,9 @@ export function alphaBlend(fg: RgbaColor, bg: RgbColor): RgbColor {
 	const b = fg.b * alpha + bg.b * invAlpha
 
 	return {
-		r: Math.min(255, Math.max(0, Math.round(r))),
-		g: Math.min(255, Math.max(0, Math.round(g))),
-		b: Math.min(255, Math.max(0, Math.round(b)))
+		r: Math.min(255, Math.max(0, r)),
+		g: Math.min(255, Math.max(0, g)),
+		b: Math.min(255, Math.max(0, b))
 	}
 }
 export function computeGrayWithBackground(
@@ -231,9 +231,9 @@ export function hsvToRgba(color: HsvaColor): RgbaColor {
 	}
 
 	return {
-		r: Math.round((rn + m) * 255),
-		g: Math.round((gn + m) * 255),
-		b: Math.round((bn + m) * 255),
+		r: (rn + m) * 255,
+		g: (gn + m) * 255,
+		b: (bn + m) * 255,
 		a: color.a
 	}
 }
@@ -275,24 +275,24 @@ export function hslToRgba(color: HslaColor): RgbaColor {
 	}
 
 	return {
-		r: Math.round((rn + m) * 255),
-		g: Math.round((gn + m) * 255),
-		b: Math.round((bn + m) * 255),
+		r: (rn + m) * 255,
+		g: (gn + m) * 255,
+		b: (bn + m) * 255,
 		a: color.a
 	}
 }
 export function hwbToRgba(color: HwbaColor): RgbaColor {
 	const h = normalizeHue(color.h)
-	const roundedW = clamp(color.w, 0, 1)
-	const roundedB = clamp(color.b, 0, 1)
+	const normalizeW = clamp(color.w, 0, 1)
+	const normalizeB = clamp(color.b, 0, 1)
 
-	if (roundedW + roundedB >= 1) {
-		const gray = roundedW / (roundedW + roundedB)
-		const v = Math.round(gray * 255)
+	if (normalizeW + normalizeB >= 1) {
+		const gray = normalizeW / (normalizeW + normalizeB)
+		const v = gray * 255
 		return { r: v, g: v, b: v, a: color.a }
 	}
 
-	const c = 1 - roundedW - roundedB
+	const c = 1 - normalizeW - normalizeB
 	const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
 
 	let rn = 0
@@ -326,9 +326,9 @@ export function hwbToRgba(color: HwbaColor): RgbaColor {
 	}
 
 	return {
-		r: Math.round((roundedW + rn) * 255),
-		g: Math.round((roundedW + gn) * 255),
-		b: Math.round((roundedW + bn) * 255),
+		r: (normalizeW + rn) * 255,
+		g: (normalizeW + gn) * 255,
+		b: (normalizeW + bn) * 255,
 		a: color.a
 	}
 }
@@ -370,11 +370,11 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			/rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*(?:,\s*(\d+(?:\.\d+)?))?\s*\)/i
 		)
 		if (matches) {
-			const r = clamp(Math.round(parseFloat(matches[1])), 0, 255)
-			const g = clamp(Math.round(parseFloat(matches[2])), 0, 255)
-			const b = clamp(Math.round(parseFloat(matches[3])), 0, 255)
+			const r = clamp(parseFloat(matches[1]), 0, 255)
+			const g = clamp(parseFloat(matches[2]), 0, 255)
+			const b = clamp(parseFloat(matches[3]), 0, 255)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			rgba = { r, g, b, a: Math.round(alpha * 255) }
+			rgba = { r, g, b, a: alpha * 255 }
 			parsedColor = rgba
 			format = 'rgb'
 		}
@@ -417,7 +417,7 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const l = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			parsedColor = { h, s, l, a: Math.round(alpha * 255) }
+			parsedColor = { h, s, l, a: alpha * 255 }
 			rgba = hslToRgba(parsedColor)
 			format = 'hsl'
 		}
@@ -430,7 +430,7 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			const s = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const v = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			parsedColor = { h, s, v, a: Math.round(alpha * 255) }
+			parsedColor = { h, s, v, a: alpha * 255 }
 			rgba = hsvToRgba(parsedColor)
 			format = 'hsv'
 		}
@@ -443,7 +443,7 @@ function parseColorValue(color: string): ParseColorValueResult | null {
 			const w = clamp(parseFloat(matches[2]) / 100, 0, 1)
 			const b = clamp(parseFloat(matches[3]) / 100, 0, 1)
 			const alpha = matches[4] !== undefined ? clamp(parseFloat(matches[4]), 0, 1) : 1
-			parsedColor = { h, w, b, a: Math.round(alpha * 255) }
+			parsedColor = { h, w, b, a: alpha * 255 }
 			rgba = hwbToRgba(parsedColor)
 			format = 'hwb'
 		}
@@ -612,9 +612,9 @@ function oklchToRgba(l: number, c: number, h: number, a: number = 255): RgbaColo
 	const g = toGamma(lg)
 	const b = toGamma(lb)
 	return {
-		r: Math.round(r * 255),
-		g: Math.round(g * 255),
-		b: Math.round(b * 255),
+		r: r * 255,
+		g: g * 255,
+		b: b * 255,
 		a: a
 	}
 }
