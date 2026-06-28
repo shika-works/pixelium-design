@@ -8,7 +8,7 @@ export const useControlledMode = <
 	P extends { [key in (K | D) & string]: T | Nullish } = {
 		[key in (K | D) & string]: T | Nullish
 	},
-	const V extends P[K] = P[K]
+	V extends P[K] = P[K]
 >(
 	field: K,
 	props: P,
