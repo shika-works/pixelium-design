@@ -3,7 +3,6 @@ import { useDarkMode } from '../share/hook/use-dark-mode'
 import {
 	drawCircle,
 	calcBorderCornerCenter,
-	calcPixelSize,
 	canvasPreprocess,
 	floodFill,
 	getBorderRadius
@@ -11,6 +10,7 @@ import {
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { AutoCompleteProps } from './type'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 
@@ -109,6 +109,7 @@ export const useDraw = (
 	options: UseDrawOptions
 ) => {
 	const darkMode = useDarkMode()
+	const pixelSizeRef = usePixelSize()
 
 	const drawPixel = () => {
 		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
@@ -117,7 +118,7 @@ export const useDraw = (
 		}
 		const { ctx, width, height, canvas } = preprocessData
 
-		const pixelSize = calcPixelSize()
+		const pixelSize = pixelSizeRef.value
 
 		const borderRadius = getBorderRadius(
 			canvas,
@@ -176,6 +177,7 @@ export const useDraw = (
 
 	watch(
 		[
+			pixelSizeRef,
 			options.first,
 			options.last,
 			options.borderRadiusComputed,
