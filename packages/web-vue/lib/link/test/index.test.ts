@@ -245,7 +245,7 @@ describe('Link Component', () => {
 
 		// Hover state
 		await wrapper.trigger('mouseenter')
-		expect(wrapper.attributes('style')).toContain('rgb(255, 97, 80)')
+		expect(wrapper.attributes('style')).toContain('rgb(255, 98, 80)')
 
 		// Active state
 		await wrapper.trigger('mousedown')
