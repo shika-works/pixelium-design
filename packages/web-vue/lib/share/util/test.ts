@@ -93,6 +93,7 @@ export function createMocks4Focus() {
 				const activeElement = activeElementMock as HTMLElement | null
 				if (activeElement !== this) {
 					activeElement?.blur()
+					// eslint-disable-next-line typescript-eslint/no-this-alias
 					activeElementMock = this
 				}
 			}
@@ -109,6 +110,7 @@ export function createMocks4Focus() {
 					const activeElement = activeElementMock as HTMLElement | null
 					if (activeElement !== this) {
 						activeElement?.blur()
+						// eslint-disable-next-line typescript-eslint/no-this-alias
 						activeElementMock = this
 					}
 				}

@@ -63,26 +63,11 @@ import {
 import type { ButtonProps } from './type'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
-import {
-	calcBorderCornerCenter,
-	calcPixelSize,
-	canvasPreprocess,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
 import { generatePalette, parseColor } from '../share/util/color'
 import type { RgbaColor } from '../share/type'
 import type { ButtonGroupProvide } from '../button-group/type'
-import {
-	drawBorder,
-	drawGradient,
-	getBackgroundColor,
-	getBorderColor,
-	getTextColorWithPalette
-} from './draw'
+import { useDraw, getTextColorWithPalette } from './draw'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { BUTTON_GROUP_UPDATE, INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import type { InputGroupProvide } from '../input-group/type'
@@ -92,12 +77,9 @@ import {
 	FORM_PROVIDE,
 	INPUT_GROUP_PROVIDE
 } from '../share/const/provide-key'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { FormProvide } from '../form/type'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { traverseParent } from '../share/util/render'
 
 defineOptions({
@@ -246,7 +228,6 @@ const id = useId()
 
 onMounted(() => {
 	nextTick(() => {
-		drawPixel()
 		if (innerButtonGroup.value) {
 			buttonGroupProvide?.collectChildrenInfo({
 				id,
@@ -328,134 +309,24 @@ const textColor = computed(() => {
 	)
 })
 
-watch(
-	[
-		borderRadiusComputed,
-		shapeComputed,
-		disabledComputed,
-		loadingComputed,
-		typeComputed,
-		themeComputed,
-		palette,
-		hoverFlag,
-		activeFlag,
-		darkMode,
-		nextIsTextButton,
-		first,
-		last
-	],
-	() => {
-		nextTick(() => {
-			drawPixel()
-		})
-	}
-)
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(buttonRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-
-	const pixelSize = calcPixelSize()
-
-	const { ctx, width, height, canvas } = preprocessData
-
-	const borderRadius = getBorderRadius(
-		canvas,
-		pixelSize,
-		borderRadiusComputed.value,
-		shapeComputed.value || 'rect',
-		sizeComputed.value || 'medium',
-		innerButtonGroup.value || innerInputGroup.value,
-		first.value,
-		last.value
-	)
-
-	const borderColor = getBorderColor(
-		!!disabledComputed.value,
-		!!loadingComputed.value,
-		typeComputed.value || 'primary',
-		themeComputed.value || 'primary',
-		palette.value,
-		hoverFlag.value,
-		activeFlag.value
-	)
-	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-	const rad = BORDER_CORNER_RAD_RANGE
-
-	if (!typeComputed.value || typeComputed.value === 'primary') {
-		drawGradient(
-			ctx,
-			width,
-			height,
-			center,
-			borderRadius,
-			rad,
-			pixelSize,
-			!!disabledComputed.value,
-			!!loadingComputed.value,
-			themeComputed.value,
-			palette.value,
-			innerButtonGroup.value || innerInputGroup.value,
-			first.value,
-			last.value,
-			hoverFlag.value,
-			activeFlag.value
-		)
-	}
-	if (borderColor) {
-		drawBorder(
-			ctx,
-			width,
-			height,
-			center,
-			borderRadius,
-			rad,
-			borderColor,
-			pixelSize,
-			typeComputed.value || 'primary',
-			innerButtonGroup.value || innerInputGroup.value,
-			first.value,
-			last.value,
-			nextIsTextButton.value
-		)
-	}
-	const backgroundColor = getBackgroundColor(
-		!!disabledComputed.value,
-		!!loadingComputed.value,
-		typeComputed.value || 'primary',
-		themeComputed.value || 'primary',
-		palette.value,
-		hoverFlag.value,
-		activeFlag.value
-	)
-
-	if (backgroundColor) {
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-	}
-}
-
-useResizeObserver(buttonRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(buttonRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const button = buttonRef.value
-	if (button) {
-		const rect = button.getBoundingClientRect()
-
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw(buttonRef, canvasRef, {
+	borderRadiusComputed,
+	shapeComputed,
+	sizeComputed,
+	disabledComputed,
+	loadingComputed,
+	typeComputed,
+	themeComputed,
+	palette,
+	hoverFlag,
+	activeFlag,
+	innerButtonGroup,
+	innerInputGroup,
+	first,
+	last,
+	nextIsTextButton,
+	pollSizeChangeComputed,
+	slots
 })
 </script>
 

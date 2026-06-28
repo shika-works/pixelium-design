@@ -4,7 +4,6 @@ import {
 	getCurrentInstance,
 	inject,
 	nextTick,
-	onMounted,
 	ref,
 	shallowRef,
 	useSlots,
@@ -21,23 +20,12 @@ import type {
 	SelectOption,
 	SelectProps
 } from './type'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { drawBorder } from './draw'
-import { getGlobalThemeColor } from '../share/util/color'
-import {
-	calcBorderCornerCenter,
-	calcPixelSize,
-	canvasPreprocess,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
-import { useDarkMode } from '../share/hook/use-dark-mode'
+import { useDraw } from './draw'
 import { useComposition } from '../share/hook/use-composition'
 // @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
 import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
@@ -57,7 +45,6 @@ import {
 	wait
 } from 'parsnip-kit'
 import {
-	BORDER_CORNER_RAD_RANGE,
 	GET_ELEMENT_RENDERED,
 	GROUP_OPTION_TYPE,
 	POPUP_CONTENT_DEFAULT_MAX_WIDTH
@@ -66,8 +53,6 @@ import Tag from '../tag/index.vue'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { inVitest } from '../share/util/env'
 import { useFocusMode } from '../share/hook/use-focus-mode'
 import { getScopedObj } from '../share/util/render'
@@ -594,115 +579,21 @@ const tagsCollapsed = computed(() => {
 	return shouldCollapseTags.value ? modelValue.value.slice(props.maxDisplayTags) : []
 })
 
-const darkMode = useDarkMode()
-
-watch(
-	[
-		first,
-		last,
-		borderRadiusComputed,
-		shapeComputed,
-		sizeComputed,
-		readonlyComputed,
-		disabledComputed,
-		() => slots,
-		darkMode,
-		focusMode,
-		hoverFlag,
-		statusComputed,
-		nextIsTextButton
-	],
-	() => {
-		drawPixel()
-	}
-)
-
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height, canvas } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const borderRadius = getBorderRadius(
-		canvas,
-		pixelSize,
-		borderRadiusComputed.value,
-		shapeComputed.value,
-		sizeComputed.value || 'medium',
-		!!inputGroupProvide,
-		first.value,
-		last.value
-	)
-
-	const borderColor =
-		statusComputed.value !== 'normal'
-			? getGlobalThemeColor(
-					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
-					6
-				)
-			: (hoverFlag.value || focusMode.value) &&
-				  !disabledComputed.value &&
-				  !readonlyComputed.value
-				? getGlobalThemeColor('primary', 6)
-				: getGlobalThemeColor('neutral', 10)
-	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-	const rad = BORDER_CORNER_RAD_RANGE
-
-	if (borderColor) {
-		drawBorder(
-			ctx,
-			width,
-			height,
-			center,
-			borderRadius,
-			rad,
-			borderColor,
-			pixelSize,
-			!!inputGroupProvide,
-			first.value,
-			last.value,
-			nextIsTextButton.value
-		)
-	}
-
-	const backgroundColor = disabledComputed.value
-		? getGlobalThemeColor('neutral', 6)
-		: getGlobalThemeColor('neutral', 1)
-
-	if (backgroundColor) {
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-	}
-}
-
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-	})
-})
-
-useResizeObserver(wrapperRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(wrapperRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = wrapperRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw(wrapperRef, canvasRef, {
+	first,
+	last,
+	borderRadiusComputed,
+	shapeComputed,
+	sizeComputed,
+	disabledComputed,
+	readonlyComputed,
+	statusComputed,
+	hoverFlag,
+	focusMode,
+	nextIsTextButton,
+	innerInputGroup: !!inputGroupProvide,
+	pollSizeChangeComputed,
+	slots
 })
 
 const popoverProps = computed(() => {

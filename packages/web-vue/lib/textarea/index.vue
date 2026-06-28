@@ -56,27 +56,20 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { computed, inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue'
 import type { TextareaEvents, TextareaExpose, TextareaProps } from './type'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { draw } from './draw'
-import { getGlobalThemeColor } from '../share/util/color'
-import { useDarkMode } from '../share/hook/use-dark-mode'
+import { useDraw } from './draw'
 import { useComposition } from '../share/hook/use-composition'
 // @ts-ignore
 import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
-import { debounce, isNullish, type Nullish } from 'parsnip-kit'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { isNullish, type Nullish } from 'parsnip-kit'
 import { useTextareaHeight } from '../share/hook/use-textarea-height'
-import { calcPixelSize, canvasPreprocess } from '../share/util/plot'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
@@ -242,88 +235,14 @@ defineExpose<TextareaExpose>({
 	}
 })
 
-const darkMode = useDarkMode()
-
-watch(
-	[
-		sizeComputed,
-		disabledComputed,
-		readonlyComputed,
-		darkMode,
-		hoverFlag,
-		focusMode,
-		statusComputed
-	],
-	() => {
-		setTimeout(() => {
-			drawPixelDebounce()
-		})
-	}
-)
-
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const borderColor =
-		statusComputed.value !== 'normal'
-			? getGlobalThemeColor(
-					statusComputed.value === 'error' ? 'danger' : statusComputed.value!,
-					6
-				)
-			: (hoverFlag.value || focusMode.value) &&
-				  !disabledComputed.value &&
-				  !readonlyComputed.value
-				? getGlobalThemeColor('primary', 6)
-				: getGlobalThemeColor('neutral', 10)
-	const backgroundColor = disabledComputed.value
-		? getGlobalThemeColor('neutral', 6)
-		: getGlobalThemeColor('neutral', 1)
-
-	if (borderColor && backgroundColor) {
-		draw(ctx, width, height, borderColor, backgroundColor, pixelSize)
-	}
-}
-const drawPixelDebounce = debounce(drawPixel, 0, {
-	maxWait: 25
-})
-
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-	})
-	setTimeout(() => {
-		setHeight()
-	})
-})
-
-useResizeObserver(wrapperRef, drawPixelDebounce, drawPixel)
-
-useWatchGlobalCssVal(drawPixelDebounce)
-
-useTransitionEnd(wrapperRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = wrapperRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw(wrapperRef, canvasRef, {
+	sizeComputed,
+	disabledComputed,
+	readonlyComputed,
+	statusComputed,
+	hoverFlag,
+	focusMode,
+	pollSizeChangeComputed
 })
 </script>
 

@@ -114,14 +114,11 @@ const mouseenterDateWrapperHandler = () => {
 	hoverDate.value = null
 }
 
-watch(
-	() => multiple.value,
-	() => {
-		if (!multiple.value) {
-			hoverDate.value = null
-		}
+watch(multiple, () => {
+	if (!multiple.value) {
+		hoverDate.value = null
 	}
-)
+})
 
 const startDate = computed(() => {
 	if (multiple.value) {
@@ -320,7 +317,7 @@ const selectHandler = (item: CalendarItem, index: number, event: MouseEvent) => 
 	}
 }
 
-watch([() => multiple.value, () => props.current], () => {
+watch([multiple, () => props.current], () => {
 	if (multiple.value && !isArray(props.current)) {
 		if (isNullish(props.current)) {
 			innerCurrent.value = []

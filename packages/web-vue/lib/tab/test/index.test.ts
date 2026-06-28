@@ -302,7 +302,7 @@ describe('Tab', () => {
 			const wrapper = mount(Tab, {
 				props: { placement: 'top' },
 				slots: {
-					default: [h(TabPanel, { index: 1, title: 'Panel' }, 'Content')]
+					default: () => h(TabPanel, { index: 1, title: 'Panel' }, 'Content')
 				}
 			})
 
@@ -314,7 +314,7 @@ describe('Tab', () => {
 			const wrapper = mount(Tab, {
 				props: { placement: 'bottom' },
 				slots: {
-					default: [h(TabPanel, { index: 1, title: 'Panel' }, 'Content')]
+					default: () => h(TabPanel, { index: 1, title: 'Panel' }, 'Content')
 				}
 			})
 
@@ -326,7 +326,7 @@ describe('Tab', () => {
 			const wrapper = mount(Tab, {
 				props: { placement: 'left' },
 				slots: {
-					default: [h(TabPanel, { index: 1, title: 'Panel' }, 'Content')]
+					default: () => h(TabPanel, { index: 1, title: 'Panel' }, 'Content')
 				}
 			})
 
@@ -339,7 +339,7 @@ describe('Tab', () => {
 			const wrapper = mount(Tab, {
 				props: { placement: 'right' },
 				slots: {
-					default: [h(TabPanel, { index: 1, title: 'Panel' }, 'Content')]
+					default: () => h(TabPanel, { index: 1, title: 'Panel' }, 'Content')
 				}
 			})
 

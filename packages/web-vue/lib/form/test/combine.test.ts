@@ -362,7 +362,7 @@ describe('Form Component', () => {
 					),
 				disabledTarget: '.px-slider-thumb',
 				disabledAttr: 'tabindex',
-				disabledValue: '-1'
+				disabledValue: ''
 			},
 			{
 				name: 'BaseDatePicker',

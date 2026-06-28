@@ -19,12 +19,14 @@ import { isNullish, throttle } from 'parsnip-kit'
 import PopupContent from '../popup-content/index.vue'
 import PopupTrigger from '../popup-trigger/index.vue'
 import { inBrowser, inVitest } from '../share/util/env'
-import { calcPixelSize } from '../share/util/plot'
 import { useCancelableDelay } from '../share/hook/use-cancelable-delay'
 import { checkMouseInsideElement, checkMouseInsideElementFromEvent } from '../share/util/dom'
 import { POPUP_PROVIDE } from '../share/const/provide-key'
 import { getElFromVNode, traversePopupContentGetters } from './util'
 import { useMousePosition } from './use-mouse-position'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+
+const pixelSizeRef = usePixelSize()
 
 defineOptions({
 	name: 'Popup'
@@ -360,7 +362,7 @@ const dragEndHandler = (e: MouseEvent | TouchEvent) => {
 }
 
 defineRender(() => {
-	const pixelSize = calcPixelSize()
+	const pixelSize = pixelSizeRef.value
 	return (
 		<Fragment>
 			<PopupTrigger

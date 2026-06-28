@@ -35,26 +35,21 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, shallowRef, toRef, useSlots, watch } from 'vue'
 import type { ProgressProps } from './type'
-import { calcPixelSize, canvasPreprocess } from '../share/util/plot'
-import {
-	generatePalette,
-	getGlobalThemeColor,
-	getGlobalThemeColorString,
-	parseColor,
-	rgbaColor2string
-} from '../share/util/color'
+import { parseColor, generatePalette } from '../share/util/color'
 import type { RgbaColor } from '../share/type'
-import { drawBorder, drawChecker, getBackgroundColor, getGradientColor } from './draw'
+import { useDraw } from './draw'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { clamp, isNumber, isString } from 'parsnip-kit'
 import { useSmoothTransition } from '../share/hook/use-smooth-transition'
 import { INTERVAL, INTERVAL_MINI } from '../share/const/style'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+import { useTransitionEnd } from '../share/hook/use-transition-end'
+import { ignoreNonSizeTransition } from '../share/hook/use-draw-canvas'
+
+const pixelSizeRef = usePixelSize()
 
 defineOptions({
 	name: 'Progress'
@@ -75,8 +70,8 @@ const props = withDefaults(defineProps<ProgressProps>(), {
 const slots = useSlots()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
-const progressRef = shallowRef<HTMLButtonElement | null>(null)
-const progressInnerRef = shallowRef<HTMLButtonElement | null>(null)
+const progressRef = shallowRef<HTMLDivElement | null>(null)
+const progressInnerRef = shallowRef<HTMLDivElement | null>(null)
 const indicatorRef = shallowRef<HTMLDivElement | null>(null)
 
 const percentageValidated = computed(() => {
@@ -102,8 +97,6 @@ const indicatorRect = ref({
 	height: 0
 })
 
-const pixelSizeValue = ref(calcPixelSize())
-
 const updateProgressRect = () => {
 	const progressEl = progressInnerRef.value
 	if (progressEl) {
@@ -127,7 +120,7 @@ const updateIndicatorRect = () => {
 }
 const indicatorRight = computed(() => {
 	const padding = progressPadding.value
-	const borderWidth = pixelSizeValue.value
+	const borderWidth = pixelSizeRef.value
 
 	const right =
 		progressRect.value.width +
@@ -157,18 +150,6 @@ watch(percentageValidated, (val) => {
 
 const darkMode = useDarkMode()
 
-const refresh = () => {
-	drawPixel()
-	updateProgressRect()
-	updateIndicatorRect()
-}
-
-onMounted(() => {
-	nextTick(() => {
-		refresh()
-	})
-})
-
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)?.color
@@ -179,102 +160,34 @@ const palette = computed<null | RgbaColor[]>(() => {
 	return palette
 })
 
-watch(
-	[
-		() => props.variant,
-		() => props.theme,
-		palette,
-		darkMode,
-		slots,
-		progress,
-		progressPadding,
-		() => props.trackColor
-	],
-	() => {
-		drawPixel()
-	},
-	{ deep: true }
-)
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(progressInnerRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height } = preprocessData
-
-	const pixelSize = pixelSizeValue.value
-
-	const borderColor = getGlobalThemeColor('neutral', 10)
-
-	const backgroundColor = getBackgroundColor(props.theme, palette.value)
-	const gradientColor = getGradientColor(props.theme, palette.value)
-
-	const padding = progressPadding.value
-
-	const borderWidth = pixelSize
-	const innerHeight = height - 2 * borderWidth - padding * 2
-	const innerWidth = width - 2 * borderWidth - padding * 2
-
-	if (borderColor) {
-		drawBorder(ctx, width, height, borderColor, pixelSize)
-	}
-
-	ctx.fillStyle = props.trackColor || getGlobalThemeColorString('neutral', 5)
-	ctx.fillRect(borderWidth, borderWidth, width - 2 * borderWidth, height - 2 * borderWidth)
-
-	if (backgroundColor) {
-		ctx.fillStyle = rgbaColor2string(backgroundColor)
-		ctx.fillRect(
-			borderWidth + padding,
-			borderWidth + padding,
-			innerWidth * progress.value,
-			innerHeight
-		)
-	}
-
-	if (props.variant === 'checkered' && gradientColor) {
-		drawChecker(
-			ctx,
-			width,
-			height,
-			INTERVAL,
-			rgbaColor2string(gradientColor),
-			borderWidth,
-			padding,
-			progress.value
-		)
-	}
+const refreshLayout = () => {
+	updateProgressRect()
+	updateIndicatorRect()
 }
 
-useResizeObserver(progressInnerRef, refresh)
-useResizeObserver(indicatorRef, updateIndicatorRect)
-useWatchGlobalCssVal(() => {
-	pixelSizeValue.value = calcPixelSize()
-	refresh()
+useDraw({
+	wrapperRef: progressInnerRef,
+	canvasRef,
+	darkMode,
+	variant: toRef(props, 'variant'),
+	theme: toRef(props, 'theme'),
+	palette,
+	progress,
+	progressPadding,
+	trackColor: toRef(props, 'trackColor'),
+	slots,
+	pollSizeChange: toRef(props, 'pollSizeChange'),
+	refresh: refreshLayout
 })
-useTransitionEnd(progressInnerRef, refresh)
-useTransitionEnd(progressRef, refresh)
 
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(
-	() => props.pollSizeChange,
-	() => {
-		const wrapper = progressInnerRef.value
-		if (wrapper) {
-			const rect = wrapper.getBoundingClientRect()
-			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-				wrapperSize = {
-					width: rect.width,
-					height: rect.height
-				}
-				refresh()
-			}
-		}
-	}
-)
+useResizeObserver(indicatorRef, updateIndicatorRect)
+useTransitionEnd(progressRef, refreshLayout, ignoreNonSizeTransition)
+
+onMounted(() => {
+	nextTick(() => {
+		refreshLayout()
+	})
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

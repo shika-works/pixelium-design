@@ -1,6 +1,16 @@
-import type { RgbaColor } from '../share/type'
+import { watch, type Ref, type ShallowRef, type Slots } from 'vue'
+import type { NumberOrPercentage, RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { drawCircle } from '../share/util/plot'
+import {
+	calcBorderCornerCenter,
+	canvasPreprocess,
+	drawCircle,
+	floodFill,
+	getBorderRadius
+} from '../share/util/plot'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { AlertProps } from './type'
 
 export function getBackgroundColor(
@@ -128,4 +138,88 @@ export const getTextColorWithPalette = (
 		default:
 			return undefined
 	}
+}
+
+type UseDrawOptions = {
+	wrapperRef: ShallowRef<HTMLSpanElement | null>
+	canvasRef: ShallowRef<HTMLCanvasElement | null>
+	borderRadius: Ref<NumberOrPercentage | NumberOrPercentage[] | undefined>
+	shape: Ref<AlertProps['shape']>
+	variant: Ref<AlertProps['variant']>
+	type: Ref<AlertProps['type']>
+	textAlign: Ref<string>
+	palette: Ref<null | RgbaColor[]>
+	darkMode: Ref<boolean>
+	slots: Slots
+	pollSizeChange: Ref<boolean | undefined>
+}
+
+export const useDraw = (options: UseDrawOptions) => {
+	const pixelSizeRef = usePixelSize()
+
+	const drawPixel = () => {
+		const preprocessData = canvasPreprocess(options.wrapperRef, options.canvasRef)
+		if (!preprocessData) {
+			return
+		}
+		const { ctx, width, height, canvas } = preprocessData
+
+		const pixelSize = pixelSizeRef.value
+
+		const borderRadius = getBorderRadius(
+			canvas,
+			pixelSize,
+			options.borderRadius.value,
+			options.shape.value,
+			'medium',
+			false,
+			false,
+			false
+		)
+
+		const borderColor = getBorderColor(
+			options.variant.value,
+			options.type.value,
+			options.palette.value
+		)
+		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
+		const rad = BORDER_CORNER_RAD_RANGE
+
+		if (borderColor) {
+			drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+		}
+
+		const backgroundColor = getBackgroundColor(
+			options.variant.value,
+			options.type.value,
+			options.palette.value
+		)
+
+		if (backgroundColor) {
+			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+		}
+	}
+
+	watch(
+		[
+			pixelSizeRef,
+			options.borderRadius,
+			options.shape,
+			options.variant,
+			options.type,
+			options.textAlign,
+			options.palette,
+			options.darkMode,
+			() => options.slots
+		],
+		() => {
+			debouncedTrigger()
+		}
+	)
+
+	const { debouncedTrigger } = useDrawCanvas(options.wrapperRef, drawPixel, {
+		pollSizeChange: options.pollSizeChange
+	})
+
+	return { debouncedTrigger }
 }

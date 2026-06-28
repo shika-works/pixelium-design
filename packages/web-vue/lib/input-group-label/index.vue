@@ -12,29 +12,15 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { computed, inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, inject, ref, shallowRef, toRef, useSlots } from 'vue'
 import type { InputGroupLabelProps } from './type'
-import {
-	calcBorderCornerCenter,
-	calcPixelSize,
-	canvasPreprocess,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
-import { getGlobalThemeColor, parseColor } from '../share/util/color'
-import { drawBorder } from './draw'
-import { useDarkMode } from '../share/hook/use-dark-mode'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { useDraw } from './draw'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import type { InputGroupProvide } from '../input-group/type'
 import { FORM_ITEM_PROVIDE, INPUT_GROUP_PROVIDE } from '../share/const/provide-key'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { FormItemProvide } from '../form-item/type'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 
 defineOptions({
 	name: 'InputGroupLabel'
@@ -85,103 +71,24 @@ const nextIsTextButton = computed(() => {
 const hoverFlag = ref(false)
 const activeFlag = ref(false)
 
-const darkMode = useDarkMode()
-
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const labelRef = shallowRef<HTMLDivElement | null>(null)
 
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-	})
-})
+const slots = useSlots()
 
-watch(
-	[
-		borderRadiusComputed,
-		shapeComputed,
-		hoverFlag,
-		activeFlag,
-		darkMode,
-		() => props.backgroundColor,
-		nextIsTextButton
-	],
-	() => {
-		drawPixel()
-	}
-)
-watch([first, last], () => {
-	drawPixel()
-})
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(labelRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height, canvas } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const borderRadius = getBorderRadius(
-		canvas,
-		pixelSize,
-		borderRadiusComputed.value,
-		shapeComputed.value,
-		sizeComputed.value || 'medium',
-		!!inputGroupProvide,
-		first.value,
-		last.value
-	)
-
-	const borderColor = getGlobalThemeColor('neutral', 10)
-	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-	const rad = BORDER_CORNER_RAD_RANGE
-
-	if (borderColor) {
-		drawBorder(
-			ctx,
-			width,
-			height,
-			center,
-			borderRadius,
-			rad,
-			borderColor,
-			pixelSize,
-			!!inputGroupProvide,
-			first.value,
-			last.value,
-			nextIsTextButton.value
-		)
-	}
-
-	const backgroundColor =
-		(props.backgroundColor && parseColor(props.backgroundColor)?.color) ||
-		getGlobalThemeColor('neutral', 3)
-	if (backgroundColor) {
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-	}
-}
-
-useResizeObserver(labelRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(labelRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = labelRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw(labelRef, canvasRef, {
+	borderRadiusComputed,
+	shapeComputed,
+	sizeComputed,
+	hoverFlag,
+	activeFlag,
+	nextIsTextButton,
+	first,
+	last,
+	innerInputGroup: !!inputGroupProvide,
+	pollSizeChangeComputed,
+	backgroundColor: toRef(props, 'backgroundColor'),
+	slots
 })
 </script>
 

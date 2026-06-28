@@ -33,8 +33,8 @@ export const formatColor = (
 			: `hwb(${Math.round(cwm.hwb.h)}, ${w}%, ${b}%)`
 	}
 	return allowAlpha
-		? `rgb(${cwm.rgb.r}, ${cwm.rgb.g}, ${cwm.rgb.b}, ${alpha})`
-		: `rgb(${cwm.rgb.r}, ${cwm.rgb.g}, ${cwm.rgb.b})`
+		? `rgb(${Math.round(cwm.rgb.r)}, ${Math.round(cwm.rgb.g)}, ${Math.round(cwm.rgb.b)}, ${alpha})`
+		: `rgb(${Math.round(cwm.rgb.r)}, ${Math.round(cwm.rgb.g)}, ${Math.round(cwm.rgb.b)})`
 }
 
 export const calcColorWithModel = (hsv: HsvaColor, allowAlpha: boolean): ColorWithModel => {

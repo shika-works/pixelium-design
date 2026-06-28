@@ -19,7 +19,7 @@ const NON_SIZE_PROPERTIES = new Set([
 	'outline-style'
 ])
 
-const ignoreNonSizeTransition = (event: TransitionEvent) => {
+export const ignoreNonSizeTransition = (event: TransitionEvent) => {
 	return NON_SIZE_PROPERTIES.has(event.propertyName)
 }
 
