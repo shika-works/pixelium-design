@@ -39,33 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, watch, ref, inject, shallowRef } from 'vue'
+import { watch, ref, inject, shallowRef } from 'vue'
+import { useDraw } from './draw'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
-import { useDarkMode } from '../share/hook/use-dark-mode'
-import { getGlobalThemeColorString, parseColor } from '../share/util/color'
 import type { RadioProps, RadioEvents } from './type'
 import { FORM_ITEM_PROVIDE, RADIO_GROUP_PROVIDE } from '../share/const/provide-key'
-import {
-	calcBorderCornerCenter,
-	canvasPreprocess,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
 import type { FormItemProvide } from '../form-item/type'
-import {
-	drawBorder,
-	drawMaskedPixelTriangle,
-	drawPixelTriangle,
-	drawRadioCircleMark
-} from './draw'
 import { createProvideComputed } from '../share/util/reactivity'
-import { calcPixelSize } from '../share/util/plot'
 import type { RadioGroupProvide } from '../radio-group/type'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { useFocusMode } from '../share/hook/use-focus-mode'
 
 defineOptions({
@@ -124,7 +105,7 @@ const variantComputed = createProvideComputed(
 
 if (radioGroupProvide) {
 	watch(
-		() => radioGroupProvide.modelValue.value,
+		radioGroupProvide.modelValue,
 		(newValue) => {
 			modelValue.value = newValue === props.value
 		},
@@ -179,108 +160,15 @@ const inputHandler = async (e: InputEvent) => {
 	formItemProvide?.inputHandler()
 }
 
-const darkMode = useDarkMode()
-
-const pixelSize = calcPixelSize()
-
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(canvasWrapperRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height, canvas } = preprocessData
-	ctx.clearRect(0, 0, width, height)
-
-	const backgroundColor = getGlobalThemeColorString('neutral', 1)
-
-	const mainColor = modelValue.value
-		? disabledComputed.value
-			? getGlobalThemeColorString('primary', 2)
-			: hoverFlag.value && !readonlyComputed.value
-				? getGlobalThemeColorString('primary', 5)
-				: getGlobalThemeColorString('primary', 6)
-		: disabledComputed.value
-			? getGlobalThemeColorString('neutral', 8)
-			: hoverFlag.value && !readonlyComputed.value
-				? getGlobalThemeColorString('primary', 5)
-				: getGlobalThemeColorString('neutral', 10)
-
-	if (variantComputed.value === 'retro') {
-		if (modelValue.value) {
-			drawPixelTriangle(ctx, width, height, mainColor, pixelSize)
-		} else {
-			drawMaskedPixelTriangle(ctx, width, height, mainColor, pixelSize)
-		}
-	} else {
-		const borderRadius = getBorderRadius(
-			canvas,
-			pixelSize,
-			undefined,
-			'round',
-			undefined,
-			false,
-			false,
-			false
-		)
-		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-		const rad = BORDER_CORNER_RAD_RANGE
-		drawBorder(ctx, width, height, center, borderRadius, rad, mainColor, pixelSize)
-
-		const size = Math.min(width, height)
-		const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
-
-		const parsedBackgroundColor = parseColor(backgroundColor)?.color
-		if (parsedBackgroundColor) {
-			floodFill(ctx, fillStart, fillStart, parsedBackgroundColor)
-		}
-
-		if (modelValue.value) {
-			drawRadioCircleMark(ctx, size, mainColor, pixelSize)
-		}
-	}
-}
-
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-	})
-})
-
-watch(
-	[
-		disabledComputed,
-		readonlyComputed,
-		modelValue,
-		darkMode,
-		hoverFlag,
-		variantComputed,
-		sizeComputed
-	],
-	() => {
-		drawPixel()
-	}
-)
-
-useResizeObserver(canvasWrapperRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(canvasWrapperRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = canvasWrapperRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw(canvasWrapperRef, canvasRef, {
+	hoverFlag,
+	focusMode,
+	modelValue,
+	disabledComputed,
+	readonlyComputed,
+	sizeComputed,
+	variantComputed,
+	pollSizeChangeComputed
 })
 </script>
 

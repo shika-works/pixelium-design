@@ -36,13 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
-import { getGlobalThemeColorString } from '../share/util/color'
-import { canvasPreprocess, calcPixelSize } from '../share/util/plot'
-import { drawAsteriskMark, drawBorder, drawBracketBorder, drawLineMark } from './draw'
-import { useDarkMode } from '../share/hook/use-dark-mode'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { inject, ref, shallowRef, watch } from 'vue'
+import { useDraw } from './draw'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { CheckboxEvents, CheckboxProps } from './type'
 import type { FormItemProvide } from '../form-item/type'
@@ -52,9 +47,6 @@ import { CHECKBOX_GROUP_PROVIDE, FORM_ITEM_PROVIDE } from '../share/const/provid
 import CheckSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-solid.svg'
 import { createProvideComputed } from '../share/util/reactivity'
 import type { CheckboxGroupProvide } from '../checkbox-group/type'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { INTERVAL } from '../share/const/style'
-import { usePolling } from '../share/hook/use-polling'
 import { useFocusMode } from '../share/hook/use-focus-mode'
 defineOptions({
 	name: 'Checkbox'
@@ -159,7 +151,7 @@ const changeHandler = (e: Event) => {
 
 if (checkboxGroupProvide) {
 	watch(
-		() => checkboxGroupProvide.modelValue.value,
+		checkboxGroupProvide.modelValue,
 		(newValue) => {
 			modelValue.value = !newValue ? false : newValue.includes(props.value)
 		},
@@ -172,103 +164,16 @@ if (checkboxGroupProvide) {
 		checkboxGroupProvide.updateValue(props.value, !!newValue)
 	})
 }
-
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(boxRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const mainColor = disabledComputed.value
-		? modelValue.value || props.indeterminate
-			? getGlobalThemeColorString('primary', 2)
-			: getGlobalThemeColorString('neutral', 8)
-		: hoverFlag.value && !readonlyComputed.value
-			? getGlobalThemeColorString('primary', 5)
-			: modelValue.value || props.indeterminate
-				? getGlobalThemeColorString('primary', 6)
-				: getGlobalThemeColorString('neutral', 10)
-
-	const backgroundColor = getGlobalThemeColorString('neutral', 1)
-
-	const intervalSize = INTERVAL
-
-	if (variantComputed.value === 'normal') {
-		drawBorder(ctx, width, height, mainColor, pixelSize)
-
-		ctx.fillStyle = backgroundColor
-		ctx.fillRect(pixelSize, pixelSize, width - pixelSize * 2, height - pixelSize * 2)
-
-		if (props.indeterminate) {
-			ctx.fillStyle = mainColor
-			ctx.fillRect(
-				pixelSize + intervalSize,
-				pixelSize + intervalSize,
-				width - pixelSize * 2 - intervalSize * 2,
-				height - pixelSize * 2 - intervalSize * 2
-			)
-		}
-	} else {
-		drawBracketBorder(ctx, width, height, mainColor, pixelSize)
-
-		const size = Math.min(width, height)
-
-		if (props.indeterminate) {
-			drawLineMark(ctx, size, intervalSize, mainColor, pixelSize)
-		} else if (modelValue.value) {
-			drawAsteriskMark(ctx, size, intervalSize, mainColor, pixelSize)
-		}
-	}
-}
-
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-	})
-})
-
-const darkMode = useDarkMode()
-
-watch(
-	[
-		darkMode,
-		hoverFlag,
-		focusMode,
-		modelValue,
-		() => props.indeterminate,
-		disabledComputed,
-		readonlyComputed,
-		sizeComputed,
-		variantComputed
-	],
-	() => {
-		drawPixel()
-	}
-)
-
-useResizeObserver(boxRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(boxRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = boxRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw(boxRef, canvasRef, {
+	hoverFlag,
+	focusMode,
+	modelValue,
+	indeterminate: () => props.indeterminate,
+	disabledComputed,
+	readonlyComputed,
+	sizeComputed,
+	variantComputed,
+	pollSizeChangeComputed
 })
 </script>
 

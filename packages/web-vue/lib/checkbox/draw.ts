@@ -1,5 +1,12 @@
+import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { INV_SQRT3 } from '../share/const'
-import { roundToPixel } from '../share/util/plot'
+import { roundToPixel, canvasPreprocess } from '../share/util/plot'
+import { getGlobalThemeColorString } from '../share/util/color'
+import { useDarkMode } from '../share/hook/use-dark-mode'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+import type { CheckboxProps } from './type'
+import { INTERVAL } from '../share/const/style'
 
 export const drawBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -98,4 +105,103 @@ export const drawLineMark = (
 	}
 
 	ctx.fillRect(offset, offset + mid * pixelSize, areaSize, pixelSize)
+}
+
+type UseDrawOptions = {
+	hoverFlag: Ref<boolean>
+	focusMode: Ref<boolean>
+	modelValue: Ref<boolean | null | undefined>
+	indeterminate: () => boolean
+	disabledComputed: ComputedRef<CheckboxProps['disabled']>
+	readonlyComputed: ComputedRef<CheckboxProps['readonly']>
+	sizeComputed: ComputedRef<CheckboxProps['size']>
+	variantComputed: ComputedRef<CheckboxProps['variant']>
+	pollSizeChangeComputed: ComputedRef<CheckboxProps['pollSizeChange']>
+}
+
+export const useDraw = (
+	boxRef: ShallowRef<HTMLDivElement | null>,
+	canvasRef: ShallowRef<HTMLCanvasElement | null>,
+	options: UseDrawOptions
+) => {
+	const darkMode = useDarkMode()
+	const pixelSize = usePixelSize()
+
+	const drawPixel = () => {
+		const preprocessData = canvasPreprocess(boxRef, canvasRef)
+		if (!preprocessData) {
+			return
+		}
+		const { ctx, width, height } = preprocessData
+
+		const mainColor = options.disabledComputed.value
+			? options.modelValue.value || options.indeterminate()
+				? getGlobalThemeColorString('primary', 2)
+				: getGlobalThemeColorString('neutral', 8)
+			: options.hoverFlag.value && !options.readonlyComputed.value
+				? getGlobalThemeColorString('primary', 5)
+				: options.modelValue.value || options.indeterminate()
+					? getGlobalThemeColorString('primary', 6)
+					: getGlobalThemeColorString('neutral', 10)
+
+		const backgroundColor = getGlobalThemeColorString('neutral', 1)
+
+		const intervalSize = INTERVAL
+
+		if (options.variantComputed.value === 'normal') {
+			drawBorder(ctx, width, height, mainColor, pixelSize.value)
+
+			ctx.fillStyle = backgroundColor
+			ctx.fillRect(
+				pixelSize.value,
+				pixelSize.value,
+				width - pixelSize.value * 2,
+				height - pixelSize.value * 2
+			)
+
+			if (options.indeterminate()) {
+				ctx.fillStyle = mainColor
+				ctx.fillRect(
+					pixelSize.value + intervalSize,
+					pixelSize.value + intervalSize,
+					width - pixelSize.value * 2 - intervalSize * 2,
+					height - pixelSize.value * 2 - intervalSize * 2
+				)
+			}
+		} else {
+			drawBracketBorder(ctx, width, height, mainColor, pixelSize.value)
+
+			const size = Math.min(width, height)
+
+			if (options.indeterminate()) {
+				drawLineMark(ctx, size, intervalSize, mainColor, pixelSize.value)
+			} else if (options.modelValue.value) {
+				drawAsteriskMark(ctx, size, intervalSize, mainColor, pixelSize.value)
+			}
+		}
+	}
+
+	const { debouncedTrigger, triggerDraw } = useDrawCanvas(boxRef, drawPixel, {
+		pollSizeChange: options.pollSizeChangeComputed
+	})
+
+	watch(
+		[
+			pixelSize,
+			darkMode,
+			options.hoverFlag,
+			options.focusMode,
+			options.modelValue,
+			() => options.indeterminate,
+			options.disabledComputed,
+			options.readonlyComputed,
+			options.sizeComputed,
+			options.variantComputed
+		],
+		() => {
+			debouncedTrigger()
+		}
+	)
+
+	return { triggerDraw, debouncedTrigger }
 }

@@ -1,7 +1,20 @@
-import { SQRT3 } from '../share/const'
+import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
+import { SQRT3, BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { INTERVAL } from '../share/const/style'
-import { parseColor } from '../share/util/color'
-import { drawCircle, drawSmoothCircle, floodFill, roundToPixel } from '../share/util/plot'
+import { parseColor, getGlobalThemeColorString } from '../share/util/color'
+import {
+	drawCircle,
+	drawSmoothCircle,
+	floodFill,
+	roundToPixel,
+	canvasPreprocess,
+	calcBorderCornerCenter,
+	getBorderRadius
+} from '../share/util/plot'
+import { useDarkMode } from '../share/hook/use-dark-mode'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+import type { RadioProps } from './type'
 
 export const drawPixelTriangle = (
 	ctx: CanvasRenderingContext2D,
@@ -125,4 +138,105 @@ export const drawRadioCircleMark = (
 		floodFill(ctx, fillStart, fillStart, rgbaColor)
 	}
 	ctx.fillRect(fillStart, fillStart, pixelSize, pixelSize)
+}
+
+type UseDrawOptions = {
+	hoverFlag: Ref<boolean>
+	focusMode: Ref<boolean>
+	modelValue: Ref<boolean | null | undefined>
+	disabledComputed: ComputedRef<RadioProps['disabled']>
+	readonlyComputed: ComputedRef<RadioProps['readonly']>
+	sizeComputed: ComputedRef<RadioProps['size']>
+	variantComputed: ComputedRef<RadioProps['variant']>
+	pollSizeChangeComputed: ComputedRef<RadioProps['pollSizeChange']>
+}
+
+export const useDraw = (
+	wrapperRef: ShallowRef<HTMLDivElement | null>,
+	canvasRef: ShallowRef<HTMLCanvasElement | null>,
+	options: UseDrawOptions
+) => {
+	const darkMode = useDarkMode()
+	const pixelSizeRef = usePixelSize()
+
+	const drawPixel = () => {
+		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
+		if (!preprocessData) {
+			return
+		}
+		const { ctx, width, height, canvas } = preprocessData
+		ctx.clearRect(0, 0, width, height)
+
+		const pixelSize = pixelSizeRef.value
+
+		const backgroundColor = getGlobalThemeColorString('neutral', 1)
+
+		const mainColor = options.modelValue.value
+			? options.disabledComputed.value
+				? getGlobalThemeColorString('primary', 2)
+				: options.hoverFlag.value && !options.readonlyComputed.value
+					? getGlobalThemeColorString('primary', 5)
+					: getGlobalThemeColorString('primary', 6)
+			: options.disabledComputed.value
+				? getGlobalThemeColorString('neutral', 8)
+				: options.hoverFlag.value && !options.readonlyComputed.value
+					? getGlobalThemeColorString('primary', 5)
+					: getGlobalThemeColorString('neutral', 10)
+
+		if (options.variantComputed.value === 'retro') {
+			if (options.modelValue.value) {
+				drawPixelTriangle(ctx, width, height, mainColor, pixelSize)
+			} else {
+				drawMaskedPixelTriangle(ctx, width, height, mainColor, pixelSize)
+			}
+		} else {
+			const borderRadius = getBorderRadius(
+				canvas,
+				pixelSize,
+				undefined,
+				'round',
+				undefined,
+				false,
+				false,
+				false
+			)
+			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
+			const rad = BORDER_CORNER_RAD_RANGE
+			drawBorder(ctx, width, height, center, borderRadius, rad, mainColor, pixelSize)
+
+			const size = Math.min(width, height)
+			const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
+
+			const parsedBackgroundColor = parseColor(backgroundColor)?.color
+			if (parsedBackgroundColor) {
+				floodFill(ctx, fillStart, fillStart, parsedBackgroundColor)
+			}
+
+			if (options.modelValue.value) {
+				drawRadioCircleMark(ctx, size, mainColor, pixelSize)
+			}
+		}
+	}
+
+	const { debouncedTrigger, triggerDraw } = useDrawCanvas(wrapperRef, drawPixel, {
+		pollSizeChange: options.pollSizeChangeComputed
+	})
+
+	watch(
+		[
+			pixelSizeRef,
+			options.disabledComputed,
+			options.readonlyComputed,
+			options.modelValue,
+			darkMode,
+			options.hoverFlag,
+			options.variantComputed,
+			options.sizeComputed
+		],
+		() => {
+			debouncedTrigger()
+		}
+	)
+
+	return { triggerDraw, debouncedTrigger }
 }
