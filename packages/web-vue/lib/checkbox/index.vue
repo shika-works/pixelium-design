@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, shallowRef, watch } from 'vue'
+import { inject, ref, shallowRef, toRef, watch } from 'vue'
 import { useDraw } from './draw'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { CheckboxEvents, CheckboxProps } from './type'
@@ -168,7 +168,7 @@ useDraw(boxRef, canvasRef, {
 	hoverFlag,
 	focusMode,
 	modelValue,
-	indeterminate: () => props.indeterminate,
+	indeterminate: toRef(props, 'indeterminate'),
 	disabledComputed,
 	readonlyComputed,
 	sizeComputed,

@@ -111,7 +111,7 @@ type UseDrawOptions = {
 	hoverFlag: Ref<boolean>
 	focusMode: Ref<boolean>
 	modelValue: Ref<boolean | null | undefined>
-	indeterminate: () => boolean
+	indeterminate: Ref<boolean>
 	disabledComputed: ComputedRef<CheckboxProps['disabled']>
 	readonlyComputed: ComputedRef<CheckboxProps['readonly']>
 	sizeComputed: ComputedRef<CheckboxProps['size']>
@@ -135,12 +135,12 @@ export const useDraw = (
 		const { ctx, width, height } = preprocessData
 
 		const mainColor = options.disabledComputed.value
-			? options.modelValue.value || options.indeterminate()
+			? options.modelValue.value || options.indeterminate.value
 				? getGlobalThemeColorString('primary', 2)
 				: getGlobalThemeColorString('neutral', 8)
 			: options.hoverFlag.value && !options.readonlyComputed.value
 				? getGlobalThemeColorString('primary', 5)
-				: options.modelValue.value || options.indeterminate()
+				: options.modelValue.value || options.indeterminate.value
 					? getGlobalThemeColorString('primary', 6)
 					: getGlobalThemeColorString('neutral', 10)
 
@@ -159,7 +159,7 @@ export const useDraw = (
 				height - pixelSize.value * 2
 			)
 
-			if (options.indeterminate()) {
+			if (options.indeterminate.value) {
 				ctx.fillStyle = mainColor
 				ctx.fillRect(
 					pixelSize.value + intervalSize,
@@ -173,7 +173,7 @@ export const useDraw = (
 
 			const size = Math.min(width, height)
 
-			if (options.indeterminate()) {
+			if (options.indeterminate.value) {
 				drawLineMark(ctx, size, intervalSize, mainColor, pixelSize.value)
 			} else if (options.modelValue.value) {
 				drawAsteriskMark(ctx, size, intervalSize, mainColor, pixelSize.value)
@@ -192,7 +192,7 @@ export const useDraw = (
 			options.hoverFlag,
 			options.focusMode,
 			options.modelValue,
-			() => options.indeterminate,
+			options.indeterminate,
 			options.disabledComputed,
 			options.readonlyComputed,
 			options.sizeComputed,
