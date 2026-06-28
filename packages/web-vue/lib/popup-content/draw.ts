@@ -1,6 +1,16 @@
+import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { drawCircle } from '../share/util/plot'
+import {
+	calcBorderCornerCenter,
+	canvasPreprocess,
+	drawCircle,
+	floodFill
+} from '../share/util/plot'
+import { fillArr } from '../share/util/common'
+import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { PopupContentProps } from './type'
 
 export function getBorderColor(variant: PopupContentProps['variant']) {
@@ -203,4 +213,128 @@ export const drawArrow = (
 			break
 		}
 	}
+}
+
+type UseDrawOptions = {
+	wrapperRef: ShallowRef<HTMLDivElement | null>
+	canvasRef: ShallowRef<HTMLCanvasElement | null>
+	darkMode: Ref<boolean>
+	popupFinalPlacement: Ref<'top' | 'bottom' | 'left' | 'right' | undefined>
+	arrowXOffset: Ref<number | undefined>
+	arrowYOffset: Ref<number | undefined>
+	show: Ref<boolean>
+	floatingStyles: Ref<Record<string, string>>
+	variant: Ref<PopupContentProps['variant']>
+	arrow: Ref<PopupContentProps['arrow']>
+	popupSide: ComputedRef<'start' | 'end' | 'middle'>
+	borderRadius: Ref<PopupContentProps['borderRadius']>
+}
+
+export const useDraw = (options: UseDrawOptions) => {
+	const pixelSizeRef = usePixelSize()
+
+	const drawPixel = () => {
+		if (!options.popupFinalPlacement.value) {
+			return
+		}
+
+		const preprocessData = canvasPreprocess(options.wrapperRef, options.canvasRef)
+		if (!preprocessData) {
+			return
+		}
+		const { ctx, width, height } = preprocessData
+		const pixelSize = pixelSizeRef.value
+
+		const borderRadiusValue = Math.max(options.borderRadius.value ?? pixelSize, pixelSize)
+		const borderRadius = fillArr(borderRadiusValue, 4)
+
+		const offset = options.arrow.value ? pixelSize * 2 : 0
+		const offsetX =
+			options.popupFinalPlacement.value === 'left' ||
+			options.popupFinalPlacement.value === 'right'
+				? offset
+				: 0
+		const offsetY =
+			options.popupFinalPlacement.value === 'top' ||
+			options.popupFinalPlacement.value === 'bottom'
+				? offset
+				: 0
+
+		const borderColor = getBorderColor(options.variant.value)
+		const center = calcBorderCornerCenter(
+			borderRadius,
+			width,
+			height,
+			pixelSize,
+			offsetX,
+			offsetY
+		)
+		const rad = BORDER_CORNER_RAD_RANGE
+
+		const offsetTop = options.popupFinalPlacement.value === 'bottom' ? offset : 0
+		const offsetLeft = options.popupFinalPlacement.value === 'right' ? offset : 0
+
+		if (borderColor) {
+			drawBorder(
+				ctx,
+				width,
+				height,
+				center,
+				borderRadius,
+				rad,
+				borderColor,
+				pixelSize,
+				offsetX,
+				offsetY,
+				offsetTop,
+				offsetLeft
+			)
+		}
+
+		const backgroundColor = getBackgroundColor(options.variant.value)
+
+		if (backgroundColor) {
+			floodFill(
+				ctx,
+				Math.round((width - offsetX) / 2 + offsetLeft),
+				Math.round((height - offsetY) / 2 + offsetTop),
+				backgroundColor
+			)
+		}
+		if (options.arrow.value && borderColor && backgroundColor) {
+			drawArrow(
+				ctx,
+				width,
+				height,
+				borderColor,
+				backgroundColor,
+				pixelSize,
+				options.popupFinalPlacement.value,
+				options.popupSide.value,
+				options.arrowXOffset.value || 0,
+				options.arrowYOffset.value || 0
+			)
+		}
+	}
+
+	const { debouncedTrigger } = useDrawCanvas(options.wrapperRef, drawPixel)
+
+	watch(
+		[
+			pixelSizeRef,
+			options.darkMode,
+			options.popupFinalPlacement,
+			options.arrowXOffset,
+			options.arrowYOffset,
+			options.show,
+			options.floatingStyles,
+			options.variant,
+			options.arrow
+		],
+		() => {
+			debouncedTrigger()
+		}
+	)
+
+	return { debouncedTrigger }
 }

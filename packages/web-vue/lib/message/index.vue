@@ -1,26 +1,26 @@
 <script lang="tsx" setup>
-import { ref, onMounted, computed, watch, onBeforeUnmount, Transition, shallowRef } from 'vue'
-import type { MessageProps } from './type'
 import {
-	generatePalette,
-	getGlobalThemeColor,
-	getGlobalThemeColorString,
-	parseColor,
-	rgbaColor2string
-} from '../share/util/color'
+	ref,
+	onMounted,
+	computed,
+	onBeforeUnmount,
+	Transition,
+	shallowRef,
+	toRef,
+	useSlots
+} from 'vue'
+import type { MessageProps } from './type'
+import { generatePalette, parseColor, rgbaColor2string } from '../share/util/color'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { type RgbaColor } from '../share/type'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
 import InfoCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/info-circle-solid.svg'
 import ExclamationTriangleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/exclamation-triangle-solid.svg'
 import OctagonTimesSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/octagon-times-solid.svg'
 import CheckCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-circle-solid.svg'
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import { isString } from 'parsnip-kit'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { calcPixelSize, canvasPreprocess } from '../share/util/plot'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
+import { useDraw } from './draw'
 
 defineOptions({
 	name: 'MessageItem'
@@ -70,23 +70,13 @@ const afterLeaveHandler = () => {
 	emits('close', props.id)
 	clearTimer()
 }
+
+const slots = useSlots()
 const canvasRef = shallowRef<null | HTMLCanvasElement>(null)
 const messageRef = shallowRef<null | HTMLDivElement>(null)
 
-const themeMap = (type: MessageProps['type']) => {
-	if (!type) {
-		return 'normal'
-	}
-	switch (type) {
-		case 'info':
-			return 'primary'
-		case 'error':
-			return 'danger'
-		default:
-			return type
-	}
-}
 const darkMode = useDarkMode()
+const type = toRef(props, 'type')
 const palette = computed<null | RgbaColor[]>(() => {
 	if (!props.color) return null
 	const color = parseColor(props.color)?.color
@@ -110,63 +100,16 @@ const closeIconColor = computed(() => {
 			? rgbaColor2string(palette.value[4])
 			: rgbaColor2string(palette.value[5])
 })
-function getBorderColor(type: MessageProps['type'] = 'normal', palette: RgbaColor[] | null) {
-	if (palette) {
-		return palette[5]
-	} else {
-		const theme = themeMap(type)
-		if (theme === 'normal') {
-			return getGlobalThemeColor('neutral', 10)
-		} else if (theme === 'loading') {
-			return getGlobalThemeColor('neutral', 8)
-		} else {
-			return getGlobalThemeColor(theme, 6)
-		}
-	}
-}
-const draw = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	borderColor: RgbaColor,
-	pixelSize: number
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
 
-	ctx.fillRect(pixelSize, 0, width - 2 * pixelSize, pixelSize)
-	ctx.fillRect(width - pixelSize, pixelSize, pixelSize, height - 2 * pixelSize)
-	ctx.fillRect(pixelSize, height - pixelSize, width - 2 * pixelSize, pixelSize)
-	ctx.fillRect(0, pixelSize, pixelSize, height - 2 * pixelSize)
-
-	const backgroundColor = getGlobalThemeColorString('neutral', 1)
-	ctx.fillStyle = backgroundColor
-	ctx.fillRect(pixelSize, pixelSize, width - 2 * pixelSize, height - 2 * pixelSize)
-}
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(messageRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const borderColor = getBorderColor(props.type, palette.value)
-
-	if (borderColor) {
-		draw(ctx, width, height, borderColor, pixelSize)
-	}
-}
-
-useResizeObserver(messageRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(messageRef, drawPixel)
-
-watch([() => props.type, palette, darkMode], () => {
-	setTimeout(() => {
-		drawPixel()
-	})
+useDraw({
+	wrapperRef: messageRef,
+	canvasRef,
+	darkMode,
+	type,
+	palette,
+	slots
 })
+
 defineExpose({
 	close
 })

@@ -45,28 +45,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { computed, nextTick, onMounted, ref, shallowRef, toRef, watch } from 'vue'
 import { arrow, computePosition, flip, offset, shift } from '@floating-ui/dom'
-import {
-	calcBorderCornerCenter,
-	calcPixelSize,
-	calcWhenLeaveBaseline,
-	canvasPreprocess,
-	floodFill
-} from '../share/util/plot'
+import { calcWhenLeaveBaseline } from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { fillArr } from '../share/util/common'
-import { drawArrow, drawBorder, getBackgroundColor, getBorderColor } from './draw'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+import { useDraw } from './draw'
 import type { PopupContentEvents, PopupContentProps } from './type'
 import { isNumber } from 'parsnip-kit'
 import { inBrowser } from '../share/util/env'
 import PopupWrapper from '../popup-wrapper/index.vue'
 import PopupPortal from '../popup-portal/index.vue'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { hasNoneDisplayAncestor } from '../share/util/dom'
+
+const pixelSizeRef = usePixelSize()
 
 defineOptions({
 	name: 'PopupContent',
@@ -166,7 +158,7 @@ async function updatePosition(element: HTMLElement | SVGElement) {
 		contentWidth.value = undefined
 	}
 
-	const pixelSize = calcPixelSize()
+	const pixelSize = pixelSizeRef.value
 
 	const borderRadius = Math.max(props.borderRadius || pixelSize, pixelSize)
 
@@ -286,107 +278,24 @@ defineExpose({
 const darkMode = useDarkMode()
 onMounted(() => {
 	nextTick(() => {
-		drawPixel()
 		processVisible(!!props.visible)
 	})
 })
-watch(
-	[
-		darkMode,
-		popupFinalPlacement,
-		arrowXOffset,
-		arrowYOffset,
-		show,
-		floatingStyles,
-		() => props.variant,
-		() => props.arrow
-	],
-	() => {
-		drawPixel()
-	}
-)
-const drawPixel = () => {
-	if (!popupFinalPlacement.value) {
-		return
-	}
 
-	const preprocessData = canvasPreprocess(contentRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const borderRadiusValue = Math.max(props.borderRadius || pixelSize, pixelSize)
-	const borderRadius = fillArr(borderRadiusValue, 4)
-
-	const offset = props.arrow ? pixelSize * 2 : 0
-	const offsetX =
-		popupFinalPlacement.value === 'left' || popupFinalPlacement.value === 'right' ? offset : 0
-	const offsetY =
-		popupFinalPlacement.value === 'top' || popupFinalPlacement.value === 'bottom' ? offset : 0
-
-	const borderColor = getBorderColor(props.variant)
-	const center = calcBorderCornerCenter(
-		borderRadius,
-		width,
-		height,
-		pixelSize,
-		offsetX,
-		offsetY
-	)
-	const rad = BORDER_CORNER_RAD_RANGE
-
-	const offsetTop = popupFinalPlacement.value === 'bottom' ? offset : 0
-	const offsetLeft = popupFinalPlacement.value === 'right' ? offset : 0
-
-	if (borderColor) {
-		drawBorder(
-			ctx,
-			width,
-			height,
-			center,
-			borderRadius,
-			rad,
-			borderColor,
-			pixelSize,
-			offsetX,
-			offsetY,
-			offsetTop,
-			offsetLeft
-		)
-	}
-
-	const backgroundColor = getBackgroundColor(props.variant)
-
-	if (backgroundColor) {
-		floodFill(
-			ctx,
-			Math.round((width - offsetX) / 2 + offsetLeft),
-			Math.round((height - offsetY) / 2 + offsetTop),
-			backgroundColor
-		)
-	}
-	if (props.arrow && borderColor && backgroundColor) {
-		drawArrow(
-			ctx,
-			width,
-			height,
-			borderColor,
-			backgroundColor,
-			pixelSize,
-			popupFinalPlacement.value,
-			popupSide.value,
-			arrowXOffset.value || 0,
-			arrowYOffset.value || 0
-		)
-	}
-}
-
-useResizeObserver(contentRef, doOpen)
-useWatchGlobalCssVal(doOpen)
-useTransitionEnd(contentRef, drawPixel)
+useDraw({
+	wrapperRef: contentRef,
+	canvasRef,
+	darkMode,
+	popupFinalPlacement,
+	arrowXOffset,
+	arrowYOffset,
+	show,
+	floatingStyles,
+	variant: toRef(props, 'variant'),
+	arrow: toRef(props, 'arrow'),
+	popupSide,
+	borderRadius: toRef(props, 'borderRadius')
+})
 </script>
 
 <style lang="less" src="./index.less" />
