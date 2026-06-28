@@ -18,7 +18,6 @@
 			<template v-if="markPoints.length">
 				<template v-for="mark in markPoints" :key="mark.value">
 					<div
-						:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 						@click="(e: MouseEvent) => selectSliderHandler(e, mark.value)"
 						class="px-slider-mark"
 						:style="getMarkStyle(mark.markLeft, props.direction, props.reverse)"
@@ -26,7 +25,6 @@
 						<slot name="mark" :value="mark.value" :label="mark.label">{{ mark.label }}</slot>
 					</div>
 					<div
-						:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
 						@click="(e: MouseEvent) => selectSliderHandler(e, mark.value)"
 						class="px-slider-dot"
 						:style="getDotStyle(mark.left, props.direction, props.reverse)"
@@ -55,7 +53,7 @@
 				@touchstart.passive="startDrag"
 				@focusin="thumbFocusHandler"
 				@focusout="thumbBlurHandler"
-				:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+				:tabindex="thumbTabindex"
 				ref="thumbRef"
 			>
 				<slot name="thumb"></slot>
@@ -88,7 +86,7 @@
 					}"
 					@mousedown="(e) => startDrag(e, 'start')"
 					@touchstart.passive="(e) => startDrag(e, 'start')"
-					:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+					:tabindex="thumbTabindex"
 					@focusin="thumbStartFocusHandler"
 					@focusout="thumbStartBlurHandler"
 					ref="thumbStartRef"
@@ -122,7 +120,7 @@
 					}"
 					@mousedown="(e) => startDrag(e, 'end')"
 					@touchstart.passive="(e) => startDrag(e, 'end')"
-					:tabindex="disabledComputed || readonlyComputed ? -1 : 0"
+					:tabindex="thumbTabindex"
 					@focusin="thumbEndFocusHandler"
 					@focusout="thumbEndBlurHandler"
 					ref="thumbEndRef"
@@ -156,19 +154,24 @@ import {
 	wait,
 	type Nullish
 } from 'parsnip-kit'
-import { ref, computed, onUnmounted, watch, shallowRef, onMounted, nextTick, inject } from 'vue'
+import {
+	ref,
+	computed,
+	onUnmounted,
+	watch,
+	shallowRef,
+	nextTick,
+	inject,
+	toRef,
+	useSlots
+} from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { calcBorderCornerCenter, calcPixelSize, canvasPreprocess } from '../share/util/plot'
-import { getGlobalThemeColor } from '../share/util/color'
-import { fillArr } from '../share/util/common'
-import { drawBorder, drawMark, drawRange, drawThumb, getMarkStyle, getDotStyle } from './draw'
-import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { useDraw, getMarkStyle, getDotStyle } from './draw'
 import type { SliderEvent, SliderProps } from './type'
 import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import {
 	transformModelValue,
 	clampValue as clampValueImpl,
@@ -506,7 +509,7 @@ watch(
 			}
 		})
 	},
-	{ deep: true }
+	{ deep: true, immediate: true }
 )
 
 const selectSliderHandler = async (e: MouseEvent, preSetValue?: number) => {
@@ -576,16 +579,10 @@ const {
 } = useFocusMode({}, thumbEndRef)
 
 const darkMode = useDarkMode()
+const slots = useSlots()
 
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
 const sliderRef = shallowRef<HTMLDivElement | null>(null)
-
-onMounted(() => {
-	nextTick(() => {
-		updateSliderRect()
-		markPoints.value = updateMarkPoints(sliderRect.value, valueRange.value, props)
-	})
-})
 
 watch([range, disabledComputed, readonlyComputed], (v, o) => {
 	const [range, disabled, readonly] = v
@@ -597,121 +594,43 @@ watch([range, disabledComputed, readonlyComputed], (v, o) => {
 	}
 })
 
-const drawPixel = () => {
-	const pixelSize = calcPixelSize()
-	const preprocessData = canvasPreprocess(
-		sliderRef,
-		canvasRef,
-		props.direction === 'vertical' ? pixelSize : 0,
-		props.direction === 'vertical' ? 0 : pixelSize
-	)
+const rangeComputed = toRef(props, 'range')
+const direction = toRef(props, 'direction')
+const reverse = toRef(props, 'reverse')
 
-	if (!preprocessData) {
-		return
+useDraw({
+	wrapperRef: sliderRef,
+	canvasRef,
+	thumbRef,
+	thumbCanvasRef,
+	thumbStartRef,
+	thumbStartCanvasRef,
+	thumbEndRef,
+	thumbEndCanvasRef,
+	dotCanvasRef,
+	darkMode,
+	disabled: disabledComputed,
+	direction,
+	range: rangeComputed,
+	reverse,
+	trackLeft,
+	trackWidth,
+	modelValue,
+	markPoints,
+	thumbFocusMode,
+	thumbStartFocusMode,
+	thumbEndFocusMode,
+	pollSizeChangeComputed,
+	slots,
+	refresh: () => {
+		updateSliderRect()
+		updateThumbRect()
 	}
-	const { ctx, width, height } = preprocessData
-
-	const borderColor = getGlobalThemeColor('neutral', 10)
-	const center = calcBorderCornerCenter(fillArr(pixelSize, 4), width, height, pixelSize)
-
-	if (borderColor) {
-		drawBorder(ctx, width, height, center, borderColor, pixelSize)
-	}
-
-	const fillColor = disabledComputed.value
-		? getGlobalThemeColor('primary', 2)
-		: getGlobalThemeColor('primary', 6)
-	const emptyColor = disabledComputed.value
-		? getGlobalThemeColor('neutral', 6)
-		: getGlobalThemeColor('neutral', 1)
-
-	if (fillColor && emptyColor) {
-		drawRange(
-			ctx,
-			width,
-			height,
-			trackLeft.value,
-			trackWidth.value,
-			fillColor,
-			emptyColor,
-			pixelSize,
-			props.direction,
-			props.reverse
-		)
-	}
-
-	const rad = BORDER_CORNER_RAD_RANGE
-
-	const thumbColor = disabledComputed.value
-		? getGlobalThemeColor('neutral', 6)
-		: getGlobalThemeColor('neutral', 1)
-
-	if (thumbColor && borderColor) {
-		drawThumb(
-			thumbRef,
-			thumbCanvasRef,
-			thumbFocusMode.value,
-			thumbStartRef,
-			thumbStartCanvasRef,
-			thumbStartFocusMode.value,
-			thumbEndRef,
-			thumbEndCanvasRef,
-			thumbEndFocusMode.value,
-			props.range,
-			rad,
-			pixelSize,
-			thumbColor
-		)
-	}
-
-	if (markPoints.value.length) {
-		drawMark(
-			sliderRef,
-			dotCanvasRef,
-			rad,
-			modelValue.value,
-			props.direction,
-			props.reverse,
-			props.disabled,
-			markPoints.value,
-			pixelSize
-		)
-	}
-}
-
-const refresh = () => {
-	drawPixel()
-	updateSliderRect()
-	updateThumbRect()
-}
-
-const { debouncedTrigger } = useDrawCanvas(sliderRef, refresh, {
-	pollSizeChange: pollSizeChangeComputed
 })
 
-watch(
-	[
-		disabledComputed,
-		darkMode,
-		trackLeft,
-		trackWidth,
-		() => props.range,
-		thumbLeft,
-		thumbLeftStart,
-		thumbLeftEnd,
-		markPoints,
-		modelValue,
-		() => props.direction,
-		() => props.reverse,
-		thumbFocusMode,
-		thumbStartFocusMode,
-		thumbEndFocusMode
-	],
-	() => {
-		debouncedTrigger()
-	},
-	{ deep: true }
-)
+const thumbTabindex = computed(() => {
+	return disabledComputed.value || readonlyComputed.value ? '' : 0
+})
 </script>
 
 <style lang="less" src="./index.less"></style>

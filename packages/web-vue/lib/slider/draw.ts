@@ -1,4 +1,4 @@
-import type { ShallowRef } from 'vue'
+import { watch, type ComputedRef, type Ref, type ShallowRef, type Slots } from 'vue'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import {
@@ -10,6 +10,10 @@ import {
 } from '../share/util/plot'
 import type { SliderProps } from './type'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
+import { fillArr } from '../share/util/common'
+import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { usePixelSize } from '../share/hook/use-pixel-size'
+import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 
 export const drawBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -399,4 +403,158 @@ export const drawMark = (
 			}
 		}
 	}
+}
+
+type UseDrawOptions = {
+	wrapperRef: ShallowRef<HTMLDivElement | null>
+	canvasRef: ShallowRef<HTMLCanvasElement | null>
+	thumbRef: ShallowRef<HTMLDivElement | null>
+	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>
+	thumbStartRef: ShallowRef<HTMLDivElement | null>
+	thumbStartCanvasRef: ShallowRef<HTMLCanvasElement | null>
+	thumbEndRef: ShallowRef<HTMLDivElement | null>
+	thumbEndCanvasRef: ShallowRef<HTMLCanvasElement | null>
+	dotCanvasRef: ShallowRef<HTMLCanvasElement | null>
+	darkMode: Ref<boolean>
+	disabled: Ref<boolean | undefined>
+	direction: Ref<SliderProps['direction']>
+	range: Ref<boolean>
+	reverse: Ref<boolean>
+	trackLeft: Ref<number>
+	trackWidth: Ref<number>
+	modelValue: Ref<number | [number, number] | Nullish>
+	markPoints: Ref<
+		{
+			value: number
+			left: number
+			label?: string | undefined
+			markLeft: number
+		}[]
+	>
+	thumbFocusMode: Ref<boolean>
+	thumbStartFocusMode: Ref<boolean>
+	thumbEndFocusMode: Ref<boolean>
+	pollSizeChangeComputed: ComputedRef<boolean | undefined>
+	slots: Slots
+	refresh?: () => void
+}
+
+export const useDraw = (options: UseDrawOptions) => {
+	const pixelSizeRef = usePixelSize()
+
+	const drawPixel = () => {
+		const pixelSize = pixelSizeRef.value
+		const preprocessData = canvasPreprocess(
+			options.wrapperRef,
+			options.canvasRef,
+			options.direction.value === 'vertical' ? pixelSize : 0,
+			options.direction.value === 'vertical' ? 0 : pixelSize
+		)
+
+		if (!preprocessData) {
+			return
+		}
+		const { ctx, width, height } = preprocessData
+
+		const borderColor = getGlobalThemeColor('neutral', 10)
+		const center = calcBorderCornerCenter(fillArr(pixelSize, 4), width, height, pixelSize)
+
+		if (borderColor) {
+			drawBorder(ctx, width, height, center, borderColor, pixelSize)
+		}
+
+		const fillColor = options.disabled.value
+			? getGlobalThemeColor('primary', 2)
+			: getGlobalThemeColor('primary', 6)
+		const emptyColor = options.disabled.value
+			? getGlobalThemeColor('neutral', 6)
+			: getGlobalThemeColor('neutral', 1)
+
+		if (fillColor && emptyColor) {
+			drawRange(
+				ctx,
+				width,
+				height,
+				options.trackLeft.value,
+				options.trackWidth.value,
+				fillColor,
+				emptyColor,
+				pixelSize,
+				options.direction.value,
+				options.reverse.value
+			)
+		}
+
+		const rad = BORDER_CORNER_RAD_RANGE
+
+		const thumbColor = options.disabled.value
+			? getGlobalThemeColor('neutral', 6)
+			: getGlobalThemeColor('neutral', 1)
+
+		if (thumbColor && borderColor) {
+			drawThumb(
+				options.thumbRef,
+				options.thumbCanvasRef,
+				options.thumbFocusMode.value,
+				options.thumbStartRef,
+				options.thumbStartCanvasRef,
+				options.thumbStartFocusMode.value,
+				options.thumbEndRef,
+				options.thumbEndCanvasRef,
+				options.thumbEndFocusMode.value,
+				options.range.value,
+				rad,
+				pixelSize,
+				thumbColor
+			)
+		}
+
+		if (options.markPoints.value.length) {
+			drawMark(
+				options.wrapperRef,
+				options.dotCanvasRef,
+				rad,
+				options.modelValue.value,
+				options.direction.value,
+				options.reverse.value,
+				!!options.disabled.value,
+				options.markPoints.value,
+				pixelSize
+			)
+		}
+	}
+
+	const drawAndRefresh = () => {
+		drawPixel()
+		options.refresh?.()
+	}
+
+	const { debouncedTrigger } = useDrawCanvas(options.wrapperRef, drawAndRefresh, {
+		pollSizeChange: options.pollSizeChangeComputed
+	})
+
+	watch(
+		[
+			pixelSizeRef,
+			options.disabled,
+			options.darkMode,
+			options.trackLeft,
+			options.trackWidth,
+			options.range,
+			options.markPoints,
+			options.modelValue,
+			options.direction,
+			options.reverse,
+			options.thumbFocusMode,
+			options.thumbStartFocusMode,
+			options.thumbEndFocusMode,
+			() => options.slots
+		],
+		() => {
+			debouncedTrigger()
+		},
+		{ deep: true }
+	)
+
+	return { debouncedTrigger }
 }

@@ -74,22 +74,11 @@
 	</label>
 </template>
 <script lang="ts" setup>
-import { computed, inject, nextTick, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
+import { computed, inject, ref, shallowRef, toRef, useSlots, watch } from 'vue'
 import type { SwitchEvents, SwitchProps } from './type'
-import {
-	calcBorderCornerCenter,
-	calcPixelSize,
-	canvasPreprocess,
-	drawSmoothCircle,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
+import { rgbaColor2string } from '../share/util/color'
+import { getMainColor, useDraw } from './draw'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { BORDER_CORNER_RAD_RANGE, TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
-import { getGlobalThemeColor, parseColor, rgbaColor2string } from '../share/util/color'
-import { drawBorder } from './draw'
 import { useSmoothTransition } from '../share/hook/use-smooth-transition'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import type { FormItemProvide } from '../form-item/type'
@@ -97,13 +86,11 @@ import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
-import { inBrowser } from '../share/util/env'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
 import { INTERVAL } from '../share/const/style'
-import { usePolling } from '../share/hook/use-polling'
 import { useFocusMode } from '../share/hook/use-focus-mode'
-import { debounce, isNullish } from 'parsnip-kit'
+import { usePixelSize } from '../share/hook/use-pixel-size'
 
+const pixelSizeRef = usePixelSize()
 const MID_PROGRESS = 0.5
 
 defineOptions({
@@ -192,13 +179,6 @@ const { focusHandler, blurHandler, wrapperMousedownHandler } = useFocusMode(
 	checkboxRef
 )
 
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-		updateIconLeft()
-	})
-})
-
 const updateSize = () => {
 	if (!canvasWrapperRef.value) {
 		return
@@ -212,7 +192,7 @@ const updateIconLeft = () => {
 		return 0
 	}
 
-	const pixelSize = calcPixelSize()
+	const pixelSize = pixelSizeRef.value
 	const intervalSize = INTERVAL
 
 	const sliceHeight = size.value[1] + 2 * pixelSize - intervalSize * 2
@@ -225,28 +205,6 @@ const updateIconLeft = () => {
 
 const iconLeft = ref(0)
 
-const getMainColor = () => {
-	if (!inBrowser()) {
-		return TRANSPARENT_RGBA_COLOR_OBJECT
-	}
-	return progress.value > MID_PROGRESS
-		? props.activeColor
-			? parseColor(props.activeColor)?.color
-			: disabledComputed.value
-				? getGlobalThemeColor('primary', 2)
-				: getGlobalThemeColor('primary', 6)
-		: props.inactiveColor
-			? parseColor(props.inactiveColor)?.color
-			: disabledComputed.value
-				? getGlobalThemeColor('neutral', 6)
-				: getGlobalThemeColor('neutral', 8)
-}
-
-const iconColor = computed(() => {
-	const color = getMainColor()
-	return color ? rgbaColor2string(color) : undefined
-})
-
 watch(
 	[size, progress, sizeComputed],
 	() => {
@@ -257,124 +215,36 @@ watch(
 	}
 )
 
-watch(progress, (val, old) => {
-	if (!isNullish(old) && (val - MID_PROGRESS) * (old - MID_PROGRESS) < 0) nextTick(drawPixel)
-})
-watch(
-	[
-		darkMode,
-		sizeComputed,
-		() => props.shape,
-		disabledComputed,
-		() => props.activeColor,
-		() => props.inactiveColor
-	],
-	() => {
-		debounceDrawPixel()
-	}
-)
-
-const drawButton = () => {
-	const buttonPreprocessData = canvasPreprocess(switchButtonRef, buttonCanvasRef)
-	if (!buttonPreprocessData) {
-		return
-	}
-	const { ctx, width, height } = buttonPreprocessData
-
-	const size = Math.min(width, height)
-	const pixelSize = calcPixelSize()
-
-	const sliceColor = getGlobalThemeColor('neutral', 1)
-
-	if (!sliceColor) {
-		return
-	}
-
-	ctx.fillStyle = rgbaColor2string(sliceColor)
-
-	const radius = Math.round(size / 2 - pixelSize / 2)
-	if (props.shape === 'round') {
-		drawSmoothCircle(ctx, radius, radius, radius, 0, Math.PI * 2, pixelSize)
-	} else {
-		ctx.fillRect(0, 0, size, size)
-	}
-
-	floodFill(ctx, Math.round(radius + 1), Math.round(radius + 1), sliceColor)
-}
-
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(canvasWrapperRef, canvasRef)
-	if (!preprocessData) {
-		return
-	}
-	const { ctx, width, height, canvas } = preprocessData
-
-	const pixelSize = calcPixelSize()
-
-	const borderRadius = getBorderRadius(
-		canvas,
-		pixelSize,
-		undefined,
-		props.shape,
-		'medium',
-		false,
-		false,
-		false
+const iconColor = computed(() => {
+	const color = getMainColor(
+		progress.value,
+		props.activeColor,
+		props.inactiveColor,
+		!!disabledComputed.value
 	)
-
-	const backgroundColor = getMainColor()
-	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-	const rad = BORDER_CORNER_RAD_RANGE
-
-	if (backgroundColor) {
-		drawBorder(
-			ctx,
-			width,
-			height,
-			center,
-			borderRadius,
-			rad,
-			backgroundColor,
-			pixelSize,
-			0,
-			0,
-			sizeComputed.value === 'small' && props.shape === 'round'
-		)
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-	}
-	drawButton()
-}
-
-const debounceDrawPixel = debounce(drawPixel, 0, { maxWait: 50 })
+	return color ? rgbaColor2string(color) : undefined
+})
 
 const refresh = () => {
-	debounceDrawPixel()
 	updateSize()
 }
 
-useResizeObserver(canvasWrapperRef, refresh, () => {
-	drawPixel()
-	updateSize()
-})
-useWatchGlobalCssVal(refresh)
-useTransitionEnd(canvasWrapperRef, refresh)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(pollSizeChangeComputed, () => {
-	const wrapper = canvasWrapperRef.value
-	if (wrapper) {
-		const rect = wrapper.getBoundingClientRect()
-		if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-			wrapperSize = {
-				width: rect.width,
-				height: rect.height
-			}
-			drawPixel()
-		}
-	}
+useDraw({
+	wrapperRef: canvasWrapperRef,
+	pixelSizeRef,
+	darkMode,
+	canvasRef,
+	buttonCanvasRef,
+	switchButtonRef,
+	sizeComputed,
+	disabled: disabledComputed,
+	shape: toRef(props, 'shape'),
+	activeColor: toRef(props, 'activeColor'),
+	inactiveColor: toRef(props, 'inactiveColor'),
+	progress,
+	pollSizeChange: pollSizeChangeComputed,
+	slots,
+	refresh
 })
 </script>
 
