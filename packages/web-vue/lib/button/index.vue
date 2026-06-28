@@ -51,6 +51,7 @@ import {
 	computed,
 	getCurrentInstance,
 	inject,
+	nextTick,
 	onBeforeUnmount,
 	onMounted,
 	ref,
@@ -226,20 +227,22 @@ const buttonRef = shallowRef<HTMLButtonElement | null>(null)
 const id = useId()
 
 onMounted(() => {
-	if (innerButtonGroup.value) {
-		buttonGroupProvide?.collectChildrenInfo({
-			id,
-			variant: typeComputed.value,
-			index: index.value
-		})
-	}
-	if (innerInputGroup.value) {
-		inputGroupProvide?.collectChildrenInfo({
-			id,
-			variant: typeComputed.value,
-			index: index.value
-		})
-	}
+	nextTick(() => {
+		if (innerButtonGroup.value) {
+			buttonGroupProvide?.collectChildrenInfo({
+				id,
+				variant: typeComputed.value,
+				index: index.value
+			})
+		}
+		if (innerInputGroup.value) {
+			inputGroupProvide?.collectChildrenInfo({
+				id,
+				variant: typeComputed.value,
+				index: index.value
+			})
+		}
+	})
 })
 
 onBeforeUnmount(() => {

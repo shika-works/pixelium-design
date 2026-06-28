@@ -5,7 +5,6 @@ import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import {
 	calcBorderCornerCenter,
-	calcPixelSize,
 	calcWhenLeaveBaseline,
 	canvasPreprocess,
 	drawCircle,
@@ -13,6 +12,7 @@ import {
 	getBorderRadius
 } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
+import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { ButtonProps } from './type'
 import type { Slots } from 'vue'
 
@@ -459,6 +459,7 @@ export const useDraw = (
 	options: UseDrawOptions
 ) => {
 	const darkMode = useDarkMode()
+	const pixelSizeRef = usePixelSize()
 
 	const drawPixel = () => {
 		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
@@ -466,7 +467,7 @@ export const useDraw = (
 			return
 		}
 
-		const pixelSize = calcPixelSize()
+		const pixelSize = pixelSizeRef.value
 		const { ctx, width, height, canvas } = preprocessData
 
 		const borderRadius = getBorderRadius(
@@ -550,6 +551,7 @@ export const useDraw = (
 
 	watch(
 		[
+			pixelSizeRef,
 			options.borderRadiusComputed,
 			options.shapeComputed,
 			options.disabledComputed,

@@ -20,26 +20,13 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, shallowRef, watch } from 'vue'
+import { computed, shallowRef, toRef, useSlots } from 'vue'
 import type { BadgeProps } from './type'
 // @ts-ignore
 import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
-import {
-	calcBorderCornerCenter,
-	calcPixelSize,
-	canvasPreprocess,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
-import { useWatchGlobalCssVal } from '../share/hook/use-watch-global-css-var'
-import { useTransitionEnd } from '../share/hook/use-transition-end'
-import { usePolling } from '../share/hook/use-polling'
 import { isNumber, isString } from 'parsnip-kit'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
-import { drawBorder } from './draw'
-import { getGlobalThemeColor, getGlobalThemeColorString, parseColor } from '../share/util/color'
+import { useDraw } from './draw'
 
 defineOptions({
 	name: 'Badge'
@@ -89,71 +76,17 @@ const badgeStyle = computed(() => {
 	}
 })
 
-watch(
-	[darkMode, valueComputed, () => props.borderColor, () => props.color, () => props.theme],
-	() => {
-		nextTick(() => {
-			drawPixel()
-		})
-	}
-)
-
-onMounted(() => {
-	nextTick(() => {
-		drawPixel()
-	})
+useDraw({
+	wrapperRef: badgeRef,
+	canvasRef,
+	darkMode,
+	borderColor: toRef(props, 'borderColor'),
+	color: toRef(props, 'color'),
+	theme: toRef(props, 'theme'),
+	slots: useSlots(),
+	pollSizeChange: toRef(props, 'pollSizeChange'),
+	valueComputed
 })
-
-const drawPixel = () => {
-	const preprocessData = canvasPreprocess(badgeRef, canvasRef)
-
-	if (!preprocessData) {
-		return
-	}
-
-	const pixelSize = calcPixelSize()
-
-	const { ctx, width, height, canvas } = preprocessData
-
-	const borderRadius = getBorderRadius(canvas, pixelSize, undefined, 'round')
-
-	const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-	const rad = BORDER_CORNER_RAD_RANGE
-	const borderColor = props.borderColor || getGlobalThemeColorString('neutral', 10)
-	drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
-
-	const backgroundColor =
-		(props.color && parseColor(props.color)?.color) || getGlobalThemeColor(props.theme, 6)
-	if (backgroundColor) {
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-	}
-}
-
-useResizeObserver(badgeRef, drawPixel)
-useWatchGlobalCssVal(drawPixel)
-useTransitionEnd(badgeRef, drawPixel)
-
-let wrapperSize = {
-	width: 0,
-	height: 0
-}
-usePolling(
-	() => props.pollSizeChange,
-	() => {
-		const button = badgeRef.value
-		if (button) {
-			const rect = button.getBoundingClientRect()
-
-			if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
-				wrapperSize = {
-					width: rect.width,
-					height: rect.height
-				}
-				drawPixel()
-			}
-		}
-	}
-)
 </script>
 
 <style lang="less" src="./index.less"></style>
