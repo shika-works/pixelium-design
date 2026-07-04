@@ -6,7 +6,8 @@ const newItems = [
 	'rate',
 	'color-picker',
 	'notification',
-	'tab'
+	'tab',
+	'card'
 ]
 
 const titleMapEn = {
@@ -95,7 +96,8 @@ const additionMapZh = {
 	'color-picker': '颜色选择器',
 	drawer: '抽屉',
 	notification: '通知',
-	tab: '标签页'
+	tab: '标签页',
+	card: '卡片'
 }
 const order = [
 	'guide',

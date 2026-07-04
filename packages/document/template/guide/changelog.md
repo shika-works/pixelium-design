@@ -11,6 +11,7 @@
   - 新增数据输入组件：ColorPicker、Rate。
   - 新增反馈组件：Drawer。
   - 新增导航组件：Tab、TabItem、TabPanel。
+  - 新增数据展示组件：Card。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
   - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
   - Divider 组件新增属性 `soft` 和 `color`。
@@ -33,6 +34,7 @@
   - New data input components: ColorPicker, Rate.
   - New feedback components: Drawer.
   - New navigation  components: Tab, TabItem, TabPanel.
+  - New data display components: Card
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
   - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
   - Divider component adds `soft` and `color` properties.
