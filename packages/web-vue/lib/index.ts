@@ -78,6 +78,7 @@ import TabPanel from './tab-panel/index.vue'
 import TabItem from './tab-item/index.vue'
 import NotificationBox from './notification-box/notification-box-wrapped.vue'
 import Notification from './notification-box/index.ts'
+import Card from './card/index.vue'
 
 const components = [
 	Button,
@@ -148,7 +149,8 @@ const components = [
 	NotificationBox,
 	Tab,
 	TabPanel,
-	TabItem
+	TabItem,
+	Card
 ]
 
 const defaultPrefix = 'Px'
@@ -266,7 +268,8 @@ export {
 	NotificationBox,
 	Tab,
 	TabPanel,
-	TabItem
+	TabItem,
+	Card
 }
 export default {
 	install
