@@ -31,5 +31,8 @@ export default {
 		Sunday: 'Sun',
 		'YYYY-Www': 'YYYY-Www',
 		current: 'Current'
+	},
+	calendar: {
+		today: 'Today'
 	}
 }

@@ -411,3 +411,14 @@ html.dark {
 }
 
 /* menu end */
+
+/* calendar start */
+
+.vitepress-demo-preview-preview .px-calendar table > thead > tr {
+	background-color: transparent !important;
+}
+.vitepress-demo-preview-preview .px-calendar table > thead > tr > th {
+	background-color: transparent !important;
+}
+
+/* calendar end */

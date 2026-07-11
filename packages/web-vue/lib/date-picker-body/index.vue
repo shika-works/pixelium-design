@@ -35,14 +35,13 @@ import type { DatePickerBodyEvents, DatePickerBodyProps } from './type'
 import { clone, isArray, isNullish } from 'parsnip-kit'
 import { getDateByISOWeek, getDateObj, getISOWeekOfYear } from '../share/util/time'
 import { useLocale } from '../share/util/locale'
+import { genCalenderDays, type CalendarItem } from '../share/util/calendar'
 
 defineOptions({
 	name: 'DatePickerBody'
 })
 
 const emits = defineEmits<DatePickerBodyEvents>()
-
-const DATE_COUNT = 42
 
 const props = defineProps<DatePickerBodyProps>()
 
@@ -59,28 +58,6 @@ const weekDays = computed(() => {
 		t<string>('date-picker.Sunday')
 	]
 })
-
-interface CalendarItem {
-	date: number
-	month: number
-	year: number
-	isCurrentMonth: boolean
-}
-
-const createCalendarItem = (
-	year: number,
-	month: number,
-	date: number,
-	isCurrentMonth: boolean
-): CalendarItem => {
-	const entity: CalendarItem = {
-		date,
-		month,
-		year,
-		isCurrentMonth
-	}
-	return entity
-}
 
 const innerCurrent = ref<Date | Date[] | null>(props.current || null)
 
@@ -246,31 +223,8 @@ const isCurrentDate = (item: CalendarItem): boolean => {
 }
 
 const calendarDays = computed(() => {
-	let { year, month } = props
-
-	const days: CalendarItem[] = []
-
-	const firstDayOfWeek = getDateObj(year, month, 1).getDay()
-	const currentMonthDays = getDateObj(year, month + 1, 0).getDate()
-	const lastMonthDays = getDateObj(year, month, 0).getDate()
-
-	const offset = (firstDayOfWeek + 6) % 7
-	for (let i = offset - 1; i >= 0; i--) {
-		const date = lastMonthDays - i
-		const prevDate = getDateObj(year, month - 1, date)
-		days.push(createCalendarItem(prevDate.getFullYear(), prevDate.getMonth(), date, false))
-	}
-
-	for (let i = 1; i <= currentMonthDays; i++) {
-		days.push(createCalendarItem(year, month, i, true))
-	}
-
-	const remaining = DATE_COUNT - days.length
-	for (let i = 1; i <= remaining; i++) {
-		const nextDate = getDateObj(year, month + 1, i)
-		days.push(createCalendarItem(nextDate.getFullYear(), nextDate.getMonth(), i, false))
-	}
-	return days
+	const { year, month } = props
+	return genCalenderDays(year, month)
 })
 
 const singleSelectHandler = (item: CalendarItem, event: MouseEvent) => {

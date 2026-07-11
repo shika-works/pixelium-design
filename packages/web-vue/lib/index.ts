@@ -79,6 +79,7 @@ import TabItem from './tab-item/index.vue'
 import NotificationBox from './notification-box/notification-box-wrapped.vue'
 import Notification from './notification-box/index.ts'
 import Card from './card/index.vue'
+import Calendar from './calendar/index.vue'
 
 const components = [
 	Button,
@@ -150,7 +151,8 @@ const components = [
 	Tab,
 	TabPanel,
 	TabItem,
-	Card
+	Card,
+	Calendar
 ]
 
 const defaultPrefix = 'Px'
@@ -269,7 +271,8 @@ export {
 	Tab,
 	TabPanel,
 	TabItem,
-	Card
+	Card,
+	Calendar
 }
 export default {
 	install
@@ -332,6 +335,8 @@ export type { PaginationOption } from './pagination/type.ts'
 
 export type { ColorValue, ColorWithModel } from './color-picker/type.ts'
 export type { HslaColor, HsvaColor, HwbaColor, RgbaColor } from './share/type'
+
+export type { CalendarItem } from './share/util/calendar.ts'
 
 export type { DrawerReturn, DrawerOptions } from './drawer/type.ts'
 

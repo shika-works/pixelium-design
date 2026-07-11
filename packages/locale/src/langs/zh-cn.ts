@@ -31,5 +31,8 @@ export default {
 		Sunday: '日',
 		'YYYY-Www': 'YYYY-ww周',
 		current: '此时'
+	},
+	calendar: {
+		today: '今天'
 	}
 }
