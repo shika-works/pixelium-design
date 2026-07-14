@@ -1,12 +1,12 @@
 [[[zh
 # 日历 Calendar
 
-日历组件，支持受控/非受控模式。
+日历组件。
 ]]]
 [[[en
 # Calendar
 
-A calendar component supporting both controlled and uncontrolled modes.
+A calendar component.
 
 Pass `modelValue` for controlled mode. Not passing it or passing `undefined` puts it in uncontrolled mode, where you can pass the `defaultValue` property as the default value.
 ]]]

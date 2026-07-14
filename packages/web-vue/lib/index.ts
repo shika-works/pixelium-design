@@ -80,6 +80,8 @@ import NotificationBox from './notification-box/notification-box-wrapped.vue'
 import Notification from './notification-box/index.ts'
 import Card from './card/index.vue'
 import Calendar from './calendar/index.vue'
+import Collapse from './collapse/index.vue'
+import CollapseItem from './collapse-item/index.vue'
 
 const components = [
 	Button,
@@ -152,7 +154,9 @@ const components = [
 	TabPanel,
 	TabItem,
 	Card,
-	Calendar
+	Calendar,
+	Collapse,
+	CollapseItem
 ]
 
 const defaultPrefix = 'Px'
@@ -272,7 +276,9 @@ export {
 	TabPanel,
 	TabItem,
 	Card,
-	Calendar
+	Calendar,
+	Collapse,
+	CollapseItem
 }
 export default {
 	install
