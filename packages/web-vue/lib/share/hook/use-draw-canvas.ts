@@ -44,7 +44,7 @@ export function useDrawCanvas(
 		})
 	})
 
-	useResizeObserver(wrapperRef, drawFunc)
+	useResizeObserver(wrapperRef, debouncedDraw, drawFunc)
 	useWatchGlobalCssVal(debouncedDraw)
 	useTransitionEnd(wrapperRef, debouncedDraw, ignoreNonSizeTransition)
 

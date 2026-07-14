@@ -8,7 +8,8 @@ const newItems = [
 	'notification',
 	'tab',
 	'card',
-	'calendar'
+	'calendar',
+	'collapse'
 ]
 
 const titleMapEn = {
@@ -99,7 +100,8 @@ const additionMapZh = {
 	notification: '通知',
 	tab: '标签页',
 	card: '卡片',
-	calendar: '日历'
+	calendar: '日历',
+	collapse: '折叠面板'
 }
 const order = [
 	'guide',

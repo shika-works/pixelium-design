@@ -66,10 +66,18 @@ export function drawCircle(
 	radius: number,
 	startRad = 0,
 	endRad = Math.PI * 2,
-	pixelSize: number
+	pixelSize: number,
+	range?: number[][]
 ) {
 	let s = pixelSize
 	if (s <= 0 || radius <= 0) return
+
+	if (range) {
+		ctx.save()
+		ctx.beginPath()
+		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
+		ctx.clip()
+	}
 
 	let rate = radius / s
 	let x = 0
@@ -96,6 +104,10 @@ export function drawCircle(
 	if (rate > 6 && rate < 7) {
 		const fix = Math.round(tmp)
 		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
+	}
+
+	if (range) {
+		ctx.restore()
 	}
 }
 

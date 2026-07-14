@@ -1,0 +1,124 @@
+@import url(../share/style/variable.less);
+
+.px-collapse-item {
+	@prefix: px-collapse-item;
+
+	box-sizing: border-box;
+
+	&-header {
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		min-height: var(--px-large-size);
+		cursor: pointer;
+		user-select: none;
+		font-size: @px-title-font-size;
+		line-height: @px-line-height;
+		color: var(--px-neutral-10);
+
+		&__disabled {
+			color: var(--px-neutral-8);
+			cursor: not-allowed;
+		}
+	}
+	&__line {
+		& .@{prefix}-header {
+			border-bottom: var(--px-half-bit) solid var(--px-neutral-7);
+		}
+		&:last-child {
+			& .@{prefix}-header {
+				border-bottom: none;
+			}
+		}
+	}
+	&__card {
+		& .@{prefix}-header {
+			border: var(--px-bit) solid transparent;
+			position: relative;
+			margin-top: calc(-1 * var(--px-bit));
+			padding: 0 @px-interval-2;
+		}
+		& .@{prefix}-content-canvas {
+			position: absolute;
+			top: calc(var(--px-bit) * -1);
+			left: 50%;
+			transform: translate(-50%, 0);
+			z-index: -2;
+			pointer-events: none;
+		}
+		& .@{prefix}-header-canvas {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: -1;
+			pointer-events: none;
+		}
+		&:first-child {
+			& .@{prefix}-header {
+				margin-top: 0;
+			}
+		}
+		& .@{prefix}-content-wrapper {
+			margin-top: calc(var(--px-bit) * -2);
+			position: relative;
+			border: var(--px-bit) solid transparent;
+			padding-left: var(--px-bit);
+			padding-right: var(--px-bit);
+			background: transparent;
+			&__active {
+				margin-top: calc(var(--px-bit) * -1);
+			}
+		}
+	}
+
+	&-arrow {
+		display: flex;
+		align-items: center;
+
+		font-size: @px-medium-font-size;
+		transform: rotate(90deg);
+
+		&__active {
+			transform: rotate(180deg);
+		}
+
+		&__left {
+			margin-right: @px-interval-3;
+		}
+
+		&__right {
+			margin-left: @px-interval-3;
+		}
+	}
+
+	&-title {
+		flex: 1;
+		min-width: 0;
+	}
+
+	&-extra {
+		margin-left: auto;
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	&-content-wrapper {
+		box-sizing: border-box;
+	}
+
+	&-content {
+		box-sizing: border-box;
+		overflow: hidden;
+		position: relative;
+		height: 0px;
+	}
+
+	&-content-box {
+		box-sizing: border-box;
+		position: absolute;
+		padding-top: @px-interval-2;
+		padding-bottom: @px-interval-2;
+	}
+}
