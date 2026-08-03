@@ -138,7 +138,6 @@ function getProps(node: TypeAliasDeclaration | InterfaceDeclaration, compName: s
 	node
 		.getDescendantsOfKind(SyntaxKind.IndexSignature)
 		.forEach((e) => resolveJsDoc(e, nodeName, nodeApiType, props))
-
 	return props
 }
 

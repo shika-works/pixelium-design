@@ -4,6 +4,8 @@ import { fillArr } from './common'
 import type { ShallowRef } from 'vue'
 import { inBrowser } from './env'
 import { LARGE_BASE_SIZE, MEDIUM_BASE_SIZE, SMALL_BASE_SIZE } from '../const/style'
+import { rgbaColor2string } from './color'
+import { BORDER_CORNER_RAD_RANGE } from '../const'
 
 export const roundToPixel = (coord: number, pixelSize: number) =>
 	Math.floor(coord / pixelSize) * pixelSize
@@ -434,6 +436,24 @@ export const calcBorderCornerCenter = (
 	] as [number, number][]
 }
 
+export const calcBorderCornerCenterWithPadding = (
+	borderRadius: number[],
+	width: number,
+	height: number,
+	pixelSize: number,
+	padding: [number, number, number, number] = [0, 0, 0, 0]
+) => {
+	return [
+		[padding[3] + borderRadius[0], padding[0] + borderRadius[0]],
+		[width - padding[1] - borderRadius[1] - pixelSize, padding[0] + borderRadius[1]],
+		[
+			width - padding[1] - borderRadius[2] - pixelSize,
+			height - padding[2] - borderRadius[2] - pixelSize
+		],
+		[padding[3] + borderRadius[3], height - padding[2] - borderRadius[3] - pixelSize]
+	] as [number, number][]
+}
+
 export const canvasPreprocess = (
 	wrapperRef: ShallowRef<HTMLElement | null>,
 	canvasRef: ShallowRef<HTMLCanvasElement | null>,
@@ -838,4 +858,66 @@ export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number]
 	clockOrderSort(points)
 
 	return filterLine(points)
+}
+
+export const drawRoundRect = (
+	ctx: CanvasRenderingContext2D,
+	width: number,
+	height: number,
+	borderRadius: number[],
+	borderColor: RgbaColor,
+	pixelSize: number,
+	ranges?: number[][][],
+	padding: [number, number, number, number] = [0, 0, 0, 0]
+) => {
+	const rad = BORDER_CORNER_RAD_RANGE
+	const center = calcBorderCornerCenterWithPadding(
+		borderRadius,
+		width,
+		height,
+		pixelSize,
+		padding
+	)
+
+	ctx.fillStyle = rgbaColor2string(borderColor)
+	for (let i = 0; i < 4; i++) {
+		if (borderRadius[i] > pixelSize) {
+			drawCircle(
+				ctx,
+				center[i][0],
+				center[i][1],
+				borderRadius[i],
+				rad[i][0],
+				rad[i][1],
+				pixelSize,
+				ranges?.[i]
+			)
+		}
+	}
+
+	if (center[1][0] + pixelSize > center[0][0]) {
+		ctx.fillRect(center[0][0], padding[0], center[1][0] - center[0][0] + pixelSize, pixelSize)
+	}
+
+	if (center[2][1] + pixelSize > center[1][1]) {
+		ctx.fillRect(
+			width - padding[1] - pixelSize,
+			center[1][1],
+			pixelSize,
+			center[2][1] - center[1][1] + pixelSize
+		)
+	}
+
+	if (center[3][0] < center[2][0] + pixelSize) {
+		ctx.fillRect(
+			center[3][0],
+			height - padding[2] - pixelSize,
+			center[2][0] - center[3][0] + pixelSize,
+			pixelSize
+		)
+	}
+
+	if (center[3][1] + pixelSize > center[0][1]) {
+		ctx.fillRect(padding[3], center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
+	}
 }

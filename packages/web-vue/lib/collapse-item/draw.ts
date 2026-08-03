@@ -4,14 +4,8 @@ import type { RgbaColor } from '../share/type'
 import type { CollapseProvide } from '../collapse/type'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import {
-	calcBorderCornerCenter,
-	canvasPreprocess,
-	drawCircle,
-	floodFill
-} from '../share/util/plot'
-import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
+import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { getGlobalThemeColor } from '../share/util/color'
 import { fillArr } from '../share/util/common'
 
 const getRanges = (width: number, height: number) => {
@@ -39,54 +33,12 @@ const drawBorder = (
 	ctx: CanvasRenderingContext2D,
 	width: number,
 	height: number,
-	center: [number, number][],
 	borderRadius: number[],
-	rad: [number, number][],
 	borderColor: RgbaColor,
 	pixelSize: number
 ) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
 	const ranges = getRanges(width, height)
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0],
-				center[i][1],
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize,
-				ranges[i]
-			)
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(center[0][0], 0, center[1][0] - center[0][0] + pixelSize, pixelSize)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - pixelSize,
-			center[1][1],
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0],
-			height - pixelSize,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
-	}
+	drawRoundRect(ctx, width, height, borderRadius, borderColor, pixelSize, ranges)
 }
 
 const HEAD_BORDER_RADIUS = fillArr(4, 4)
@@ -122,11 +74,8 @@ export const useDraw = (
 
 			const pixelSize = pixelSizeRef.value
 
-			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-			const rad = BORDER_CORNER_RAD_RANGE
-
 			if (borderColor) {
-				drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+				drawBorder(ctx, width, height, borderRadius, borderColor, pixelSize)
 			}
 
 			if (backgroundColor) {

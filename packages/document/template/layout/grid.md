@@ -79,16 +79,4 @@ span: The width of GridItem defaults to the `column` attribute of Grid.
 slots.default: Content of GridItem.
 ]]]
 
-### ValueWithDeviceWidth
-```ts
-enum SCREEN_SIZE_TYPE {
-	XS = 'xs',
-	SM = 'sm',
-	MD = 'md',
-	LG = 'lg',
-	XL = 'xl',
-	XXL = 'xxl'
-}
-
-type ValueWithDeviceWidth<T> = Record<SCREEN_SIZE_TYPE, T>
-```
+[[[slice value-with-device-width]]]

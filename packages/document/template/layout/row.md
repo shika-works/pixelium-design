@@ -91,16 +91,4 @@ span: The width of Col.
 slots.default: The Col's content.
 ]]]
 
-### ValueWithDeviceWidth
-```ts
-enum SCREEN_SIZE_TYPE {
-	XS = 'xs',
-	SM = 'sm',
-	MD = 'md',
-	LG = 'lg',
-	XL = 'xl',
-	XXL = 'xxl'
-}
-
-type ValueWithDeviceWidth<T> = Record<SCREEN_SIZE_TYPE, T>
-```
+[[[slice value-with-device-width]]]
