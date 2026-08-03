@@ -82,6 +82,8 @@ import Card from './card/index.vue'
 import Calendar from './calendar/index.vue'
 import Collapse from './collapse/index.vue'
 import CollapseItem from './collapse-item/index.vue'
+import Timeline from './timeline/index.vue'
+import TimelineItem from './timeline-item/index.vue'
 
 const components = [
 	Button,
@@ -156,7 +158,9 @@ const components = [
 	Card,
 	Calendar,
 	Collapse,
-	CollapseItem
+	CollapseItem,
+	Timeline,
+	TimelineItem
 ]
 
 const defaultPrefix = 'Px'
@@ -278,7 +282,9 @@ export {
 	Card,
 	Calendar,
 	Collapse,
-	CollapseItem
+	CollapseItem,
+	Timeline,
+	TimelineItem
 }
 export default {
 	install
