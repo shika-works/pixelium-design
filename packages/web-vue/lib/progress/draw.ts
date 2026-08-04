@@ -4,7 +4,7 @@ import {
 	getGlobalThemeColorString,
 	rgbaColor2string
 } from '../share/util/color'
-import { canvasPreprocess } from '../share/util/plot'
+import { canvasPreprocess, drawRectBorder } from '../share/util/plot'
 import { watch, type ComputedRef, type Ref, type ShallowRef, type Slots } from 'vue'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -31,24 +31,6 @@ export function getGradientColor(
 	} else {
 		return getGlobalThemeColor(theme, 4)
 	}
-}
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	borderColor: RgbaColor,
-	pixelSize: number
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-
-	ctx.fillRect(pixelSize, 0, width - 2 * pixelSize, pixelSize)
-
-	ctx.fillRect(width - pixelSize, pixelSize, pixelSize, height - 2 * pixelSize)
-
-	ctx.fillRect(pixelSize, height - pixelSize, width - 2 * pixelSize, pixelSize)
-
-	ctx.fillRect(0, pixelSize, pixelSize, height - 2 * pixelSize)
 }
 
 export const drawChecker = (
@@ -130,7 +112,7 @@ export const useDraw = (options: UseDrawOptions) => {
 		const innerWidth = width - 2 * borderWidth - padding * 2
 
 		if (borderColor) {
-			drawBorder(ctx, width, height, borderColor, pixelSize)
+			drawRectBorder(ctx, rgbaColor2string(borderColor), pixelSize)
 		}
 
 		ctx.fillStyle = options.trackColor.value || getGlobalThemeColorString('neutral', 5)

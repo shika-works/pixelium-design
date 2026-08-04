@@ -70,7 +70,7 @@ The `preset` prop provides preset color options.
 <preview path="./color-picker-size.vue"></preview>
 
 [[[zh
-## 图表展示
+## 图标展示
 ]]]
 [[[en
 ## Icon Display

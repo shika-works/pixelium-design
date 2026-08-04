@@ -441,7 +441,7 @@ export const calcBorderCornerCenterWithPadding = (
 	width: number,
 	height: number,
 	pixelSize: number,
-	padding: [number, number, number, number] = [0, 0, 0, 0]
+	padding: number[] = [0, 0, 0, 0]
 ) => {
 	return [
 		[padding[3] + borderRadius[0], padding[0] + borderRadius[0]],
@@ -860,19 +860,68 @@ export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number]
 	return filterLine(points)
 }
 
+export type DrawRoundRectOptions = {
+	// For getBorderRadius
+	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
+	shape?: 'rect' | 'round' | 'circle' | 'square' | 'default'
+	size?: 'medium' | 'small' | 'large'
+	inner?: boolean
+	first?: boolean
+	last?: boolean
+	direction?: 'horizontal' | 'vertical'
+	// For drawCircle
+	ranges?: number[][][]
+	padding?: number[]
+	// For inner-group (input/button group) borders
+	nextIsTextButton?: boolean
+	// Smooth rounded corners
+	smooth?: boolean
+	// Draw corners regardless of borderRadius size
+	miniRadius?: boolean
+}
+
 export const drawRoundRect = (
 	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	borderRadius: number[],
 	borderColor: RgbaColor,
 	pixelSize: number,
-	ranges?: number[][][],
-	padding: [number, number, number, number] = [0, 0, 0, 0]
+	options: DrawRoundRectOptions = {}
 ) => {
+	const {
+		borderRadius,
+		shape = 'rect',
+		size,
+		inner,
+		first,
+		last,
+		direction,
+		ranges,
+		padding = [0, 0, 0, 0],
+		nextIsTextButton = false,
+		smooth = false,
+		miniRadius = false
+	} = options
+
+	const width = ctx.canvas.width
+	const height = ctx.canvas.height
+
+	const resolvedRadius = getBorderRadius(
+		ctx.canvas,
+		pixelSize,
+		borderRadius,
+		shape,
+		size,
+		inner,
+		first,
+		last,
+		direction
+	)
+
+	const hasLeftNeighbor = inner && !first
+	const hasRightNeighbor = inner && !last
+
 	const rad = BORDER_CORNER_RAD_RANGE
 	const center = calcBorderCornerCenterWithPadding(
-		borderRadius,
+		resolvedRadius,
 		width,
 		height,
 		pixelSize,
@@ -881,25 +930,41 @@ export const drawRoundRect = (
 
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0],
-				center[i][1],
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize,
-				ranges?.[i]
-			)
+		if (resolvedRadius[i] > pixelSize || miniRadius) {
+			if (smooth) {
+				drawSmoothCircle(
+					ctx,
+					center[i][0],
+					center[i][1],
+					resolvedRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize
+				)
+			} else {
+				drawCircle(
+					ctx,
+					center[i][0],
+					center[i][1],
+					resolvedRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize,
+					ranges?.[i]
+				)
+			}
 		}
 	}
 
 	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(center[0][0], padding[0], center[1][0] - center[0][0] + pixelSize, pixelSize)
+		let length = center[1][0] - center[0][0] + pixelSize
+		if (hasRightNeighbor) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[0][0], padding[0], length, pixelSize)
 	}
 
-	if (center[2][1] + pixelSize > center[1][1]) {
+	if (center[2][1] + pixelSize > center[1][1] && !hasRightNeighbor) {
 		ctx.fillRect(
 			width - padding[1] - pixelSize,
 			center[1][1],
@@ -909,15 +974,42 @@ export const drawRoundRect = (
 	}
 
 	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0],
-			height - padding[2] - pixelSize,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
+		let length = center[2][0] - center[3][0] + pixelSize
+		if (hasRightNeighbor) {
+			length -= pixelSize
+		}
+		ctx.fillRect(center[3][0], height - padding[2] - pixelSize, length, pixelSize)
 	}
 
-	if (center[3][1] + pixelSize > center[0][1]) {
+	if (!hasLeftNeighbor && center[3][1] + pixelSize > center[0][1]) {
 		ctx.fillRect(padding[3], center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
 	}
+
+	if (hasLeftNeighbor) {
+		ctx.fillRect(padding[3] + pixelSize / 2, 0, pixelSize / 2, height)
+	}
+	if (hasRightNeighbor) {
+		let length = pixelSize
+		if (nextIsTextButton) {
+			length /= 2
+		}
+		ctx.fillRect(width - padding[1] - 2 * pixelSize - 1, 0, length, height)
+	}
+}
+
+export const drawRectBorder = (
+	ctx: CanvasRenderingContext2D,
+	borderColorString: string,
+	pixelSize: number
+) => {
+	const width = ctx.canvas.width
+	const height = ctx.canvas.height
+	const inset = pixelSize
+
+	ctx.fillStyle = borderColorString
+
+	ctx.fillRect(inset, 0, width - 2 * inset, pixelSize)
+	ctx.fillRect(width - pixelSize, inset, pixelSize, height - 2 * inset)
+	ctx.fillRect(inset, height - pixelSize, width - 2 * inset, pixelSize)
+	ctx.fillRect(0, inset, pixelSize, height - 2 * inset)
 }

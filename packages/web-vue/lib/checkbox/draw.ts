@@ -1,30 +1,12 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { INV_SQRT3 } from '../share/const'
-import { roundToPixel, canvasPreprocess } from '../share/util/plot'
+import { roundToPixel, canvasPreprocess, drawRectBorder } from '../share/util/plot'
 import { getGlobalThemeColorString } from '../share/util/color'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { CheckboxProps } from './type'
 import { INTERVAL } from '../share/const/style'
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	borderColor: string,
-	pixelSize: number
-) => {
-	ctx.fillStyle = borderColor
-
-	ctx.fillRect(pixelSize, 0, width - pixelSize * 2, pixelSize)
-
-	ctx.fillRect(width - pixelSize, pixelSize, pixelSize, height - pixelSize * 2)
-
-	ctx.fillRect(pixelSize, height - pixelSize, width - pixelSize * 2, pixelSize)
-
-	ctx.fillRect(0, pixelSize, pixelSize, height - pixelSize * 2)
-}
 
 export const drawBracketBorder = (
 	ctx: CanvasRenderingContext2D,
@@ -149,7 +131,7 @@ export const useDraw = (
 		const intervalSize = INTERVAL
 
 		if (options.variantComputed.value === 'normal') {
-			drawBorder(ctx, width, height, mainColor, pixelSize.value)
+			drawRectBorder(ctx, mainColor, pixelSize.value)
 
 			ctx.fillStyle = backgroundColor
 			ctx.fillRect(

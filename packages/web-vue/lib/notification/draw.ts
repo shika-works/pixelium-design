@@ -5,7 +5,7 @@ import {
 	getGlobalThemeColorString,
 	rgbaColor2string
 } from '../share/util/color'
-import { canvasPreprocess } from '../share/util/plot'
+import { canvasPreprocess, drawRectBorder } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { NotificationProps } from './type'
@@ -42,25 +42,6 @@ export function getBorderColor(
 	}
 }
 
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	borderColor: RgbaColor,
-	pixelSize: number
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-
-	ctx.fillRect(pixelSize, 0, width - 2 * pixelSize, pixelSize)
-	ctx.fillRect(width - pixelSize, pixelSize, pixelSize, height - 2 * pixelSize)
-	ctx.fillRect(pixelSize, height - pixelSize, width - 2 * pixelSize, pixelSize)
-	ctx.fillRect(0, pixelSize, pixelSize, height - 2 * pixelSize)
-
-	const backgroundColor = getGlobalThemeColorString('neutral', 1)
-	ctx.fillStyle = backgroundColor
-	ctx.fillRect(pixelSize, pixelSize, width - 2 * pixelSize, height - 2 * pixelSize)
-}
-
 type UseDrawOptions = {
 	wrapperRef: ShallowRef<HTMLDivElement | null>
 	canvasRef: ShallowRef<HTMLCanvasElement | null>
@@ -82,7 +63,12 @@ export const useDraw = (options: UseDrawOptions) => {
 		const borderColor = getBorderColor(options.type.value, options.palette.value)
 
 		if (borderColor) {
-			drawBorder(ctx, width, height, borderColor, pixelSize)
+			drawRectBorder(ctx, rgbaColor2string(borderColor), pixelSize)
+		}
+		const backgroundColor = getGlobalThemeColorString('neutral', 1)
+		if (backgroundColor) {
+			ctx.fillStyle = backgroundColor
+			ctx.fillRect(pixelSize, pixelSize, width - 2 * pixelSize, height - 2 * pixelSize)
 		}
 	}
 

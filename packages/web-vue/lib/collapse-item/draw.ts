@@ -31,14 +31,12 @@ const getRanges = (width: number, height: number) => {
 
 const drawBorder = (
 	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
 	borderRadius: number[],
 	borderColor: RgbaColor,
 	pixelSize: number
 ) => {
-	const ranges = getRanges(width, height)
-	drawRoundRect(ctx, width, height, borderRadius, borderColor, pixelSize, ranges)
+	const ranges = getRanges(ctx.canvas.width, ctx.canvas.height)
+	drawRoundRect(ctx, borderColor, pixelSize, { borderRadius, ranges })
 }
 
 const HEAD_BORDER_RADIUS = fillArr(4, 4)
@@ -75,7 +73,7 @@ export const useDraw = (
 			const pixelSize = pixelSizeRef.value
 
 			if (borderColor) {
-				drawBorder(ctx, width, height, borderRadius, borderColor, pixelSize)
+				drawBorder(ctx, borderRadius, borderColor, pixelSize)
 			}
 
 			if (backgroundColor) {

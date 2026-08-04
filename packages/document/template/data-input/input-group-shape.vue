@@ -7,7 +7,7 @@
 			<px-input placeholder="Please input"> </px-input>
 			<px-button>Search</px-button>
 		</px-input-group>
-		<px-input-group :border-radius="[20, 16, 20, 16]">
+		<px-input-group :border-radius="[20, 8, 20, 8]">
 			<px-input-group-label>
 				<IconSearch></IconSearch>
 			</px-input-group-label>

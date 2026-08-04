@@ -9,12 +9,7 @@ export const draw = (
 	backgroundColor: RgbaColor,
 	pixelSize: number
 ) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-
-	ctx.fillRect(pixelSize, 0, width - 2 * pixelSize, pixelSize)
-	ctx.fillRect(width - pixelSize, pixelSize, pixelSize, height - 2 * pixelSize)
-	ctx.fillRect(pixelSize, height - pixelSize, width - 2 * pixelSize, pixelSize)
-	ctx.fillRect(0, pixelSize, pixelSize, height - 2 * pixelSize)
+	drawRectBorder(ctx, rgbaColor2string(borderColor), pixelSize)
 
 	ctx.fillStyle = rgbaColor2string(backgroundColor)
 	ctx.fillRect(pixelSize, pixelSize, width - 2 * pixelSize, height - 2 * pixelSize)
@@ -22,7 +17,7 @@ export const draw = (
 
 import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { canvasPreprocess } from '../share/util/plot'
+import { canvasPreprocess, drawRectBorder } from '../share/util/plot'
 import { getGlobalThemeColor } from '../share/util/color'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -76,7 +71,8 @@ export const useDraw = (
 	}
 
 	const { debouncedTrigger } = useDrawCanvas(wrapperRef, drawPixel, {
-		pollSizeChange: options.pollSizeChangeComputed
+		pollSizeChange: options.pollSizeChangeComputed,
+		renderImmediatelyWhenResize: true
 	})
 
 	watch(

@@ -25,6 +25,7 @@ export const ignoreNonSizeTransition = (event: TransitionEvent) => {
 
 export interface UseDrawCanvasOptions {
 	pollSizeChange?: WatchSource<any>
+	renderImmediatelyWhenResize?: boolean
 }
 
 export function useDrawCanvas(
@@ -36,7 +37,9 @@ export function useDrawCanvas(
 
 	let wrapperSize = { width: 0, height: 0 }
 
-	const debouncedDraw = debounce(drawFunc, 0)
+	const debouncedDraw = debounce(drawFunc, 0, {
+		maxWait: 100
+	})
 
 	onMounted(() => {
 		nextTick(() => {
@@ -44,7 +47,11 @@ export function useDrawCanvas(
 		})
 	})
 
-	useResizeObserver(wrapperRef, debouncedDraw, drawFunc)
+	useResizeObserver(
+		wrapperRef,
+		options.renderImmediatelyWhenResize ? drawFunc : debouncedDraw,
+		drawFunc
+	)
 	useWatchGlobalCssVal(debouncedDraw)
 	useTransitionEnd(wrapperRef, debouncedDraw, ignoreNonSizeTransition)
 

@@ -20,6 +20,10 @@ Used to combine various input controls and buttons together.
 - Select
 - Button
 - InputGroupLabel
+- ColorPicker
+- TimePicker
+- DatePicker
+- DateTimePicker
 
 ]]]
 [[[en
@@ -33,6 +37,10 @@ Combines various input controls and buttons. Currently supported components:
 - Select
 - Button
 - InputGroupLabel
+- ColorPicker
+- TimePicker
+- DatePicker
+- DateTimePicker
 ]]]
 <preview path="./input-group-basic.vue"></preview>
 

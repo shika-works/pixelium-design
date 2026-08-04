@@ -1,14 +1,12 @@
 import {
-	drawCircle,
+	drawRoundRect,
 	drawSmoothCircle,
-	calcBorderCornerCenter,
 	canvasPreprocess,
-	floodFill,
-	getBorderRadius
+	floodFill
 } from '../share/util/plot'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, parseColor, rgbaColor2string } from '../share/util/color'
-import { BORDER_CORNER_RAD_RANGE, TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
+import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { inBrowser } from '../share/util/env'
 import { isNullish } from 'parsnip-kit'
@@ -21,76 +19,6 @@ import {
 	type WatchSource
 } from 'vue'
 import type { SwitchProps } from './type'
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: RgbaColor,
-	pixelSize: number,
-	paddingX: number = 0,
-	paddingY: number = 0,
-	small: boolean = false,
-	smooth: boolean = false
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize || (small && borderRadius[i] === pixelSize)) {
-			if (!smooth) {
-				drawCircle(
-					ctx,
-					center[i][0] + paddingX,
-					center[i][1] + paddingY,
-					borderRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize
-				)
-			} else {
-				drawSmoothCircle(
-					ctx,
-					center[i][0] + paddingX,
-					center[i][1] + paddingY,
-					borderRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize
-				)
-			}
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		let length = center[1][0] - center[0][0] + pixelSize
-		ctx.fillRect(center[0][0] + paddingX, paddingY, length, pixelSize)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - pixelSize + paddingX,
-			center[1][1] + paddingY,
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		let length = center[2][0] - center[3][0] + pixelSize
-		ctx.fillRect(center[3][0] + paddingX, height - pixelSize + paddingY, length, pixelSize)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(
-			paddingX,
-			center[0][1] + paddingY,
-			pixelSize,
-			center[3][1] - center[0][1] + pixelSize
-		)
-	}
-}
 
 const MID_PROGRESS = 0.5
 
@@ -140,20 +68,9 @@ export const useDraw = (options: UseDrawOptions) => {
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height, canvas } = preprocessData
+		const { ctx, width, height } = preprocessData
 
 		const pixelSize = options.pixelSizeRef.value
-
-		const borderRadius = getBorderRadius(
-			canvas,
-			pixelSize,
-			undefined,
-			options.shape.value,
-			'medium',
-			false,
-			false,
-			false
-		)
 
 		const backgroundColor = getMainColor(
 			options.progress.value,
@@ -161,23 +78,12 @@ export const useDraw = (options: UseDrawOptions) => {
 			options.inactiveColor.value,
 			!!options.disabled.value
 		)
-		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-		const rad = BORDER_CORNER_RAD_RANGE
 
 		if (backgroundColor) {
-			drawBorder(
-				ctx,
-				width,
-				height,
-				center,
-				borderRadius,
-				rad,
-				backgroundColor,
-				pixelSize,
-				0,
-				0,
-				options.sizeComputed.value === 'small' && options.shape.value === 'round'
-			)
+			drawRoundRect(ctx, backgroundColor, pixelSize, {
+				shape: options.shape.value,
+				miniRadius: options.sizeComputed.value === 'small' && options.shape.value === 'round'
+			})
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
 		}
 

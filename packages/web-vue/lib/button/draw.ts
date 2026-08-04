@@ -8,6 +8,7 @@ import {
 	calcWhenLeaveBaseline,
 	canvasPreprocess,
 	drawCircle,
+	drawRoundRect,
 	floodFill,
 	getBorderRadius
 } from '../share/util/plot'
@@ -158,79 +159,6 @@ export function getBorderColor(
 				return getGlobalThemeColor('neutral', 10)
 		}
 		return disabled ? getGlobalThemeColor('neutral', 8) : getGlobalThemeColor('neutral', 10)
-	}
-}
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: RgbaColor,
-	pixelSize: number,
-	type: ButtonProps['variant'],
-	inner: boolean,
-	first: boolean,
-	last: boolean,
-	nextIsTextButton: boolean
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			if (i === 1 || i === 2 ? (inner && last) || !inner : true) {
-				drawCircle(
-					ctx,
-					center[i][0],
-					center[i][1],
-					borderRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize
-				)
-			}
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		let length = center[1][0] - center[0][0] + pixelSize
-		if (inner && !last) {
-			length -= pixelSize
-		}
-		ctx.fillRect(center[0][0], 0, length, pixelSize)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1] && ((inner && last) || !inner)) {
-		ctx.fillRect(
-			width - pixelSize,
-			center[1][1],
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		let length = center[2][0] - center[3][0] + pixelSize
-		if (inner && !last) {
-			length -= pixelSize
-		}
-		ctx.fillRect(center[3][0], height - pixelSize, length, pixelSize)
-	}
-
-	if ((!inner || first) && center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
-	}
-
-	if (inner && !first) {
-		ctx.fillRect(pixelSize / 2, 0, pixelSize / 2, height)
-	}
-	if (inner && !last) {
-		let length = pixelSize
-		if (type === 'text' || nextIsTextButton) {
-			length /= 2
-		}
-		ctx.fillRect(width - 2 * pixelSize - 1, 0, length, height)
 	}
 }
 
@@ -514,21 +442,16 @@ export const useDraw = (
 			)
 		}
 		if (borderColor) {
-			drawBorder(
-				ctx,
-				width,
-				height,
-				center,
-				borderRadius,
-				rad,
-				borderColor,
-				pixelSize,
-				options.typeComputed.value || 'primary',
-				options.innerButtonGroup.value || options.innerInputGroup.value,
-				options.first.value,
-				options.last.value,
-				options.nextIsTextButton.value
-			)
+			drawRoundRect(ctx, borderColor, pixelSize, {
+				borderRadius: options.borderRadiusComputed.value,
+				shape: options.shapeComputed.value || 'rect',
+				size: options.sizeComputed.value || 'medium',
+				inner: options.innerButtonGroup.value || options.innerInputGroup.value,
+				first: options.first.value,
+				last: options.last.value,
+				nextIsTextButton:
+					options.typeComputed.value === 'text' || options.nextIsTextButton.value
+			})
 		}
 		const backgroundColor = getBackgroundColor(
 			!!options.disabledComputed.value,
