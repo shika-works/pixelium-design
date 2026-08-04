@@ -1,68 +1,12 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef, type Slots } from 'vue'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import {
-	calcBorderCornerCenter,
-	canvasPreprocess,
-	drawCircle,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
 import type { SliderProps } from './type'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
 import { fillArr } from '../share/util/common'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderColor: RgbaColor,
-	pixelSize: number,
-	paddingX: number = 0,
-	paddingY: number = 0
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(
-			center[0][0] + paddingX,
-			paddingY,
-			center[1][0] - center[0][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - pixelSize + paddingX,
-			center[1][1] + paddingY,
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0] + paddingX,
-			height - pixelSize + paddingY,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(
-			paddingX,
-			center[0][1] + paddingY,
-			pixelSize,
-			center[3][1] - center[0][1] + pixelSize
-		)
-	}
-}
 
 export const drawRange = (
 	ctx: CanvasRenderingContext2D,
@@ -134,70 +78,6 @@ export const drawRange = (
 	}
 }
 
-export const drawThumbBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: RgbaColor,
-	pixelSize: number,
-	paddingX: number = 0,
-	paddingY: number = 0
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0] + paddingX,
-				center[i][1] + paddingY,
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize
-			)
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(
-			center[0][0] + paddingX,
-			paddingY,
-			center[1][0] - center[0][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - pixelSize + paddingX,
-			center[1][1] + paddingY,
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0] + paddingX,
-			height - pixelSize + paddingY,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(
-			paddingX,
-			center[0][1] + paddingY,
-			pixelSize,
-			center[3][1] - center[0][1] + pixelSize
-		)
-	}
-}
-
 export const drawThumb = (
 	thumbRef: ShallowRef<HTMLDivElement | null>,
 	thumbCanvasRef: ShallowRef<HTMLCanvasElement | null>,
@@ -209,7 +89,6 @@ export const drawThumb = (
 	thumbEndCanvasRef: ShallowRef<HTMLCanvasElement | null>,
 	thumbEndFocus: boolean,
 	range: boolean,
-	rad: [number, number][],
 	pixelSize: number,
 	thumbColor: RgbaColor
 ) => {
@@ -223,46 +102,13 @@ export const drawThumb = (
 			? getGlobalThemeColor('neutral', 10)
 			: getGlobalThemeColor('primary', 6)
 		if (thumbStartPreprocessData && startBorderColor) {
-			const { ctx, width, height, canvas } = thumbStartPreprocessData
-
-			const borderRadius = getBorderRadius(
-				canvas,
-				pixelSize,
-				undefined,
-				'round',
-				'medium',
-				false,
-				false,
-				false
-			)
-			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-			drawThumbBorder(
-				ctx,
-				width,
-				height,
-				center,
-				borderRadius,
-				rad,
-				startBorderColor,
-				pixelSize
-			)
+			const { ctx, width, height } = thumbStartPreprocessData
+			drawRoundRect(ctx, startBorderColor, pixelSize, { shape: 'round', size: 'medium' })
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
 		}
 		if (thumbEndPreprocessData && endBorderColor) {
-			const { ctx, width, height, canvas } = thumbEndPreprocessData
-
-			const borderRadius = getBorderRadius(
-				canvas,
-				pixelSize,
-				undefined,
-				'round',
-				'medium',
-				false,
-				false,
-				false
-			)
-			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-			drawThumbBorder(ctx, width, height, center, borderRadius, rad, endBorderColor, pixelSize)
+			const { ctx, width, height } = thumbEndPreprocessData
+			drawRoundRect(ctx, endBorderColor, pixelSize, { shape: 'round', size: 'medium' })
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
 		}
 	} else {
@@ -271,19 +117,8 @@ export const drawThumb = (
 			? getGlobalThemeColor('neutral', 10)
 			: getGlobalThemeColor('primary', 6)
 		if (thumbPreprocessData && borderColor) {
-			const { ctx, width, height, canvas } = thumbPreprocessData
-			const borderRadius = getBorderRadius(
-				canvas,
-				pixelSize,
-				undefined,
-				'round',
-				'medium',
-				false,
-				false,
-				false
-			)
-			const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-			drawThumbBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+			const { ctx, width, height } = thumbPreprocessData
+			drawRoundRect(ctx, borderColor, pixelSize, { shape: 'round', size: 'medium' })
 			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
 		}
 	}
@@ -318,7 +153,6 @@ export const getMarkStyle = (
 export const drawMark = (
 	sliderRef: ShallowRef<HTMLDivElement | null>,
 	dotCanvasRef: ShallowRef<HTMLCanvasElement | null>,
-	rad: [number, number][],
 	modelValue: number | [number, number] | Nullish,
 	direction: SliderProps['direction'],
 	reverse: boolean,
@@ -333,23 +167,11 @@ export const drawMark = (
 	const preprocessData = canvasPreprocess(sliderRef, dotCanvasRef)
 
 	if (preprocessData) {
-		const { ctx, height, width, canvas } = preprocessData
+		const { ctx, height, width } = preprocessData
 		const dotSize = direction === 'horizontal' ? height : width
 		const areaWidth = direction !== 'horizontal' ? height : width
-		const borderRadius = getBorderRadius(
-			canvas,
-			pixelSize,
-			undefined,
-			'round',
-			'medium',
-			false,
-			false,
-			false,
-			direction
-		)
 
 		for (const point of markPoints) {
-			const center = calcBorderCornerCenter(borderRadius, dotSize, dotSize, pixelSize)
 			const borderColor = getGlobalThemeColor('neutral', 10)
 
 			const covered = isArray(modelValue)
@@ -380,18 +202,12 @@ export const drawMark = (
 						? markOffset + pixelSize
 						: areaWidth - markOffset - dotSize - pixelSize
 			if (borderColor) {
-				drawThumbBorder(
-					ctx,
-					dotSize,
-					dotSize,
-					center,
-					borderRadius,
-					rad,
-					borderColor,
-					pixelSize,
-					paddingX,
-					paddingY
-				)
+				drawRoundRect(ctx, borderColor, pixelSize, {
+					shape: 'round',
+					size: 'medium',
+					direction,
+					padding: [paddingY, width - paddingX - dotSize, height - paddingY - dotSize, paddingX]
+				})
 			}
 			if (dotColor) {
 				floodFill(
@@ -457,10 +273,11 @@ export const useDraw = (options: UseDrawOptions) => {
 		const { ctx, width, height } = preprocessData
 
 		const borderColor = getGlobalThemeColor('neutral', 10)
-		const center = calcBorderCornerCenter(fillArr(pixelSize, 4), width, height, pixelSize)
 
 		if (borderColor) {
-			drawBorder(ctx, width, height, center, borderColor, pixelSize)
+			drawRoundRect(ctx, borderColor, pixelSize, {
+				borderRadius: fillArr(pixelSize, 4)
+			})
 		}
 
 		const fillColor = options.disabled.value
@@ -485,8 +302,6 @@ export const useDraw = (options: UseDrawOptions) => {
 			)
 		}
 
-		const rad = BORDER_CORNER_RAD_RANGE
-
 		const thumbColor = options.disabled.value
 			? getGlobalThemeColor('neutral', 6)
 			: getGlobalThemeColor('neutral', 1)
@@ -503,7 +318,6 @@ export const useDraw = (options: UseDrawOptions) => {
 				options.thumbEndCanvasRef,
 				options.thumbEndFocusMode.value,
 				options.range.value,
-				rad,
 				pixelSize,
 				thumbColor
 			)
@@ -513,7 +327,6 @@ export const useDraw = (options: UseDrawOptions) => {
 			drawMark(
 				options.wrapperRef,
 				options.dotCanvasRef,
-				rad,
 				options.modelValue.value,
 				options.direction.value,
 				options.reverse.value,

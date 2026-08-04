@@ -1,14 +1,8 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import {
-	calcBorderCornerCenter,
-	canvasPreprocess,
-	drawCircle,
-	floodFill
-} from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
 import { fillArr } from '../share/util/common'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { PopupContentProps } from './type'
@@ -23,72 +17,6 @@ export function getBackgroundColor(variant: PopupContentProps['variant']) {
 	return variant === 'light'
 		? getGlobalThemeColor('neutral', 1)
 		: getGlobalThemeColor('neutral', 10)
-}
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: RgbaColor,
-	pixelSize: number,
-	offsetX: number,
-	offsetY: number,
-	offsetTop: number,
-	offsetLeft: number
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0] + offsetLeft,
-				center[i][1] + offsetTop,
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize
-			)
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(
-			center[0][0] + offsetLeft,
-			offsetTop,
-			center[1][0] - center[0][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - offsetX - pixelSize + offsetLeft,
-			center[1][1] + offsetTop,
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0] + offsetLeft,
-			height - offsetY - pixelSize + offsetTop,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(
-			offsetLeft,
-			center[0][1] + offsetTop,
-			pixelSize,
-			center[3][1] - center[0][1] + pixelSize
-		)
-	}
 }
 
 export const drawArrow = (
@@ -261,34 +189,15 @@ export const useDraw = (options: UseDrawOptions) => {
 				: 0
 
 		const borderColor = getBorderColor(options.variant.value)
-		const center = calcBorderCornerCenter(
-			borderRadius,
-			width,
-			height,
-			pixelSize,
-			offsetX,
-			offsetY
-		)
-		const rad = BORDER_CORNER_RAD_RANGE
 
 		const offsetTop = options.popupFinalPlacement.value === 'bottom' ? offset : 0
 		const offsetLeft = options.popupFinalPlacement.value === 'right' ? offset : 0
 
 		if (borderColor) {
-			drawBorder(
-				ctx,
-				width,
-				height,
-				center,
+			drawRoundRect(ctx, borderColor, pixelSize, {
 				borderRadius,
-				rad,
-				borderColor,
-				pixelSize,
-				offsetX,
-				offsetY,
-				offsetTop,
-				offsetLeft
-			)
+				padding: [offsetTop, offsetX - offsetLeft, offsetY - offsetTop, offsetLeft]
+			})
 		}
 
 		const backgroundColor = getBackgroundColor(options.variant.value)

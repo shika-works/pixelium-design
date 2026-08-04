@@ -27,6 +27,7 @@
   - 修复了输入框样式的组件，只读时，边框区域鼠标指针样式不正确的问题。
   - 修复 Message 旧属性 position 不生效的问题。
   - 修复了 Slider 组件反复重新渲染的问题。
+  - 修复了 Textarea 组件拖拽时，渲染延迟的问题。
 ]]]
 [[[en
 ## v0.2.0
@@ -49,7 +50,8 @@
   - When scrollbar and its hooks are imported on demand, the public styles are now also imported.
   - Fixed an issue where the mouse pointer style in the border area of the input-style component was incorrect when it was read-only.
   - Fix the issue where the old position property of Message does not take effect.
-  - Fix the problem of the Slider component repeatedly re-rendering
+  - Fix the problem of the Slider component repeatedly re-rendering.
+  - Fixed the rendering delay issue when dragging the Textarea component.
 ]]]
 
 [[[zh

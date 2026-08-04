@@ -441,7 +441,7 @@ export const calcBorderCornerCenterWithPadding = (
 	width: number,
 	height: number,
 	pixelSize: number,
-	padding: [number, number, number, number] = [0, 0, 0, 0]
+	padding: number[] = [0, 0, 0, 0]
 ) => {
 	return [
 		[padding[3] + borderRadius[0], padding[0] + borderRadius[0]],
@@ -871,9 +871,13 @@ export type DrawRoundRectOptions = {
 	direction?: 'horizontal' | 'vertical'
 	// For drawCircle
 	ranges?: number[][][]
-	padding?: [number, number, number, number]
+	padding?: number[]
 	// For inner-group (input/button group) borders
 	nextIsTextButton?: boolean
+	// Smooth rounded corners
+	smooth?: boolean
+	// Draw corners regardless of borderRadius size
+	miniRadius?: boolean
 }
 
 export const drawRoundRect = (
@@ -892,7 +896,9 @@ export const drawRoundRect = (
 		direction,
 		ranges,
 		padding = [0, 0, 0, 0],
-		nextIsTextButton = false
+		nextIsTextButton = false,
+		smooth = false,
+		miniRadius = false
 	} = options
 
 	const width = ctx.canvas.width
@@ -910,9 +916,6 @@ export const drawRoundRect = (
 		direction
 	)
 
-	// Inner-group semantics: an inner item's merged side borders its neighbor
-	// (corner suppression is already handled symmetrically by getInnerRadius,
-	// which zeroes the adjacent corner radii down to pixelSize).
 	const hasLeftNeighbor = inner && !first
 	const hasRightNeighbor = inner && !last
 
@@ -927,17 +930,29 @@ export const drawRoundRect = (
 
 	ctx.fillStyle = rgbaColor2string(borderColor)
 	for (let i = 0; i < 4; i++) {
-		if (resolvedRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0],
-				center[i][1],
-				resolvedRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize,
-				ranges?.[i]
-			)
+		if (resolvedRadius[i] > pixelSize || miniRadius) {
+			if (smooth) {
+				drawSmoothCircle(
+					ctx,
+					center[i][0],
+					center[i][1],
+					resolvedRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize
+				)
+			} else {
+				drawCircle(
+					ctx,
+					center[i][0],
+					center[i][1],
+					resolvedRadius[i],
+					rad[i][0],
+					rad[i][1],
+					pixelSize,
+					ranges?.[i]
+				)
+			}
 		}
 	}
 
@@ -963,12 +978,7 @@ export const drawRoundRect = (
 		if (hasRightNeighbor) {
 			length -= pixelSize
 		}
-		ctx.fillRect(
-			center[3][0],
-			height - padding[2] - pixelSize,
-			length,
-			pixelSize
-		)
+		ctx.fillRect(center[3][0], height - padding[2] - pixelSize, length, pixelSize)
 	}
 
 	if (!hasLeftNeighbor && center[3][1] + pixelSize > center[0][1]) {
@@ -985,4 +995,21 @@ export const drawRoundRect = (
 		}
 		ctx.fillRect(width - padding[1] - 2 * pixelSize - 1, 0, length, height)
 	}
+}
+
+export const drawRectBorder = (
+	ctx: CanvasRenderingContext2D,
+	borderColorString: string,
+	pixelSize: number
+) => {
+	const width = ctx.canvas.width
+	const height = ctx.canvas.height
+	const inset = pixelSize
+
+	ctx.fillStyle = borderColorString
+
+	ctx.fillRect(inset, 0, width - 2 * inset, pixelSize)
+	ctx.fillRect(width - pixelSize, inset, pixelSize, height - 2 * inset)
+	ctx.fillRect(inset, height - pixelSize, width - 2 * inset, pixelSize)
+	ctx.fillRect(0, inset, pixelSize, height - 2 * inset)
 }

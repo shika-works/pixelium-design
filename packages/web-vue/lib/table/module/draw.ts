@@ -1,70 +1,15 @@
 import { ref, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
-import { BORDER_CORNER_RAD_RANGE } from '../../share/const'
-import { getGlobalThemeColorString, getGlobalThemeColor } from '../../share/util/color'
+import { getGlobalThemeColor, rgbaColor2string } from '../../share/util/color'
 import { fillArr, offsetOutward } from '../../share/util/common'
 import {
-	calcBorderCornerCenter,
 	canvasPreprocess,
-	drawCircle,
+	drawRoundRect,
 	floodFill,
 	floodFillEdge
 } from '../../share/util/plot'
 import type { TableProps } from '../type'
 import type { LooseRequired } from '../../share/type'
 import { useDrawCanvas } from '../../share/hook/use-draw-canvas'
-
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: string,
-	pixelSize: number,
-	hasBottom: boolean = true
-) => {
-	ctx.fillStyle = borderColor
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0],
-				center[i][1],
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize
-			)
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(center[0][0], 0, center[1][0] - center[0][0] + pixelSize, pixelSize)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - pixelSize,
-			center[1][1],
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (hasBottom && center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0],
-			height - pixelSize,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
-	}
-}
 
 const drawTableBorder = (
 	wrapperRef: ShallowRef<HTMLDivElement | null>,
@@ -92,16 +37,15 @@ const drawTableBorder = (
 	if (bordered.table) {
 		const borderRadius = fillArr(r, 4)
 
-		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSizeValue)
-		const rad = BORDER_CORNER_RAD_RANGE
-
-		const borderColor = getGlobalThemeColorString('neutral', 9)
-		if (bordered.side) {
-			drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSizeValue)
-		} else {
-			ctx.fillStyle = borderColor
-			ctx.fillRect(0, height - pixelSizeValue, width, pixelSizeValue)
-			ctx.fillRect(0, 0, width, pixelSizeValue)
+		const borderColor = getGlobalThemeColor('neutral', 9)
+		if (borderColor) {
+			if (bordered.side) {
+				drawRoundRect(ctx, borderColor, pixelSizeValue, { borderRadius })
+			} else {
+				ctx.fillStyle = rgbaColor2string(borderColor)
+				ctx.fillRect(0, height - pixelSizeValue, width, pixelSizeValue)
+				ctx.fillRect(0, 0, width, pixelSizeValue)
+			}
 		}
 	}
 

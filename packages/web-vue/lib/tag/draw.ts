@@ -2,16 +2,9 @@ import { watch, type Ref, type ShallowRef, type Slots } from 'vue'
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import {
-	calcBorderCornerCenter,
-	canvasPreprocess,
-	drawCircle,
-	floodFill,
-	getBorderRadius
-} from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import type { TagProps } from './type'
 
 export function getBackgroundColor(
@@ -101,58 +94,6 @@ export function getBorderColor(
 	}
 }
 
-export const drawBorder = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: RgbaColor,
-	pixelSize: number
-) => {
-	ctx.fillStyle = rgbaColor2string(borderColor)
-	for (let i = 0; i < 4; i++) {
-		if (borderRadius[i] > pixelSize) {
-			drawCircle(
-				ctx,
-				center[i][0],
-				center[i][1],
-				borderRadius[i],
-				rad[i][0],
-				rad[i][1],
-				pixelSize
-			)
-		}
-	}
-
-	if (center[1][0] + pixelSize > center[0][0]) {
-		ctx.fillRect(center[0][0], 0, center[1][0] - center[0][0] + pixelSize, pixelSize)
-	}
-
-	if (center[2][1] + pixelSize > center[1][1]) {
-		ctx.fillRect(
-			width - pixelSize,
-			center[1][1],
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		ctx.fillRect(
-			center[3][0],
-			height - pixelSize,
-			center[2][0] - center[3][0] + pixelSize,
-			pixelSize
-		)
-	}
-
-	if (center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(0, center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
-	}
-}
-
 export const getTextColorWithPalette = (
 	palette: RgbaColor[] | null,
 	type: TagProps['variant'],
@@ -197,20 +138,9 @@ export const useDraw = (options: UseDrawOptions) => {
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height, canvas } = preprocessData
+		const { ctx, width, height } = preprocessData
 
 		const pixelSize = pixelSizeRef.value
-
-		const borderRadius = getBorderRadius(
-			canvas,
-			pixelSize,
-			options.borderRadius.value,
-			options.shape.value,
-			'medium',
-			false,
-			false,
-			false
-		)
 
 		const borderColor = getBorderColor(
 			options.disabled.value,
@@ -218,11 +148,13 @@ export const useDraw = (options: UseDrawOptions) => {
 			options.theme.value,
 			options.palette.value
 		)
-		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
-		const rad = BORDER_CORNER_RAD_RANGE
 
 		if (borderColor) {
-			drawBorder(ctx, width, height, center, borderRadius, rad, borderColor, pixelSize)
+			drawRoundRect(ctx, borderColor, pixelSize, {
+				borderRadius: options.borderRadius.value,
+				shape: options.shape.value,
+				size: 'medium'
+			})
 		}
 
 		const backgroundColor = getBackgroundColor(
