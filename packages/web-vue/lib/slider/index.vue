@@ -167,7 +167,7 @@ import {
 } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useDraw, getMarkStyle, getDotStyle } from './draw'
-import type { SliderEvent, SliderProps } from './type'
+import type { SliderEvents, SliderProps } from './type'
 import type { FormItemProvide } from '../form-item/type'
 import { FORM_ITEM_PROVIDE } from '../share/const/provide-key'
 import { createProvideComputed } from '../share/util/reactivity'
@@ -201,7 +201,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
 	precision: 8
 })
 
-const emits = defineEmits<SliderEvent>()
+const emits = defineEmits<SliderEvents>()
 
 const formItemProvide = inject<undefined | FormItemProvide>(FORM_ITEM_PROVIDE, undefined)
 const disabledComputed = createProvideComputed('disabled', [formItemProvide, props], 'or')

@@ -89,7 +89,7 @@ export type SliderProps = {
 	pollSizeChange?: boolean
 }
 
-export type SliderEvent = {
+export type SliderEvents = {
 	/**
 	 * @event update:modelValue
 	 * @version 0.0.3
