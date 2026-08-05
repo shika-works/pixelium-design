@@ -10,7 +10,8 @@ const newItems = [
 	'card',
 	'calendar',
 	'collapse',
-	'timeline'
+	'timeline',
+	'typewriter'
 ]
 
 const titleMapEn = {
@@ -103,7 +104,8 @@ const additionMapZh = {
 	card: '卡片',
 	calendar: '日历',
 	collapse: '折叠面板',
-	timeline: '时间线'
+	timeline: '时间线',
+	typewriter: '打字机'
 }
 const order = [
 	'guide',

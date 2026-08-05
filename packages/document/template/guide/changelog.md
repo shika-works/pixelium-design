@@ -13,6 +13,7 @@
   - 新增导航组件：Tab、TabItem、TabPanel。
   - 新增数据展示组件：Card、Calendar、Collapse、CollapseItem。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
+  - 新增视觉组件：Typewriter。
   - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
   - Divider 组件新增属性 `soft` 和 `color`。
   - ScrollBar 组件新增 expose `scrollHeight`、`scrollWidth`、`scrollTop`、`scrollLeft` 用于获取当前滚动状态，新增属性 `visible` 控制是否显示滚动条，`edgeMask` 控制是否展示边缘遮罩。
@@ -37,6 +38,7 @@
   - New navigation  components: Tab, TabItem, TabPanel.
   - New data display components: Card, Calendar, Collapse, CollapseItem.
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
+  - New visual components: Typewriter.
   - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
   - Divider component adds `soft` and `color` properties.
   - ScrollBar component added exposes `scrollHeight`, `scrollWidth`, `scrollTop`, `scrollLeft` to retrieve the current scroll state, added property `visible` to control whether the scrollbar is shown, and `edgeMask` to control whether the edge mask is displayed.

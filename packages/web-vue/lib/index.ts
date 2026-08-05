@@ -84,6 +84,7 @@ import Collapse from './collapse/index.vue'
 import CollapseItem from './collapse-item/index.vue'
 import Timeline from './timeline/index.vue'
 import TimelineItem from './timeline-item/index.vue'
+import Typewriter from './typewriter/index.vue'
 
 const components = [
 	Button,
@@ -160,7 +161,8 @@ const components = [
 	Collapse,
 	CollapseItem,
 	Timeline,
-	TimelineItem
+	TimelineItem,
+	Typewriter
 ]
 
 const defaultPrefix = 'Px'
@@ -284,7 +286,8 @@ export {
 	Collapse,
 	CollapseItem,
 	Timeline,
-	TimelineItem
+	TimelineItem,
+	Typewriter
 }
 export default {
 	install
@@ -354,3 +357,5 @@ export type { DrawerReturn, DrawerOptions } from './drawer/type.ts'
 
 export type { NotificationOptions, NotificationBoxEvents } from './notification-box/type.ts'
 export type { NotificationProps } from './notification/type.ts'
+
+export type { TypewriterText } from './typewriter/type.ts'
