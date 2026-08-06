@@ -11,7 +11,8 @@ const newItems = [
 	'calendar',
 	'collapse',
 	'timeline',
-	'typewriter'
+	'typewriter',
+	'carousel'
 ]
 
 const titleMapEn = {
@@ -105,7 +106,8 @@ const additionMapZh = {
 	calendar: '日历',
 	collapse: '折叠面板',
 	timeline: '时间线',
-	typewriter: '打字机'
+	typewriter: '打字机',
+	carousel: '轮播'
 }
 const order = [
 	'guide',

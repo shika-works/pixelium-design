@@ -9,6 +9,29 @@ const isFocusableElement = (element: HTMLElement) => {
 	)
 }
 
+let oldRaf: any
+let oldCaf: any
+
+const mockRequestAnimationFrame = () => {
+	oldRaf = window.requestAnimationFrame
+	oldCaf = window.cancelAnimationFrame
+	let frame = 0
+	window.requestAnimationFrame = (callback: FrameRequestCallback) => {
+		frame++
+		return window.setTimeout(() => {
+			callback(20 * frame)
+		}, 20) as unknown as number
+	}
+	window.cancelAnimationFrame = (id: number) => {
+		window.clearTimeout(id)
+	}
+}
+
+const restoreRequestAnimationFrame = () => {
+	window.requestAnimationFrame = oldRaf
+	window.cancelAnimationFrame = oldCaf
+}
+
 export function createMocks() {
 	let originalMatchMedia: any
 	let originalResizeObserver: any
@@ -36,12 +59,15 @@ export function createMocks() {
 			unobserve: vi.fn(),
 			disconnect: vi.fn()
 		}))
+
+		mockRequestAnimationFrame()
 	}
 
 	const post = () => {
 		window.matchMedia = originalMatchMedia
 		window.ResizeObserver = originalResizeObserver
 		window.IntersectionObserver = originalIntersectionObserver
+		restoreRequestAnimationFrame()
 		vi.clearAllMocks()
 	}
 

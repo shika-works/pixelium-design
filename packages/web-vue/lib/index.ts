@@ -85,6 +85,7 @@ import CollapseItem from './collapse-item/index.vue'
 import Timeline from './timeline/index.vue'
 import TimelineItem from './timeline-item/index.vue'
 import Typewriter from './typewriter/index.vue'
+import Carousel from './carousel/index.vue'
 
 const components = [
 	Button,
@@ -162,7 +163,8 @@ const components = [
 	CollapseItem,
 	Timeline,
 	TimelineItem,
-	Typewriter
+	Typewriter,
+	Carousel
 ]
 
 const defaultPrefix = 'Px'
@@ -287,7 +289,8 @@ export {
 	CollapseItem,
 	Timeline,
 	TimelineItem,
-	Typewriter
+	Typewriter,
+	Carousel
 }
 export default {
 	install

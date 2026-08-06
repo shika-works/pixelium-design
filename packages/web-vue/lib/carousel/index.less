@@ -1,0 +1,35 @@
+@import url(../share/style/variable.less);
+
+.px-carousel {
+	display: block;
+	overflow: hidden;
+	box-sizing: border-box;
+
+	&-viewport {
+		overflow: hidden;
+		box-sizing: border-box;
+		position: relative;
+	}
+
+	&-track {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		width: max-content;
+		will-change: transform;
+		box-sizing: border-box;
+		position: absolute;
+	}
+
+	&-content-wrapper {
+		flex: 0 0 auto;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		width: max-content;
+
+		box-sizing: border-box;
+	}
+}
