@@ -94,7 +94,7 @@ events.indexChange: Typewriter 执行命令索引变化时触发。
 slots.default: 自定义 Typewriter 的文本渲染。
 slots.caret: 自定义 Typewriter 的光标。
 
-typewriterExpose.start: 开始 Typewriter 的打字过程。
+typewriterExpose.start: （重新）开始 Typewriter 的打字过程。
 typewriterExpose.stop: 停止 Typewriter 的打字过程。
 typewriterExpose.reset: 重置 Typewriter 的打字内容。
 ]]]
@@ -118,7 +118,7 @@ events.indexChange: Triggered when the executing command index of Typewriter cha
 slots.default: Customize the text rendering of Typewriter.
 slots.caret: Customize the caret of Typewriter.
 
-typewriterExpose.start: Start the typing process of Typewriter.
+typewriterExpose.start: (Re)start the typing process of Typewriter.
 typewriterExpose.stop: Stop the typing process of Typewriter.
 typewriterExpose.reset: Reset the typing content of Typewriter.
 ]]]

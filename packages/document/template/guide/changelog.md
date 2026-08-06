@@ -13,14 +13,14 @@
   - 新增导航组件：Tab、TabItem、TabPanel。
   - 新增数据展示组件：Card、Calendar、Collapse、CollapseItem。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
-  - 新增视觉组件：Typewriter。
+  - 新增视觉组件：Typewriter、Carousel。
   - AutoComplete、Select 组件新增 `dropdownProps` 属性控制选项下拉组件的 Props。
   - Divider 组件新增属性 `soft` 和 `color`。
   - ScrollBar 组件新增 expose `scrollHeight`、`scrollWidth`、`scrollTop`、`scrollLeft` 用于获取当前滚动状态，新增属性 `visible` 控制是否显示滚动条，`edgeMask` 控制是否展示边缘遮罩。
 - 调整：
   - 收拢了表单输入组件聚焦相关逻辑，优化了可维护性和可读性，并添加相关测试用例。
   - ⚠️需要注意⚠️移除了 Slider 组件标尺和标记的 `tabindex`，只有调节器 thumb 可以聚焦，为 thumb 增加聚焦样式。
-  - ⚠️需要注意⚠️Select、AutoComplete 组件增加事件 `dropdownOpen`、`dropdownClose`，建议通过 `dropdownOpen` 监听下拉选项展示。通过 `focus` 和 `select` 方法不再回触发下拉选项。原有通过 `focus` 监听的方式对用户操作和触发的下拉展示依然可用。
+  - ⚠️需要注意⚠️Select、AutoComplete 组件增加事件 `dropdownOpen`、`dropdownClose`，建议通过 `dropdownOpen` 监听下拉选项展示。通过 `focus` 和 `select` 方法不再触发下拉选项。原有通过 `focus` 监听的方式对用户操作触发的下拉展示依然可用。
 - 修复：
   - 修复多语言切换不会触发响应式更新的问题。
   - 修复 Slider 组件的聚焦逻辑，现在在调节器 thumb 外按下鼠标会聚焦到最近的 thumb。
@@ -38,7 +38,7 @@
   - New navigation  components: Tab, TabItem, TabPanel.
   - New data display components: Card, Calendar, Collapse, CollapseItem.
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
-  - New visual components: Typewriter.
+  - New visual components: Typewriter, Carousel.
   - AutoComplete and Select components now support `dropdownProps` to control props of the option dropdown.
   - Divider component adds `soft` and `color` properties.
   - ScrollBar component added exposes `scrollHeight`, `scrollWidth`, `scrollTop`, `scrollLeft` to retrieve the current scroll state, added property `visible` to control whether the scrollbar is shown, and `edgeMask` to control whether the edge mask is displayed.
