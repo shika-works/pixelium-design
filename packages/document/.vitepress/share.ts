@@ -12,7 +12,8 @@ const newItems = [
 	'collapse',
 	'timeline',
 	'typewriter',
-	'carousel'
+	'carousel',
+	'count-to'
 ]
 
 const titleMapEn = {
@@ -107,7 +108,8 @@ const additionMapZh = {
 	collapse: '折叠面板',
 	timeline: '时间线',
 	typewriter: '打字机',
-	carousel: '轮播'
+	carousel: '轮播',
+	'count-to': '数字滚动'
 }
 const order = [
 	'guide',
