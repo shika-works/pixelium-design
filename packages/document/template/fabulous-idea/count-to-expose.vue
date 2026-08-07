@@ -6,37 +6,37 @@
 			<px-button theme="info" @click="resumeHandler">Resume</px-button>
 			<px-button theme="danger" @click="resetHandler">Reset</px-button>
 		</px-space>
-		<div style="font-size: 18px; font-family: monospace">
-			<px-typewriter
-				:text="text"
-				:typeSpeed="80"
-				:autoplay="false"
-				ref="typewriterRef"
-			></px-typewriter>
-		</div>
+		<px-count-to
+			:from="0"
+			:to="10000"
+			separator
+			:duration="2000"
+			:autoplay="false"
+			ref="countToRef"
+			style="font-size: 24px"
+		></px-count-to>
 	</px-space>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Typewriter } from '@pixelium/web-vue'
+import { CountTo } from '@pixelium/web-vue'
 
 // If on-demand import
-// import { Typewriter } from '@pixelium/web-vue/es'
+// import { CountTo } from '@pixelium/web-vue/es'
 
-const text = ref([{ type: 'type', text: 'Controlled typewriter' }])
-const typewriterRef = ref<null | InstanceType<typeof Typewriter>>(null)
+const countToRef = ref<null | InstanceType<typeof CountTo>>(null)
 
 const startHandler = () => {
-	typewriterRef.value?.start()
+	countToRef.value?.start()
 }
 const pauseHandler = () => {
-	typewriterRef.value?.pause()
+	countToRef.value?.pause()
 }
 const resumeHandler = () => {
-	typewriterRef.value?.resume()
+	countToRef.value?.resume()
 }
 const resetHandler = () => {
-	typewriterRef.value?.reset()
+	countToRef.value?.reset()
 }
 </script>

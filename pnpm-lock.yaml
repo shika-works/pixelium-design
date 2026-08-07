@@ -62,12 +62,15 @@ importers:
       '@pixelium/web-vue':
         specifier: workspace:*
         version: link:../web-vue
-      '@vitepress-demo-preview/component':
-        specifier: ^2.6.2
-        version: 2.6.2(vitepress@2.0.0-alpha.12(@algolia/client-search@5.46.2)(@types/node@24.10.4)(@types/react@19.2.7)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(postcss@8.5.6)(react@19.2.3)(search-insights@2.17.3)(typescript@5.8.3))(vue@3.5.26(typescript@5.8.3))
-      '@vitepress-demo-preview/core':
-        specifier: ^0.3.0
-        version: 0.3.0
+      '@shikijs/engine-javascript':
+        specifier: ^3.20.0
+        version: 3.20.0
+      '@shikijs/langs':
+        specifier: ^3.20.0
+        version: 3.20.0
+      '@shikijs/themes':
+        specifier: ^3.20.0
+        version: 3.20.0
       '@vitepress-demo-preview/plugin':
         specifier: ^1.4.1
         version: 1.4.1(markdown-it-container@3.0.0)(vitepress@2.0.0-alpha.12(@algolia/client-search@5.46.2)(@types/node@24.10.4)(@types/react@19.2.7)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(postcss@8.5.6)(react@19.2.3)(search-insights@2.17.3)(typescript@5.8.3))(vue@3.5.26(typescript@5.8.3))
@@ -77,6 +80,9 @@ importers:
       markdown-it-katex:
         specifier: ^2.0.3
         version: 2.0.3
+      shiki:
+        specifier: ^3.20.0
+        version: 3.20.0
       vue:
         specifier: ^3.5.22
         version: 3.5.26(typescript@5.8.3)
@@ -731,9 +737,6 @@ packages:
   '@floating-ui/core@1.7.3':
     resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
 
-  '@floating-ui/dom@1.1.1':
-    resolution: {integrity: sha512-TpIO93+DIujg3g7SykEAGZMDtbJRrmnYRCNYSjJlvIbGhBjRSNTLVbNeDQBrzy9qDgUbiWdc7KA0uZHZ2tJmiw==}
-
   '@floating-ui/dom@1.7.4':
     resolution: {integrity: sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==}
 
@@ -1346,6 +1349,7 @@ packages:
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
+    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
 
   '@vercel/oidc@3.0.5':
     resolution: {integrity: sha512-fnYhv671l+eTTp48gB4zEsTW/YtRgRPnkI2nT7x6qw5rkI1Lq2hTmQIpHPgyThI0znLK+vX2n9XxKdXZ7BUbbw==}
@@ -1364,15 +1368,6 @@ packages:
     peerDependencies:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
       vue: ^3.2.25
-
-  '@vitepress-demo-preview/component@2.6.2':
-    resolution: {integrity: sha512-j73unlNDpmwWfzkyptsmG8mn88I+GWheJQEYmwW99NyDsBLSPtd2uBi3nmvFi2PGqwKEwvKPvJXNzGOc5ouneg==}
-    peerDependencies:
-      vitepress: '*'
-      vue: ^3.2.0
-
-  '@vitepress-demo-preview/core@0.3.0':
-    resolution: {integrity: sha512-DZTUvrn/89p8DxOTnFeZGvUnHgoA1daHwqX9r2WpuPYluoz4azFsbMWSi/2Qg+qZ038fNNe0ZofZb1zydicklQ==}
 
   '@vitepress-demo-preview/plugin@1.4.1':
     resolution: {integrity: sha512-RYmEieW2URgxw276ztlQfvGeyXjErx0ZyebNUQAFPINXFKdn58b228QqpvwGnsiy0WMxOTUgdH9KUHdX5cfA9w==}
@@ -1985,8 +1980,8 @@ packages:
     resolution: {integrity: sha512-BnBS08aLUM+DKamupXs3w2tJJoqU+AkaE/+6vQxi/G/DPmIZFJJp9Dkb1kM03AZx8ADehDUZgsNxju3mPXZYIA==}
     engines: {node: '>=20'}
 
-  dayjs@1.11.19:
-    resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
+  dayjs@1.11.21:
+    resolution: {integrity: sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==}
 
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -2152,15 +2147,6 @@ packages:
   find-up@7.0.0:
     resolution: {integrity: sha512-YyZM99iHrqLKjmt4LJDj58KI+fYyufRLBSYcqycxf//KpBk9FoewoGX0450m9nB44qrZnovzC2oeP5hUibxc/g==}
     engines: {node: '>=18'}
-
-  floating-vue@5.2.2:
-    resolution: {integrity: sha512-afW+h2CFafo+7Y9Lvw/xsqjaQlKLdJV7h1fCHfcYQ1C4SVMlu7OAekqWgu5d4SgvkBVU0pVpLlVsrSTBURFRkg==}
-    peerDependencies:
-      '@nuxt/kit': ^3.2.0
-      vue: ^3.2.0
-    peerDependenciesMeta:
-      '@nuxt/kit':
-        optional: true
 
   focus-trap@7.7.1:
     resolution: {integrity: sha512-Pkp8m55GjxBLnhBoT6OXdMvfRr4TjMAKLvFM566zlIryq5plbhaTmLAJWTGR0EkRwLjEte1lCOG9MxF1ipJrOg==}
@@ -2495,8 +2481,8 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  linkify-it@5.0.0:
-    resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==}
+  linkify-it@5.0.2:
+    resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==}
 
   local-pkg@1.1.2:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
@@ -2533,8 +2519,8 @@ packages:
   lodash.upperfirst@4.3.1:
     resolution: {integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   loupe@3.2.1:
     resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
@@ -2580,8 +2566,8 @@ packages:
   markdown-it-katex@2.0.3:
     resolution: {integrity: sha512-nUkkMtRWeg7OpdflamflE/Ho/pWl64Lk9wNBKOmaj33XkQdumhXAIYhI0WO03GeiycPCsxbmX536V5NEXpC3Ng==}
 
-  markdown-it@14.1.0:
-    resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
+  markdown-it@14.3.0:
+    resolution: {integrity: sha512-RCEsPjR+sr0x+AuYp601tKTkgFG4YEPLCzHST3cQ/fhlJkqAkz1L2/Qbp1j9qw5SBwQHFBoW8+hoN5xssOF0Tw==}
     hasBin: true
 
   marked@16.4.2:
@@ -2601,8 +2587,8 @@ packages:
   mdn-data@2.12.2:
     resolution: {integrity: sha512-IEn+pegP1aManZuckezWCO+XZQDplx1366JoVhTpMpBB1sPey/SbveZQUosKiKiGYjg1wH4pMlNgXbCiYgihQA==}
 
-  mdurl@2.0.0:
-    resolution: {integrity: sha512-Lf+9+2r+Tdp5wXDXC4PcIBjTDtq4UKjCPMQhKIuzpJNW0b96kVqSwW0bT7FhRSfmAiFYgP+SCRvdrDozfh0U5w==}
+  mdurl@2.1.0:
+    resolution: {integrity: sha512-1+HBaOx0zi/dQWht8rNv9MYf9qqpqL/kxI0hXImU6Y547zM6Sni8BQibt7ifgMcYtQg41ao3Ivd6cnSM86inpg==}
 
   meow@12.1.1:
     resolution: {integrity: sha512-BhXM0Au22RwUneMPwSCnyhTOizdWoIEPU9sp0Aqa1PnDMR5Wv2FGXYDjuzJEIX+Eo2Rb8xuYe5jrnm5QowQFkw==}
@@ -3373,29 +3359,10 @@ packages:
     peerDependencies:
       vue: ^2.7.0 || ^3.2.25
 
-  vue-resize@2.0.0-alpha.1:
-    resolution: {integrity: sha512-7+iqOueLU7uc9NrMfrzbG8hwMqchfVfSzpVlCMeJQe4pyibqyoifDNbKTZvwxZKDvGkB+PdFeKvnGZMoEb8esg==}
-    peerDependencies:
-      vue: ^3.0.0
-
   vue-router@4.6.4:
     resolution: {integrity: sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==}
     peerDependencies:
       vue: ^3.5.0
-
-  vue-sonner@2.0.9:
-    resolution: {integrity: sha512-i6BokNlNDL93fpzNxN/LZSn6D6MzlO+i3qXt6iVZne3x1k7R46d5HlFB4P8tYydhgqOrRbIZEsnRd3kG7qGXyw==}
-    peerDependencies:
-      '@nuxt/kit': ^4.0.3
-      '@nuxt/schema': ^4.0.3
-      nuxt: ^4.0.3
-    peerDependenciesMeta:
-      '@nuxt/kit':
-        optional: true
-      '@nuxt/schema':
-        optional: true
-      nuxt:
-        optional: true
 
   vue-tsc@3.2.1:
     resolution: {integrity: sha512-I23Rk8dkQfmcSbxDO0dmg9ioMLjKA1pjlU3Lz6Jfk2pMGu3Uryu9810XkcZH24IzPbhzPCnkKo2rEMRX0skSrw==}
@@ -4095,10 +4062,6 @@ snapshots:
     dependencies:
       '@floating-ui/utils': 0.2.10
 
-  '@floating-ui/dom@1.1.1':
-    dependencies:
-      '@floating-ui/core': 1.7.3
-
   '@floating-ui/dom@1.7.4':
     dependencies:
       '@floating-ui/core': 1.7.3
@@ -4108,9 +4071,9 @@ snapshots:
 
   '@flypeng/tool@5.7.5':
     dependencies:
-      dayjs: 1.11.19
+      dayjs: 1.11.21
       html-to-image: 1.11.13
-      lodash: 4.17.21
+      lodash: 4.18.1
 
   '@hackernoon/pixel-icon-library@1.0.6': {}
 
@@ -4584,26 +4547,10 @@ snapshots:
       vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)
       vue: 3.5.26(typescript@5.8.3)
 
-  '@vitepress-demo-preview/component@2.6.2(vitepress@2.0.0-alpha.12(@algolia/client-search@5.46.2)(@types/node@24.10.4)(@types/react@19.2.7)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(postcss@8.5.6)(react@19.2.3)(search-insights@2.17.3)(typescript@5.8.3))(vue@3.5.26(typescript@5.8.3))':
-    dependencies:
-      '@vitepress-demo-preview/core': 0.3.0
-      floating-vue: 5.2.2(vue@3.5.26(typescript@5.8.3))
-      vitepress: 2.0.0-alpha.12(@algolia/client-search@5.46.2)(@types/node@24.10.4)(@types/react@19.2.7)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(postcss@8.5.6)(react@19.2.3)(search-insights@2.17.3)(typescript@5.8.3)
-      vue: 3.5.26(typescript@5.8.3)
-      vue-sonner: 2.0.9
-    transitivePeerDependencies:
-      - '@nuxt/kit'
-      - '@nuxt/schema'
-      - nuxt
-
-  '@vitepress-demo-preview/core@0.3.0':
-    dependencies:
-      '@flypeng/tool': 5.7.5
-
   '@vitepress-demo-preview/plugin@1.4.1(markdown-it-container@3.0.0)(vitepress@2.0.0-alpha.12(@algolia/client-search@5.46.2)(@types/node@24.10.4)(@types/react@19.2.7)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(postcss@8.5.6)(react@19.2.3)(search-insights@2.17.3)(typescript@5.8.3))(vue@3.5.26(typescript@5.8.3))':
     dependencies:
       '@flypeng/tool': 5.7.5
-      markdown-it: 14.1.0
+      markdown-it: 14.3.0
       markdown-it-container: 3.0.0
       vitepress: 2.0.0-alpha.12(@algolia/client-search@5.46.2)(@types/node@24.10.4)(@types/react@19.2.7)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(postcss@8.5.6)(react@19.2.3)(search-insights@2.17.3)(typescript@5.8.3)
       vue: 3.5.26(typescript@5.8.3)
@@ -5336,7 +5283,7 @@ snapshots:
       whatwg-mimetype: 4.0.0
       whatwg-url: 15.1.0
 
-  dayjs@1.11.19: {}
+  dayjs@1.11.21: {}
 
   de-indent@1.0.2: {}
 
@@ -5512,12 +5459,6 @@ snapshots:
       locate-path: 7.2.0
       path-exists: 5.0.0
       unicorn-magic: 0.1.0
-
-  floating-vue@5.2.2(vue@3.5.26(typescript@5.8.3)):
-    dependencies:
-      '@floating-ui/dom': 1.1.1
-      vue: 3.5.26(typescript@5.8.3)
-      vue-resize: 2.0.0-alpha.1(vue@3.5.26(typescript@5.8.3))
 
   focus-trap@7.7.1:
     dependencies:
@@ -5837,7 +5778,7 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  linkify-it@5.0.0:
+  linkify-it@5.0.2:
     dependencies:
       uc.micro: 2.1.0
 
@@ -5869,7 +5810,7 @@ snapshots:
 
   lodash.upperfirst@4.3.1: {}
 
-  lodash@4.17.21: {}
+  lodash@4.18.1: {}
 
   loupe@3.2.1: {}
 
@@ -5915,12 +5856,12 @@ snapshots:
     dependencies:
       katex: 0.6.0
 
-  markdown-it@14.1.0:
+  markdown-it@14.3.0:
     dependencies:
       argparse: 2.0.1
       entities: 4.5.0
-      linkify-it: 5.0.0
-      mdurl: 2.0.0
+      linkify-it: 5.0.2
+      mdurl: 2.1.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
@@ -5944,7 +5885,7 @@ snapshots:
 
   mdn-data@2.12.2: {}
 
-  mdurl@2.0.0: {}
+  mdurl@2.1.0: {}
 
   meow@12.1.1: {}
 
@@ -6775,16 +6716,10 @@ snapshots:
       - vue-tsc
       - webpack
 
-  vue-resize@2.0.0-alpha.1(vue@3.5.26(typescript@5.8.3)):
-    dependencies:
-      vue: 3.5.26(typescript@5.8.3)
-
   vue-router@4.6.4(vue@3.5.26(typescript@5.8.3)):
     dependencies:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.26(typescript@5.8.3)
-
-  vue-sonner@2.0.9: {}
 
   vue-tsc@3.2.1(typescript@5.8.3):
     dependencies:

@@ -1,7 +1,7 @@
 <template>
 	<px-space direction="vertical">
 		<px-space>
-			<px-button theme="info" @click="runHandler">Run</px-button>
+			<px-button theme="info" @click="resumeHandler">Resume</px-button>
 			<px-button theme="warning" @click="pauseHandler">Pause</px-button>
 			<px-button theme="danger" @click="resetHandler">Reset</px-button>
 		</px-space>
@@ -17,8 +17,8 @@ import { Carousel } from '@pixelium/web-vue'
 
 const carouselRef = ref<null | InstanceType<typeof Carousel>>(null)
 
-const runHandler = () => {
-	carouselRef.value?.run()
+const resumeHandler = () => {
+	carouselRef.value?.resume()
 }
 const pauseHandler = () => {
 	carouselRef.value?.pause()

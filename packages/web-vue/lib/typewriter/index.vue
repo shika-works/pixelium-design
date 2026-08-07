@@ -41,8 +41,7 @@ const props = withDefaults(defineProps<TypewriterProps>(), {
 	deleteSpeed: 40,
 	startDelay: 0,
 	loop: false,
-	start: true,
-	pause: false,
+	autoplay: true,
 	caret: true,
 	caretText: '|',
 	blinkSpeed: 500
@@ -62,6 +61,7 @@ const activeClass = ref<string | undefined>(undefined)
 const currentText = computed(() => segments.value.map((seg) => seg.text).join(''))
 const caretOn = ref(true)
 const running = ref(false)
+const paused = ref(false)
 
 watch(currentText, (text) => {
 	emits('textChange', text)
@@ -101,7 +101,7 @@ const wait = (ms: number) =>
 			done()
 			return
 		}
-		if (props.pause) {
+		if (paused.value) {
 			registerResume()
 			return
 		}
@@ -112,7 +112,7 @@ const wait = (ms: number) =>
 				done()
 				return
 			}
-			if (props.pause) {
+			if (paused.value) {
 				registerResume()
 				return
 			}
@@ -224,28 +224,37 @@ const run = async () => {
 }
 
 const start = () => {
+	paused.value = false
 	run()
 }
 
-const stop = () => {
-	cancelRun()
-	running.value = false
+const pause = () => {
+	if (!running.value || paused.value) return
+	paused.value = true
+}
+
+const resume = () => {
+	if (!paused.value) return
+	paused.value = false
+	flushResume()
 }
 
 const reset = () => {
 	cancelRun()
+	paused.value = false
 	segments.value = []
 	activeColor.value = undefined
 	activeClass.value = undefined
 	running.value = false
-	if (props.start) {
+	if (props.autoplay) {
 		run()
 	}
 }
 
 defineExpose<TypewriterExpose>({
 	start,
-	stop,
+	pause,
+	resume,
 	reset
 })
 
@@ -278,25 +287,16 @@ watch(
 )
 
 watch(
-	() => props.pause,
-	(val) => {
-		if (!val) {
-			flushResume()
-		}
-	}
-)
-
-watch(
 	() => props.text,
 	() => {
-		if (props.start && (props.text?.length || 0) > 0) {
+		if (props.autoplay && (props.text?.length || 0) > 0) {
 			run()
 		}
 	}
 )
 
 onMounted(() => {
-	if (props.start) {
+	if (props.autoplay) {
 		run()
 	}
 })

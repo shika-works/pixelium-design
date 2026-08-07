@@ -17,11 +17,13 @@
 	},
 	"dependencies": {
 		"@pixelium/web-vue": "workspace:*",
-		"@vitepress-demo-preview/component": "^2.6.2",
-		"@vitepress-demo-preview/core": "^0.3.0",
+		"@shikijs/engine-javascript": "^3.20.0",
+		"@shikijs/langs": "^3.20.0",
+		"@shikijs/themes": "^3.20.0",
 		"@vitepress-demo-preview/plugin": "^1.4.1",
 		"grapheme-splitter": "^1.0.4",
 		"markdown-it-katex": "^2.0.3",
+		"shiki": "^3.20.0",
 		"vue": "^3.5.22"
 	},
 	"engines": {

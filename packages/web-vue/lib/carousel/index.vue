@@ -123,7 +123,7 @@ const tick = (ts: number) => {
 	rafId = requestAnimationFrame(tick)
 }
 
-const run = () => {
+const resume = () => {
 	if (running) return
 	running = true
 	lastTs = null
@@ -141,12 +141,12 @@ const pause = () => {
 
 const reset = () => {
 	measure()
-	run()
+	resume()
 	offset.value = calcOffset()
 }
 
 defineExpose<CarouselExpose>({
-	run,
+	resume,
 	pause,
 	reset,
 	measure
@@ -165,7 +165,7 @@ watch(
 onMounted(() => {
 	nextTick(() => {
 		measure()
-		run()
+		resume()
 	})
 })
 

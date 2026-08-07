@@ -86,6 +86,7 @@ import Timeline from './timeline/index.vue'
 import TimelineItem from './timeline-item/index.vue'
 import Typewriter from './typewriter/index.vue'
 import Carousel from './carousel/index.vue'
+import CountTo from './count-to/index.vue'
 
 const components = [
 	Button,
@@ -164,7 +165,8 @@ const components = [
 	Timeline,
 	TimelineItem,
 	Typewriter,
-	Carousel
+	Carousel,
+	CountTo
 ]
 
 const defaultPrefix = 'Px'
@@ -290,7 +292,8 @@ export {
 	Timeline,
 	TimelineItem,
 	Typewriter,
-	Carousel
+	Carousel,
+	CountTo
 }
 export default {
 	install

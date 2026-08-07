@@ -35,7 +35,7 @@ img[alt='Static Badge'] {
 /* img end */
 
 /* table start */
-.vp-doc .vitepress-demo-preview-preview .px-table table {
+.vp-doc .px-demo-preview .px-table table {
 	display: table;
 	border-collapse: separate;
 	margin: 0 0;
@@ -55,15 +55,15 @@ img[alt='Static Badge'] {
 /* table end */
 
 /* ul start */
-.vp-doc .vitepress-demo-preview-preview ul {
+.vp-doc .px-demo-preview ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
-.vp-doc .vitepress-demo-preview-preview ol {
+.vp-doc .px-demo-preview ol {
 	margin: 0;
 }
-.vp-doc .vitepress-demo-preview-preview li {
+.vp-doc .px-demo-preview li {
 	margin: 0;
 }
 .vp-doc .example ul {
@@ -414,10 +414,10 @@ html.dark {
 
 /* calendar start */
 
-.vitepress-demo-preview-preview .px-calendar table > thead > tr {
+.px-demo-preview .px-calendar table > thead > tr {
 	background-color: transparent !important;
 }
-.vitepress-demo-preview-preview .px-calendar table > thead > tr > th {
+.px-demo-preview .px-calendar table > thead > tr > th {
 	background-color: transparent !important;
 }
 
@@ -425,7 +425,7 @@ html.dark {
 
 /* p start */
 
-.vitepress-demo-preview-preview p {
+.px-demo-preview p {
 	margin: 0;
 }
 

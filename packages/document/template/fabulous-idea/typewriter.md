@@ -50,26 +50,26 @@ Typewriter provides the `default` slot to customize the text rendering, receivin
 <preview path="./typewriter-slot.vue"></preview>
 
 [[[zh
-## 暂停与循环
+## 循环
 
-通过 `pause` 属性可以暂停打字，恢复后将继续。使用 `loop` 属性可以让 Typewriter 循环播放命令序列。
+使用 `loop` 属性可以让 Typewriter 循环播放命令序列。
 ]]]
 [[[en
-## Pause and Loop
+## Loop
 
-Use the `pause` prop to pause typing; typing resumes when it is set back to `false`. Use the `loop` prop to make Typewriter play the command sequence repeatedly.
+Use the `loop` prop to make Typewriter play the command sequence repeatedly.
 ]]]
-<preview path="./typewriter-pause.vue"></preview>
+<preview path="./typewriter-loop.vue"></preview>
 
 [[[zh
 ## 手动控制
 
-通过 `start` 属性可以控制打字是否自动开始。组件还通过 ref 暴露 `start`、`stop`、`reset` 方法，便于手动控制打字过程。
+通过 `autoplay` 属性可以控制打字是否自动开始。组件还暴露 `start`、`pause`、`resume`、`reset` 方法，便于手动控制打字过程：`start` 从头开始播放，`pause` 暂停当前打字，`resume` 从暂停处继续，`reset` 根据属性状态重置播放并视 `autoplay` 决定是否自动继续。
 ]]]
 [[[en
 ## Manual Control
 
-Use the `start` prop to control whether typing starts automatically. The component also exposes the `start`, `stop`, and `reset` methods via ref for manual control over the typing process.
+Use the `autoplay` prop to control whether typing starts automatically. The component also exposes the `start`, `pause`, `resume`, and `reset` methods for manual control over the typing process: `start` plays from the beginning, `pause` pauses the current typing, `resume` continues from where it was paused, and `reset` resets the playback according to the prop state and continues automatically if `autoplay` is enabled.
 ]]]
 <preview path="./typewriter-expose.vue"></preview>
 
@@ -80,8 +80,7 @@ typeSpeed: Typewriter 打字的速度（毫秒/字符）。
 deleteSpeed: Typewriter 退格删除的速度（毫秒/字符）。
 startDelay: Typewriter 开始打字前的延迟时间。
 loop: Typewriter 是否循环播放命令序列。
-start: Typewriter 是否自动开始打字。
-pause: Typewriter 是否暂停打字。
+autoplay: Typewriter 是否自动开始打字。
 caret: 是否显示 Typewriter 的光标。
 caretText: Typewriter 光标的文本内容。
 blinkSpeed: Typewriter 光标的闪烁速度（毫秒间隔）。
@@ -95,7 +94,8 @@ slots.default: 自定义 Typewriter 的文本渲染。
 slots.caret: 自定义 Typewriter 的光标。
 
 typewriterExpose.start: （重新）开始 Typewriter 的打字过程。
-typewriterExpose.stop: 停止 Typewriter 的打字过程。
+typewriterExpose.pause: 暂停 Typewriter 的打字过程。
+typewriterExpose.resume: 恢复 Typewriter 被打断的打字过程。
 typewriterExpose.reset: 重置 Typewriter 的打字内容。
 ]]]
 [[[api en
@@ -104,8 +104,7 @@ typeSpeed: The typing speed of Typewriter (ms per character).
 deleteSpeed: The backspace deletion speed of Typewriter (ms per character).
 startDelay: The delay before Typewriter starts typing.
 loop: Whether Typewriter loops through the command sequence.
-start: Whether Typewriter starts typing automatically.
-pause: Whether Typewriter is paused.
+autoplay: Whether Typewriter starts typing automatically.
 caret: Whether the caret of Typewriter is shown.
 caretText: The text content of the Typewriter caret.
 blinkSpeed: Typewriter cursor blink speed (ms interval).
@@ -119,7 +118,8 @@ slots.default: Customize the text rendering of Typewriter.
 slots.caret: Customize the caret of Typewriter.
 
 typewriterExpose.start: (Re)start the typing process of Typewriter.
-typewriterExpose.stop: Stop the typing process of Typewriter.
+typewriterExpose.pause: Pause the typing process of Typewriter.
+typewriterExpose.resume: Resume the interrupted typing process of Typewriter.
 typewriterExpose.reset: Reset the typing content of Typewriter.
 ]]]
 
