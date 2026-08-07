@@ -107,6 +107,7 @@ Every `.md` file in [`packages/document/slice/`](packages/document/slice) is a r
 - In English prose, also use PascalCase (`Timeline`, `TimelineItem`) where the word refers to the component.
 - Prop names in prose: backticked camelCase (`theme`, `lineVariant`, `contentPlacement`); in Vue templates use kebab-case (`line-variant`, `content-placement`, `default-active`).
 - Use accurate component terminology for the concept (e.g. "自定义节点" not "自定义圆点").
+- When describing component-exposed methods/props in prose, simply say the component "暴露 X 方法 / exposes X methods" — do NOT mention `ref` (e.g. do NOT write "通过 ref 暴露", "exposes ... via ref"). The docs describe the component's API, not how it is accessed in a template.
 
 ## 4. Step 3 — Write example preview .vue files
 
