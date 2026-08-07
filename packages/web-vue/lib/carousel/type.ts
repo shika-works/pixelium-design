@@ -21,10 +21,10 @@ export type CarouselSlots = {
 
 export type CarouselExpose = {
 	/**
-	 * @property {() => void} run
+	 * @property {() => void} resume
 	 * @version 0.2.0
 	 */
-	run: () => void
+	resume: () => void
 	/**
 	 * @property {() => void} pause
 	 * @version 0.2.0

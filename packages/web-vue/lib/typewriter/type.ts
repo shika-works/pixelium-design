@@ -50,15 +50,10 @@ export type TypewriterProps = {
 	 */
 	loop?: boolean
 	/**
-	 * @property {boolean} [start=true]
+	 * @property {boolean} [autoplay=true]
 	 * @version 0.2.0
 	 */
-	start?: boolean
-	/**
-	 * @property {boolean} [pause=false]
-	 * @version 0.2.0
-	 */
-	pause?: boolean
+	autoplay?: boolean
 	/**
 	 * @property {boolean} [caret=true]
 	 * @version 0.2.0
@@ -127,10 +122,15 @@ export type TypewriterExpose = {
 	 */
 	start: () => void
 	/**
-	 * @property {() => void} stop
+	 * @property {() => void} pause
 	 * @version 0.2.0
 	 */
-	stop: () => void
+	pause: () => void
+	/**
+	 * @property {() => void} resume
+	 * @version 0.2.0
+	 */
+	resume: () => void
 	/**
 	 * @property {() => void} reset
 	 * @version 0.2.0

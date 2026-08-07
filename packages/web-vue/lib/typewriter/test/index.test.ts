@@ -135,12 +135,12 @@ describe('Typewriter', () => {
 	})
 
 	describe('controls', () => {
-		it('does not type when start is false until start is called', async () => {
+		it('does not type when autoplay is false until start is called', async () => {
 			const wrapper = mount(Typewriter, {
 				props: {
 					text: [{ type: 'type', text: 'abc' }],
 					typeSpeed: 100,
-					start: false
+					autoplay: false
 				}
 			})
 
@@ -152,12 +152,12 @@ describe('Typewriter', () => {
 			expect(wrapper.find('.px-typewriter-text').text()).toBe('abc')
 		})
 
-		it('stop halts typing and keeps current text', async () => {
+		it('pause halts typing and keeps current text until resume', async () => {
 			const wrapper = mount(Typewriter, {
 				props: {
 					text: [{ type: 'type', text: 'abcdef' }],
 					typeSpeed: 100,
-					start: false
+					autoplay: false
 				}
 			})
 
@@ -165,12 +165,16 @@ describe('Typewriter', () => {
 			await vi.advanceTimersByTimeAsync(200)
 			expect(wrapper.find('.px-typewriter-text').text()).toBe('ab')
 
-			wrapper.vm.stop()
+			wrapper.vm.pause()
 			await vi.advanceTimersByTimeAsync(1000)
 			expect(wrapper.find('.px-typewriter-text').text()).toBe('ab')
+
+			wrapper.vm.resume()
+			await vi.advanceTimersByTimeAsync(100)
+			expect(wrapper.find('.px-typewriter-text').text()).toBe('abc')
 		})
 
-		it('reset clears text and restarts when start is true', async () => {
+		it('reset clears text and restarts when autoplay is true', async () => {
 			const wrapper = mount(Typewriter, {
 				props: {
 					text: [{ type: 'type', text: 'abc' }],
@@ -208,19 +212,20 @@ describe('Typewriter', () => {
 			expect(wrapper.find('.px-typewriter-text').text()).toBe('ab')
 		})
 
-		it('pauses typing and resumes when pause changes', async () => {
+		it('reset honors autoplay: keeps waiting when autoplay is false', async () => {
 			const wrapper = mount(Typewriter, {
 				props: {
-					text: [{ type: 'type', text: 'abcdef' }],
+					text: [{ type: 'type', text: 'abc' }],
 					typeSpeed: 100,
-					pause: true
+					autoplay: false
 				}
 			})
 
-			await vi.advanceTimersByTimeAsync(500)
+			wrapper.vm.reset()
+			await vi.advanceTimersByTimeAsync(200)
 			expect(wrapper.find('.px-typewriter-text').text()).toBe('')
 
-			await wrapper.setProps({ pause: false })
+			wrapper.vm.start()
 			await vi.advanceTimersByTimeAsync(100)
 			expect(wrapper.find('.px-typewriter-text').text()).toBe('a')
 		})
@@ -262,7 +267,7 @@ describe('Typewriter', () => {
 				props: {
 					text: [{ type: 'type', text: 'ab' }],
 					typeSpeed: 100,
-					start: false
+					autoplay: false
 				},
 				slots: {
 					default: ({ text }: { text: string }) => h('strong', { class: 'custom-text' }, text)

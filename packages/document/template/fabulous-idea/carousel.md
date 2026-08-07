@@ -36,12 +36,12 @@ After setting the `autoFill` property, the Carousel component will make the cont
 [[[zh
 ## 手动控制
 
-Carousel 通过 ref 暴露 `start`、`stop` 和 `reset` 方法，分别用于开始滚动、停止滚动以及重置滚动位置并重新测量尺寸。
+Carousel 暴露 `resume`、`pause` 和 `reset` 方法，分别用于继续滚动、暂停滚动以及重置滚动位置并重新测量尺寸。
 ]]]
 [[[en
 ## Manual Control
 
-Carousel exposes the `start`, `stop`, and `reset` methods via ref, used to start scrolling, stop scrolling, and reset the scroll position while re-measuring the dimensions respectively.
+Carousel exposes the `resume`, `pause`, and `reset` methods, used to resume scrolling, pause scrolling, and reset the scroll position while re-measuring the dimensions respectively.
 ]]]
 <preview path="./carousel-expose.vue"></preview>
 
@@ -53,7 +53,7 @@ speed: Carousel 的滚动速度。
 
 slots.default: Carousel 的内容。
 
-carouselExpose.run: 开始 Carousel 的滚动。
+carouselExpose.resume: 继续 Carousel 的滚动。
 carouselExpose.pause: 暂停 Carousel 的滚动。
 carouselExpose.reset: 重置 Carousel 的滚动位置并重新测量尺寸。
 carouselExpose.measure: 重新测量 Carousel 的尺寸。
@@ -64,7 +64,7 @@ speed: The scrolling speed of Carousel.
 
 slots.default: The content of Carousel.
 
-carouselExpose.run: Start the scrolling of Carousel.
+carouselExpose.resume: Resume the scrolling of Carousel.
 carouselExpose.pause: Pause the scrolling of Carousel.
 carouselExpose.reset: Reset the scroll position of Carousel and re-measure the dimensions.
 carouselExpose.measure: Re-measure the dimensions of Carousel.

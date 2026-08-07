@@ -271,14 +271,14 @@ describe('Carousel', () => {
 			expect(trackTransform(wrapper)).toContain('translateX(-6.400000000000091px)')
 		})
 
-		it('run resumes the animation after pause', async () => {
+		it('resume continues the animation after pause', async () => {
 			const wrapper = await mountCarousel()
 			await vi.advanceTimersByTimeAsync(100)
 			wrapper.vm.pause()
 			await vi.advanceTimersByTimeAsync(100)
 			expect(trackTransform(wrapper)).toContain('translateX(-6.400000000000091px)')
 
-			wrapper.vm.run()
+			wrapper.vm.resume()
 			await vi.advanceTimersByTimeAsync(100)
 			// resumed rAF tick 1 resets lastTs (no-op), then ticks of +2 -> offset ~314.4
 			// -> transform = translateX(-314.4px)
