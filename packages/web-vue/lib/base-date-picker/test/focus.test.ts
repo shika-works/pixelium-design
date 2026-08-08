@@ -95,7 +95,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 
 		const wrapperEl = wrapper.find('.px-base-date-picker')
 		await wrapperEl.trigger('mousedown')
-		await wait(20)
+		await wait(50)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none;')

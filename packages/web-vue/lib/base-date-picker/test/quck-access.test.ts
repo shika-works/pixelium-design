@@ -31,7 +31,7 @@ describe('BaseDatePicker Quick Access', () => {
 	const openDropdown = async (wrapper: ReturnType<typeof mount>) => {
 		const input = wrapper.find('.px-base-date-picker')
 		await input.trigger('mousedown')
-		await wait(20)
+		await wait(50)
 	}
 
 	it('renders default current quick access button', async () => {

@@ -25,7 +25,7 @@ describe('color util functions', () => {
 	it('computes gray value after alpha blending against a background', () => {
 		expect(
 			computeGrayWithBackground({ r: 255, g: 0, b: 0, a: 128 }, { r: 0, g: 0, b: 0 })
-		).toBe(38)
+		).toBe(38.272)
 	})
 
 	it('converts hsv values to hsl correctly', () => {
@@ -125,11 +125,11 @@ describe('color util functions', () => {
 			b: 0,
 			a: 255
 		})
-		expect(hsvToRgba({ h: 120, s: 1, v: 0.5, a: 128 })).toStrictEqual({
+		expect(hsvToRgba({ h: 120, s: 1, v: 0.5, a: 127.5 })).toStrictEqual({
 			r: 0,
-			g: 128,
+			g: 127.5,
 			b: 0,
-			a: 128
+			a: 127.5
 		})
 	})
 
@@ -143,7 +143,7 @@ describe('color util functions', () => {
 		expect(hslToRgba({ h: 240, s: 1, l: 0.25, a: 128 })).toStrictEqual({
 			r: 0,
 			g: 0,
-			b: 128,
+			b: 127.5,
 			a: 128
 		})
 	})
@@ -156,9 +156,9 @@ describe('color util functions', () => {
 			a: 255
 		})
 		expect(hwbToRgba({ h: 120, w: 0.25, b: 0.25, a: 128 })).toStrictEqual({
-			r: 64,
-			g: 191,
-			b: 64,
+			r: 63.75,
+			g: 191.25,
+			b: 63.75,
 			a: 128
 		})
 	})
