@@ -50,34 +50,23 @@ async function buildLib() {
 							}
 							return 'assets/[name][extname]'
 						},
-						advancedChunks: {
-							includeDependenciesRecursively: false,
-							groups: [
-								{
-									name(id: string) {
-										if (id && id.includes('pixelium-design/packages/locale'))
-											return 'public/locale'
-										if (id && id.endsWith('overlayscrollbars.css'))
-											return 'public/overlayscrollbars.css'
-										if (id && id.includes('node_modules')) return 'public/vendor'
-										if (
-											id.endsWith('.ts') ||
-											id.endsWith('.tsx') ||
-											id.endsWith('.vue') ||
-											id.endsWith('.less') ||
-											id.endsWith('.css')
-										) {
-											const rel = relative(resolve(process.cwd(), 'lib'), id)
-											const base = rel.split('?')[0]
-											const name = base.split('.')[0]
-											if (name === 'index') {
-												return 'entry'
-											}
-											return name
-										}
-									}
-								}
-							]
+						manualChunks(id: string) {
+							if (id && id.includes('pixelium-design/packages/locale')) return 'public/locale'
+							if (id && id.endsWith('overlayscrollbars.css'))
+								return 'public/overlayscrollbars.css'
+							if (id && id.includes('node_modules')) return 'public/vendor'
+							if (
+								id.endsWith('.ts') ||
+								id.endsWith('.tsx') ||
+								id.endsWith('.vue') ||
+								id.endsWith('.less') ||
+								id.endsWith('.css')
+							) {
+								const rel = relative(resolve(process.cwd(), 'lib'), id)
+								const base = rel.split('?')[0]
+								const name = base.split('.')[0]
+								return name
+							}
 						}
 					}
 				},
