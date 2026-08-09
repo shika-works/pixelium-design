@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.1.5",
+	"version": "0.2.0-alpha",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
@@ -63,8 +63,8 @@
 		"nanoid": "^5.1.5",
 		"pixelarticons": "^1.8.1",
 		"svgo": "^4.0.0",
-		"vite": "npm:rolldown-vite@latest",
-		"vue-macros": "3.0.0-beta.23",
+		"vite": "^7.3.6",
+		"@vue-macros/define-render": "3.0.0-beta.23",
 		"vue-tsc": "^3.2.1"
 	},
 	"dependencies": {

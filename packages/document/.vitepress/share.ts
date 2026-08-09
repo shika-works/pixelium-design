@@ -13,7 +13,8 @@ const newItems = [
 	'timeline',
 	'typewriter',
 	'carousel',
-	'count-to'
+	'count-to',
+	'circle-progress'
 ]
 
 const titleMapEn = {
@@ -86,6 +87,7 @@ const additionMapZh = {
 	dialog: '对话框',
 	alert: '警告',
 	progress: '进度条',
+	'circle-progress': '环形进度条',
 	popconfirm: '确认弹出框',
 	badge: '角标',
 	'back-top': '回到顶部',

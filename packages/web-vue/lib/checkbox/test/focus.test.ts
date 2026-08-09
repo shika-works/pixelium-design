@@ -2,19 +2,20 @@ import { mount } from '@vue/test-utils'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
 import Checkbox from '../index.vue'
-import { wait } from 'parsnip-kit'
 
 describe('Checkbox focus/blur behavior', () => {
 	const { pre, post } = createMocks()
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -33,7 +34,7 @@ describe('Checkbox focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await input.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -47,7 +48,7 @@ describe('Checkbox focus/blur behavior', () => {
 		})
 
 		await wrapper.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toHaveBeenCalled()
 	})
 
@@ -65,11 +66,11 @@ describe('Checkbox focus/blur behavior', () => {
 		const el = wrapper
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 })

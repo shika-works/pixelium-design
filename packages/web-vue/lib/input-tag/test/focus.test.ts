@@ -2,7 +2,6 @@ import InputTag from '../index.vue'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
 import PopupWrapper from '../../popup-wrapper/index.vue'
-import { wait } from 'parsnip-kit'
 import { mount } from '@vue/test-utils'
 
 const mountComponent = (props = {}, slots = {}) => {
@@ -21,12 +20,14 @@ describe('AutoComplete focus/blur behavior', () => {
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -40,7 +41,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await input.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -51,7 +52,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		const el = wrapper.find('.px-input-tag')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 
@@ -63,11 +64,11 @@ describe('AutoComplete focus/blur behavior', () => {
 		const el = wrapper.find('.px-input-tag')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 		expect(onBlur).toBeCalledTimes(0)
 	})
@@ -83,7 +84,7 @@ describe('AutoComplete focus/blur behavior', () => {
 
 		await input.trigger('focus')
 		await innerButton.trigger('focus')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -101,7 +102,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		const tagRes = wrapper.findAll('.px-tag')[2]
 
 		await tagRes.trigger('mouseenter')
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 
@@ -110,7 +111,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		expect(tagPopup.exists()).toBe(true)
 
 		await tagPopup.trigger('mousedown')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)

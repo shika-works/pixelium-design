@@ -9,7 +9,7 @@
 ## v0.2.0
 - 新增：
   - 新增数据输入组件：ColorPicker、Rate。
-  - 新增反馈组件：Drawer。
+  - 新增反馈组件：Drawer、CircleProgress。
   - 新增导航组件：Tab、TabItem、TabPanel。
   - 新增数据展示组件：Card、Calendar、Collapse、CollapseItem。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
@@ -29,12 +29,13 @@
   - 修复 Message 旧属性 position 不生效的问题。
   - 修复了 Slider 组件反复重新渲染的问题。
   - 修复了 Textarea 组件拖拽时，渲染延迟的问题。
+  - 修复了以组件形式使用的 Dialog 挂载位置异常和以及 `root` 属性无效的问题。
 ]]]
 [[[en
 ## v0.2.0
 - New Features:
   - New data input components: ColorPicker, Rate.
-  - New feedback components: Drawer.
+  - New feedback components: Drawer, CircleProgress.
   - New navigation  components: Tab, TabItem, TabPanel.
   - New data display components: Card, Calendar, Collapse, CollapseItem.
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.
@@ -54,6 +55,7 @@
   - Fix the issue where the old position property of Message does not take effect.
   - Fix the problem of the Slider component repeatedly re-rendering.
   - Fixed the rendering delay issue when dragging the Textarea component.
+  - Fixed the issue where the Dialog used as a component had an abnormal mount position and the `root` property was ineffective.
 ]]]
 
 [[[zh
