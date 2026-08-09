@@ -53,6 +53,7 @@ import Dialog from './dialog/index.ts'
 import { locale } from './share/util/locale.ts'
 import Alert from './alert/index.vue'
 import Progress from './progress/index.vue'
+import CircleProgress from './circle-progress/index.vue'
 import Popconfirm from './popconfirm/index.vue'
 import Badge from './badge/index.vue'
 import BackTop from './back-top/index.vue'
@@ -134,6 +135,7 @@ const components = [
 	Dialog,
 	Alert,
 	Progress,
+	CircleProgress,
 	Popconfirm,
 	Badge,
 	BackTop,
@@ -260,6 +262,7 @@ export {
 	locale,
 	Alert,
 	Progress,
+	CircleProgress,
 	Popconfirm,
 	Badge,
 	BackTop,
@@ -295,6 +298,7 @@ export {
 	Carousel,
 	CountTo
 }
+
 export default {
 	install
 }
