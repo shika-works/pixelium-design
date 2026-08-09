@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import AutoComplete from '../index.vue'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { wait } from 'parsnip-kit'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 import { nextTick, ref } from 'vue'
 
@@ -29,12 +28,14 @@ describe('AutoComplete focus/blur behavior', () => {
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -48,7 +49,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await input.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -59,7 +60,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		const el = wrapper.find('.px-auto-complete')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 
@@ -71,11 +72,11 @@ describe('AutoComplete focus/blur behavior', () => {
 		const el = wrapper.find('.px-auto-complete')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 		expect(onBlur).toBeCalledTimes(0)
 	})
@@ -91,7 +92,7 @@ describe('AutoComplete focus/blur behavior', () => {
 
 		await input.trigger('focus')
 		await innerButton.trigger('focus')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -107,7 +108,7 @@ describe('AutoComplete focus/blur behavior', () => {
 
 		const wrapperEl = wrapper.find('.px-auto-complete')
 		await wrapperEl.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none;')
@@ -115,7 +116,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		expect(optionItem.exists()).toBe(true)
 
 		await optionItem.trigger('mousedown')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
@@ -151,12 +152,12 @@ describe('AutoComplete focus/blur behavior', () => {
 
 		await closeWrapper.trigger('mousedown')
 		await closeWrapper.trigger('click')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		expect(onUpdate).toBeCalledWith('')
 		expect(inputValue.value).toBe('')
 
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 		expect(document.activeElement).toBe(input.element)
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -184,7 +185,7 @@ describe('AutoComplete focus/blur behavior', () => {
 		await wrapperEl.trigger('mousedown')
 
 		await input.trigger('input', { value: 'a' })
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent({ name: 'Popup' })
 		expect(popupWrapper.props('visible')).toBe(true)
@@ -198,12 +199,12 @@ describe('AutoComplete focus/blur behavior', () => {
 
 		await closeWrapper.trigger('mousedown')
 		await closeWrapper.trigger('click')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		expect(onUpdate).toBeCalledWith('')
 		expect(inputValue.value).toBe('')
 
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 
 		expect(popupWrapper.props('visible')).toBe(false)
 

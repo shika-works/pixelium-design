@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import Input from '../index.vue'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
-import { wait } from 'parsnip-kit'
 
 const mountComponent = (props = {}, slots = {}) => {
 	return mount(Input, {
@@ -20,12 +19,14 @@ describe('Input focus/blur behavior', () => {
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -39,7 +40,7 @@ describe('Input focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await input.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -50,7 +51,7 @@ describe('Input focus/blur behavior', () => {
 		const el = wrapper.find('.px-input')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 
@@ -62,11 +63,11 @@ describe('Input focus/blur behavior', () => {
 		const el = wrapper.find('.px-input')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 		expect(onBlur).toBeCalledTimes(0)
 	})
@@ -82,7 +83,7 @@ describe('Input focus/blur behavior', () => {
 
 		await input.trigger('focus')
 		await innerButton.trigger('focus')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 	})

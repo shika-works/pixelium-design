@@ -9,7 +9,7 @@
 ## v0.2.0
 - 新增：
   - 新增数据输入组件：ColorPicker、Rate。
-  - 新增反馈组件：Drawer。
+  - 新增反馈组件：Drawer、CircleProgress。
   - 新增导航组件：Tab、TabItem、TabPanel。
   - 新增数据展示组件：Card、Calendar、Collapse、CollapseItem。
   - 日期 / 时间选择组件：DatePicker、TimePicker、DateTimePicker。
@@ -34,7 +34,7 @@
 ## v0.2.0
 - New Features:
   - New data input components: ColorPicker, Rate.
-  - New feedback components: Drawer.
+  - New feedback components: Drawer, CircleProgress.
   - New navigation  components: Tab, TabItem, TabPanel.
   - New data display components: Card, Calendar, Collapse, CollapseItem.
   - Date / Time selection components: DatePicker, TimePicker, DateTimePicker.

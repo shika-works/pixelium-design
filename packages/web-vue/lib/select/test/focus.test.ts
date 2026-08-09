@@ -2,7 +2,6 @@ import Select from '../index.vue'
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
 import PopupWrapper from '../../popup-wrapper/index.vue'
-import { wait } from 'parsnip-kit'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import OptionList from '../../option-list/index.vue'
@@ -30,12 +29,14 @@ describe('Select focus/blur behavior', () => {
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -49,7 +50,7 @@ describe('Select focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await input.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -60,7 +61,7 @@ describe('Select focus/blur behavior', () => {
 		const el = wrapper.find('.px-select-content')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 
@@ -72,11 +73,11 @@ describe('Select focus/blur behavior', () => {
 		const el = wrapper.find('.px-select-content')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 		expect(onBlur).toBeCalledTimes(0)
 	})
@@ -92,7 +93,7 @@ describe('Select focus/blur behavior', () => {
 
 		await input.trigger('focus')
 		await innerButton.trigger('focus')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -104,7 +105,7 @@ describe('Select focus/blur behavior', () => {
 
 		const selectWrapper = wrapper.find('.px-select')
 		await selectWrapper.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none;')
@@ -112,7 +113,7 @@ describe('Select focus/blur behavior', () => {
 		expect(optionItem.exists()).toBe(true)
 
 		await optionItem.trigger('mousedown')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
@@ -132,7 +133,7 @@ describe('Select focus/blur behavior', () => {
 		const tagRes = wrapper.findAll('.px-tag')[2]
 
 		await tagRes.trigger('mouseenter')
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 
@@ -141,7 +142,7 @@ describe('Select focus/blur behavior', () => {
 		expect(tagPopup.exists()).toBe(true)
 
 		await tagPopup.trigger('mousedown')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
@@ -155,7 +156,7 @@ describe('Select focus/blur behavior', () => {
 
 		const selectWrapper = wrapper.find('.px-select')
 		await selectWrapper.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none;')
@@ -177,7 +178,7 @@ describe('Select focus/blur behavior', () => {
 		await optionListComponent.find('.px-option-list-item').trigger('mousedown')
 		await optionListComponent.find('.px-option-list-item').trigger('click')
 
-		await wait(1000)
+		await vi.advanceTimersByTimeAsync(1000)
 		expect(document.activeElement).eq(wrapper.find('.px-select-content').element)
 		expect(popupWrapper.attributes('style')).include('display: none;')
 		// @ts-ignore
@@ -212,7 +213,7 @@ describe('Select focus/blur behavior', () => {
 
 		await closeWrapper.trigger('mousedown')
 		await closeWrapper.trigger('click')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		expect(onUpdate).toBeCalledWith(null)
 
@@ -235,7 +236,7 @@ describe('Select focus/blur behavior', () => {
 
 		const wrapperEl = wrapper.find('.px-select')
 		await wrapperEl.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent({ name: 'Popup' })
 		expect(popupWrapper.props('visible')).toBe(true)
@@ -250,11 +251,11 @@ describe('Select focus/blur behavior', () => {
 
 		await closeWrapper.trigger('mousedown')
 		await closeWrapper.trigger('click')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		expect(onUpdate).toBeCalledWith(null)
 
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 
 		expect(popupWrapper.props('visible')).toBe(false)
 

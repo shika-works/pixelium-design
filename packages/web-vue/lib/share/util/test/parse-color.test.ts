@@ -10,7 +10,7 @@ describe('parseColor', () => {
 			})
 
 			expect(parseColor('rgba(255, 128, 64, 0.5)')).toStrictEqual({
-				color: { r: 255, g: 128, b: 64, a: 128 },
+				color: { r: 255, g: 128, b: 64, a: 127.5 },
 				format: 'rgb'
 			})
 		})
@@ -44,7 +44,7 @@ describe('parseColor', () => {
 			})
 
 			expect(parseColor('hsla(240, 100%, 50%, 0.25)')).toStrictEqual({
-				color: { r: 0, g: 0, b: 255, a: 64 },
+				color: { r: 0, g: 0, b: 255, a: 63.75 },
 				format: 'rgb'
 			})
 		})
@@ -56,12 +56,12 @@ describe('parseColor', () => {
 			})
 
 			expect(parseColor('hsva(60, 100%, 50%, 0.5)')).toStrictEqual({
-				color: { r: 128, g: 128, b: 0, a: 128 },
+				color: { r: 127.5, g: 127.5, b: 0, a: 127.5 },
 				format: 'rgb'
 			})
 
 			expect(parseColor('hsva(20, 0%, 0%, 0.5)')).toStrictEqual({
-				color: { r: 0, g: 0, b: 0, a: 128 },
+				color: { r: 0, g: 0, b: 0, a: 127.5 },
 				format: 'rgb'
 			})
 		})
@@ -99,7 +99,7 @@ describe('parseColor', () => {
 			const parsed = parseColor('hsva(60, 50.35%, 75.35%, 0.5)', 'hsv')
 			expect(parsed?.format).toBe('hsv')
 			expect(parsed?.color.h).toBe(60)
-			expect(parsed?.color.a).toBe(128)
+			expect(parsed?.color.a).toBe(127.5)
 			expect(parsed?.color.s).toBeGreaterThanOrEqual(0.5035 - Number.EPSILON)
 			expect(parsed?.color.s).toBeLessThanOrEqual(0.5035 + Number.EPSILON)
 			expect(parsed?.color.v).toBeGreaterThanOrEqual(0.7535 - Number.EPSILON)
@@ -114,7 +114,7 @@ describe('parseColor', () => {
 				format: 'rgb'
 			})
 			expect(parseColor('hwba(0, 50%, 50%, 0.5)')).toStrictEqual({
-				color: { r: 128, g: 128, b: 128, a: 128 },
+				color: { r: 127.5, g: 127.5, b: 127.5, a: 127.5 },
 				format: 'rgb'
 			})
 		})
@@ -130,7 +130,7 @@ describe('parseColor', () => {
 			const parsed = parseColor('hwba(120, 25.35%, 25.35%, 0.5)', 'hwb')
 			expect(parsed?.format).toBe('hwb')
 			expect(parsed?.color.h).toBe(120)
-			expect(parsed?.color.a).toBe(128)
+			expect(parsed?.color.a).toBe(127.5)
 			expect(parsed?.color.w).toBeGreaterThanOrEqual(0.2535 - Number.EPSILON)
 			expect(parsed?.color.w).toBeLessThanOrEqual(0.2535 + Number.EPSILON)
 			expect(parsed?.color.b).toBeGreaterThanOrEqual(0.2535 - Number.EPSILON)

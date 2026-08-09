@@ -41,9 +41,11 @@ function plot(
 	startRad: number,
 	endRad: number,
 	pixelSize: number
-) {
+): [number, number][] {
 	const xRound = x
 	const yRound = y
+
+	const points: [number, number][] = []
 
 	for (let i = 0; i < QUADRANT_TEMPLATES.length; i++) {
 		const [sign1, sign2] = QUADRANT_TEMPLATES[i]
@@ -57,8 +59,11 @@ function plot(
 		}
 		if (shouldPlot(px, py, startRad, endRad)) {
 			ctx.fillRect(centerX + px, centerY + py, pixelSize, pixelSize)
+			points.push([px, py])
 		}
 	}
+
+	return points
 }
 // Bresenham algorithm
 export function drawCircle(
@@ -70,9 +75,9 @@ export function drawCircle(
 	endRad = Math.PI * 2,
 	pixelSize: number,
 	range?: number[][]
-) {
+): [number, number][] {
 	let s = pixelSize
-	if (s <= 0 || radius <= 0) return
+	if (s <= 0 || radius <= 0) return []
 
 	if (range) {
 		ctx.save()
@@ -81,7 +86,6 @@ export function drawCircle(
 		ctx.clip()
 	}
 
-	let rate = radius / s
 	let x = 0
 	let y = radius
 	const dy = s
@@ -91,26 +95,29 @@ export function drawCircle(
 
 	const dx = s
 
+	const points: [number, number][] = []
+
 	while (x <= end) {
-		plot(ctx, x, y, centerX, centerY, startRad, endRad, s)
+		points.push(...plot(ctx, x, y, centerX, centerY, startRad, endRad, s))
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
 		if ((y - dy / 2) * (y - dy / 2) > yP) {
 			y -= dy
 		}
+		if (originalY === y && x + dx > end) {
+			y -= dy
+		}
 		if (x >= end && originalY === y) {
 			break
 		}
-	}
-	if (rate > 6 && rate < 7) {
-		const fix = Math.round(tmp)
-		plot(ctx, fix, fix, centerX, centerY, startRad, endRad, s)
 	}
 
 	if (range) {
 		ctx.restore()
 	}
+
+	return points
 }
 
 export function drawSmoothCircle(
@@ -182,40 +189,52 @@ export function floodFill(
 
 	const data32 = new Uint32Array(img.data.buffer)
 	const uint32Color =
-		(fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r
+		((fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r) >>> 0
 
 	const startPos = startY * w + startX
 	const targetColor = data32[startPos]
 
 	if (targetColor === uint32Color) return
 
-	type Span = { y: number; left: number; right: number; dy: number }
+	type Span = { y: number; left: number; right: number }
 	const stack: Span[] = []
 
-	const firstSpan = fillLine(startX, startY, 1)
-	if (firstSpan) stack.push({ ...firstSpan, dy: 1 })
-	const secondSpan = fillLine(startX, startY - 1, -1)
-	if (secondSpan) stack.push({ ...secondSpan, dy: -1 })
+	const firstSpan = fillLine(startX, startY)
+	if (firstSpan) stack.push(firstSpan)
 
 	while (stack.length) {
-		const { y, left, right, dy } = stack.pop()!
-		const ny = y + dy
-		if (ny < 0 || ny >= h) continue
+		const { y, left, right } = stack.pop()!
 
-		let x = left
-		while (x <= right) {
-			while (x <= right && data32[ny * w + x] !== targetColor) x++
-			if (x > right) break
-			const spanLeft = x
-			const newSpan = fillLine(spanLeft, ny, dy)
-			if (newSpan) stack.push(newSpan)
-			x = newSpan ? newSpan.right + 1 : spanLeft + 1
+		// Check the row above the span
+		if (y - 1 >= 0) {
+			let x = left
+			while (x <= right) {
+				while (x <= right && data32[(y - 1) * w + x] !== targetColor) x++
+				if (x > right) break
+				const spanLeft = x
+				const newSpan = fillLine(spanLeft, y - 1)
+				if (newSpan) stack.push(newSpan)
+				x = newSpan ? newSpan.right + 1 : spanLeft + 1
+			}
+		}
+
+		// Check the row below the span
+		if (y + 1 < h) {
+			let x = left
+			while (x <= right) {
+				while (x <= right && data32[(y + 1) * w + x] !== targetColor) x++
+				if (x > right) break
+				const spanLeft = x
+				const newSpan = fillLine(spanLeft, y + 1)
+				if (newSpan) stack.push(newSpan)
+				x = newSpan ? newSpan.right + 1 : spanLeft + 1
+			}
 		}
 	}
 
 	ctx.putImageData(img, 0, 0)
 
-	function fillLine(x: number, y: number, dy: number): Span | null {
+	function fillLine(x: number, y: number): Span | null {
 		let left = x
 		while (left > 0 && data32[y * w + left - 1] === targetColor) left--
 		let right = x
@@ -223,7 +242,7 @@ export function floodFill(
 
 		for (let i = left; i <= right; i++) data32[y * w + i] = uint32Color
 
-		return { y, left, right, dy }
+		return { y, left, right }
 	}
 }
 
@@ -581,7 +600,7 @@ function collectFloodFillRegion(
 	const img = ctx.getImageData(0, 0, w, h)
 	const data32 = new Uint32Array(img.data.buffer)
 	const uint32Color =
-		(fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r
+		((fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r) >>> 0
 
 	const startPos = startY * w + startX
 	const targetColor = data32[startPos]
@@ -624,26 +643,41 @@ function collectFloodFillRegion(
 	}
 
 	const firstSpan = fillLine(startX, startY, 1)
-	if (firstSpan) stack.push({ ...firstSpan, dy: 1 })
-	const secondSpan = fillLine(startX, startY - 1, -1)
-	if (secondSpan) stack.push({ ...secondSpan, dy: -1 })
+	if (firstSpan) stack.push(firstSpan)
 
 	while (stack.length) {
-		const { y, left, right, dy } = stack.pop()!
-		const ny = y + dy
-		if (ny < 0 || ny >= h) continue
+		const { y, left, right } = stack.pop()!
 
-		let x = left
-		while (x <= right) {
-			const pos = ny * w + x
-			if (data32[pos] !== targetColor || filled[pos] === 1) {
-				x++
-				continue
+		// Check the row above the span
+		if (y - 1 >= 0) {
+			let x = left
+			while (x <= right) {
+				const pos = (y - 1) * w + x
+				if (data32[pos] !== targetColor || filled[pos] === 1) {
+					x++
+					continue
+				}
+
+				const newSpan = fillLine(x, y - 1, -1)
+				if (newSpan) stack.push(newSpan)
+				x = newSpan ? newSpan.right + 1 : x + 1
 			}
+		}
 
-			const newSpan = fillLine(x, ny, dy)
-			if (newSpan) stack.push(newSpan)
-			x = newSpan ? newSpan.right + 1 : x + 1
+		// Check the row below the span
+		if (y + 1 < h) {
+			let x = left
+			while (x <= right) {
+				const pos = (y + 1) * w + x
+				if (data32[pos] !== targetColor || filled[pos] === 1) {
+					x++
+					continue
+				}
+
+				const newSpan = fillLine(x, y + 1, 1)
+				if (newSpan) stack.push(newSpan)
+				x = newSpan ? newSpan.right + 1 : x + 1
+			}
 		}
 	}
 
