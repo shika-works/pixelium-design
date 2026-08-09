@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, mergeProps, useAttrs } from 'vue'
 import Dialog from './dialog.vue'
+import PopupPortal from '../popup-portal/index.vue'
 import type { DialogEvents, DialogExpose, DialogProps } from './type'
 import { forwardEmits } from '../share/util/reactivity'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
@@ -26,7 +27,8 @@ const props = withDefaults(
 		loading: false,
 		showFooter: true,
 		destroyOnHide: false,
-		escToClose: true
+		escToClose: true,
+		root: 'body'
 	}
 )
 
@@ -63,18 +65,19 @@ const mergedProps = computed(() => {
 </script>
 
 <template>
-	<Dialog v-bind="mergedProps" :visible="visible" @ok="okHandler" @cancel="cancelHandler">
-		<template #title>
-			<slot name="title" />
-		</template>
-		<template #icon>
-			<slot name="icon" />
-		</template>
-		<template #default>
-			<slot />
-		</template>
-		<template #footer>
-			<slot name="footer" />
-		</template>
-	</Dialog>
+	<PopupPortal :root="props.root">
+		<Dialog v-bind="mergedProps" :visible="visible" @ok="okHandler" @cancel="cancelHandler">
+			<template #title>
+				<slot name="title" />
+			</template>
+			<template #icon>
+				<slot name="icon" />
+			</template>
+			<template #default>
+				<slot />
+			</template>
+			<template #footer>
+				<slot name="footer" />
+			</template> </Dialog
+	></PopupPortal>
 </template>

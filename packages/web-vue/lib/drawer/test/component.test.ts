@@ -24,7 +24,7 @@ describe('Drawer (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-drawer-wrapper')
+		const container = wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-wrapper')
 		expect(container.element).toBeTruthy()
 		expect(container.element.getAttribute('style')).toBe(null)
 
@@ -38,10 +38,12 @@ describe('Drawer (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-drawer-wrapper')
+		const container = wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-wrapper')
 		expect(container.element).toBeTruthy()
 
-		const closeIcon = wrapper.find('.px-drawer-close-icon-wrapper')
+		const closeIcon = wrapper
+			.findComponent({ name: 'DrawerInner' })
+			.find('.px-drawer-close-icon-wrapper')
 		expect(closeIcon.element).toBeTruthy()
 
 		await closeIcon.trigger('click')
@@ -65,10 +67,10 @@ describe('Drawer (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-drawer-wrapper')
+		const container = wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-wrapper')
 		expect(container.element).toBeTruthy()
 
-		const mask = wrapper.find('.px-drawer-mask')
+		const mask = wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-mask')
 		expect(mask.element).toBeTruthy()
 
 		mask.trigger('click')
@@ -87,7 +89,7 @@ describe('Drawer (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-drawer-wrapper')
+		const container = wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-wrapper')
 		expect(container.element).toBeTruthy()
 		expect(container.element.getAttribute('style')).toBe(null)
 
@@ -112,7 +114,7 @@ describe('Drawer (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-drawer-wrapper')
+		const container = wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-wrapper')
 		expect(container.element).toBeTruthy()
 		expect(container.element.getAttribute('style')).toBe(null)
 
@@ -131,8 +133,12 @@ describe('Drawer (wrapped component)', () => {
 
 		await nextTick()
 		const [wrapper1, wrapper2] = wrapper.findAllComponents(Drawer)
-		const container1 = wrapper1.find('.px-drawer-wrapper')
-		const container2 = wrapper2.find('.px-drawer-wrapper')
+		const container1 = wrapper1
+			.findComponent({ name: 'DrawerInner' })
+			.find('.px-drawer-wrapper')
+		const container2 = wrapper2
+			.findComponent({ name: 'DrawerInner' })
+			.find('.px-drawer-wrapper')
 		expect(container2.element).toBeTruthy()
 		expect(container1.element.getAttribute('style')).toBe(null)
 		expect(container2.element.getAttribute('style')).toBe(null)
@@ -156,10 +162,124 @@ describe('Drawer (wrapped component)', () => {
 			}
 		})
 
-		expect(wrapper.find('.px-drawer-header').text()).toBe('title')
-		expect(wrapper.find('.px-drawer-body').text()).toBe('content')
-		expect(wrapper.find('.px-drawer-footer').text()).toBe('footer')
+		expect(
+			wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-header').text()
+		).toBe('title')
+		expect(wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-body').text()).toBe(
+			'content'
+		)
+		expect(
+			wrapper.findComponent({ name: 'DrawerInner' }).find('.px-drawer-footer').text()
+		).toBe('footer')
 
 		wrapper.unmount()
+	})
+	it('teleports the drawer to document.body by default', async () => {
+		const mountRoot = document.createElement('div')
+		document.body.appendChild(mountRoot)
+
+		const wrapper = mount(Drawer, {
+			props: { defaultVisible: true },
+			attachTo: mountRoot
+		})
+
+		await nextTick()
+		// content must NOT stay inside the mount point
+		expect(mountRoot.querySelector('.px-drawer-wrapper')).toBeNull()
+		// content IS teleported to document.body
+		expect(document.querySelector('.px-drawer-wrapper')).toBeTruthy()
+
+		wrapper.unmount()
+		mountRoot.remove()
+	})
+
+	it('renders inside a custom selector root', async () => {
+		const rootEl = document.createElement('div')
+		rootEl.id = 'custom-drawer-root'
+		document.body.appendChild(rootEl)
+
+		const wrapper = mount(Drawer, {
+			props: { defaultVisible: true, root: '#custom-drawer-root' },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const drawerEl = document.querySelector('.px-drawer-wrapper')
+		expect(drawerEl).toBeTruthy()
+		expect(rootEl.contains(drawerEl)).toBe(true)
+
+		wrapper.unmount()
+		rootEl.remove()
+	})
+
+	it('renders inside an HTMLElement root', async () => {
+		const rootEl = document.createElement('div')
+		document.body.appendChild(rootEl)
+
+		const wrapper = mount(Drawer, {
+			props: { defaultVisible: true, root: rootEl },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const drawerEl = document.querySelector('.px-drawer-wrapper')
+		expect(drawerEl).toBeTruthy()
+		expect(rootEl.contains(drawerEl)).toBe(true)
+
+		wrapper.unmount()
+		rootEl.remove()
+	})
+
+	it('moves the drawer to the new root when the root prop changes', async () => {
+		const rootA = document.createElement('div')
+		const rootB = document.createElement('div')
+		document.body.appendChild(rootA)
+		document.body.appendChild(rootB)
+
+		const wrapper = mount(Drawer, {
+			props: { defaultVisible: true, root: rootA },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const drawerEl = document.querySelector('.px-drawer-wrapper')
+		expect(drawerEl).toBeTruthy()
+		expect(rootA.contains(drawerEl)).toBe(true)
+
+		await wrapper.setProps({ root: rootB })
+		expect(rootA.contains(document.querySelector('.px-drawer-wrapper'))).toBe(false)
+		expect(rootB.contains(document.querySelector('.px-drawer-wrapper'))).toBe(true)
+
+		wrapper.unmount()
+		rootA.remove()
+		rootB.remove()
+	})
+
+	it('keeps working through the portal (close icon still exits and closes)', async () => {
+		const rootEl = document.createElement('div')
+		document.body.appendChild(rootEl)
+
+		const wrapper = mount(Drawer, {
+			props: { defaultVisible: true, root: rootEl },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const drawerEl = document.querySelector('.px-drawer-wrapper')
+		expect(drawerEl).toBeTruthy()
+		expect(rootEl.contains(drawerEl)).toBe(true)
+
+		const closeIcon = rootEl.querySelector(
+			'.px-drawer-close-icon-wrapper'
+		) as HTMLElement | null
+		expect(closeIcon).toBeTruthy()
+		closeIcon!.click()
+		await nextTick()
+
+		expect(wrapper.emitted().exit).toBeTruthy()
+		expect(drawerEl!.getAttribute('style')).include('display: none')
+
+		wrapper.unmount()
+		rootEl.remove()
 	})
 })

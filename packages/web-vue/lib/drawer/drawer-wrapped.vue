@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, mergeProps, useAttrs } from 'vue'
 import Drawer from './drawer.vue'
+import PopupPortal from '../popup-portal/index.vue'
 import type { DrawerEvents, DrawerExpose, DrawerProps } from './type'
 import { forwardEmits } from '../share/util/reactivity'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
@@ -18,7 +19,8 @@ const props = withDefaults(defineProps<DrawerProps>(), {
 	maskClosable: true,
 	destroyOnHide: false,
 	escToClose: true,
-	placement: 'right'
+	placement: 'right',
+	root: 'body'
 })
 
 const emits = defineEmits<Omit<DrawerEvents, 'onBeforeOk'>>()
@@ -49,15 +51,16 @@ const mergedProps = computed(() => {
 </script>
 
 <template>
-	<Drawer v-bind="mergedProps" :visible="visible" @exit="exitHandler">
-		<template #title>
-			<slot name="title" />
-		</template>
-		<template #default>
-			<slot />
-		</template>
-		<template #footer>
-			<slot name="footer" />
-		</template>
-	</Drawer>
+	<PopupPortal :root="props.root">
+		<Drawer v-bind="mergedProps" :visible="visible" @exit="exitHandler">
+			<template #title>
+				<slot name="title" />
+			</template>
+			<template #default>
+				<slot />
+			</template>
+			<template #footer>
+				<slot name="footer" />
+			</template> </Drawer
+	></PopupPortal>
 </template>

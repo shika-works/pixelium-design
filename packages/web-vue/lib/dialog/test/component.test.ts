@@ -24,7 +24,7 @@ describe('Dialog (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-dialog-wrapper')
+		const container = wrapper.findComponent({ name: 'DialogInner' }).find('.px-dialog-wrapper')
 		expect(container.element).toBeTruthy()
 		expect(container.element.getAttribute('style')).toBe(null)
 
@@ -38,10 +38,12 @@ describe('Dialog (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-dialog-wrapper')
+		const container = wrapper.findComponent({ name: 'DialogInner' }).find('.px-dialog-wrapper')
 		expect(container.element).toBeTruthy()
 
-		const cancelBtn = wrapper.find('.px-dialog-cancel-button')
+		const cancelBtn = wrapper
+			.findComponent({ name: 'DialogInner' })
+			.find('.px-dialog-cancel-button')
 		expect(cancelBtn.element).toBeTruthy()
 
 		await cancelBtn.trigger('click')
@@ -65,10 +67,12 @@ describe('Dialog (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-dialog-wrapper')
+		const container = wrapper.findComponent({ name: 'DialogInner' }).find('.px-dialog-wrapper')
 		expect(container.element).toBeTruthy()
 
-		const confirmBtn = wrapper.find('.px-dialog-confirm-button')
+		const confirmBtn = wrapper
+			.findComponent({ name: 'DialogInner' })
+			.find('.px-dialog-confirm-button')
 		expect(confirmBtn.element).toBeTruthy()
 
 		confirmBtn.trigger('click')
@@ -87,7 +91,7 @@ describe('Dialog (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-dialog-wrapper')
+		const container = wrapper.findComponent({ name: 'DialogInner' }).find('.px-dialog-wrapper')
 		expect(container.element).toBeTruthy()
 		expect(container.element.getAttribute('style')).toBe(null)
 
@@ -112,7 +116,7 @@ describe('Dialog (wrapped component)', () => {
 		})
 
 		await nextTick()
-		const container = wrapper.find('.px-dialog-wrapper')
+		const container = wrapper.findComponent({ name: 'DialogInner' }).find('.px-dialog-wrapper')
 		expect(container.element).toBeTruthy()
 		expect(container.element.getAttribute('style')).toBe(null)
 
@@ -131,8 +135,12 @@ describe('Dialog (wrapped component)', () => {
 
 		await nextTick()
 		const [wrapper1, wrapper2] = wrapper.findAllComponents(Dialog)
-		const container1 = wrapper1.find('.px-dialog-wrapper')
-		const container2 = wrapper2.find('.px-dialog-wrapper')
+		const container1 = wrapper1
+			.findComponent({ name: 'DialogInner' })
+			.find('.px-dialog-wrapper')
+		const container2 = wrapper2
+			.findComponent({ name: 'DialogInner' })
+			.find('.px-dialog-wrapper')
 		expect(container2.element).toBeTruthy()
 		expect(container1.element.getAttribute('style')).toBe(null)
 		expect(container2.element.getAttribute('style')).toBe(null)
@@ -144,5 +152,113 @@ describe('Dialog (wrapped component)', () => {
 		expect(container2.element.getAttribute('style')).toBe(null)
 
 		wrapper.unmount()
+	})
+	it('teleports the dialog to document.body by default', async () => {
+		const mountRoot = document.createElement('div')
+		document.body.appendChild(mountRoot)
+
+		const wrapper = mount(Dialog, {
+			props: { defaultVisible: true },
+			attachTo: mountRoot
+		})
+
+		await nextTick()
+		// content must NOT stay inside the mount point
+		expect(mountRoot.querySelector('.px-dialog-wrapper')).toBeNull()
+		// content IS teleported to document.body
+		expect(document.querySelector('.px-dialog-wrapper')).toBeTruthy()
+
+		wrapper.unmount()
+		mountRoot.remove()
+	})
+
+	it('renders inside a custom selector root', async () => {
+		const rootEl = document.createElement('div')
+		rootEl.id = 'custom-dialog-root'
+		document.body.appendChild(rootEl)
+
+		const wrapper = mount(Dialog, {
+			props: { defaultVisible: true, root: '#custom-dialog-root' },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const dialogEl = document.querySelector('.px-dialog-wrapper')
+		expect(dialogEl).toBeTruthy()
+		expect(rootEl.contains(dialogEl)).toBe(true)
+
+		wrapper.unmount()
+		rootEl.remove()
+	})
+
+	it('renders inside an HTMLElement root', async () => {
+		const rootEl = document.createElement('div')
+		document.body.appendChild(rootEl)
+
+		const wrapper = mount(Dialog, {
+			props: { defaultVisible: true, root: rootEl },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const dialogEl = document.querySelector('.px-dialog-wrapper')
+		expect(dialogEl).toBeTruthy()
+		expect(rootEl.contains(dialogEl)).toBe(true)
+
+		wrapper.unmount()
+		rootEl.remove()
+	})
+
+	it('moves the dialog to the new root when the root prop changes', async () => {
+		const rootA = document.createElement('div')
+		const rootB = document.createElement('div')
+		document.body.appendChild(rootA)
+		document.body.appendChild(rootB)
+
+		const wrapper = mount(Dialog, {
+			props: { defaultVisible: true, root: rootA },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const dialogEl = document.querySelector('.px-dialog-wrapper')
+		expect(dialogEl).toBeTruthy()
+		expect(rootA.contains(dialogEl)).toBe(true)
+
+		await wrapper.setProps({ root: rootB })
+		expect(rootA.contains(document.querySelector('.px-dialog-wrapper'))).toBe(false)
+		expect(rootB.contains(document.querySelector('.px-dialog-wrapper'))).toBe(true)
+
+		wrapper.unmount()
+		rootA.remove()
+		rootB.remove()
+	})
+
+	it('keeps working through the portal (cancel still emits and closes)', async () => {
+		const rootEl = document.createElement('div')
+		document.body.appendChild(rootEl)
+
+		const wrapper = mount(Dialog, {
+			props: { defaultVisible: true, root: rootEl },
+			attachTo: document.body
+		})
+
+		await nextTick()
+		const dialogEl = document.querySelector('.px-dialog-wrapper')
+		expect(dialogEl).toBeTruthy()
+		expect(rootEl.contains(dialogEl)).toBe(true)
+
+		const cancelBtn = rootEl.querySelector(
+			'.px-dialog-cancel-button'
+		) as HTMLButtonElement | null
+		expect(cancelBtn).toBeTruthy()
+		cancelBtn!.click()
+		await nextTick()
+
+		expect(wrapper.emitted().cancel).toBeTruthy()
+		expect(dialogEl!.getAttribute('style')).include('display: none')
+
+		wrapper.unmount()
+		rootEl.remove()
 	})
 })
