@@ -2,7 +2,7 @@ import { resolve, relative, join, dirname } from 'path'
 import { build, defineConfig, type Plugin } from 'vite'
 import viteSvgLoader from '../plugin/svg-loader.ts'
 import Vue from '@vitejs/plugin-vue'
-import VueMacros from 'vue-macros/vite'
+import DefineRender from '@vue-macros/define-render/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import { promises as fs } from 'node:fs'
 import { isArray } from 'parsnip-kit'
@@ -20,7 +20,7 @@ const onDemandImport: Plugin = {
 	}
 }
 
-const basePlugins = [Vue(), VueJsx(), VueMacros(), viteSvgLoader(), onDemandImport]
+const basePlugins = [Vue(), VueJsx(), DefineRender(), viteSvgLoader(), onDemandImport]
 async function buildLib() {
 	await build(
 		defineConfig({
@@ -50,34 +50,23 @@ async function buildLib() {
 							}
 							return 'assets/[name][extname]'
 						},
-						advancedChunks: {
-							includeDependenciesRecursively: false,
-							groups: [
-								{
-									name(id: string) {
-										if (id && id.includes('pixelium-design/packages/locale'))
-											return 'public/locale'
-										if (id && id.endsWith('overlayscrollbars.css'))
-											return 'public/overlayscrollbars.css'
-										if (id && id.includes('node_modules')) return 'public/vendor'
-										if (
-											id.endsWith('.ts') ||
-											id.endsWith('.tsx') ||
-											id.endsWith('.vue') ||
-											id.endsWith('.less') ||
-											id.endsWith('.css')
-										) {
-											const rel = relative(resolve(process.cwd(), 'lib'), id)
-											const base = rel.split('?')[0]
-											const name = base.split('.')[0]
-											if (name === 'index') {
-												return 'entry'
-											}
-											return name
-										}
-									}
-								}
-							]
+						manualChunks(id: string) {
+							if (id && id.includes('pixelium-design/packages/locale')) return 'public/locale'
+							if (id && id.endsWith('overlayscrollbars.css'))
+								return 'public/overlayscrollbars.css'
+							if (id && id.includes('node_modules')) return 'public/vendor'
+							if (
+								id.endsWith('.ts') ||
+								id.endsWith('.tsx') ||
+								id.endsWith('.vue') ||
+								id.endsWith('.less') ||
+								id.endsWith('.css')
+							) {
+								const rel = relative(resolve(process.cwd(), 'lib'), id)
+								const base = rel.split('?')[0]
+								const name = base.split('.')[0]
+								return name
+							}
 						}
 					}
 				},

@@ -105,7 +105,7 @@ export function drawCircle(
 		if ((y - dy / 2) * (y - dy / 2) > yP) {
 			y -= dy
 		}
-		if (originalY === y && x + dx > end) {
+		if (originalY === y && x + dx > end && radius / pixelSize > 4) {
 			y -= dy
 		}
 		if (x >= end && originalY === y) {
@@ -604,7 +604,6 @@ function collectFloodFillRegion(
 
 	const startPos = startY * w + startX
 	const targetColor = data32[startPos]
-	if (targetColor === uint32Color) return null
 
 	const filled = new Uint8Array(w * h)
 	type Span = { y: number; left: number; right: number; dy: number }
