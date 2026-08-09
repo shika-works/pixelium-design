@@ -105,7 +105,7 @@ export function drawCircle(
 		if ((y - dy / 2) * (y - dy / 2) > yP) {
 			y -= dy
 		}
-		if (originalY === y && x + dx > end) {
+		if (originalY === y && x + dx > end && radius / pixelSize > 4) {
 			y -= dy
 		}
 		if (x >= end && originalY === y) {
