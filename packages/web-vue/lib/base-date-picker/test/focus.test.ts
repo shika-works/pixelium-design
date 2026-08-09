@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import BaseDatePicker from '../index.vue'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { wait } from 'parsnip-kit'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 
 const mountComponent = (props = {}, slots = {}) => {
@@ -21,12 +20,14 @@ describe('BaseDatePicker focus/blur behavior', () => {
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -40,7 +41,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await input.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -51,7 +52,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		const el = wrapper.find('.px-base-date-picker')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 
@@ -63,11 +64,11 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		const el = wrapper.find('.px-base-date-picker')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 		expect(onBlur).toBeCalledTimes(0)
 	})
@@ -83,7 +84,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 
 		await input.trigger('focus')
 		await innerButton.trigger('focus')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -95,7 +96,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 
 		const wrapperEl = wrapper.find('.px-base-date-picker')
 		await wrapperEl.trigger('mousedown')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none;')
@@ -103,7 +104,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 		expect(panel.exists()).toBe(true)
 
 		await panel.trigger('mousedown')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
@@ -136,11 +137,11 @@ describe('BaseDatePicker focus/blur behavior', () => {
 
 		await closeWrapper.trigger('mousedown')
 		await closeWrapper.trigger('click')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		expect(onUpdate).toBeCalledWith(null)
 
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 		expect(document.activeElement).toBe(input.element)
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -161,7 +162,7 @@ describe('BaseDatePicker focus/blur behavior', () => {
 
 		const wrapperEl = wrapper.find('.px-base-date-picker')
 		await wrapperEl.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent({ name: 'Popup' })
 		expect(popupWrapper.props('visible')).toBe(true)
@@ -178,11 +179,11 @@ describe('BaseDatePicker focus/blur behavior', () => {
 
 		await closeWrapper.trigger('mousedown')
 		await closeWrapper.trigger('click')
-		await wait(50)
+		await vi.advanceTimersByTimeAsync(50)
 
 		expect(onUpdate).toBeCalledWith(null)
 
-		await wait(300)
+		await vi.advanceTimersByTimeAsync(300)
 
 		expect(popupWrapper.props('visible')).toBe(false)
 

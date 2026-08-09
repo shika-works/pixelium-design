@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import ColorPicker from '../index.vue'
 import { createMocks, createMocks4Focus } from '../../share/util/test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { wait } from 'parsnip-kit'
 import PopupWrapper from '../../popup-wrapper/index.vue'
 
 const mountComponent = (props = {}, slots = {}) => {
@@ -21,12 +20,14 @@ describe('ColorPicker focus/blur behavior', () => {
 	const { pre: focusPre, post: focusPost } = createMocks4Focus()
 
 	afterEach(() => {
+		vi.useRealTimers()
 		post()
 		focusPost()
 	})
 	beforeEach(() => {
 		pre()
 		focusPre()
+		vi.useFakeTimers()
 	})
 
 	it('wrapper onFocus/onBlur callbacks are called on focus/blur', async () => {
@@ -40,7 +41,7 @@ describe('ColorPicker focus/blur behavior', () => {
 		expect(onFocus).toHaveBeenCalledTimes(1)
 
 		await content.trigger('blur')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 		expect(onBlur).toHaveBeenCalledTimes(1)
 	})
 
@@ -51,7 +52,7 @@ describe('ColorPicker focus/blur behavior', () => {
 		const el = wrapper.find('.px-color-picker')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 	})
 
@@ -63,11 +64,11 @@ describe('ColorPicker focus/blur behavior', () => {
 		const el = wrapper.find('.px-color-picker')
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 
 		await el.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 		expect(onFocus).toBeCalledTimes(1)
 		expect(onBlur).toBeCalledTimes(0)
 	})
@@ -79,7 +80,7 @@ describe('ColorPicker focus/blur behavior', () => {
 
 		await content.trigger('focus')
 		await content.trigger('focus')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 	})
@@ -91,7 +92,7 @@ describe('ColorPicker focus/blur behavior', () => {
 
 		const wrapperEl = wrapper.find('.px-color-picker')
 		await wrapperEl.trigger('mousedown')
-		await wait(20)
+		await vi.advanceTimersByTimeAsync(20)
 
 		const popupWrapper = wrapper.findComponent(PopupWrapper)
 		expect(popupWrapper.attributes('style')).not.include('display: none;')
@@ -99,7 +100,7 @@ describe('ColorPicker focus/blur behavior', () => {
 		expect(panel.exists()).toBe(true)
 
 		await panel.trigger('mousedown')
-		await wait(200)
+		await vi.advanceTimersByTimeAsync(200)
 
 		expect(onBlur).not.toHaveBeenCalled()
 		expect(onFocus).toHaveBeenCalledTimes(1)
