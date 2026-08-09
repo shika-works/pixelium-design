@@ -604,7 +604,6 @@ function collectFloodFillRegion(
 
 	const startPos = startY * w + startX
 	const targetColor = data32[startPos]
-	if (targetColor === uint32Color) return null
 
 	const filled = new Uint8Array(w * h)
 	type Span = { y: number; left: number; right: number; dy: number }
