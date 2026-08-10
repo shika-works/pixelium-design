@@ -20,11 +20,12 @@ import ScrollBar from '../scroll-bar/index.vue'
 import { flattenVNodes } from '../share/util/render'
 import TabItem from '../tab-item/index.vue'
 import { isEqual, isNumber, isObjectLike } from 'parsnip-kit'
-import Add from '@hackernoon/pixel-icon-library/icons/SVG/regular/plus.svg'
-import IconWrapper from '../icon-wrapper/index.vue'
+import AddIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/plus.svg'
 defineOptions({
 	name: 'Tab'
 })
+
+const Add = AddIcon as any
 
 const props = withDefaults(defineProps<TabProps>(), {
 	placement: 'top',
@@ -184,15 +185,9 @@ const renderHeaderTabs = (tabItems: VNode[]) => {
 const renderAddTab = () => {
 	return (
 		<div class="px-tab-add-tab">
-			<IconWrapper
-				// @ts-ignore
-				onClick={createHandler}
-				color="var(--px-neutral-8)"
-				press-color="var(--px-primary-7)"
-				hover-color="var(--px-primary-5)"
-			>
-				<Add></Add>
-			</IconWrapper>
+			<div class="px-tab-add-icon-wrapper" onClick={createHandler}>
+				<Add class="px-tab-add-icon"></Add>
+			</div>
 		</div>
 	)
 }

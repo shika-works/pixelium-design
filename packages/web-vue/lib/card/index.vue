@@ -17,17 +17,9 @@
 				<slot name="header">
 					<span v-if="props.title">{{ props.title }}</span>
 				</slot>
-				<IconWrapper
-					v-if="props.closable"
-					class="px-card-close-icon"
-					size="mini"
-					color="var(--px-neutral-8)"
-					hover-color="var(--px-neutral-6)"
-					press-color="var(--px-neutral-9)"
-					@click="closeHandler"
-				>
-					<Times></Times>
-				</IconWrapper>
+				<div v-if="props.closable" class="px-card-close-icon-wrapper" @click="closeHandler">
+					<Times class="px-card-close-icon"></Times>
+				</div>
 			</div>
 			<div class="px-card-body" v-bind="props.bodyProps">
 				<slot></slot>
@@ -46,7 +38,6 @@
 import { computed, shallowRef, toRef, useSlots } from 'vue'
 import type { CardProps, CardEvents } from './type'
 import { useDrawPixel } from './draw'
-import IconWrapper from '../icon-wrapper/index.vue'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 
 defineOptions({

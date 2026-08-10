@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+qimport { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Calendar from '../index.vue'
@@ -6,7 +6,6 @@ import { createMocks } from '../../share/util/test'
 import { locale } from '../../share/util/locale'
 
 const stubs = {
-	IconWrapper: true,
 	AngleLeft: true,
 	ArrowLeft: true,
 	AngleRight: true,
