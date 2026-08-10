@@ -12,8 +12,8 @@
 	box-sizing: border-box;
 	position: relative;
 
-	height: 28px;
-	width: 28px;
+	height: @px-medium-base-size;
+	width: @px-medium-base-size;
 }
 
 .px-rate {
@@ -33,6 +33,7 @@
 		border-color: transparent;
 		margin: @px-interval-1 0;
 		cursor: pointer;
+		z-index: 0;
 	}
 	&__readonly .px-rate-item {
 		cursor: default;
