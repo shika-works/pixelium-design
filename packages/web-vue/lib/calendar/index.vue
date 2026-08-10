@@ -12,26 +12,18 @@
 					@click="changeYear(-1, $event)"
 					title="Previous year"
 				>
-					<IconWrapper
-						color="var(--px-neutral-8)"
-						hover-color="var(--px-neutral-7)"
-						active-color="var(--px-neutral-9)"
-					>
-						<ArrowLeft />
-					</IconWrapper>
+					<div class="px-calendar-header-nav-icon-wrapper">
+						<ArrowLeft class="px-calendar-header-nav-icon" />
+					</div>
 				</span>
 				<span
 					class="px-calendar-header-nav-btn"
 					@click="changeMonth(-1, $event)"
 					title="Previous month"
 				>
-					<IconWrapper
-						color="var(--px-neutral-8)"
-						hover-color="var(--px-neutral-7)"
-						active-color="var(--px-neutral-9)"
-					>
-						<AngleLeft />
-					</IconWrapper>
+					<div class="px-calendar-header-nav-icon-wrapper">
+						<AngleLeft class="px-calendar-header-nav-icon" />
+					</div>
 				</span>
 				<span
 					class="px-calendar-header-nav-btn px-calendar-header-nav-btn__today"
@@ -44,26 +36,18 @@
 					@click="changeMonth(1, $event)"
 					title="Next month"
 				>
-					<IconWrapper
-						color="var(--px-neutral-8)"
-						hover-color="var(--px-neutral-7)"
-						active-color="var(--px-neutral-9)"
-					>
-						<AngleRight />
-					</IconWrapper>
+					<div class="px-calendar-header-nav-icon-wrapper">
+						<AngleRight class="px-calendar-header-nav-icon" />
+					</div>
 				</span>
 				<span
 					class="px-calendar-header-nav-btn"
 					@click="changeYear(1, $event)"
 					title="Next year"
 				>
-					<IconWrapper
-						color="var(--px-neutral-8)"
-						hover-color="var(--px-neutral-7)"
-						active-color="var(--px-neutral-9)"
-					>
-						<ArrowRight />
-					</IconWrapper>
+					<div class="px-calendar-header-nav-icon-wrapper">
+						<ArrowRight class="px-calendar-header-nav-icon" />
+					</div>
 				</span>
 			</div>
 		</div>
@@ -111,7 +95,6 @@ import { genCalenderDays, type CalendarItem } from '../share/util/calendar'
 import { formaDate, getDateObj } from '../share/util/time'
 import { useLocale } from '../share/util/locale'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
-import IconWrapper from '../icon-wrapper/index.vue'
 import { isFunction, type Nullish } from 'parsnip-kit'
 
 import AngleLeft from '@hackernoon/pixel-icon-library/icons/SVG/regular/angle-left.svg'

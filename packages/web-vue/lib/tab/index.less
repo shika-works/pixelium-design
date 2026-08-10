@@ -126,6 +126,22 @@
 			padding-left: @px-interval-1;
 			border-left-width: var(--px-bit);
 		}
+
+		.px-tab-add-icon-wrapper {
+			display: flex;
+			align-items: center;
+			color: var(--px-neutral-8);
+			font-size: @px-medium-font-size;
+			transition: color 0.25s;
+
+			&:hover {
+				color: var(--px-primary-5);
+			}
+
+			&:active {
+				color: var(--px-primary-7);
+			}
+		}
 	}
 
 	&__left,

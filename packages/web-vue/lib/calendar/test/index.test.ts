@@ -6,7 +6,6 @@ import { createMocks } from '../../share/util/test'
 import { locale } from '../../share/util/locale'
 
 const stubs = {
-	IconWrapper: true,
 	AngleLeft: true,
 	ArrowLeft: true,
 	AngleRight: true,

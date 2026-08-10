@@ -27,8 +27,9 @@
 
 	&-canvas {
 		position: absolute;
-		top: 0;
-		left: 0;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		z-index: -1;
 		pointer-events: none;
 	}
@@ -60,9 +61,22 @@
 		}
 	}
 
-	&-close-icon {
+	&-close-icon-wrapper {
 		margin-left: auto;
 		cursor: pointer;
+		display: flex;
+		align-items: center;
+		color: var(--px-neutral-8);
+		font-size: @px-mini-font-size;
+		transition: color 0.25s;
+
+		&:hover {
+			color: var(--px-neutral-6);
+		}
+
+		&:active {
+			color: var(--px-neutral-9);
+		}
 	}
 
 	&-body {

@@ -26,7 +26,7 @@
 				'px-word-wrap': tabsProvide?.isHorizontal.value
 			}"
 		>
-			<IconWrapper
+			<div
 				v-if="slots.icon"
 				class="px-tab-item-icon"
 				:class="{
@@ -34,30 +34,21 @@
 				}"
 			>
 				<slot name="icon"></slot>
-			</IconWrapper>
+			</div>
 			<slot name="title">
 				{{ props.title }}
 			</slot>
-			<IconWrapper
+			<div
 				ref="closeRef"
 				v-if="props.closable && !tabsProvide?.lastTab.value"
+				class="px-tab-item-close-icon"
 				:class="{
 					'px-tab-item-close-icon__single': singleIcon
 				}"
-				class="px-tab-item-close-icon"
-				active-color="var(--px-primary-6)"
-				:disabled-color="variant === 'card' ? 'var(--px-neutral-7)' : 'var(--px-neutral-6)'"
-				active-disabled-color="var(--px-primary-3)"
-				color="var(--px-neutral-8)"
-				press-color="var(--px-primary-7)"
-				hover-color="var(--px-primary-5)"
-				:disabled="props.disabled"
-				:active="active"
 				@click="closeHandler"
-				size="mini"
 			>
 				<Times></Times>
-			</IconWrapper>
+			</div>
 			<canvas v-if="variant === 'card'" class="px-tab-item-canvas" ref="canvasRef"></canvas>
 		</div>
 		<div class="px-tab-item-pad"></div>
@@ -68,7 +59,6 @@ import { computed, inject, shallowRef, useSlots } from 'vue'
 import type { TabItemProps } from './type'
 import { TAB_PROVIDE } from '../share/const/provide-key'
 import { type TabProvide } from '../tab/type'
-import IconWrapper from '../icon-wrapper/index.vue'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 import { useDraw } from './draw.ts'
 import { wait } from 'parsnip-kit'
@@ -81,7 +71,7 @@ const props = withDefaults(defineProps<TabItemProps>(), {
 	title: ''
 })
 
-const closeRef = shallowRef<null | InstanceType<typeof IconWrapper>>(null)
+const closeRef = shallowRef<null | HTMLElement>(null)
 
 const tabsProvide = inject<TabProvide | null>(TAB_PROVIDE, null)
 
@@ -105,10 +95,7 @@ const clickHandler = (e: MouseEvent) => {
 	if (props.disabled) {
 		return
 	}
-	if (
-		closeRef.value?.$el instanceof HTMLElement &&
-		closeRef.value.$el.contains(e.target as Element)
-	) {
+	if (closeRef.value instanceof HTMLElement && closeRef.value.contains(e.target as Element)) {
 		return
 	}
 	tabsProvide?.selectHandler(props.index, e)
