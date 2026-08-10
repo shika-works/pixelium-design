@@ -119,6 +119,8 @@ When setting `columns[].width`, please leave at least one column unset so the ta
 我们推荐使用 `tableAreaProps` 属性，设置固定或者动态的表格高度，例如 `:table-area-props="{ style: 'max-height: 400px' }"`。
 ]]]
 [[[en
+## Table Height
+
 Due to the features of `display: table`, unexpected results may occur when setting a small `height` or `max-height` on the outermost element of the Table component. The `<table>` height will still be expanded by its child elements.
 
 We recommend using the `tableAreaProps` property to set a fixed or dynamic table height, for example: `:table-area-props="{ style: 'max-height: 400px' }"`.
