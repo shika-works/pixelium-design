@@ -442,7 +442,7 @@ describe('Tab', () => {
 			})
 
 			const addTab = wrapper.find('.px-tab-add-tab')
-			const addIcon = addTab.find('.px-icon-wrapper')
+			const addIcon = addTab.find('.px-tab-add-icon-wrapper')
 			await addIcon.trigger('click')
 
 			expect(onCreate).toHaveBeenCalled()
@@ -460,7 +460,7 @@ describe('Tab', () => {
 			await nextTick()
 
 			const addTab = wrapper.find('.px-tab-add-tab')
-			await addTab.find('.px-icon-wrapper').trigger('click')
+			await addTab.find('.px-tab-add-icon-wrapper').trigger('click')
 
 			// The add icon click should NOT produce a 'select' event
 			expect(wrapper.emitted('select')).toBeFalsy()

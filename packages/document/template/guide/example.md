@@ -6,10 +6,14 @@ import Example from './example.vue'
 </script>
 
 [[[zh
-# 组件示例
+# 仪表盘示例
+
+示例仓库：[shika-works/pixelium-dashboard](https://github.com/shika-works/pixelium-dashboard)
 ]]]
 [[[en
-# Example
+# Dashboard Example
+
+Example repository: [shika-works/pixelium-dashboard](https://github.com/shika-works/pixelium-dashboard)
 ]]]
 
 <Example />

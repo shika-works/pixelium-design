@@ -74,7 +74,7 @@ const columns = [
 		cellProps: {
 			style: {
 				backgroundColor: 'wheat',
-				color: 'var(--px-neutral-10)'
+				color: 'black'
 			}
 		}
 	},

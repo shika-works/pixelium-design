@@ -22,10 +22,9 @@ import type {
 } from './type'
 import { useDraw } from './draw'
 import { useComposition } from '../share/hook/use-composition'
-// @ts-ignore
-import TimesCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
-// @ts-ignore
-import SpinnerThirdSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
+import TimesCircleSolidIcon from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-circle-solid.svg'
+import ChevronDownIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/chevron-down.svg'
+import SpinnerThirdSolidIcon from '@hackernoon/pixel-icon-library/icons/SVG/solid/spinner-third-solid.svg'
 import type { InputGroupProvide } from '../input-group/type'
 import { INPUT_GROUP_UPDATE } from '../share/const/event-bus-key'
 import { useIndexOfChildren } from '../share/hook/use-index-of-children'
@@ -56,6 +55,10 @@ import type { FormItemProvide } from '../form-item/type'
 import { inVitest } from '../share/util/env'
 import { useFocusMode } from '../share/hook/use-focus-mode'
 import { getScopedObj } from '../share/util/render'
+
+const TimesCircleSolid = TimesCircleSolidIcon as any
+const ChevronDown = ChevronDownIcon as any
+const SpinnerThirdSolid = SpinnerThirdSolidIcon as any
 
 defineOptions({
 	name: 'Select',
@@ -791,7 +794,6 @@ defineRender(() => {
 				<div class="px-select-close-wrapper">
 					{hoverFlag.value && !modelValueIsFalse(modelValue.value) ? (
 						<TimesCircleSolid
-							// @ts-ignore
 							class="px-select-icon"
 							onClick={clearHandler}
 							ref={(el: any) => {
@@ -803,10 +805,13 @@ defineRender(() => {
 					)}
 				</div>
 			)}
+			<div class="px-select-chevron-wrapper">
+				<ChevronDown class="px-select-icon" />
+			</div>
 			{props.loading && (
 				<div class="px-select-loading-wrapper">
 					<SpinnerThirdSolid
-						// @ts-ignore
+						color="var(--px-primary-6)"
 						class="px-select-icon px-animation__loading"
 					/>
 				</div>
