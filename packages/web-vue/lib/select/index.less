@@ -64,14 +64,17 @@
 					height: @@fontVar;
 				}
 				.@{prefix}-icon {
-					width: @@fontVar;
-					height: @@fontVar;
+					font-size: @@fontVar;
 				}
 			}
 			.@{prefix}-loading-wrapper {
 				.@{prefix}-icon {
-					width: @@fontVar;
-					height: @@fontVar;
+					font-size: @@fontVar;
+				}
+			}
+			.@{prefix}-chevron-wrapper {
+				.@{prefix}-icon {
+					font-size: @@fontVar;
 				}
 			}
 		}
@@ -165,6 +168,7 @@
 	&-prefix-wrapper,
 	&-suffix-wrapper,
 	&-loading-wrapper,
+	&-chevron-wrapper,
 	&-close-wrapper {
 		flex-shrink: 0;
 		display: flex;
@@ -175,6 +179,7 @@
 	}
 	&-suffix-wrapper,
 	&-loading-wrapper,
+	&-chevron-wrapper,
 	&-close-wrapper {
 		margin-left: @px-interval-2;
 	}
