@@ -8,7 +8,8 @@
 import type { PopupPortalProps } from './type'
 
 defineOptions({
-	name: 'PopupPortal'
+	name: 'PopupPortal',
+	inheritAttrs: false
 })
 
 const props = withDefaults(defineProps<PopupPortalProps>(), {
