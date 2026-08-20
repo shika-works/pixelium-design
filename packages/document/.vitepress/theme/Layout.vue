@@ -29,7 +29,7 @@ onContentUpdated(() => {
 		.forEach((el) => el instanceof HTMLElement && (el.style.display = 'none'))
 })
 
-const { isDark } = useData()
+const { isDark, theme } = useData()
 
 function updateThemeClass() {
 	const html = document.documentElement
@@ -70,6 +70,15 @@ const checkUrlChange = () => {
 	}
 }
 
+const scrollCallback = () => {
+	setTimeout(() => {
+		const activeElement = document.querySelector('.VPSidebarItem.is-active')
+		if (activeElement) {
+			activeElement.scrollIntoView({ block: 'center', behavior: 'smooth' })
+		}
+	}, 1000)
+}
+
 if (typeof window !== 'undefined') {
 	window.addEventListener('popstate', checkUrlChange)
 	;['pushState', 'replaceState'].forEach((method) => {
@@ -86,24 +95,12 @@ if (typeof window !== 'undefined') {
 	checkUrlChange()
 }
 
-const route = useRoute()
-const scrollCallback = () => {
-	nextTick(() => {
-		const activeElement = document.querySelector('.VPSidebarItem.is-active')
-		if (activeElement) {
-			activeElement.scrollIntoView({ block: 'center', behavior: 'smooth' })
-		}
-	})
-}
-watch(
-	() => route.path,
-	() => {
-		scrollCallback()
-	}
-)
+onMounted(() => {
+	scrollCallback()
+})
+
 
 const [initBody] = useScrollBar()
-const [initSidebar, _, initialized] = useScrollBar('simple')
 
 if (typeof document !== 'undefined') {
 	initBody({
@@ -111,27 +108,12 @@ if (typeof document !== 'undefined') {
 	})
 }
 
-onMounted(() => {
-	nextTick(() => {
-		const sidebar = document.querySelector('.VPSidebar') as HTMLElement | null
-		if (!sidebar) {
-			return
-		}
-		sidebar.setAttribute('data-overlayscrollbars-initialize', '')
-
-		initSidebar({
-			target: sidebar
-		})
-	})
-})
-
-watch(initialized, () => {
-	if (initialized.value) {
-		scrollCallback()
-	}
-})
 </script>
 
 <template>
-	<DefaultTheme.Layout />
+	<DefaultTheme.Layout>
+		<template #nav-bar-title-after>
+			<span v-if="theme.version" class="vp-version-badge">v{{ theme.version }}</span>
+		</template>
+	</DefaultTheme.Layout>
 </template>

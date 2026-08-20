@@ -1,4 +1,5 @@
 import DefaultTheme from 'vitepress/theme'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import Layout from './Layout.vue'
 
 import '@pixelium/web-vue/dist/font.css'
@@ -17,7 +18,22 @@ import type { App } from 'vue'
 export default {
 	extends: DefaultTheme,
 	Layout,
-	enhanceApp({ app }: { app: App }) {
+	async enhanceApp({ app }: { app: App }) {
+		/**
+		 * Register a Vue Router with memory history solely to resolve RouterLink to props into hrefs,
+		 * while VitePress handles actual navigation.
+		 */
+		const vueRouter = createRouter({
+			history: createMemoryHistory(import.meta.env.BASE_URL),
+			routes: [
+				{ path: '/:pathMatch(.*)*', name: 'docs-page', component: { render: () => null } }
+			]
+		})
+		app.use(vueRouter)
+		if (typeof window === 'undefined') {
+			await vueRouter.push('/')
+		}
+
 		app.use(PixeliumVue)
 		app.component('demo-preview', DemoContainer)
 		app.component('IconExamplePa', IconExamplePa)
