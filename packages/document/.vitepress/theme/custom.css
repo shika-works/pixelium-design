@@ -84,6 +84,15 @@ html.dark {
 	.VPSidebarItem.is-active {
 		background: #0d6d5e;
 	}
+	::-webkit-scrollbar {
+		background-color: var(--vp-c-bg-alt);
+	}
+	::-webkit-scrollbar-track {
+		background-color: var(--vp-c-bg-alt);
+	}
+	::-webkit-scrollbar-thumb {
+		background-color: rgba(255, 255, 255, 0.15);
+	}
 }
 
 ::-webkit-scrollbar {
@@ -430,3 +439,18 @@ html.dark {
 }
 
 /* p end */
+
+/* version badge start */
+.vp-version-badge {
+	display: inline-block;
+	margin-left: 4px;
+	padding: 0 8px;
+	font-size: 12px;
+	line-height: 20px;
+	color: var(--vp-c-brand-1);
+	background: var(--vp-c-brand-soft);
+	border: 1px solid var(--vp-c-brand-1);
+	border-radius: 4px;
+	vertical-align: middle;
+}
+/* version badge end */

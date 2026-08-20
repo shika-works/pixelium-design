@@ -5,6 +5,7 @@ import MenuItem from '../../menu-item/index.vue'
 import Submenu from '../../submenu/index.vue'
 import { GROUP_OPTION_TYPE, SUBMENU_OPTION_TYPE } from '../../share/const'
 import { createMocks } from '../../share/util/test'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import { nextTick } from 'vue'
 
 describe('Menu Component', () => {
@@ -24,7 +25,25 @@ describe('Menu Component', () => {
 		const ul = wrapper.find('ul')
 		expect(ul.exists()).toBe(true)
 		expect(ul.attributes('aria-orientation')).toBe('horizontal')
-		expect(wrapper.classes()).toContain('px-menu__horizontal')
+		expect(ul.classes()).toContain('px-menu__horizontal')
+	})
+
+	it('inherits non-prop attributes onto the root <ul> (fragment root)', () => {
+		const wrapper = mount(Menu, {
+			attrs: {
+				style: 'margin-top: 8px',
+				id: 'main-menu',
+				class: 'custom-menu'
+			}
+		})
+
+		const ul = wrapper.find('ul')
+		expect(ul.attributes('style')).toContain('margin-top: 8px')
+		expect(ul.attributes('id')).toBe('main-menu')
+		// component classes are preserved and merged with the inherited class
+		expect(ul.classes()).toContain('px-menu')
+		expect(ul.classes()).toContain('px-menu__vertical')
+		expect(ul.classes()).toContain('custom-menu')
 	})
 
 	it('applies defaultActive to child MenuItem', async () => {
@@ -169,5 +188,116 @@ describe('Menu Component', () => {
 		const submenuLabel = wrapper.find('.px-submenu-label')
 		expect(submenuLabel.exists()).toBe(true)
 		expect(submenuLabel.text()).toContain('Sub1')
+	})
+
+	it('renders route (RouterLink) items in horizontal ellipsis mode without crashing', async () => {
+		const router = createRouter({
+			history: createMemoryHistory(),
+			routes: [
+				{ path: '/', component: { template: '<div />' } },
+				{ path: '/about', component: { template: '<div />' } }
+			]
+		})
+
+		const wrapper = mount(
+			{
+				components: { Menu, MenuItem },
+				template: `
+					<Menu direction="horizontal">
+						<MenuItem :index="1" label="Home" :route="{ path: '/' }" />
+						<MenuItem :index="2" label="About" :route="{ path: '/about' }" />
+					</Menu>
+				`
+			},
+			{
+				global: { plugins: [router] }
+			}
+		)
+
+		await nextTick()
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		await nextTick()
+
+		const layer = wrapper.find('.px-menu-measure-layer')
+		expect(layer.exists()).toBe(true)
+		expect(layer.find('a').exists()).toBe(true)
+		expect(layer.find('a').attributes('href')).toBeDefined()
+	})
+
+	it('renders a RouterLink item inside a horizontal submenu without crashing', async () => {
+		const router = createRouter({
+			history: createMemoryHistory(),
+			routes: [
+				{ path: '/', component: { template: '<div />' } },
+				{ path: '/child', component: { template: '<div />' } }
+			]
+		})
+
+		const wrapper = mount(
+			{
+				components: { Menu, Submenu, MenuItem },
+				template: `
+					<Menu direction="horizontal">
+						<Submenu index="s1" label="Sub">
+							<MenuItem :index="1" label="Child" :route="{ path: '/child' }" />
+						</Submenu>
+					</Menu>
+				`
+			},
+			{
+				global: { plugins: [router] }
+			}
+		)
+
+		await nextTick()
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		await nextTick()
+
+		const layer = wrapper.find('.px-menu-measure-layer')
+		expect(layer.exists()).toBe(true)
+		expect(layer.find('.px-submenu-label').text()).toContain('Sub')
+
+		// popover content is teleported to body by both the visible and the measure trees
+		const childLinks = [...document.body.querySelectorAll('a.px-menu-item-link')].filter(
+			(a) => a.getAttribute('href') === '/child'
+		)
+		expect(childLinks.length).toBeGreaterThanOrEqual(2)
+	})
+
+	it('renders the measure layer hidden and out of the a11y tree', async () => {
+		const wrapper = mount(Menu, {
+			props: { direction: 'horizontal' }
+		})
+
+		await nextTick()
+
+		const layer = wrapper.find('.px-menu-measure-layer')
+		expect(layer.exists()).toBe(true)
+		expect(layer.attributes('aria-hidden')).toBe('true')
+		expect((layer.element as HTMLElement).style.visibility).toBe('hidden')
+		expect((layer.element as HTMLElement).style.position).toBe('absolute')
+	})
+
+	it('does not render the measure layer in vertical mode', async () => {
+		const wrapper = mount(Menu, {
+			props: { direction: 'vertical' }
+		})
+
+		await nextTick()
+
+		expect(wrapper.find('.px-menu-measure-layer').exists()).toBe(false)
+	})
+
+	it('shares the same class list between the visible menu and the measure layer', async () => {
+		const wrapper = mount(Menu, {
+			props: { direction: 'horizontal', dark: true }
+		})
+
+		await nextTick()
+
+		const visibleUl = wrapper.find('ul.px-menu')
+		const measureUl = wrapper.find('.px-menu-measure-layer ul')
+		expect(measureUl.exists()).toBe(true)
+		expect(measureUl.classes()).toEqual(visibleUl.classes())
 	})
 })

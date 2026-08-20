@@ -7,7 +7,8 @@ import { forwardEmits } from '../share/util/reactivity'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 
 defineOptions({
-	name: 'Dialog'
+	name: 'Dialog',
+	inheritAttrs: false
 })
 
 const props = withDefaults(
