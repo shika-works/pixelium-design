@@ -1,11 +1,17 @@
 import { defineConfig } from 'vitepress'
+import type { DefaultTheme } from 'vitepress/theme'
 import { componentPreview, containerPreview } from '@vitepress-demo-preview/plugin'
 // @ts-ignore
 import markdownItKatex from 'markdown-it-katex'
 import zh from './zh'
 import en from './en'
+import { version } from './version'
 
-export default defineConfig({
+interface ThemeConfig extends DefaultTheme.Config {
+	version?: string
+}
+
+export default defineConfig<ThemeConfig>({
 	title: 'Pixelium Design Doc',
 	description: 'Pixelium Design Doc',
 	lastUpdated: true,
@@ -30,6 +36,7 @@ export default defineConfig({
 		en: { label: 'English', ...en }
 	},
 	themeConfig: {
+		version,
 		socialLinks: [
 			{ icon: 'github', link: 'https://github.com/shika-works/pixelium-design' },
 			{ icon: 'npm', link: 'https://www.npmjs.com/package/@pixelium/web-vue' }
