@@ -2,14 +2,14 @@
 import {
 	computed,
 	getCurrentInstance,
+	mergeProps,
 	nextTick,
 	onMounted,
 	provide,
 	ref,
-	render,
 	shallowRef,
 	toRef,
-	useId,
+	useAttrs,
 	useSlots,
 	watch,
 	withScopeId,
@@ -28,7 +28,7 @@ import { MENU_PROVIDE } from '../share/const/provide-key'
 import { useControlledMode } from '../share/hook/use-controlled-mode'
 import { debounce, isArray, isNullish, isObject, isString } from 'parsnip-kit'
 import { flattenVNodes } from '../share/util/render'
-import { useHiddenMeasure } from '../share/hook/use-hidden-measure'
+import MeasureLayer from './measure-layer.vue'
 import Submenu from '../submenu/index.vue'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { useDarkMode } from '../share/hook/use-dark-mode'
@@ -37,7 +37,8 @@ import MenuGroup from '../menu-group/index.vue'
 import { GROUP_OPTION_TYPE } from '../share/const'
 
 defineOptions({
-	name: 'Menu'
+	name: 'Menu',
+	inheritAttrs: false
 })
 
 const props = withDefaults(defineProps<MenuProps>(), {
@@ -51,6 +52,8 @@ const props = withDefaults(defineProps<MenuProps>(), {
 })
 
 const emits = defineEmits<MenuEvents>()
+
+const attrs = useAttrs()
 
 const [active, updateActive] = useControlledMode('active', props, emits, {
 	defaultField: 'defaultActive'
@@ -126,7 +129,6 @@ const instance = getCurrentInstance()
 
 const visibleIndex = ref(-1)
 
-const id = useId()
 let childrenVNode = undefined as VNode[] | undefined
 
 const isMenuOption = (
@@ -197,42 +199,21 @@ const renderMenuChildren = () => {
 	return children
 }
 
-const hiddenMeasureGetter = useHiddenMeasure('menu-' + id)
-const latestMeasure = () => {
-	const children = renderMenuChildren()
-	children.push(<Submenu index={ELLIPSIS} label="..."></Submenu>)
-	const renderMeasure = () => {
-		return (
-			<ul
-				class={[
-					'px-menu',
-					'pixelium',
-					`px-menu__${props.direction}`,
-					{ 'px-menu__collapsed': props.collapsed }
-				]}
-			>
-				{children}
-			</ul>
-		)
+const menuClass = computed(() => {
+	const classes = ['px-menu', 'pixelium', `px-menu__${props.direction}`]
+	if (props.collapsed) {
+		classes.push('px-menu__collapsed')
 	}
-	return {
-		render: renderMeasure,
-		children
+	if (dark.value) {
+		classes.push('px-menu__dark')
 	}
-}
+	if (darkMode.value) {
+		classes.push('px-menu__dark-theme')
+	}
+	return classes
+})
 
 const menuRef = shallowRef<HTMLUListElement | null>(null)
-
-const hiddenRender = () => {
-	const container = hiddenMeasureGetter()
-
-	if (!container) {
-		return
-	}
-	const { render: renderFunc, children } = latestMeasure()
-	render(renderFunc(), container)
-	childrenVNode = children
-}
 const measure = () => {
 	if (!menuRef.value || !childrenVNode) {
 		return
@@ -268,10 +249,7 @@ const measure = () => {
 
 const hiddenMeasureImmediate = () => {
 	nextTick(() => {
-		hiddenRender()
-		nextTick(() => {
-			measure()
-		})
+		measure()
 	})
 }
 const hiddenMeasure = debounce(hiddenMeasureImmediate, 150)
@@ -297,20 +275,27 @@ useResizeObserver(menuRef, () => {
 
 defineRender(() => {
 	const scopeId = instance?.vnode.scopeId
+	const isMeasure = props.direction === 'horizontal' && props.ellipsis
 	const renderMenu = () => {
 		const children = renderMenuChildren()
-		const visibleChildren =
-			props.direction === 'horizontal' && props.ellipsis
-				? visibleIndex.value === -1
-					? []
-					: children.slice(0, visibleIndex.value + 1)
-				: children
-		const hiddenChildren =
-			props.direction === 'horizontal' && props.ellipsis
-				? visibleIndex.value === -1
-					? children
-					: children.slice(visibleIndex.value + 1)
-				: []
+		const measureChildren = isMeasure
+			? [
+					...renderMenuChildren(),
+					<Submenu key={ELLIPSIS} index={ELLIPSIS} label="..."></Submenu>
+				]
+			: undefined
+		childrenVNode = measureChildren
+
+		const visibleChildren = isMeasure
+			? visibleIndex.value === -1
+				? []
+				: children.slice(0, visibleIndex.value + 1)
+			: children
+		const hiddenChildren = isMeasure
+			? visibleIndex.value === -1
+				? children
+				: children.slice(visibleIndex.value + 1)
+			: []
 		if (hiddenChildren.length) {
 			visibleChildren.push(
 				<Submenu index={ELLIPSIS} label="...">
@@ -325,14 +310,7 @@ defineRender(() => {
 				ref={menuRef}
 				role="menu"
 				aria-orientation={props.direction === 'horizontal' ? 'horizontal' : 'vertical'}
-				class={[
-					'px-menu',
-					'pixelium',
-					`px-menu__${props.direction}`,
-					{ 'px-menu__collapsed': props.collapsed },
-					{ 'px-menu__dark': dark.value },
-					{ 'px-menu__dark-theme': darkMode.value }
-				]}
+				{...mergeProps({ class: menuClass.value }, attrs)}
 			>
 				{visibleChildren}
 			</ul>
@@ -340,7 +318,13 @@ defineRender(() => {
 	}
 
 	const res = scopeId ? withScopeId(scopeId)(renderMenu) : renderMenu
-	return res()
+
+	return (
+		<>
+			{res()}
+			{isMeasure && <MeasureLayer classes={menuClass.value}>{childrenVNode}</MeasureLayer>}
+		</>
+	)
 })
 </script>
 
