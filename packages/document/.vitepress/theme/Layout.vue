@@ -99,7 +99,6 @@ onMounted(() => {
 	scrollCallback()
 })
 
-
 const [initBody] = useScrollBar()
 
 if (typeof document !== 'undefined') {
@@ -107,7 +106,6 @@ if (typeof document !== 'undefined') {
 		target: document.body
 	})
 }
-
 </script>
 
 <template>
