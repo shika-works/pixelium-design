@@ -31,6 +31,7 @@
   - 修复了 Textarea 组件拖拽时，渲染延迟的问题。
   - 修复了以组件形式使用的 Dialog 挂载位置异常和以及 `root` 属性无效的问题。
   - 修复了 Menu 组件中测量时 VueRouter 相关逻辑报错的问题。
+  - 修复了 MenuItem、DropDown 组件的链接在键盘聚焦（focus-visible）时仍显示默认焦点轮廓的问题。
 ]]]
 [[[en
 ## v0.2.0
@@ -58,6 +59,7 @@
   - Fixed the rendering delay issue when dragging the Textarea component.
   - Fixed the issue where the Dialog used as a component had an abnormal mount position and the `root` property was ineffective.
   - Fixed the issue where VueRouter-related logic threw errors during measurement in the Menu component.
+  - Fixed an issue where links in MenuItem and DropDown still showed the default focus outline on keyboard focus-visible.
 ]]]
 
 [[[zh
