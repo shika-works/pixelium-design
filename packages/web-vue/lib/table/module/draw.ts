@@ -10,6 +10,7 @@ import {
 import type { TableProps } from '../type'
 import type { LooseRequired } from '../../share/type'
 import { useDrawCanvas } from '../../share/hook/use-draw-canvas'
+import { useDarkMode } from '../../share/hook/use-dark-mode'
 
 const drawTableBorder = (
 	wrapperRef: ShallowRef<HTMLDivElement | null>,
@@ -94,6 +95,7 @@ export const useDrawPixel = (
 	props: LooseRequired<TableProps>
 ) => {
 	const polygon = ref('')
+	const darkMode = useDarkMode()
 	const drawPixel = () => {
 		drawTableBorder(
 			wrapperRef,
@@ -110,7 +112,7 @@ export const useDrawPixel = (
 	})
 
 	watch(
-		[() => props.borderRadius, bordered, pixelSize],
+		[darkMode, () => props.borderRadius, bordered, pixelSize],
 		() => {
 			debouncedTrigger()
 		},
