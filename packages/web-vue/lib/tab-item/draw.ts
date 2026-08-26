@@ -6,6 +6,7 @@ import {
 	floodFill
 } from '../share/util/plot'
 import { usePixelSize } from '../share/hook/use-pixel-size'
+import { useDarkMode } from '../share/hook/use-dark-mode'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
 import type { RgbaColor } from '../share/type'
 import { BORDER_CORNER_RAD_RANGE } from '../share/const'
@@ -119,6 +120,7 @@ export const useDraw = (
 	}
 ) => {
 	const pixelSize = usePixelSize()
+	const darkMode = useDarkMode()
 	const draw = () => {
 		const preprocessData = canvasPreprocess(wrapperRef, canvasRef)
 		if (!preprocessData) {
@@ -168,7 +170,7 @@ export const useDraw = (
 		triggerDraw()
 	})
 
-	watch([pixelSize, options.active, options.placement], () => {
+	watch([pixelSize, darkMode, options.active, options.placement], () => {
 		if (canvasRef.value) {
 			debouncedTrigger()
 		}
