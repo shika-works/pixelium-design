@@ -1,5 +1,13 @@
 <script setup lang="tsx">
-import { useSlots, Fragment, type VNode, shallowRef, ref, cloneVNode } from 'vue'
+import {
+	useSlots,
+	Fragment,
+	type VNode,
+	shallowRef,
+	ref,
+	cloneVNode,
+	onBeforeUnmount
+} from 'vue'
 import { flattenVNodes, isTextVNode } from '../share/util/render'
 import type { PopupTriggerEmits, PopupTriggerProps } from './type'
 import { useClickOutsideListener } from '../share/hook/use-click-outside-listener'
@@ -89,6 +97,14 @@ const startDrag = (e: TouchEvent | MouseEvent) => {
 	document.addEventListener('touchend', stopDrag)
 	emits('dragStart', e)
 }
+
+onBeforeUnmount(() => {
+	dragging.value = false
+	document.removeEventListener('mousemove', handleDrag)
+	document.removeEventListener('mouseup', stopDrag)
+	document.removeEventListener('touchmove', handleDrag)
+	document.removeEventListener('touchend', stopDrag)
+})
 
 const initCurrentTrigger = (e: any) => {
 	if (currentTrigger.value) {
