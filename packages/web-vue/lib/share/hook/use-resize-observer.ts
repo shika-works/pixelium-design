@@ -48,5 +48,6 @@ export const useResizeObserver = (
 			resizeObserver.disconnect()
 			resizeObserver = null
 		}
+		window.removeEventListener('resize', windowResizeCallback)
 	})
 }
