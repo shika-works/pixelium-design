@@ -41,11 +41,11 @@ export const defaultFilter = <T extends string | Option | GroupOption>(
 }
 
 export const findSameOption = <T extends string | Option | GroupOption>(
-	keyword: string,
+	keyword: any,
 	list: T[],
 	checkLabel: boolean = false
 ): T[] => {
-	if (!keyword) {
+	if ((checkLabel && keyword === '') || keyword === null || keyword === undefined) {
 		return []
 	}
 	const len = list.length

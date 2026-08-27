@@ -9,7 +9,7 @@ import {
 } from 'parsnip-kit'
 import type { LooseRequired, RemoveUndefinedFromFields } from '../share/type'
 import type { SliderProps } from './type'
-import { type ShallowRef } from 'vue'
+import type { ShallowRef } from 'vue'
 import { calcPixelSize } from '../share/util/plot'
 import { fixedNumber } from '../share/util/common'
 
