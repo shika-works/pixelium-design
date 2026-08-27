@@ -49,6 +49,12 @@ let closeTimer = null as any
 
 const displayContent = ref(!!isActive.value)
 
+// The height transition must not play on the initial mount (e.g. an item that
+// starts expanded would otherwise animate from 0 to its real height once the
+// first ResizeObserver measurement lands). Transitions are only enabled after
+// the user actually toggles the item.
+const transitionEnabled = ref(false)
+
 const setContentHeight = () => {
 	if (contentWrapperRef.value) {
 		contentWrapperHeight.value = contentWrapperRef.value.clientHeight
@@ -69,6 +75,7 @@ const activeHandler = (state: boolean) => {
 }
 const activeHandlerDebounce = debounce(activeHandler, 50)
 watch(isActive, (val) => {
+	transitionEnabled.value = true
 	if (closeTimer) {
 		clearTimeout(closeTimer)
 		closeTimer = null
@@ -190,7 +197,7 @@ useDraw(
 				class="px-collapse-item-content"
 				:style="{
 					height: `${contentWrapperHeight || 0}px`,
-					transition: `height ${animationDuration}ms`
+					transition: transitionEnabled ? `height ${animationDuration}ms` : 'none'
 				}"
 				ref="contentRef"
 			>
