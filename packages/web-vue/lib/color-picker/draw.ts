@@ -49,11 +49,11 @@ const drawTransparencyGridInPolygon = (
 	const pattern = ctx.createPattern(patternCanvas, 'repeat')
 	if (!pattern) return
 
+	if (polygon.length < 3) return
+
 	ctx.save()
 
 	ctx.beginPath()
-
-	if (polygon.length < 3) return
 
 	const first = polygon[0]
 	ctx.moveTo(first[0], first[1])
