@@ -213,7 +213,7 @@ const selectAllMethod = async (
 													Button,
 													{
 														theme: 'info',
-														onClick: () => clearPageHandler(dialogReturn),
+														onClick: () => clearPageHandler(dialogReturn)
 													},
 													{ default: () => 'Clear Page' }
 												)
@@ -223,7 +223,7 @@ const selectAllMethod = async (
 													Button,
 													{
 														theme: 'warning',
-														onClick: () => clearAllHandler(dialogReturn),
+														onClick: () => clearAllHandler(dialogReturn)
 													},
 													{ default: () => 'Clear All' }
 												)
@@ -241,7 +241,7 @@ const selectAllMethod = async (
 									Button,
 									{
 										theme: 'info',
-										onClick: () => pageOnlyHandler(dialogReturn),
+										onClick: () => pageOnlyHandler(dialogReturn)
 									},
 									{ default: () => 'This Page Only' }
 								),
@@ -249,7 +249,7 @@ const selectAllMethod = async (
 									Button,
 									{
 										theme: 'primary',
-										onClick: () => pageAddHandler(dialogReturn),
+										onClick: () => pageAddHandler(dialogReturn)
 									},
 									{ default: () => 'Add This Page' }
 								),
@@ -257,7 +257,7 @@ const selectAllMethod = async (
 									Button,
 									{
 										theme: 'primary',
-										onClick: () => selectAllHandler(dialogReturn),
+										onClick: () => selectAllHandler(dialogReturn)
 									},
 									{ default: () => 'Select All' }
 								)
@@ -281,7 +281,7 @@ const selectAllMethod = async (
 								Button,
 								{
 									theme: 'info',
-									onClick: () => clearPageHandler(dialogReturn),
+									onClick: () => clearPageHandler(dialogReturn)
 								},
 								{ default: () => 'Clear Page' }
 							),
@@ -289,7 +289,7 @@ const selectAllMethod = async (
 								Button,
 								{
 									theme: 'warning',
-									onClick: () => clearAllHandler(dialogReturn),
+									onClick: () => clearAllHandler(dialogReturn)
 								},
 								{ default: () => 'Clear All' }
 							)

@@ -1,0 +1,27 @@
+# dependencies & build output
+node_modules
+dist
+dist-ssr
+es
+coverage
+*.log
+*.local
+
+# lockfile (managed by pnpm)
+pnpm-lock.yaml
+
+# generated d.ts & icons
+packages/web-vue/lib/**/*.d.ts
+packages/web-vue/lib/icons/*.ts
+packages/locale/src/**/*.d.ts
+
+# generated docs (regenerated from packages/document/template)
+packages/document/zh
+packages/document/en
+packages/document/index.md
+packages/document/template/**/*.md
+packages/document/slice/**/*.md
+packages/document/.vitepress/dist
+packages/document/.vitepress/cache
+packages/document/.vitepress/.temp
+packages/document/public
