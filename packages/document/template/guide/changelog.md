@@ -6,6 +6,17 @@
 ]]]
 
 [[[zh
+## v0.2.1
+- 新增：
+  - 新增数据展示组件：Bubble。
+]]]
+[[[en
+## v0.2.1
+- New Features:
+  - New data display component: Bubble.
+]]]
+
+[[[zh
 ## v0.2.0
 - 新增：
   - 新增数据输入组件：ColorPicker、Rate。
