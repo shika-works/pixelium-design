@@ -1,5 +1,4 @@
-import { debounce } from 'parsnip-kit'
-import { type ShallowRef, nextTick, onMounted, type WatchSource } from 'vue'
+import { type ShallowRef, nextTick, onBeforeUnmount, onMounted, type WatchSource } from 'vue'
 import { usePolling } from './use-polling'
 import { useResizeObserver } from './use-resize-observer'
 import { useTransitionEnd } from './use-transition-end'
@@ -36,10 +35,14 @@ export function useDrawCanvas(
 	const { pollSizeChange } = options
 
 	let wrapperSize = { width: 0, height: 0 }
-
-	const debouncedDraw = debounce(drawFunc, 0, {
-		maxWait: 100
-	})
+	let rafId: number | null = null
+	const scheduleDraw = () => {
+		if (rafId !== null) return
+		rafId = requestAnimationFrame(() => {
+			rafId = null
+			drawFunc()
+		})
+	}
 
 	onMounted(() => {
 		nextTick(() => {
@@ -47,13 +50,14 @@ export function useDrawCanvas(
 		})
 	})
 
-	useResizeObserver(
-		wrapperRef,
-		options.renderImmediatelyWhenResize ? drawFunc : debouncedDraw,
-		drawFunc
-	)
-	useWatchGlobalCssVal(debouncedDraw)
-	useTransitionEnd(wrapperRef, debouncedDraw, ignoreNonSizeTransition)
+	onBeforeUnmount(() => {
+		if (rafId !== null) cancelAnimationFrame(rafId)
+		rafId = null
+	})
+
+	useResizeObserver(wrapperRef, drawFunc)
+	useWatchGlobalCssVal(drawFunc)
+	useTransitionEnd(wrapperRef, drawFunc, ignoreNonSizeTransition)
 
 	if (pollSizeChange) {
 		usePolling(pollSizeChange, () => {
@@ -62,7 +66,7 @@ export function useDrawCanvas(
 				const rect = wrapper.getBoundingClientRect()
 				if (rect.width !== wrapperSize.width || rect.height !== wrapperSize.height) {
 					wrapperSize = { width: rect.width, height: rect.height }
-					debouncedDraw()
+					scheduleDraw()
 				}
 			}
 		})
@@ -70,6 +74,6 @@ export function useDrawCanvas(
 
 	return {
 		triggerDraw: drawFunc,
-		debouncedTrigger: debouncedDraw
+		debouncedTrigger: scheduleDraw
 	}
 }

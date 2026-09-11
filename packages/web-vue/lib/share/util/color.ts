@@ -10,6 +10,8 @@ import type {
 } from '../type'
 import { inBrowser } from './env'
 import { createLRU } from './lru-cache'
+import { EventBus } from './event-bus'
+import { GLOBAL_CSS_VAR_CHANGE } from '../const/event-bus-key'
 type ColorOutputFormat = 'rgb' | 'hsv' | 'hsl' | 'hwb'
 const colorCache = createLRU<string, ParseColorValueResult>(120)
 
@@ -508,22 +510,56 @@ export function parseColor(color: string, outputFormat: ColorOutputFormat = 'rgb
 	}
 }
 
+// Cached: getComputedStyle forces a style recalc. The <html> class is part of the key.
+const themeColorCache = new Map<string, RgbaColor | null>()
+const themeColorStringCache = new Map<string, string>()
+const THEME_COLOR_CACHE_LIMIT = 512
+
+EventBus.on(GLOBAL_CSS_VAR_CHANGE, () => {
+	themeColorCache.clear()
+	themeColorStringCache.clear()
+})
+
+const getThemeColorKey = (theme: string, level: number) =>
+	`${document.documentElement.className}|${theme}-${level}`
+
 export const getGlobalThemeColor = (theme: string, level: number) => {
 	if (!inBrowser()) {
 		return TRANSPARENT_RGBA_COLOR_OBJECT
 	}
-	return (
+	const key = getThemeColorKey(theme, level)
+	const cached = themeColorCache.get(key)
+	if (cached !== undefined) {
+		return cached
+	}
+	const value =
 		parseColor(
 			getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
 		)?.color || null
-	)
+	if (themeColorCache.size >= THEME_COLOR_CACHE_LIMIT) {
+		themeColorCache.clear()
+	}
+	themeColorCache.set(key, value)
+	return value
 }
 
 export const getGlobalThemeColorString = (theme: string, level: number) => {
 	if (!inBrowser()) {
 		return 'rgba(0,0,0,0)'
 	}
-	return getComputedStyle(document.documentElement).getPropertyValue(`--px-${theme}-${level}`)
+	const key = getThemeColorKey(theme, level)
+	const cached = themeColorStringCache.get(key)
+	if (cached !== undefined) {
+		return cached
+	}
+	const value = getComputedStyle(document.documentElement).getPropertyValue(
+		`--px-${theme}-${level}`
+	)
+	if (themeColorStringCache.size >= THEME_COLOR_CACHE_LIMIT) {
+		themeColorStringCache.clear()
+	}
+	themeColorStringCache.set(key, value)
+	return value
 }
 
 function toLinear(c: number) {

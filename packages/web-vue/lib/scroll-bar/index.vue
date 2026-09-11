@@ -243,23 +243,28 @@ const getPlacement = (value: boolean | boolean[] | undefined) => {
 const shouldShowMask = computed(() => {
 	return getPlacement(props.edgeMask)
 })
+
+// Keep referentially stable: overlayscrollbars-vue re-applies these with force = true.
+const osOptions = computed(() => ({
+	scrollbars: {
+		theme: theme.value,
+		clickScroll: true,
+		visibility: props.visible ? ('auto' as const) : ('hidden' as const)
+	}
+}))
+
+const osEvents = {
+	initialized: initializeHandler,
+	scroll: scrollHandler,
+	updated: updateHandler
+}
 </script>
 
 <template>
 	<OverlayScrollbarsComponent
 		ref="osRef"
-		:options="{
-			scrollbars: {
-				theme: theme,
-				clickScroll: true,
-				visibility: props.visible ? 'auto' : 'hidden'
-			}
-		}"
-		:events="{
-			initialized: initializeHandler,
-			scroll: scrollHandler,
-			updated: updateHandler
-		}"
+		:options="osOptions"
+		:events="osEvents"
 		defer
 		:class="{
 			'px-scroll': true,
