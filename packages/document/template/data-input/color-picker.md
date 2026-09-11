@@ -106,7 +106,7 @@ borderRadius: 圆角半径，优先级高于 `shape`，与 CSS `border-radius` �
 status: 表单验证状态。
 autofocus: 原生 `<input>` 的 `autofocus` 属性。
 dropdownDestroyOnHide: 下拉面板是否会在隐藏时销毁。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 dropdownProps: 下拉选择面板的属性。
 showIcon: 是否展示图标。
 
@@ -138,7 +138,7 @@ borderRadius: Border radius, higher priority than `shape`, consistent with CSS `
 status: Form validation status.
 autofocus: Native `<input>` `autofocus` attribute.
 dropdownDestroyOnHide: Whether the dropdown panel is destroyed when hidden.
-pollSizeChange: Enable polling for component size changes, may affect performance, commonly used when the component's size is affected by container elements, leading to canvas rendering issues.
+pollSizeChange: Enable polling for component size changes, may affect performance.
 dropdownProps: Properties of the dropdown selection panel.
 showIcon: Whether to display the icon.
 

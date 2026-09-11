@@ -3,8 +3,8 @@
 
 弹出对话框时，对话框就会被弹出。
 
-::: warning
-被包含在 Dialog 中的像素风组件，需要设置 `pollSizeChange` 为 `true` 确保正常渲染。
+::: tip
+被包含在 Dialog 中的像素风组件不再需要设置 `pollSizeChange`，会自动正常渲染。
 :::
 ]]]
 [[[en
@@ -12,8 +12,8 @@
 
 When a dialog is triggered, the dialog will pop up.
 
-::: warning
-For pixel-style components nested inside Dialog, set `pollSizeChange` to `true` to ensure they render correctly.
+::: tip
+Pixel-style components nested inside a Dialog no longer need `pollSizeChange` and render correctly on their own.
 :::
 ]]]
 

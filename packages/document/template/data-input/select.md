@@ -179,7 +179,7 @@ status: 表单验证状态。
 popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
 optionsDestroyOnHide: 下拉选项是否会在隐藏时销毁。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.input: 搜索选项输入时的回调。
 events.update:modelValue: 更新 `modelValue` 的回调。

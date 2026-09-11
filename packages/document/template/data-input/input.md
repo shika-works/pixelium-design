@@ -182,7 +182,7 @@ nativeType: 原生 `<input>` 的 `type` 属性。
 autofocus: 原生 `<input>` 的 `autofocus` 属性。
 status: 表单验证状态。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.change: 输入内容变化时的回调。
 events.clear: 点击清除文本按钮，清除内容时的回调。

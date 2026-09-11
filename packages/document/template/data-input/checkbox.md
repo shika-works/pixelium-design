@@ -117,7 +117,7 @@ value: 复选框的原生 `value` 属性。
 variant: 复选框的样式变体。
 size: 复选框的大小。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 选中/取消选择复选框的回调。
@@ -137,7 +137,7 @@ value: the native `value` attribute of checkboxes.
 size: Size of the checkbox.
 variant: The style variant of the checkbox.
 
-pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 events.update:modelValue: Callback for updating `modelValue`.
 events.input: Callback for selecting/deselecting the checkbox.

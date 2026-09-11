@@ -214,7 +214,6 @@ const selectAllMethod = async (
 													{
 														theme: 'info',
 														onClick: () => clearPageHandler(dialogReturn),
-														pollSizeChange: true
 													},
 													{ default: () => 'Clear Page' }
 												)
@@ -225,7 +224,6 @@ const selectAllMethod = async (
 													{
 														theme: 'warning',
 														onClick: () => clearAllHandler(dialogReturn),
-														pollSizeChange: true
 													},
 													{ default: () => 'Clear All' }
 												)
@@ -244,7 +242,6 @@ const selectAllMethod = async (
 									{
 										theme: 'info',
 										onClick: () => pageOnlyHandler(dialogReturn),
-										pollSizeChange: true
 									},
 									{ default: () => 'This Page Only' }
 								),
@@ -253,7 +250,6 @@ const selectAllMethod = async (
 									{
 										theme: 'primary',
 										onClick: () => pageAddHandler(dialogReturn),
-										pollSizeChange: true
 									},
 									{ default: () => 'Add This Page' }
 								),
@@ -262,7 +258,6 @@ const selectAllMethod = async (
 									{
 										theme: 'primary',
 										onClick: () => selectAllHandler(dialogReturn),
-										pollSizeChange: true
 									},
 									{ default: () => 'Select All' }
 								)
@@ -287,7 +282,6 @@ const selectAllMethod = async (
 								{
 									theme: 'info',
 									onClick: () => clearPageHandler(dialogReturn),
-									pollSizeChange: true
 								},
 								{ default: () => 'Clear Page' }
 							),
@@ -296,7 +290,6 @@ const selectAllMethod = async (
 								{
 									theme: 'warning',
 									onClick: () => clearAllHandler(dialogReturn),
-									pollSizeChange: true
 								},
 								{ default: () => 'Clear All' }
 							)

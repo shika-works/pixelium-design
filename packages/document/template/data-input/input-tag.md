@@ -115,7 +115,7 @@ maxDisplayTags: 展示标签的最大数量，开启 `collapseTags` 后生效。
 collapseTagsPopover: 是否在弹出框中展示被折叠的标签，开启 `collapseTags` 后生效。
 popoverProps: 标签折叠时，弹出框 Popover 组件的属性。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.clear: 点击清除文本按钮，清除内容时的回调。
 events.focus: 输入框聚焦时的回调。

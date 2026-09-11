@@ -131,7 +131,7 @@ placement: 标签页头的位置。
 justify: 标签页头对齐方式。
 tabMaxWidth: 标签页标题最大宽度，仅在 `placement` 为 `left` 或 `right` 时有效。
 tabMinWidth: 标签页标题最小宽度，仅在 `placement` 为 `left` 或 `right` 时有效。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.update:active: 更新 `active` 的回调。
 events.select: 选中标签页的回调。
@@ -152,7 +152,7 @@ placement: Tab header position.
 justify: Tab header alignment.
 tabMaxWidth: Maximum width of the tab title. Only effective when `placement` is `left` or `right`.
 tabMinWidth: Minimum width of the tab title. Only effective when `placement` is `left` or `right`.
-pollSizeChange: Enable polling for component size changes, which may affect performance. Commonly used when the size is affected by container elements, leading to canvas drawing abnormalities.
+pollSizeChange: Enable polling for component size changes, which may affect performance.
 
 events.update:active: Callback when `active` updates.
 events.select: Callback when a tab is selected.

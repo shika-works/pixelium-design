@@ -75,7 +75,7 @@ clearable: 是否可清除。
 count: 可选择图案的数量。
 allowHalf: 是否可选择半颗星。
 activeColor: 激活时的颜色。详见 [支持的颜色解析](../config/supported-color-parsing)。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 评分的值改变的回调。
@@ -94,7 +94,7 @@ clearable: Whether the value can be cleared.
 count: The number of selectable icons.
 allowHalf: Whether half-star selection is allowed.
 activeColor: The color when active. See [Supported Color Parsing](../config/supported-color-parsing).
-pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 events.update:modelValue: Callback fired when `modelValue` needs to be updated.
 events.change: Callback fired when the rating value changes.

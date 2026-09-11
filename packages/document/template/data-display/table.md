@@ -434,7 +434,7 @@ defaultFilterValue: 默认的筛选值（非受控）。
 sortOrder: 当前的排序信息（受控）。
 defaultSortOrder: 默认的排序信息（非受控）。
 borderRadius: 表格的圆角设置。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。该属也会作用域内部单选框、多选框、分页子组件。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。该属也会作用域内部单选框、多选框、分页子组件。
 page: 当前的页码（受控模式）。
 defaultPage: 当前的页码默认值（非受控模式）。
 pageSize: 当前的页面容量（受控模式）。
@@ -581,7 +581,7 @@ defaultFilterValue: Default filter values (uncontrolled).
 sortOrder: Current sorting information (controlled).
 defaultSortOrder: Default sorting information (uncontrolled).
 borderRadius: Table border-radius settings.
-pollSizeChange: Enable polling for component size changes. This may affect performance and is commonly used when a container element affects the component's size, causing canvas rendering issues. This prop also applies to internal Radio, Checkbox and Pagination child components.
+pollSizeChange: Enable polling for component size changes. This may affect performance. This prop also applies to internal Radio, Checkbox and Pagination child components.
 page: Current page number (controlled mode).
 defaultPage: Default value of current page number (uncontrolled mode).
 pageSize: Current page size (controlled mode).

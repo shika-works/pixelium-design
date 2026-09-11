@@ -128,7 +128,7 @@ activeTip: 选中时的文本提示，位于开关内侧。
 activeColor: 选中时标签颜色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 inactiveColor: 未选中时标签颜色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.input: 触发开关的回调。
