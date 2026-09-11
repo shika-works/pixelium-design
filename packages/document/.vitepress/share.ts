@@ -14,7 +14,8 @@ const newItems = [
 	'typewriter',
 	'carousel',
 	'count-to',
-	'circle-progress'
+	'circle-progress',
+	'bubble'
 ]
 
 const titleMapEn = {
@@ -111,7 +112,8 @@ const additionMapZh = {
 	timeline: '时间线',
 	typewriter: '打字机',
 	carousel: '轮播',
-	'count-to': '数字滚动'
+	'count-to': '数字滚动',
+	bubble: '气泡'
 }
 const order = [
 	'guide',

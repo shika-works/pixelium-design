@@ -1,0 +1,59 @@
+@import url(../share/style/variable.less);
+
+.px-bubble-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+	pointer-events: none;
+	image-rendering: pixelated;
+}
+
+.px-bubble {
+	@prefix: px-bubble;
+	@theme: primary, sakura, success, warning, danger, notice;
+
+	--text-color: var(--px-neutral-1);
+
+	box-sizing: border-box;
+	position: relative;
+	z-index: 0;
+	display: inline-block;
+	vertical-align: top;
+	max-width: 100%;
+	min-width: 0;
+	padding: var(--px-bit);
+	color: var(--text-color);
+	font-size: @px-medium-font-size;
+	line-height: @px-line-height;
+
+	&-content {
+		position: relative;
+		padding: @px-interval-1 @px-interval-2;
+	}
+
+	&__tail-bottom-left &-content,
+	&__tail-bottom-right &-content {
+		padding-bottom: calc(@px-interval-1 + var(--px-bubble-tail-y));
+	}
+
+	&__tail-top-left &-content,
+	&__tail-top-right &-content {
+		padding-top: calc(@px-interval-1 + var(--px-bubble-tail-y));
+	}
+
+	each(@theme, {
+		&.@{prefix}__plain.@{prefix}__theme-@{value} {
+			--text-color: var(~"--px-@{value}-6");
+		}
+	});
+
+	&.@{prefix}__plain.@{prefix}__theme-info {
+		--text-color: var(--px-neutral-10);
+	}
+
+	&__primary {
+		--text-color: var(--px-neutral-1);
+	}
+}
