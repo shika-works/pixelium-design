@@ -12,7 +12,7 @@ import {
 import type { MessageProps } from './type'
 import { generatePalette, parseColor, rgbaColor2string } from '../share/util/color'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { type RgbaColor } from '../share/type'
+import type { RgbaColor } from '../share/type'
 import InfoCircleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/info-circle-solid.svg'
 import ExclamationTriangleSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/exclamation-triangle-solid.svg'
 import OctagonTimesSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/octagon-times-solid.svg'

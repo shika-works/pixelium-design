@@ -461,7 +461,7 @@ const optionsFiltered = computed(() => {
 								e.type === GROUP_OPTION_TYPE &&
 								e.key === group.key
 						)
-						if (idx) {
+						if (idx !== -1) {
 							;(ans[idx] as SelectGroupOption).children.push(
 								dataInOptions4E[0] as string | SelectOption
 							)

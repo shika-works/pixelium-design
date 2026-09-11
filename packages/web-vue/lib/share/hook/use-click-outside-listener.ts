@@ -31,7 +31,7 @@ export const useClickOutsideListener = (
 ) => {
 	const clickOutsideHandler = (event: MouseEvent) => {
 		const target = event.target
-		if (!(target instanceof HTMLElement)) {
+		if (!(target instanceof HTMLElement || target instanceof SVGElement)) {
 			return
 		}
 		if (isArray(ref) ? ref.length === 0 : isFunction(ref) ? false : !ref.value) {

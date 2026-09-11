@@ -58,7 +58,7 @@
 import { computed, inject, shallowRef, useSlots } from 'vue'
 import type { TabItemProps } from './type'
 import { TAB_PROVIDE } from '../share/const/provide-key'
-import { type TabProvide } from '../tab/type'
+import type { TabProvide } from '../tab/type'
 import Times from '@hackernoon/pixel-icon-library/icons/SVG/regular/times.svg'
 import { useDraw } from './draw.ts'
 import { wait } from 'parsnip-kit'

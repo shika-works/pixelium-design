@@ -30,6 +30,7 @@ import type {
 	TypewriterProps,
 	TypewriterText
 } from './type'
+import { inBrowser } from '../share/util/env'
 
 defineOptions({
 	name: 'Typewriter'
@@ -262,6 +263,7 @@ let caretTimer: any = null
 const startCaret = () => {
 	stopCaret()
 	if (!props.caret) return
+	if (!inBrowser()) return
 	caretTimer = setInterval(() => {
 		caretOn.value = !caretOn.value
 	}, props.blinkSpeed)
