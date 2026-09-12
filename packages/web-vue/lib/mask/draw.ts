@@ -8,8 +8,7 @@ export const calcDefaultBackgroundColor = () => {
 	if (!color) {
 		return 'none'
 	}
-	color.a = Math.floor(255 * 0.5)
-	return rgbaColor2string(color)
+	return rgbaColor2string({ ...color, a: Math.floor(255 * 0.5) })
 }
 
 type UseDrawOptions = {
