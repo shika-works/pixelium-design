@@ -123,7 +123,7 @@ shape: 组件形状。
 borderRadius: 圆角半径，优先级高于 `shape`。与 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 size: 组件尺寸。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 slots.default: 标签内容。
 ]]]
@@ -132,7 +132,7 @@ backgroundColor: Background color. See [Supported Color Parsing](../config/suppo
 borderRadius: Corner radius, takes precedence over `shape`. Behaves like CSS `border-radius`: a single value or array of length 1 → applies to all four corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → applies to the four corners in a clockwise order.
 size: Component size.
 
-pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 slots.default: Label content.
 ]]]

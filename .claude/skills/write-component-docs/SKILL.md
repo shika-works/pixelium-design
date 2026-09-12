@@ -36,11 +36,15 @@ Wrap every prose section in language blocks:
 
 ```markdown
 [[[zh
+
 ## 标题
+
 中文说明
 ]]]
 [[[en
+
 ## English Heading
+
 English explanation
 ]]]
 ```
@@ -52,6 +56,7 @@ The doc starts with an H1 in each language block (`# Timeline`), then a one-line
 ```markdown
 <preview path="./xxx.vue"></preview>
 ```
+
 Place one preview after each usage section. The referenced `.vue` file lives in the same template folder.
 
 ### API blocks
@@ -65,14 +70,12 @@ Add `## API` (NOT wrapped in language blocks) then:
 propName: Description.
 events.eventName: Description.
 slots.slotName: Description.
-exposeName.method: Description.
-]]]
+exposeName.method: Description.]]]
 [[[api en
 propName: Description.
 events.eventName: Description.
 slots.slotName: Description.
-exposeName.method: Description.
-]]]
+exposeName.method: Description.]]]
 ```
 
 - `[[[api <lang>]]` with no component name resolves from the file basename (kebab-case) to `../web-vue/lib/<basename>/type.ts`.
@@ -90,6 +93,7 @@ exposeName.method: Description.
 ```markdown
 [[[slice <name>]]]
 ```
+
 Every `.md` file in [`packages/document/slice/`](packages/document/slice) is a reusable fragment (currently: `percent`, `rest-attrs`, `emit-event`, `option`, `option-list`, `group-option`, `date-format`, `quick-access-option`, `value-with-device-width`). The script reads `./slice/<name>.md`. Prefer these over rewriting common explanations; if a shared concept is missing, add a new `.md` file there instead of inlining it.
 
 ### API description rules (user-mandated)
@@ -134,6 +138,7 @@ Create one `*.vue` per usage section, referenced by `<preview path="./xxx.vue"><
 ## 5. Step 4 — Register in share.ts
 
 In [`packages/document/.vitepress/share.ts`](packages/document/.vitepress/share.ts):
+
 - Add the component's kebab name to `newItems` to show the NEW! badge (same format as existing entries, e.g. `'timeline'`). **Every newly added component MUST be put in the `newItems` list** — this is a required step, not optional.
 - Add `<component>: '<中文名>'` to `additionMapZh` (e.g. `timeline: '时间线'`). Add an English title to `additionMapEn`/`titleMapEn` only if the auto-derived title is wrong.
 - `order` controls the display order of top-level categories (folder names, e.g. `common`, `data-input`, `data-display`, ...) and `guideOrder` controls the order of the guide sub-pages — only touch them when adding a brand-new category/guide page. Adding a component does NOT require editing them: within a category, component pages are simply ordered by the filesystem listing (alphabetical).

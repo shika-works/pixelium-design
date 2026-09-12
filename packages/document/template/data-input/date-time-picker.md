@@ -103,7 +103,7 @@ autofocus: 原生 `<input>` 的 `autofocus` 属性。
 autofocusStart: 开始日期的原生 `<input>` 的 `autofocus` 属性。
 autofocusEnd: 结束日期的原生 `<input>` 的 `autofocus` 属性。
 dropdownDestroyOnHide: 下拉选择面板是否会在隐藏时销毁。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 dropdownProps: 下拉选择面板的属性。
 needDropdown: 是否需要展示下拉选择面板。
 use12hours: 一天是否为十二小时。
@@ -158,7 +158,7 @@ autofocus: Native `<input>` `autofocus` attribute.
 autofocusStart: Native `<input>` `autofocus` attribute for the start date.
 autofocusEnd: Native `<input>` `autofocus` attribute for the end date.
 dropdownDestroyOnHide: Whether the dropdown panel is destroyed when hidden.
-pollSizeChange: Whether to poll for component size changes (may affect performance), often used when the component is affected by container size causing canvas rendering issues.
+pollSizeChange: Whether to poll for component size changes (may affect performance).
 dropdownProps: Properties for the dropdown panel.
 needDropdown: Whether to show the dropdown panel.
 use12hours: Whether the day uses 12-hour format.

@@ -82,7 +82,7 @@ gap: 留白间隔（px），用于边框内间距。
 indicatorPlacement: 提示内容的位置，位于进度条填充部分的内侧还是外侧。
 color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 trackColor: 进度条轨道背景色。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 slots.append: 在进度条后方的插槽。
 slots.prepend: 在进度条前方的插槽。
@@ -97,7 +97,7 @@ gap: Gap spacing (px) inside the border.
 indicatorPlacement: The position of the indicator content, located inside or outside the filled portion of the progress bar.
 color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 trackColor: The background color of the progress bar track.
-pollSizeChange: Enables polling for component size changes, which may affect performance. Often used when the component's size is influenced by its container element, causing abnormal canvas rendering.
+pollSizeChange: Enables polling for component size changes, which may affect performance.
 
 slots.append: Slot for content placed after the progress bar.
 slots.prepend: Slot for content placed before the progress bar.

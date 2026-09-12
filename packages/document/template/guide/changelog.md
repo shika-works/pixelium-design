@@ -6,6 +6,35 @@
 ]]]
 
 [[[zh
+## v0.2.1
+- 新增：
+  - 新增数据展示组件：Bubble。
+- 优化：
+  - 重绘调度由防抖改为按帧合并，同一帧内的多次重绘只会执行一次，组件卸载时会取消尚未执行的重绘。
+  - canvas 尺寸没有变化时改用 `clearRect` 清空，不再重写 canvas 宽高，避免触发多余的样式重算。
+  - 填充算法记录实际发生变化的像素范围，只把该范围写回 canvas，不再整块回写。
+- 调整：
+  - `pollSizeChange` 属性不再需要（保留以处理未知情况），Dialog 等容器内的组件会自动按布局尺寸渲染。
+- 修复：
+  - 修复 Dialog 内组件未开启 `pollSizeChange` 时，canvas 渲染异常的问题。
+  - 修复了滚动条组件在 `watch` 中反复获取 CSS 变量引起的卡顿。
+]]]
+[[[en
+## v0.2.1
+- New Features:
+  - New data display component: Bubble.
+- Optimizations:
+  - Redraw scheduling now coalesces by animation frame instead of debouncing: multiple redraws within one frame run only once, and pending redraws are cancelled on unmount.
+  - When the canvas size is unchanged, it is cleared with `clearRect` instead of reassigning the canvas width and height, avoiding an unnecessary style recalculation.
+  - The fill algorithm now tracks the pixel range it actually changed and writes only that range back to the canvas instead of the whole canvas.
+- Adjustment:
+  - The `pollSizeChange` property is no longer needed (kept to handle unknown cases); components inside a Dialog and similar containers now render automatically from their layout size.
+- Fixes
+  - Fixed an issue where components inside a Dialog failed to render their canvas without `pollSizeChange`.
+  - Fixed the lag caused by the scrollbar component repeatedly reading CSS variables inside a `watch`.
+]]]
+
+[[[zh
 ## v0.2.0
 - 新增：
   - 新增数据输入组件：ColorPicker、Rate。

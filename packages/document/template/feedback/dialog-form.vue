@@ -12,7 +12,6 @@
 				style="width: 500px"
 				@submit="submitHandler"
 				ref="formRef"
-				poll-size-change
 			>
 				<px-form-item label="Input" field="input">
 					<px-input v-model="form.input" placeholder="Please input..."></px-input>

@@ -213,8 +213,7 @@ const selectAllMethod = async (
 													Button,
 													{
 														theme: 'info',
-														onClick: () => clearPageHandler(dialogReturn),
-														pollSizeChange: true
+														onClick: () => clearPageHandler(dialogReturn)
 													},
 													{ default: () => 'Clear Page' }
 												)
@@ -224,8 +223,7 @@ const selectAllMethod = async (
 													Button,
 													{
 														theme: 'warning',
-														onClick: () => clearAllHandler(dialogReturn),
-														pollSizeChange: true
+														onClick: () => clearAllHandler(dialogReturn)
 													},
 													{ default: () => 'Clear All' }
 												)
@@ -243,8 +241,7 @@ const selectAllMethod = async (
 									Button,
 									{
 										theme: 'info',
-										onClick: () => pageOnlyHandler(dialogReturn),
-										pollSizeChange: true
+										onClick: () => pageOnlyHandler(dialogReturn)
 									},
 									{ default: () => 'This Page Only' }
 								),
@@ -252,8 +249,7 @@ const selectAllMethod = async (
 									Button,
 									{
 										theme: 'primary',
-										onClick: () => pageAddHandler(dialogReturn),
-										pollSizeChange: true
+										onClick: () => pageAddHandler(dialogReturn)
 									},
 									{ default: () => 'Add This Page' }
 								),
@@ -261,8 +257,7 @@ const selectAllMethod = async (
 									Button,
 									{
 										theme: 'primary',
-										onClick: () => selectAllHandler(dialogReturn),
-										pollSizeChange: true
+										onClick: () => selectAllHandler(dialogReturn)
 									},
 									{ default: () => 'Select All' }
 								)
@@ -286,8 +281,7 @@ const selectAllMethod = async (
 								Button,
 								{
 									theme: 'info',
-									onClick: () => clearPageHandler(dialogReturn),
-									pollSizeChange: true
+									onClick: () => clearPageHandler(dialogReturn)
 								},
 								{ default: () => 'Clear Page' }
 							),
@@ -295,8 +289,7 @@ const selectAllMethod = async (
 								Button,
 								{
 									theme: 'warning',
-									onClick: () => clearAllHandler(dialogReturn),
-									pollSizeChange: true
+									onClick: () => clearAllHandler(dialogReturn)
 								},
 								{ default: () => 'Clear All' }
 							)

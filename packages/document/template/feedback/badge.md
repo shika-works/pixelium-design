@@ -100,7 +100,7 @@ offset: 角标标记的偏移。
 color: 自定义背景色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 borderColor: 自定义边框颜色。
 contentProps: 透传给角标内容容器 DOM 的额外属性。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 slots.default: 包裹的附着元素插槽。
 slots.content: 角标内容插槽（在 `dot` 为 `false` 时生效）。
@@ -114,7 +114,7 @@ visible: Whether it is visible.
 offset: The offset of the badge marker.
 color: Custom background color. See [Supported Color Parsing](../config/supported-color-parsing).
 contentProps: Additional properties passed through to the badge content container DOM.
-pollSizeChange: Enable polling for component size changes, which may affect performance. Commonly used when the size is affected by container elements, leading to abnormal canvas rendering.
+pollSizeChange: Enable polling for component size changes, which may affect performance.
 slots.default: The slot for the wrapped attached element.
 slots.content: The slot for badge content (effective when `dot` is `false`).
 ]]]
