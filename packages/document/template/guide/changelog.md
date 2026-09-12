@@ -10,9 +10,7 @@
 - 新增：
   - 新增数据展示组件：Bubble。
 - 优化：
-  - 重绘调度由防抖改为按帧合并，同一帧内的多次重绘只会执行一次，组件卸载时会取消尚未执行的重绘。
-  - canvas 尺寸没有变化时改用 `clearRect` 清空，不再重写 canvas 宽高，避免触发多余的样式重算。
-  - 填充算法记录实际发生变化的像素范围，只把该范围写回 canvas，不再整块回写。
+  - 优化 canvas 绘制，减少重复触发提高性能。
 - 调整：
   - `pollSizeChange` 属性不再需要（保留以处理未知情况），Dialog 等容器内的组件会自动按布局尺寸渲染。
 - 修复：
@@ -24,9 +22,7 @@
 - New Features:
   - New data display component: Bubble.
 - Optimizations:
-  - Redraw scheduling now coalesces by animation frame instead of debouncing: multiple redraws within one frame run only once, and pending redraws are cancelled on unmount.
-  - When the canvas size is unchanged, it is cleared with `clearRect` instead of reassigning the canvas width and height, avoiding an unnecessary style recalculation.
-  - The fill algorithm now tracks the pixel range it actually changed and writes only that range back to the canvas instead of the whole canvas.
+  - Optimize canvas rendering to reduce redundant triggers and improve performance.
 - Adjustment:
   - The `pollSizeChange` property is no longer needed (kept to handle unknown cases); components inside a Dialog and similar containers now render automatically from their layout size.
 - Fixes
