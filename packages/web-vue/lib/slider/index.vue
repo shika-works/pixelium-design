@@ -242,19 +242,19 @@ const thumbRect = ref({
 const updateSliderRect = () => {
 	const sliderEl = sliderRef.value
 	if (!sliderEl) return
-	const rect = sliderEl.getBoundingClientRect()
+	// Use the layout size, not getBoundingClientRect: the latter is transform-aware and
+	// would capture the scaled size while an ancestor (e.g. a Dialog) is animating.
 	sliderRect.value = {
-		width: rect.width,
-		height: rect.height
+		width: sliderEl.offsetWidth,
+		height: sliderEl.offsetHeight
 	}
 }
 const updateThumbRect = () => {
 	const thumbEl = thumbRef.value || thumbStartRef.value
 	if (!thumbEl) return
-	const rect = thumbEl.getBoundingClientRect()
 	thumbRect.value = {
-		width: rect.width,
-		height: rect.height
+		width: thumbEl.offsetWidth,
+		height: thumbEl.offsetHeight
 	}
 }
 
