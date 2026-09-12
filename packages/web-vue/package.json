@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.2.1-gamma",
+	"version": "0.2.1-delta",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
@@ -55,8 +55,10 @@
 		"@hackernoon/pixel-icon-library": "^1.0.6",
 		"@pixelium/locale": "workspace:*",
 		"@testing-library/user-event": "^14.6.1",
+		"@types/less": "^3.0.8",
 		"@vitejs/plugin-vue": "^6.0.1",
 		"@vitejs/plugin-vue-jsx": "^5.1.1",
+		"@vue-macros/define-render": "3.0.0-beta.23",
 		"@vue/test-utils": "^2.4.6",
 		"less": "^4.4.0",
 		"modern-normalize": "^3.0.1",
@@ -64,7 +66,6 @@
 		"pixelarticons": "^1.8.1",
 		"svgo": "^4.0.0",
 		"vite": "^7.3.6",
-		"@vue-macros/define-render": "3.0.0-beta.23",
 		"vue-tsc": "^3.2.1"
 	},
 	"dependencies": {
