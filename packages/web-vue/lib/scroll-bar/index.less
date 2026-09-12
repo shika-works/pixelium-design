@@ -156,14 +156,14 @@
 			center / 100% calc(50% - 2px) no-repeat;
 }
 
-.px-scroll-theme .os-scrollbar-handle {
+// Keep `.os-scrollbar` here: it out-specifies OS's `:hover` / `:active`, whose shorthands would reset these.
+.px-scroll-theme.os-scrollbar .os-scrollbar-handle {
 	@handle-border: var(--px-bit) solid transparent;
 
 	position: relative;
 	border-radius: 0;
 	box-sizing: border-box;
 
-	// os-scrollbar lib resets `border` on hover/active; keep it so the pixel frame stays the same size.
 	border: @handle-border;
 	background-color: var(--px-neutral-1);
 	background-clip: padding-box;
@@ -171,11 +171,9 @@
 
 	&:hover {
 		background-color: var(--px-neutral-4);
-		border: @handle-border;
 	}
 	&:active {
 		background-color: var(--px-neutral-7);
-		border: @handle-border;
 	}
 }
 
@@ -206,7 +204,8 @@
 	}
 }
 
-.px-scroll-simple-theme .os-scrollbar-handle {
+// Same as above: keep `.os-scrollbar`.
+.px-scroll-simple-theme.os-scrollbar .os-scrollbar-handle {
 	border-radius: 0;
 	box-sizing: border-box;
 
