@@ -16,6 +16,8 @@
 - 修复：
   - 修复 Dialog 内组件未开启 `pollSizeChange` 时，canvas 渲染异常的问题。
   - 修复了滚动条组件在 `watch` 中反复获取 CSS 变量引起的卡顿。
+  - 修复了 Mask 组件改写缓存的 `neutral-8` 主题色、导致未选中 Switch 在 Dialog 内圆角出现深色点的问题。
+  - 修复了 Dialog 关闭后重新打开时，Slider 游标位置不正确的问题。
 ]]]
 [[[en
 ## v0.2.1
@@ -28,6 +30,8 @@
 - Fixes
   - Fixed an issue where components inside a Dialog failed to render their canvas without `pollSizeChange`.
   - Fixed the lag caused by the scrollbar component repeatedly reading CSS variables inside a `watch`.
+  - Fixed the Mask component mutating the cached `neutral-8` theme colour, which made the inactive Switch show darker dots on its rounded corners inside a Dialog.
+  - Fixed the Slider thumb being placed at the wrong offset after a Dialog was closed and re-opened.
 ]]]
 
 [[[zh
