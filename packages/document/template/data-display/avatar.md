@@ -69,7 +69,7 @@ bordered: 头像是否拥有边框。
 backgroundColor: 头像背景颜色。详见 [支持的颜色解析](../config/supported-color-parsing)。
 borderColor: 头像边框颜色。详见 [支持的颜色解析](../config/supported-color-parsing)。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 slots.default: 头像内容。
 ]]]
@@ -80,7 +80,7 @@ bordered: Whether the avatar has a border.
 backgroundColor: The background color of the avatar. See [Supported Color Parsing](../config/supported-color-parsing).
 borderColor: The border color of the avatar. See [Supported Color Parsing](../config/supported-color-parsing).
 
-pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 slots.default: The content of the avatar.
 ]]]

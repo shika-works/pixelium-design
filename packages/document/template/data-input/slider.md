@@ -128,7 +128,7 @@ tooltipProps: 单值模式时，文本提示 Tooltip 组件的属性。
 tooltipStartProps: 范围选择模式时，第一个文本提示 Tooltip 组件的属性。
 tooltipEndProps: 范围选择模式时，第二个文本提示 Tooltip 组件的属性。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.update:modelValue: 更新 `modelValue` 的回调。
 events.change: 数值变动的回调。

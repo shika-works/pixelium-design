@@ -534,9 +534,13 @@ export const canvasPreprocess = (
 	if (!ctx) return
 	ctx.imageSmoothingEnabled = false
 
-	const rect = wrapperRef.value.getBoundingClientRect()
-	const width = rect.width - paddingX * 2
-	const height = rect.height - paddingY * 2
+	const el = wrapperRef.value
+	const rect = el.getBoundingClientRect()
+	// getBoundingClientRect is transform-aware (a dialog scales in), ResizeObserver is not.
+	const scaled =
+		Math.abs(rect.width - el.offsetWidth) > 1 || Math.abs(rect.height - el.offsetHeight) > 1
+	const width = (scaled ? el.offsetWidth : rect.width) - paddingX * 2
+	const height = (scaled ? el.offsetHeight : rect.height) - paddingY * 2
 	if (width <= 0 || height <= 0) {
 		return
 	}

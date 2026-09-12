@@ -142,7 +142,7 @@ color: 自定义主色，内部基于此生成完整色板，该色板优先级�
 block: 是否占据整行。
 nativeType: HTML `<button>` 原生 `type` 属性。
 autofocus: HTML `<button>` 原生 `autofocus` 属性。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.click: 点击事件。
 slots.default: 按钮内容。
@@ -161,7 +161,7 @@ nativeType: Native HTML `<button>` `type` attribute.
 autofocus: Native HTML `<button>` `autofocus` attribute.
 block: Whether to take up the full line.
 
-pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 events.click: Click event.
 slots.default: The button's content.
