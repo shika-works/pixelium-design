@@ -157,22 +157,25 @@
 }
 
 .px-scroll-theme .os-scrollbar-handle {
+	@handle-border: var(--px-bit) solid transparent;
+
 	position: relative;
 	border-radius: 0;
 	box-sizing: border-box;
 
-	border-width: var(--px-bit);
-	border-style: solid;
-	border-color: transparent;
+	// os-scrollbar lib resets `border` on hover/active; keep it so the pixel frame stays the same size.
+	border: @handle-border;
 	background-color: var(--px-neutral-1);
 	background-clip: padding-box;
 	transition: background 0.25s;
 
 	&:hover {
 		background-color: var(--px-neutral-4);
+		border: @handle-border;
 	}
 	&:active {
 		background-color: var(--px-neutral-7);
+		border: @handle-border;
 	}
 }
 
