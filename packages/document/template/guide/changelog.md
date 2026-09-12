@@ -6,6 +6,31 @@
 ]]]
 
 [[[zh
+## v0.2.1
+- 新增：
+  - 新增数据展示组件：Bubble。
+- 优化：
+  - 优化 canvas 绘制，减少重复触发提高性能。
+- 调整：
+  - `pollSizeChange` 属性不再需要（保留以处理未知情况），Dialog 等容器内的组件会自动按布局尺寸渲染。
+- 修复：
+  - 修复 Dialog 内组件未开启 `pollSizeChange` 时，canvas 渲染异常的问题。
+  - 修复了滚动条组件在 `watch` 中反复获取 CSS 变量引起的卡顿。
+]]]
+[[[en
+## v0.2.1
+- New Features:
+  - New data display component: Bubble.
+- Optimizations:
+  - Optimize canvas rendering to reduce redundant triggers and improve performance.
+- Adjustment:
+  - The `pollSizeChange` property is no longer needed (kept to handle unknown cases); components inside a Dialog and similar containers now render automatically from their layout size.
+- Fixes
+  - Fixed an issue where components inside a Dialog failed to render their canvas without `pollSizeChange`.
+  - Fixed the lag caused by the scrollbar component repeatedly reading CSS variables inside a `watch`.
+]]]
+
+[[[zh
 ## v0.2.0
 - 新增：
   - 新增数据输入组件：ColorPicker、Rate。

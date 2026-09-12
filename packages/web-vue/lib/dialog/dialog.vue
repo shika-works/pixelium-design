@@ -63,7 +63,6 @@
 						<slot name="footer">
 							<div class="px-dialog-button">
 								<Button
-									poll-size-change
 									class="px-dialog-cancel-button"
 									theme="info"
 									@click="closeHandler"
@@ -72,7 +71,6 @@
 									>{{ props.cancelText || t('dialog.cancel') }}</Button
 								>
 								<Button
-									poll-size-change
 									class="px-dialog-confirm-button"
 									@click="okHandler"
 									:loading="props.loading || loadingBeforeOk"

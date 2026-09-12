@@ -102,7 +102,7 @@ variant: 标签样式变体。
 theme: 标签主题。
 color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.close: 关闭事件。
 slots.default: 标签内容。
@@ -117,7 +117,7 @@ theme: Tag theme.
 color: Custom main color. See [Supported Color Parsing](../config/supported-color-parsing).
 closable: Whether the tag can be closed.
 
-pollSizeChange: Enables polling for component size changes. This may impact performance. It is typically used to resolve abnormal canvas rendering that occurs when the component's size is affected by its container element.
+pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 events.close: Close event.
 slots.default: Tag content.

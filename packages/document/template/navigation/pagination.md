@@ -168,7 +168,7 @@ showJumper: 是否页面跳转控件。
 jumperLabel: 页面跳转控件的标签文本。
 totalLabel: 数据总数的标签文本。
 itemsOrder: 组件各个部分的展示顺序。
-pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能，常用于被容器元素影响尺寸，进而 canvas 绘制异常的情况。该属性将会作用于内部的 Input 和 Select 等子组件。
+pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。该属性将会作用于内部的 Input 和 Select 等子组件。
 
 events.update:page: 更新 `page` 的回调。
 events.pageChange: `page` 改变的回调。
@@ -202,7 +202,7 @@ showJumper: Whether to display the page jumper control.
 jumperLabel: Label text for the page jumper control.
 totalLabel: Label text for the total data count.
 itemsOrder: Display order of the component parts.
-pollSizeChange: Enable polling for component size changes, which may affect performance. Commonly used when the size is affected by container elements, leading to canvas drawing abnormalities. This property will affect internal subcomponents such as Input and Select.
+pollSizeChange: Enable polling for component size changes, which may affect performance. This property will affect internal subcomponents such as Input and Select.
 
 events.update:page: Callback for updating `page`.
 events.pageChange: Callback for `page` change.

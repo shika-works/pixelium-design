@@ -174,6 +174,93 @@ export type floodFillArgs = {
 	pixels: number[]
 }
 
+type FloodFillScan = {
+	minX: number
+	minY: number
+	maxX: number
+	maxY: number
+}
+
+let scanStack = new Int32Array(1024)
+
+const growStack = (needed: number) => {
+	if (scanStack.length < needed) {
+		scanStack = new Int32Array(Math.max(needed, scanStack.length * 2))
+	}
+	return scanStack
+}
+
+function scanFloodFill(
+	data32: Uint32Array,
+	w: number,
+	h: number,
+	startX: number,
+	startY: number,
+	uint32Color: number
+): FloodFillScan | null {
+	const targetColor = data32[startY * w + startX]
+	if (targetColor === uint32Color) return null
+
+	const seedRow = startY * w
+	let runStart = startX
+	while (runStart > 0 && data32[seedRow + runStart - 1] === targetColor) runStart--
+	let runEnd = startX
+	while (runEnd < w - 1 && data32[seedRow + runEnd + 1] === targetColor) runEnd++
+	for (let i = runStart; i <= runEnd; i++) data32[seedRow + i] = uint32Color
+
+	let minX = runStart
+	let maxX = runEnd
+	let minY = startY
+	let maxY = startY
+
+	let stack = growStack(3)
+	let top = 0
+	stack[top++] = startY
+	stack[top++] = runStart
+	stack[top++] = runEnd
+
+	while (top > 0) {
+		const spanRight = stack[--top]
+		const spanLeft = stack[--top]
+		const y = stack[--top]
+
+		for (let side = 0; side < 2; side++) {
+			const ny = side === 0 ? y - 1 : y + 1
+			if (ny < 0 || ny >= h) continue
+
+			const row = ny * w
+			let x = spanLeft
+			while (x <= spanRight) {
+				while (x <= spanRight && data32[row + x] !== targetColor) x++
+				if (x > spanRight) break
+
+				if (ny < minY) minY = ny
+				else if (ny > maxY) maxY = ny
+
+				const start = x
+				let l = start
+				while (l > 0 && data32[row + l - 1] === targetColor) l--
+				let r = start
+				while (r < w - 1 && data32[row + r + 1] === targetColor) r++
+
+				for (let i = l; i <= r; i++) data32[row + i] = uint32Color
+
+				if (l < minX) minX = l
+				if (r > maxX) maxX = r
+
+				if (top + 3 > stack.length) stack = growStack(top + 3)
+				stack[top++] = ny
+				stack[top++] = l
+				stack[top++] = r
+
+				x = r + 1
+			}
+		}
+	}
+
+	return { minX, minY, maxX, maxY }
+}
+
 export function floodFill(
 	ctx: CanvasRenderingContext2D,
 	startX: number,
@@ -185,65 +272,27 @@ export function floodFill(
 	if (w <= 0 || h <= 0) {
 		return
 	}
+	if (startX < 0 || startX >= w || startY < 0 || startY >= h) {
+		return
+	}
 	const img = ctx.getImageData(0, 0, w, h)
 
 	const data32 = new Uint32Array(img.data.buffer)
 	const uint32Color =
 		((fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r) >>> 0
 
-	const startPos = startY * w + startX
-	const targetColor = data32[startPos]
+	const scan = scanFloodFill(data32, w, h, startX, startY, uint32Color)
+	if (!scan) return
 
-	if (targetColor === uint32Color) return
-
-	type Span = { y: number; left: number; right: number }
-	const stack: Span[] = []
-
-	const firstSpan = fillLine(startX, startY)
-	if (firstSpan) stack.push(firstSpan)
-
-	while (stack.length) {
-		const { y, left, right } = stack.pop()!
-
-		// Check the row above the span
-		if (y - 1 >= 0) {
-			let x = left
-			while (x <= right) {
-				while (x <= right && data32[(y - 1) * w + x] !== targetColor) x++
-				if (x > right) break
-				const spanLeft = x
-				const newSpan = fillLine(spanLeft, y - 1)
-				if (newSpan) stack.push(newSpan)
-				x = newSpan ? newSpan.right + 1 : spanLeft + 1
-			}
-		}
-
-		// Check the row below the span
-		if (y + 1 < h) {
-			let x = left
-			while (x <= right) {
-				while (x <= right && data32[(y + 1) * w + x] !== targetColor) x++
-				if (x > right) break
-				const spanLeft = x
-				const newSpan = fillLine(spanLeft, y + 1)
-				if (newSpan) stack.push(newSpan)
-				x = newSpan ? newSpan.right + 1 : spanLeft + 1
-			}
-		}
-	}
-
-	ctx.putImageData(img, 0, 0)
-
-	function fillLine(x: number, y: number): Span | null {
-		let left = x
-		while (left > 0 && data32[y * w + left - 1] === targetColor) left--
-		let right = x
-		while (right < w - 1 && data32[y * w + right + 1] === targetColor) right++
-
-		for (let i = left; i <= right; i++) data32[y * w + i] = uint32Color
-
-		return { y, left, right }
-	}
+	ctx.putImageData(
+		img,
+		0,
+		0,
+		scan.minX,
+		scan.minY,
+		scan.maxX - scan.minX + 1,
+		scan.maxY - scan.minY + 1
+	)
 }
 
 export const transformBorderRadiusSizeValue = (
@@ -485,21 +534,35 @@ export const canvasPreprocess = (
 	if (!ctx) return
 	ctx.imageSmoothingEnabled = false
 
-	const rect = wrapperRef.value.getBoundingClientRect()
-	const width = rect.width - paddingX * 2
-	const height = rect.height - paddingY * 2
+	const el = wrapperRef.value
+	const rect = el.getBoundingClientRect()
+	// getBoundingClientRect is transform-aware (a dialog scales in), ResizeObserver is not.
+	const scaled =
+		Math.abs(rect.width - el.offsetWidth) > 1 || Math.abs(rect.height - el.offsetHeight) > 1
+	const width = (scaled ? el.offsetWidth : rect.width) - paddingX * 2
+	const height = (scaled ? el.offsetHeight : rect.height) - paddingY * 2
 	if (width <= 0 || height <= 0) {
 		return
 	}
-	canvasRef.value.width = width
-	canvasRef.value.height = height
+
+	const canvas = canvasRef.value
+	const pixelWidth = Math.floor(width)
+	const pixelHeight = Math.floor(height)
+
+	if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+		canvas.width = pixelWidth
+		canvas.height = pixelHeight
+	} else {
+		// clearRect instead of canvas.width: the latter dirties the element's style.
+		ctx.clearRect(0, 0, canvas.width, canvas.height)
+	}
 
 	return {
 		ctx,
-		width: canvasRef.value.width,
-		height: canvasRef.value.height,
+		width: canvas.width,
+		height: canvas.height,
 		rect,
-		canvas: canvasRef.value,
+		canvas,
 		wrapper: wrapperRef.value
 	}
 }
