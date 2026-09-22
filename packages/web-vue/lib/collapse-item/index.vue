@@ -3,7 +3,7 @@ import { computed, inject, ref, shallowRef, useSlots } from 'vue'
 import type { CollapseItemProps } from './type'
 import { COLLAPSE_PROVIDE } from '../share/const/provide-key'
 import type { CollapseProvide } from '../collapse/type'
-import ChevronUp from '@hackernoon/pixel-icon-library/icons/SVG/regular/chevron-up.svg'
+import ChevronUp from '../chevron-up/index.vue'
 import { debounce } from 'parsnip-kit'
 import { watch } from 'vue'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
@@ -131,20 +131,16 @@ useDraw(
 				class="px-collapse-item-header-canvas"
 				v-if="collapseProvide?.variant.value === 'card'"
 			></canvas>
-			<div
+			<ChevronUp
 				v-if="
 					collapseProvide &&
 					collapseProvide.showExpandIcon.value &&
 					collapseProvide.expandIconPlacement.value === 'left'
 				"
 				class="px-collapse-item-arrow px-collapse-item-arrow__left"
-				:class="{ 'px-collapse-item-arrow__active': isActive }"
-				:style="{
-					transition: `${animationDuration}ms`
-				}"
-			>
-				<ChevronUp />
-			</div>
+				:active="isActive"
+				:duration="animationDuration"
+			/>
 			<div v-if="slots.prefix" class="px-collapse-item-extra">
 				<slot name="prefix"></slot>
 			</div>
@@ -156,20 +152,16 @@ useDraw(
 			<div v-if="slots.suffix" class="px-collapse-item-extra">
 				<slot name="suffix"></slot>
 			</div>
-			<div
+			<ChevronUp
 				v-if="
 					collapseProvide &&
 					collapseProvide.showExpandIcon.value &&
 					collapseProvide.expandIconPlacement.value === 'right'
 				"
 				class="px-collapse-item-arrow px-collapse-item-arrow__right"
-				:class="{ 'px-collapse-item-arrow__active': isActive }"
-				:style="{
-					transition: `${animationDuration}ms`
-				}"
-			>
-				<ChevronUp />
-			</div>
+				:active="isActive"
+				:duration="animationDuration"
+			/>
 		</div>
 		<div
 			v-if="!(destroyOnHideComputed && !displayContent)"
