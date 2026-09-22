@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, beforeEach, afterEach } from 'vitest'
 import { computed, ref } from 'vue'
 import TimelineItem from '../index.vue'
@@ -10,10 +10,12 @@ const createProvide = (overrides: Partial<TimelineProvide> = {}): TimelineProvid
 	horizontal: computed(() => false),
 	contentPlacement: ref<'start' | 'end'>('end'),
 	size: ref<'medium' | 'large'>('medium'),
+	spacing: ref<number | string | undefined>(undefined),
 	pollSizeChange: ref(false),
 	smooth: ref(false),
 	hasMark: ref(false),
 	contentSpan: ref(70),
+	id: 'test',
 	...overrides
 })
 
@@ -26,6 +28,17 @@ const mountWithProvide = (provide: TimelineProvide, options: Record<string, any>
 			}
 		}
 	})
+}
+
+// The spacing only survives while another item follows, so these cases mount the item
+// with a trailing sibling element.
+const mountFollowedBySibling = (
+	provide: TimelineProvide,
+	options: Record<string, any> = {}
+) => {
+	const wrapper = mountWithProvide(provide, options)
+	wrapper.element.parentElement?.appendChild(document.createElement('span'))
+	return wrapper
 }
 
 describe('TimelineItem component', () => {
@@ -235,6 +248,83 @@ describe('TimelineItem component', () => {
 			)
 			expect(wrapper.find('.px-timeline-item-mark').attributes('style')).toContain(
 				'flex-basis: 30%'
+			)
+		})
+	})
+
+	describe('Item spacing', () => {
+		it('leaves the spacing out of the markup by default', () => {
+			const wrapper = mountWithProvide(createProvide({ hasMark: ref(true) }))
+			expect(wrapper.find('.px-timeline-item').attributes('style')).toBeUndefined()
+			expect(wrapper.find('.px-timeline-item-content').attributes('style')).not.toContain(
+				'padding'
+			)
+			expect(wrapper.find('.px-timeline-item-mark').attributes('style')).not.toContain(
+				'padding'
+			)
+			expect(wrapper.html()).not.toContain('--px-')
+		})
+
+		it.each([
+			[24, '24px'],
+			['2rem', '2rem'],
+			[0, '0px']
+		])(
+			'applies the %s spacing as %s on the content and the mark',
+			async (spacing, expected) => {
+				const wrapper = mountFollowedBySibling(createProvide({ hasMark: ref(true) }), {
+					props: { spacing }
+				})
+				await flushPromises()
+				expect(wrapper.find('.px-timeline-item-content').attributes('style')).toContain(
+					`padding-bottom: ${expected}`
+				)
+				expect(wrapper.find('.px-timeline-item-mark').attributes('style')).toContain(
+					`padding-bottom: ${expected}`
+				)
+			}
+		)
+
+		it('applies the spacing on the inline axis in the horizontal direction', async () => {
+			const wrapper = mountFollowedBySibling(
+				createProvide({ hasMark: ref(true), horizontal: computed(() => true) }),
+				{ props: { spacing: 24 } }
+			)
+			await flushPromises()
+			expect(wrapper.find('.px-timeline-item-content').attributes('style')).toContain(
+				'padding-right: 24px'
+			)
+			expect(wrapper.find('.px-timeline-item-mark').attributes('style')).toContain(
+				'padding-right: 24px'
+			)
+		})
+
+		it('takes the spacing from the timeline provide', async () => {
+			const wrapper = mountFollowedBySibling(createProvide({ spacing: ref(8) }))
+			await flushPromises()
+			expect(wrapper.find('.px-timeline-item-content').attributes('style')).toContain(
+				'padding-bottom: 8px'
+			)
+		})
+
+		it('lets the item spacing override the timeline provide', async () => {
+			const wrapper = mountFollowedBySibling(createProvide({ spacing: ref(8) }), {
+				props: { spacing: 20 }
+			})
+			await flushPromises()
+			expect(wrapper.find('.px-timeline-item-content').attributes('style')).toContain(
+				'padding-bottom: 20px'
+			)
+		})
+
+		it('skips the spacing on the last item', async () => {
+			const wrapper = mountWithProvide(createProvide({ hasMark: ref(true), spacing: ref(8) }))
+			await flushPromises()
+			expect(wrapper.find('.px-timeline-item-content').attributes('style')).not.toContain(
+				'padding'
+			)
+			expect(wrapper.find('.px-timeline-item-mark').attributes('style')).not.toContain(
+				'padding'
 			)
 		})
 	})

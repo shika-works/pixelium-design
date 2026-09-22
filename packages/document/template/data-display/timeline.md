@@ -62,6 +62,23 @@ Use the `size` prop to adjust the size of Timeline, available in both vertical a
 <preview path="./timeline-size.vue"></preview>
 
 [[[zh
+## 间距
+
+通过 `spacing` 属性设置 Timeline 中各时间点之间的间距，传入数字时以像素为单位，也可以传入字符串作为 CSS 长度值。
+
+TimelineItem 也支持 `spacing` 属性，设置后会覆盖 Timeline 的间距；未设置时沿用 Timeline 的间距。
+]]]
+[[[en
+## Item Spacing
+
+Use the `spacing` prop to set the spacing between time points in Timeline. A number is treated as pixels, while a string is used as a CSS length value.
+
+TimelineItem also supports the `spacing` prop, which overrides the spacing of Timeline. It inherits that spacing when it is not set.
+]]]
+
+<preview path="./timeline-item-spacing.vue"></preview>
+
+[[[zh
 ## 标记
 
 为 TimelineItem 设置 `mark` 属性可以在时间点一侧展示标记文本，也可以使用 `mark` 插槽自定义标记内容。
@@ -106,6 +123,7 @@ TimelineItem provides the `header`, `footer`, and `default` slots for customizin
 direction: Timeline 的排列方向。
 contentPlacement: Timeline 内容相对轴线的位置。
 size: Timeline 的尺寸。
+spacing: Timeline 中各 TimelineItem 之间的间距。
 pollSizeChange: 是否轮询检测 Timeline 的尺寸变化。
 smooth: Timeline 节点是否使用平滑绘制。
 contentSpan: content 区域在 mark 与 content 总宽度中的占比（0-100），支持响应式。
@@ -116,6 +134,7 @@ slots.default: Timeline 内容，用于放置 TimelineItem。
 direction: The arrangement direction of Timeline.
 contentPlacement: The position of the Timeline content relative to the axis.
 size: The size of Timeline.
+spacing: The spacing between TimelineItem components in Timeline.
 pollSizeChange: Whether to poll for size changes of Timeline.
 smooth: Whether the Timeline nodes are drawn smoothly.
 contentSpan: The proportion (0-100) of the content area within the combined mark and content width, supports responsive values.
@@ -129,6 +148,7 @@ content: TimelineItem 的主体内容。
 footer: TimelineItem 的底部内容。
 lineVariant: TimelineItem 连接线的样式。
 mark: TimelineItem 的标记文本。
+spacing: TimelineItem 自身的间距，会覆盖 Timeline 设置的间距。
 title: TimelineItem 的标题。
 theme: TimelineItem 的主题色。
 
@@ -144,6 +164,7 @@ content: The body content of TimelineItem.
 footer: The footer content of TimelineItem.
 lineVariant: The style of the TimelineItem connector line.
 mark: The marker text of TimelineItem.
+spacing: The spacing of TimelineItem itself, which overrides the spacing set by Timeline.
 title: The title of TimelineItem.
 theme: The theme color of TimelineItem.
 

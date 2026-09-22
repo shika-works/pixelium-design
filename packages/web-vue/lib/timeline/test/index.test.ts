@@ -93,6 +93,25 @@ describe('Timeline component', () => {
 				'flex-basis: 20%'
 			)
 		})
+
+		it('provides spacing to TimelineItem children', async () => {
+			const wrapper = mount(Timeline, {
+				props: { spacing: 40 },
+				slots: {
+					default: `
+						<TimelineItem title="A" content="1" mark="2024" />
+						<TimelineItem title="B" content="2" mark="2025" />
+					`
+				},
+				global: { components: { TimelineItem } }
+			})
+			await nextTick()
+			const item = wrapper.findAllComponents(TimelineItem)[0]
+			expect(item.find('.px-timeline-item-content').attributes('style')).toContain(
+				'padding-bottom: 40px'
+			)
+			expect(wrapper.html()).not.toContain('--px-')
+		})
 	})
 
 	describe('TimelineItem children', () => {

@@ -1,7 +1,18 @@
 <script setup lang="tsx">
-import { computed, getCurrentInstance, provide, ref, toRef, useSlots, withScopeId } from 'vue'
+import {
+	computed,
+	getCurrentInstance,
+	provide,
+	ref,
+	toRef,
+	useId,
+	useSlots,
+	withScopeId
+} from 'vue'
 import type { TimelineProps, TimelineProvide } from './type'
 import { TIMELINE_PROVIDE } from '../share/const/provide-key'
+import { TIMELINE_UPDATE } from '../share/const/event-bus-key'
+import { emitParentUpdate } from '../share/hook/use-index-of-children'
 import { flattenVNodes } from '../share/util/render'
 import { useScreenWidth } from '../share/hook/use-screen-width'
 import { isNumber, isObjectLike } from 'parsnip-kit'
@@ -32,15 +43,21 @@ const contentSpan = computed(() => {
 	return props.contentSpan[widthType.value] || 70
 })
 
+const id = useId()
+
 provide<TimelineProvide>(TIMELINE_PROVIDE, {
 	horizontal,
 	contentPlacement: toRef(props, 'contentPlacement'),
 	size: toRef(props, 'size'),
+	spacing: toRef(props, 'spacing'),
 	pollSizeChange: toRef(props, 'pollSizeChange'),
 	smooth: toRef(props, 'smooth'),
 	hasMark,
-	contentSpan
+	contentSpan,
+	id
 })
+
+emitParentUpdate(TIMELINE_UPDATE + `-${id}`)
 
 const slots = useSlots()
 const instance = getCurrentInstance()
