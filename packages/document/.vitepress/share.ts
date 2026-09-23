@@ -16,7 +16,8 @@ const newItems = [
 	'count-to',
 	'circle-progress',
 	'bubble',
-	'action-list'
+	'action-list',
+	'loading-dots'
 ]
 
 const titleMapEn = {
@@ -118,8 +119,14 @@ const additionMapZh = {
 	'count-to': '数字滚动',
 	bubble: '气泡',
 	'ai-agent': '组件',
-	'action-list': '操作列表'
+	'action-list': '操作列表',
+	'loading-dots': '点状加载'
 }
+
+const dualCategoryItems: Record<string, string[]> = {
+	'ai-agent': ['bubble', 'action-list', 'typewriter', 'loading-dots']
+}
+
 const order = [
 	'guide',
 	'config',
@@ -144,4 +151,13 @@ const guideOrder = [
 	'skill'
 ]
 
-export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh, order, guideOrder }
+export {
+	newItems,
+	titleMapEn,
+	additionMapEn,
+	titleMapZh,
+	additionMapZh,
+	dualCategoryItems,
+	order,
+	guideOrder
+}
