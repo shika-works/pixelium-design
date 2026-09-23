@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import { h, nextTick } from 'vue'
+import { createTextVNode, h, nextTick, ref } from 'vue'
 import ActionList from '../index.vue'
 import ActionListItem from '../../action-list-item/index.vue'
 import { createMocks } from '../../share/util/test'
@@ -42,6 +42,14 @@ const FOLDABLE: ActionListItemData[] = [
 const fold = (wrapper: any) => el(wrapper, '.px-action-list-fold')
 const foldText = (wrapper: any) => el(wrapper, '.px-action-list-fold-text')
 const body = (wrapper: any) => el(wrapper, '.px-action-list-items')
+const titles = (wrapper: any) =>
+	items(wrapper).map((row: any) => row.find('.px-action-list-item-title').text())
+const slotRows = (count = FOLDABLE.length) => {
+	return () =>
+		FOLDABLE.slice(0, count).map((item, index) =>
+			h(ActionListItem, { key: index, index, title: item.title as string })
+		)
+}
 const clickFold = async (wrapper: any) => {
 	await fold(wrapper).trigger('click')
 	await nextTick()
@@ -232,6 +240,21 @@ describe('ActionList', () => {
 			expect(el(wrapper, '.px-action-list-item').exists()).toBe(false)
 		})
 
+		it('draws the slot once while the list is not collapsible', async () => {
+			let renders = 0
+			mount(ActionList, {
+				slots: {
+					default: () => {
+						renders++
+						return [h(ActionListItem, { index: 'row', title: 'a' })]
+					}
+				}
+			})
+			await nextTick()
+			// the row count of the slot is only read when the fold entry can appear
+			expect(renders).toBe(1)
+		})
+
 		it('feeds the default slot the list config and drives its expansion', async () => {
 			const wrapper = mountList(
 				{ size: 'small', lineVariant: 'dashed', defaultExpanded: ['draft'] },
@@ -333,12 +356,94 @@ describe('ActionList', () => {
 			expect(
 				fold(mountList({ items: FOLDABLE, collapsible: true, maxDisplayItems: 5 })).exists()
 			).toBe(false)
-			const slotMode = mountList(
-				{ collapsible: true, maxDisplayItems: 0 },
-				{ default: '<div class="custom-child">child</div>' }
+		})
+
+		it('counts the rows of the default slot just like the items', async () => {
+			const short = mountList(
+				{ collapsible: true, maxDisplayItems: 2, defaultCollapsed: true },
+				{ default: slotRows(2) }
 			)
-			expect(el(slotMode, '.custom-child').exists()).toBe(true)
-			expect(fold(slotMode).exists()).toBe(false)
+			expect(items(short)).toHaveLength(2)
+			expect(fold(short).exists()).toBe(false)
+
+			const wrapper = mountList(
+				{ collapsible: true, maxDisplayItems: 2, defaultCollapsed: true },
+				{ default: slotRows() }
+			)
+			expect(fold(wrapper).exists()).toBe(true)
+			expect(titles(wrapper)).toEqual(FOLDABLE.slice(0, 2).map((item) => item.title))
+			expect(foldText(wrapper).text()).toBe('Show 3 more')
+			await clickFold(wrapper)
+			expect(titles(wrapper)).toEqual(FOLDABLE.map((item) => item.title))
+			expect(foldText(wrapper).text()).toBe('Show less')
+			await clickFold(wrapper)
+			expect(titles(wrapper)).toEqual(FOLDABLE.slice(0, 2).map((item) => item.title))
+		})
+
+		it('counts the plain children of the slot as rows', async () => {
+			const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+			try {
+				const wrapper = mountList(
+					{ collapsible: true, maxDisplayItems: 1, defaultCollapsed: true },
+					{
+						default: () =>
+							['a', 'b', 'c'].map((name) => h('div', { class: `slot-${name}` }, name))
+					}
+				)
+				expect(fold(wrapper).exists()).toBe(true)
+				expect(el(wrapper, '.slot-a').exists()).toBe(true)
+				expect(el(wrapper, '.slot-b').exists()).toBe(false)
+				await clickFold(wrapper)
+				expect(el(wrapper, '.slot-c').exists()).toBe(true)
+				// the slot has to be called inside the render, or its rows would be stale
+				expect(warn).not.toHaveBeenCalled()
+			} finally {
+				warn.mockRestore()
+			}
+		})
+
+		it('adds the trigger when the slot grows', async () => {
+			const count = ref(2)
+			const wrapper = mount(ActionList, {
+				props: { collapsible: true, maxDisplayItems: 2, defaultCollapsed: true },
+				slots: {
+					default: () =>
+						FOLDABLE.slice(0, count.value).map((item, index) =>
+							h(ActionListItem, { key: index, index, title: item.title as string })
+						)
+				}
+			})
+			expect(fold(wrapper).exists()).toBe(false)
+			expect(items(wrapper)).toHaveLength(2)
+			count.value = 4
+			await nextTick()
+			expect(fold(wrapper).exists()).toBe(true)
+			expect(items(wrapper)).toHaveLength(2)
+			expect(foldText(wrapper).text()).toBe('Show 2 more')
+		})
+
+		it('keeps the comments and the blank text out of the count', async () => {
+			const wrapper = mountList(
+				{ collapsible: true, maxDisplayItems: 1, defaultCollapsed: true },
+				{
+					default: () => [createTextVNode('\n  '), slotRows(2)(), createTextVNode('')]
+				}
+			)
+			expect(items(wrapper)).toHaveLength(1)
+			expect(foldText(wrapper).text()).toBe('Show 1 more')
+		})
+
+		it('gives the fold slot the slot row count', async () => {
+			const wrapper = mountList(
+				{ collapsible: true, maxDisplayItems: 2, defaultCollapsed: true },
+				{
+					default: slotRows(),
+					fold: '<span class="fold-slot">{{ params.collapsed }}/{{ params.hiddenCount }}/{{ params.total }}</span>'
+				}
+			)
+			expect(el(wrapper, '.fold-slot').text()).toBe('true/3/5')
+			await clickFold(wrapper)
+			expect(el(wrapper, '.fold-slot').text()).toBe('false/0/5')
 		})
 
 		it('gives the fold slot the state, the hidden count and the total', async () => {
@@ -370,7 +475,7 @@ describe('ActionList', () => {
 			const rendered = items(wrapper)
 			expect(styleOf(mainOf(rendered[0]))).toContain('padding-bottom: 20px')
 			expect(styleOf(mainOf(rendered[1]))).toBe('')
-			expect(styleOf(fold(wrapper))).toContain('padding-top: 20px')
+			expect(styleOf(fold(wrapper))).toBe('')
 			await clickFold(wrapper)
 			expect(styleOf(mainOf(items(wrapper)[3]))).toContain('padding-bottom: 20px')
 			expect(styleOf(mainOf(items(wrapper)[4]))).toBe('')

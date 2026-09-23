@@ -4,10 +4,12 @@ import {
 	getCurrentInstance,
 	mergeProps,
 	provide,
+	ref,
 	shallowRef,
 	useAttrs,
 	useId,
-	useSlots
+	useSlots,
+	type VNode
 } from 'vue'
 import type {
 	ActionListEvents,
@@ -23,7 +25,7 @@ import { useLocale } from '../share/util/locale'
 import ActionListItem from '../action-list-item/index.vue'
 import ChevronUp from '../chevron-up/index.vue'
 import { isFunction, isNullish, isNumber } from 'parsnip-kit'
-import { getScopedObj } from '../share/util/render.ts'
+import { flattenVNodes, getScopedObj, isTextVNode } from '../share/util/render.ts'
 import { emitParentUpdate } from '../share/hook/use-index-of-children.ts'
 import { ACTION_LIST_UPDATE } from '../share/const/event-bus-key.ts'
 
@@ -87,7 +89,13 @@ emitParentUpdate(ACTION_LIST_UPDATE + `-${id}`)
 
 const itemIndex = (item: ActionListItemData, index: number) => item.index ?? index
 
-const totalCount = computed(() => props.items?.length ?? 0)
+const isBlankTextVNode = (vnode: VNode) => {
+	return isTextVNode(vnode) && !String(vnode.children ?? '').trim()
+}
+
+const slotRowCount = ref(0)
+
+const totalCount = computed(() => props.items?.length ?? slotRowCount.value)
 
 const foldable = computed(() => {
 	return (
@@ -110,7 +118,14 @@ const displayedItems = computed(() => {
 	return shown.map((item, index) => ({ item, index }))
 })
 
-const hiddenCount = computed(() => totalCount.value - displayedItems.value.length)
+const displayedSlotCount = computed(() => {
+	return folded.value ? Math.min(props.maxDisplayItems, slotRowCount.value) : slotRowCount.value
+})
+
+const hiddenCount = computed(() => {
+	const displayed = props.items ? displayedItems.value.length : displayedSlotCount.value
+	return totalCount.value - displayed
+})
 
 const foldText = computed(() => {
 	if (!folded.value) {
@@ -118,16 +133,6 @@ const foldText = computed(() => {
 	}
 	const format = t<Function>('action-list.fold')
 	return isFunction(format) ? format(hiddenCount.value) : ''
-})
-
-const foldStyle = computed(() => {
-	const spacingValue = props.spacing
-	if (spacingValue === undefined || spacingValue === null || spacingValue === '') {
-		return undefined
-	}
-	return {
-		paddingTop: isNumber(spacingValue) ? `${spacingValue}px` : spacingValue
-	}
 })
 
 const toggleFoldHandler = () => {
@@ -160,10 +165,18 @@ const validSlot = (slot: any) => {
 }
 
 const render = () => {
+	const slotRows = props.items
+		? null
+		: flattenVNodes(slots.default?.()).filter((vnode) => !isBlankTextVNode(vnode))
+	if (slotRows && props.collapsible && slotRowCount.value !== slotRows.length) {
+		slotRowCount.value = slotRows.length
+	}
+	const shownSlotRows =
+		slotRows && folded.value ? slotRows.slice(0, props.maxDisplayItems) : slotRows
 	return (
 		<div {...mergedProps.value}>
 			{foldable.value && (
-				<div class="px-action-list-fold" style={foldStyle.value} onClick={toggleFoldHandler}>
+				<div class="px-action-list-fold" onClick={toggleFoldHandler}>
 					<div class="px-action-list-fold-text">
 						{slots.fold
 							? slots.fold({
@@ -195,6 +208,7 @@ const render = () => {
 									spacing={item.spacing}
 									lineVariant={item.lineVariant}
 									expandable={item.expandable}
+									animationDuration={item.animationDuration}
 								>
 									{{
 										detail: validSlot(item.detail)
@@ -205,13 +219,16 @@ const render = () => {
 											: undefined,
 										title: validSlot(item.title)
 											? () => (isFunction(item.title) ? item.title() : item.title)
+											: undefined,
+										icon: validSlot(item.icon)
+											? () => (isFunction(item.icon) ? item.icon() : item.icon)
 											: undefined
 									}}
 								</ActionListItem>
 							)
 						})
 					: slots.default
-						? slots.default()
+						? shownSlotRows
 						: null}
 			</div>
 		</div>

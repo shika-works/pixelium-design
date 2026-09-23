@@ -41,6 +41,8 @@
 			title="Write the summary"
 			content="Waiting for the previous step."
 		/>
+		<px-action-list-item index="review" status="pending" title="Review the summary" />
+		<px-action-list-item index="publish" status="pending" title="Publish the summary" />
 	</px-action-list>
 </template>
 

@@ -62,6 +62,11 @@ export type ActionListItemData = {
 	 * @version 0.2.1
 	 */
 	expandable?: boolean
+	/**
+	 * @property {number} [animationDuration=250]
+	 * @version 0.2.1
+	 */
+	animationDuration?: number
 }
 
 export type ActionListProps = {

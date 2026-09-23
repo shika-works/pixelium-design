@@ -44,7 +44,7 @@ A custom color can be passed through `color`, which overrides the color of the s
 
 当 ActionListItem 带有 `detail` 时，点击行标题即可展开详情。`expandable` 设为 `false` 可以让某一行始终保持收起，`defaultExpanded` 可以设置非受控模式下默认展开的行，`expanded` 则用于受控模式。
 
-展开的行索引集合变化时会触发 `update:expanded` 与 `expandedChange` 事件。
+展开的行索引集合变化时会触发 `expandedChange` 事件。
 
 `animationDuration` 控制展开与收起动画的时长。
 ]]]
@@ -53,7 +53,7 @@ A custom color can be passed through `color`, which overrides the color of the s
 
 When an ActionListItem carries a `detail`, clicking its header expands the detail. Set `expandable` to `false` to keep a row collapsed, use `defaultExpanded` to expand rows in uncontrolled mode, and `expanded` for the controlled mode.
 
-The `update:expanded` and `expandedChange` events are triggered when the set of expanded row indices change.
+The `expandedChange` event is triggered when the set of expanded row indices change.
 
 `animationDuration` controls the duration of the expand and collapse animation.
 ]]]
@@ -110,16 +110,16 @@ ActionListItem also supports the `lineVariant` prop, which overrides the style s
 [[[zh
 ## 折叠
 
-折叠入口依据 `items` 的行数出现，因此在默认插槽模式下不会渲染折叠入口。设置 `collapsible` 后，当 `items` 的行数超过 `maxDisplayItems`（默认为 3）时就会出现折叠入口；`defaultCollapsed` 与 `collapsed` 分别用于非受控和受控模式下的收起状态，`foldPlacement` 决定入口位于列表上方还是下方。
+设置 `collapsible` 后，当行数超过 `maxDisplayItems`（默认为 3）时就会出现折叠入口。`defaultCollapsed` 与 `collapsed` 分别用于非受控和受控模式下的收起状态，`foldPlacement` 决定入口位于列表上方还是下方。
 
-收起状态变化时会触发 `update:collapsed` 与 `collapsedChange` 事件。
+收起状态变化时会触发 `collapsedChange` 事件。
 ]]]
 [[[en
 ## Fold
 
-The fold trigger is driven by the rows of `items`, so it is not rendered in slot mode. Once `collapsible` is set, a fold trigger appears when the number of rows in `items` exceeds `maxDisplayItems` (3 by default). `defaultCollapsed` and `collapsed` drive the folded state in uncontrolled and controlled mode respectively, and `foldPlacement` decides whether the trigger sits above or below the rows.
+Once `collapsible` is set, a fold trigger appears when the number of rows exceeds `maxDisplayItems` (3 by default). `defaultCollapsed` and `collapsed` drive the folded state in uncontrolled and controlled mode respectively, and `foldPlacement` decides whether the trigger sits above or below the rows.
 
-The `update:collapsed` and `collapsedChange` events are triggered when the folded state changes.
+The `collapsedChange` event is triggered when the folded state changes.
 ]]]
 
 <preview path="./action-list-fold.vue"></preview>
@@ -181,7 +181,7 @@ lineVariant: ActionList 中连接线的样式。
 actionListProps.animationDuration: ActionList 展开与收起动画的时长。
 expanded: 受控模式下展开的行索引集合。
 defaultExpanded: 非受控模式下默认展开的行索引集合。
-collapsible: 行数超过 `maxDisplayItems` 时是否提供折叠入口。
+collapsible: 行数超过 `maxDisplayItems` 时是否提供折叠入口，行数取自 `items` 或默认插槽。
 maxDisplayItems: 收起状态下显示的行数。
 collapsed: 受控模式下的收起状态。
 defaultCollapsed: 非受控模式下默认的收起状态。
@@ -216,7 +216,7 @@ lineVariant: The style of the connector line in ActionList.
 actionListProps.animationDuration: The duration of the expand and collapse animation of ActionList.
 expanded: The set of expanded row indices in controlled mode.
 defaultExpanded: The set of expanded row indices in uncontrolled mode.
-collapsible: Whether the fold trigger is provided when the row count exceeds `maxDisplayItems`.
+collapsible: Whether the fold trigger is provided when the row count exceeds `maxDisplayItems`, counting the rows of `items` or of the default slot.
 maxDisplayItems: The number of rows shown while folded.
 collapsed: The folded state in controlled mode.
 defaultCollapsed: The folded state in uncontrolled mode.
@@ -284,3 +284,8 @@ slots.title: The title of ActionListItem.
 slots.content: The supplementary content of ActionListItem.
 slots.icon: The icon at the node of ActionListItem.
 ]]]
+
+### ValidContent
+```ts
+export type ValidContent = string | ((...args: any[]) => VNode | string | JSX.Element | null | void)
+```

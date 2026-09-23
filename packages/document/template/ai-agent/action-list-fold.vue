@@ -1,13 +1,16 @@
 <template>
 	<px-space direction="vertical" :width="480" :margin="{ y: 12 }">
 		<px-action-list :items="items" collapsible :max-display-items="2" default-collapsed />
-		<px-action-list
-			:items="items"
-			collapsible
-			:max-display-items="3"
-			fold-placement="end"
-			default-collapsed
-		/>
+		<px-action-list collapsible :max-display-items="3" default-collapsed fold-placement="end">
+			<px-action-list-item
+				v-for="(item, index) in items"
+				:key="item.title"
+				:index="index"
+				:status="item.status"
+				:title="item.title"
+				:content="item.content"
+			/>
+		</px-action-list>
 	</px-space>
 </template>
 
