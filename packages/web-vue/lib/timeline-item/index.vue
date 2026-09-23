@@ -13,7 +13,6 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<TimelineItemProps>(), {
-	lineVariant: 'solid',
 	theme: 'primary'
 })
 
@@ -33,6 +32,10 @@ const smooth = computed(() => timelineProvide?.smooth.value ?? false)
 const contentSpan = computed(() => timelineProvide?.contentSpan.value ?? 70)
 
 const spacing = computed(() => props.spacing ?? timelineProvide?.spacing.value)
+
+const lineVariant = computed(
+	() => props.lineVariant ?? timelineProvide?.lineVariant.value ?? 'solid'
+)
 
 const spacingStyle = computed(() => {
 	// The last item has no following item to be kept away from.
@@ -94,7 +97,7 @@ const themeColorVar = computed(() => {
 			'px-timeline-item__horizontal': isHorizontal,
 			'px-timeline-item__vertical': !isHorizontal,
 			[`px-timeline-item__content-placement-${contentPlacement}`]: true,
-			[`px-timeline-item__${props.lineVariant}`]: true,
+			[`px-timeline-item__${lineVariant}`]: true,
 			[`px-timeline-item__${size}`]: true
 		}"
 	>

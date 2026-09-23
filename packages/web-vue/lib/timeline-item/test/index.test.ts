@@ -11,6 +11,7 @@ const createProvide = (overrides: Partial<TimelineProvide> = {}): TimelineProvid
 	contentPlacement: ref<'start' | 'end'>('end'),
 	size: ref<'medium' | 'large'>('medium'),
 	spacing: ref<number | string | undefined>(undefined),
+	lineVariant: ref<'solid' | 'dashed'>('solid'),
 	pollSizeChange: ref(false),
 	smooth: ref(false),
 	hasMark: ref(false),
@@ -77,14 +78,25 @@ describe('TimelineItem component', () => {
 			expect(root.classes()).not.toContain('px-timeline-item__vertical')
 		})
 
-		it('applies lineVariant and size classes from props/context', () => {
-			const wrapper = mountWithProvide(
-				createProvide({ size: ref<'medium' | 'large'>('large') }),
-				{ props: { lineVariant: 'dashed' } }
+		it('takes the line variant from the timeline and lets the item override it', () => {
+			const fromTimeline = mountWithProvide(
+				createProvide({ lineVariant: ref<'solid' | 'dashed'>('dashed') })
 			)
-			const root = wrapper.find('.px-timeline-item')
-			expect(root.classes()).toContain('px-timeline-item__dashed')
-			expect(root.classes()).toContain('px-timeline-item__large')
+			expect(fromTimeline.find('.px-timeline-item').classes()).toContain(
+				'px-timeline-item__dashed'
+			)
+
+			const fromItem = mountWithProvide(
+				createProvide({
+					size: ref<'medium' | 'large'>('large'),
+					lineVariant: ref<'solid' | 'dashed'>('dashed')
+				}),
+				{ props: { lineVariant: 'solid' } }
+			)
+			const classes = fromItem.find('.px-timeline-item').classes()
+			expect(classes).toContain('px-timeline-item__solid')
+			expect(classes).not.toContain('px-timeline-item__dashed')
+			expect(classes).toContain('px-timeline-item__large')
 		})
 	})
 

@@ -108,6 +108,19 @@ describe('ActionList', () => {
 			expect(rendered.map((entry) => entry.props('ellipsis'))).toEqual([false, true])
 		})
 
+		it('lets the row data override the line variant of the list', () => {
+			const wrapper = mountList({
+				lineVariant: 'dashed',
+				items: [
+					{ title: 'Search settings', lineVariant: 'solid' },
+					{ title: 'Rewrite the draft' }
+				]
+			})
+			const rendered = items(wrapper)
+			expect(rendered[0].classes()).toContain('px-action-list-item__line-solid')
+			expect(rendered[1].classes()).toContain('px-action-list-item__line-dashed')
+		})
+
 		it('lets the data decide which rows stay closed to expansion', () => {
 			const wrapper = mountList({
 				items: [

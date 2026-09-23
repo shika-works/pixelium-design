@@ -22,6 +22,7 @@ describe('Timeline component', () => {
 			expect(root.classes()).toContain('pixelium')
 			expect(root.classes()).toContain('px-timeline__vertical')
 			expect(root.classes()).toContain('px-timeline__medium')
+			expect(root.classes()).toContain('px-timeline__line-solid')
 			expect(root.classes()).toContain('px-timeline__content-placement-end')
 		})
 
@@ -92,6 +93,24 @@ describe('Timeline component', () => {
 			expect(item.find('.px-timeline-item-mark').attributes('style')).toContain(
 				'flex-basis: 20%'
 			)
+		})
+
+		it('applies the line variant and passes it down to TimelineItem children', async () => {
+			const wrapper = mount(Timeline, {
+				props: { lineVariant: 'dashed' },
+				slots: {
+					default: `
+						<TimelineItem title="A" content="1" />
+						<TimelineItem title="B" content="2" line-variant="solid" />
+					`
+				},
+				global: { components: { TimelineItem } }
+			})
+			await nextTick()
+			expect(wrapper.find('.px-timeline').classes()).toContain('px-timeline__line-dashed')
+			const rendered = wrapper.findAllComponents(TimelineItem)
+			expect(rendered[0].find('.px-timeline-item__dashed').exists()).toBe(true)
+			expect(rendered[1].find('.px-timeline-item__solid').exists()).toBe(true)
 		})
 
 		it('provides spacing to TimelineItem children', async () => {

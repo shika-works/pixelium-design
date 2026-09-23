@@ -183,6 +183,13 @@ describe('ActionListItem', () => {
 			expect(item(mountItem()).classes()).toContain('px-action-list-item__medium')
 			expect(item(dashed).classes()).toContain('px-action-list-item__line-dashed')
 			expect(item(mountItem()).classes()).toContain('px-action-list-item__line-solid')
+
+			const overridden = mountItem(
+				{ lineVariant: 'solid' },
+				{ lineVariant: computed(() => 'dashed' as const) }
+			)
+			expect(item(overridden).classes()).toContain('px-action-list-item__line-solid')
+			expect(item(overridden).classes()).not.toContain('px-action-list-item__line-dashed')
 		})
 	})
 

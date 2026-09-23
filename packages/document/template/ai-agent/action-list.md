@@ -90,11 +90,15 @@ ActionListItem also supports the `spacing` prop, which overrides the spacing of 
 ## 连接线
 
 通过 `lineVariant` 属性设置各行之间连接线的样式，可选 `'solid'`（默认）与 `'dashed'`。连接线从节点向下延伸，最后一行不会绘制连接线。
+
+ActionListItem 也支持 `lineVariant` 属性，设置后会覆盖 ActionList 设置的样式。
 ]]]
 [[[en
 ## Connector Line
 
 Use the `lineVariant` prop to set the style of the connector line between rows. It accepts `'solid'` (default) and `'dashed'`. The line runs downwards from the node, and the last row draws no line.
+
+ActionListItem also supports the `lineVariant` prop, which overrides the style set by ActionList.
 ]]]
 
 <preview path="./action-list-line-variant.vue"></preview>
@@ -153,12 +157,12 @@ Once `ellipsis` is set on an ActionListItem, its title and content stay on a sin
 [[[zh
 ## 数据驱动行
 
-除了使用默认插槽，也可以通过 `items` 属性传入行数据，由 ActionList 批量渲染 ActionListItem。每一项支持 `index`、`status`、`title`、`content`、`detail`、`ellipsis`、`color`、`spacing` 和 `expandable`，未设置的字段使用 ActionListItem 的默认值；`items` 与默认插槽同时存在时以 `items` 为准。
+除了使用默认插槽，也可以通过 `items` 属性传入行数据，由 ActionList 批量渲染 ActionListItem。每一项支持 `index`、`status`、`title`、`content`、`detail`、`ellipsis`、`color`、`spacing`、`lineVariant` 和 `expandable`，未设置的字段使用 ActionListItem 的默认值；`items` 与默认插槽同时存在时以 `items` 为准。
 ]]]
 [[[en
 ## Data-driven Rows
 
-Besides the default slot, the row data can be passed through the `items` prop so that ActionList renders the ActionListItem components itself. Every entry supports `index`, `status`, `title`, `content`, `detail`, `ellipsis`, `color`, `spacing`, and `expandable`, and the defaults of ActionListItem are used for the fields that are not set. When both `items` and the default slot are provided, `items` wins.
+Besides the default slot, the row data can be passed through the `items` prop so that ActionList renders the ActionListItem components itself. Every entry supports `index`, `status`, `title`, `content`, `detail`, `ellipsis`, `color`, `spacing`, `lineVariant`, and `expandable`, and the defaults of ActionListItem are used for the fields that are not set. When both `items` and the default slot are provided, `items` wins.
 ]]]
 
 <preview path="./action-list-items.vue"></preview>
@@ -196,6 +200,7 @@ icon: ActionListItem 的图标。
 ellipsis: ActionListItem 的文本是否在超出一行时省略。
 color: ActionListItem 的自定义颜色。
 spacing: ActionListItem 的间距，会覆盖 ActionList 设置的间距。
+actionListItemData.lineVariant: ActionListItem 连接线的样式，会覆盖 ActionList 设置的样式。
 expandable: ActionListItem 在带有详情内容时是否可展开。
 ]]]
 [[[api en
@@ -229,6 +234,7 @@ icon: The icon of ActionListItem.
 ellipsis: Whether the text of ActionListItem is truncated with an ellipsis when it overflows a single line.
 color: The custom color of ActionListItem.
 spacing: The spacing of ActionListItem, which overrides the spacing set by ActionList.
+actionListItemData.lineVariant: The style of the ActionListItem connector line, which overrides the style set by ActionList.
 expandable: Whether ActionListItem can be expanded when it carries detail content.
 ]]]
 
@@ -240,6 +246,7 @@ content: ActionListItem 的补充内容。
 detail: ActionListItem 展开后显示的详情内容。
 ellipsis: ActionListItem 的文本是否在超出一行时省略。
 spacing: ActionListItem 的间距，会覆盖 ActionList 设置的间距。
+lineVariant: ActionListItem 连接线的样式，会覆盖 ActionList 设置的样式。
 color: ActionListItem 的自定义颜色。
 expandable: ActionListItem 在带有详情内容时是否可展开。
 animationDuration: ActionListItem 展开与收起动画的时长。
@@ -259,6 +266,7 @@ content: The supplementary content of ActionListItem.
 detail: The detail content shown after ActionListItem is expanded.
 ellipsis: Whether the text of ActionListItem is truncated with an ellipsis when it overflows a single line.
 spacing: The spacing of ActionListItem, which overrides the spacing set by ActionList.
+lineVariant: The style of the ActionListItem connector line, which overrides the style set by ActionList.
 color: The custom color of ActionListItem.
 expandable: Whether ActionListItem can be expanded when it carries detail content.
 animationDuration: The duration of the expand and collapse animation of ActionListItem.

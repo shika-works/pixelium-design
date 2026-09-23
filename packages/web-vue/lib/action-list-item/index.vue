@@ -38,7 +38,9 @@ const [_0, _1, last] = actionListProvide
 	: [ref(0), ref(false), ref(false)]
 
 const size = computed(() => actionListProvide?.size.value ?? 'medium')
-const lineVariant = computed(() => actionListProvide?.lineVariant.value ?? 'solid')
+const lineVariant = computed(
+	() => props.lineVariant ?? actionListProvide?.lineVariant.value ?? 'solid'
+)
 const animationDuration = computed(
 	() => actionListProvide?.animationDuration.value ?? props.animationDuration
 )

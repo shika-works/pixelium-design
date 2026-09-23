@@ -23,6 +23,11 @@ export type TimelineProps = {
 	 */
 	spacing?: number | string
 	/**
+	 * @property {'solid' | 'dashed'} [lineVariant='solid']
+	 * @version 0.2.1
+	 */
+	lineVariant?: 'solid' | 'dashed'
+	/**
 	 * @property {boolean} [pollSizeChange=false]
 	 * @version 0.2.0
 	 */
@@ -52,6 +57,7 @@ export type TimelineProvide = {
 	contentPlacement: Ref<'start' | 'end'>
 	size: Ref<'medium' | 'large'>
 	spacing: Ref<number | string | undefined>
+	lineVariant: Ref<'solid' | 'dashed'>
 	pollSizeChange: Ref<boolean>
 	smooth: Ref<boolean>
 	hasMark: Ref<boolean>

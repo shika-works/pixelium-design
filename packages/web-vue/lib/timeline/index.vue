@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<TimelineProps>(), {
 	direction: 'vertical',
 	contentPlacement: 'end',
 	size: 'medium',
+	lineVariant: 'solid',
 	contentSpan: 70,
 	smooth: false
 })
@@ -50,6 +51,7 @@ provide<TimelineProvide>(TIMELINE_PROVIDE, {
 	contentPlacement: toRef(props, 'contentPlacement'),
 	size: toRef(props, 'size'),
 	spacing: toRef(props, 'spacing'),
+	lineVariant: toRef(props, 'lineVariant'),
 	pollSizeChange: toRef(props, 'pollSizeChange'),
 	smooth: toRef(props, 'smooth'),
 	hasMark,
@@ -86,6 +88,7 @@ defineRender(() => {
 				'px-timeline',
 				horizontal.value ? 'px-timeline__horizontal' : 'px-timeline__vertical',
 				`px-timeline__${props.size}`,
+				`px-timeline__line-${props.lineVariant}`,
 				`px-timeline__content-placement-${props.contentPlacement}`
 			]}
 		>

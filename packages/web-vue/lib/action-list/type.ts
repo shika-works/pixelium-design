@@ -53,6 +53,11 @@ export type ActionListItemData = {
 	 */
 	spacing?: number | string
 	/**
+	 * @property {'solid' | 'dashed'} [lineVariant='solid']
+	 * @version 0.2.1
+	 */
+	lineVariant?: ActionListLineVariant
+	/**
 	 * @property {boolean} [expandable]
 	 * @version 0.2.1
 	 */
@@ -106,12 +111,12 @@ export type ActionListProps = {
 	 */
 	maxDisplayItems?: number
 	/**
-	 * @property {boolean | null} [collapsed=undefined]
+	 * @property {boolean | null} [collapsed]
 	 * @version 0.2.1
 	 */
 	collapsed?: boolean | null
 	/**
-	 * @property {boolean | null} [defaultCollapsed=undefined]
+	 * @property {boolean | null} [defaultCollapsed]
 	 * @version 0.2.1
 	 */
 	defaultCollapsed?: boolean | null

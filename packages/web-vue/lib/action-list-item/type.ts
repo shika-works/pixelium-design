@@ -50,6 +50,11 @@ export type ActionListItemProps = {
 	 */
 	color?: string
 	/**
+	 * @property {'solid' | 'dashed'} [lineVariant='solid']
+	 * @version 0.2.1
+	 */
+	lineVariant?: 'solid' | 'dashed'
+	/**
 	 * @property {boolean} [expandable=true]
 	 * @version 0.2.1
 	 */

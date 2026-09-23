@@ -37,8 +37,6 @@ const props = withDefaults(defineProps<ActionListProps>(), {
 	animationDuration: 250,
 	collapsible: false,
 	maxDisplayItems: 3,
-	collapsed: undefined,
-	defaultCollapsed: undefined,
 	foldPlacement: 'start'
 })
 
@@ -194,6 +192,7 @@ const render = () => {
 									ellipsis={item.ellipsis}
 									color={item.color}
 									spacing={item.spacing}
+									lineVariant={item.lineVariant}
 									expandable={item.expandable}
 									onExpandedChange={(expanded: boolean) =>
 										itemToggleHandler(item, expanded, itemIndex(item, index))
