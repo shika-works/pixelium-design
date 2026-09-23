@@ -44,7 +44,7 @@ A custom color can be passed through `color`, which overrides the color of the s
 
 当 ActionListItem 带有 `detail` 时，点击行标题即可展开详情。`expandable` 设为 `false` 可以让某一行始终保持收起，`defaultExpanded` 可以设置非受控模式下默认展开的行，`expanded` 则用于受控模式。
 
-展开的行索引集合变化时会触发 `update:expanded` 与 `expandedChange` 事件，其中 `expandedChange` 携带的是该集合的副本；某一行的展开状态变化时会触发 `itemExpandedChange` 事件。
+展开的行索引集合变化时会触发 `update:expanded` 与 `expandedChange` 事件。
 
 `animationDuration` 控制展开与收起动画的时长。
 ]]]
@@ -53,7 +53,7 @@ A custom color can be passed through `color`, which overrides the color of the s
 
 When an ActionListItem carries a `detail`, clicking its header expands the detail. Set `expandable` to `false` to keep a row collapsed, use `defaultExpanded` to expand rows in uncontrolled mode, and `expanded` for the controlled mode.
 
-The `update:expanded` and `expandedChange` events are triggered when the set of expanded row indices changes, and `expandedChange` carries a copy of that set. The `itemExpandedChange` event is triggered when the expanded state of a row changes.
+The `update:expanded` and `expandedChange` events are triggered when the set of expanded row indices change.
 
 `animationDuration` controls the duration of the expand and collapse animation.
 ]]]

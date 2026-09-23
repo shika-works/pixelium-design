@@ -122,6 +122,7 @@ const toggleHandler = () => {
 	}
 	const next = !expandedComputed.value
 	actionListProvide?.toggle(props.index)
+	actionListProvide?.itemExpandedChange(props.index, next)
 	emits('expandedChange', next)
 }
 </script>

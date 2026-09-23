@@ -143,11 +143,10 @@ export type ActionListEvents = {
 	/**
 	 * @event itemExpandedChange
 	 * @version 0.2.1
-	 * @param {ActionListItemData} item
-	 * @param {boolean} expanded
 	 * @param {number | string | symbol} index
+	 * @param {boolean} expanded
 	 */
-	itemExpandedChange: [item: ActionListItemData, expanded: boolean, index: ActionListItemIndex]
+	itemExpandedChange: [index: ActionListItemIndex, expanded: boolean]
 	/**
 	 * @event update:collapsed
 	 * @version 0.2.1
@@ -189,5 +188,6 @@ export type ActionListProvide = {
 	animationDuration: ComputedRef<number>
 	expandedIndices: Ref<ActionListItemIndex[] | undefined | null>
 	toggle: (index: ActionListItemIndex) => void
+	itemExpandedChange: (index: ActionListItemIndex, expanded: boolean) => void
 	id: string
 }

@@ -161,13 +161,7 @@ describe('ActionList', () => {
 			})
 			await clickHeader(wrapper, 1)
 			expect(isExpandedDetail(details(wrapper)[1])).toBe(true)
-			expect(wrapper.emitted('itemExpandedChange')).toEqual([
-				[
-					{ index: 'rewrite', title: 'Rewrite the draft', detail: 'Rewrite the outline' },
-					true,
-					'rewrite'
-				]
-			])
+			expect(wrapper.emitted('itemExpandedChange')).toEqual([['rewrite', true]])
 			await clickHeader(wrapper, 1)
 			vi.advanceTimersByTime(300)
 			await nextTick()
@@ -255,8 +249,9 @@ describe('ActionList', () => {
 			expect(classes).toContain('px-action-list-item__line-dashed')
 			expect(isExpandedDetail(el(wrapper, '.px-action-list-item-detail'))).toBe(true)
 			await clickHeader(wrapper, 0)
-			// the row event of ActionListItem is not re-emitted in slot mode, the set one still is
-			expect(wrapper.emitted('itemExpandedChange')).toBeUndefined()
+			const [index, expanded] = wrapper.emitted('itemExpandedChange')![0]
+			expect(index).toBe('draft')
+			expect(expanded).toBe(false)
 			expect(wrapper.emitted('expandedChange')).toEqual([[[]]])
 			vi.advanceTimersByTime(300)
 			await nextTick()

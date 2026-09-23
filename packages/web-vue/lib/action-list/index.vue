@@ -68,6 +68,10 @@ const toggle = (index: ActionListItemIndex) => {
 
 const id = useId()
 
+const itemExpandedChangeHandler = (index: ActionListItemIndex, expanded: boolean) => {
+	emits('itemExpandedChange', index, expanded)
+}
+
 provide<ActionListProvide>(ACTION_LIST_PROVIDE, {
 	size: computed(() => props.size),
 	spacing: computed(() => props.spacing),
@@ -75,6 +79,7 @@ provide<ActionListProvide>(ACTION_LIST_PROVIDE, {
 	animationDuration: computed(() => props.animationDuration),
 	expandedIndices,
 	toggle,
+	itemExpandedChange: itemExpandedChangeHandler,
 	id
 })
 
@@ -129,14 +134,6 @@ const toggleFoldHandler = () => {
 	const next = !folded.value
 	updateCollapsedState(next)
 	emits('collapsedChange', next)
-}
-
-const itemToggleHandler = (
-	item: ActionListItemData,
-	expanded: boolean,
-	index: ActionListItemIndex
-) => {
-	emits('itemExpandedChange', item, expanded, index)
 }
 
 const instance = getCurrentInstance()
@@ -198,9 +195,6 @@ const render = () => {
 									spacing={item.spacing}
 									lineVariant={item.lineVariant}
 									expandable={item.expandable}
-									onExpandedChange={(expanded: boolean) =>
-										itemToggleHandler(item, expanded, itemIndex(item, index))
-									}
 								>
 									{{
 										detail: validSlot(item.detail)

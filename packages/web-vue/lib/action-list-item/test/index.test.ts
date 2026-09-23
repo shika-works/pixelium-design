@@ -30,6 +30,7 @@ const createProvide = (overrides: Partial<ActionListProvide> = {}): ActionListPr
 				? current.filter((entry) => entry !== index)
 				: [...current, index]
 		},
+		itemExpandedChange: () => {},
 		id: 'test',
 		...overrides
 	}
@@ -305,6 +306,22 @@ describe('ActionListItem', () => {
 			expect(toggle).toHaveBeenCalledWith('step-3')
 			expect(delegated.emitted('expandedChange')).toEqual([[true]])
 			expect(isExpanded(delegated)).toBe(false)
+		})
+
+		it('reports the row change to the list through the provide', async () => {
+			const itemExpandedChange = vi.fn()
+			const wrapper = mountItem(
+				{ index: 'step-2', title: 'Rewrite the draft', detail: 'some detail' },
+				{ itemExpandedChange }
+			)
+			await clickHeader(wrapper)
+			expect(itemExpandedChange).toHaveBeenNthCalledWith(1, 'step-2', true)
+			await clickHeader(wrapper)
+			expect(itemExpandedChange).toHaveBeenLastCalledWith('step-2', false)
+
+			// a row without a detail never toggles, so it reports nothing either
+			await clickHeader(mountItem({ index: 'step-4' }, { itemExpandedChange }))
+			expect(itemExpandedChange).toHaveBeenCalledTimes(2)
 		})
 	})
 })
