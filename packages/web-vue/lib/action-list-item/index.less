@@ -1,0 +1,194 @@
+@import url(../share/style/variable.less);
+
+.px-action-list-item {
+	@prefix: px-action-list-item;
+
+	.size-variant(@indicator-size, @font-size, @icon-font-size) {
+		font-size: @font-size;
+
+		.@{prefix}-indicator,
+		.@{prefix}-icon {
+			width: @indicator-size;
+		}
+
+		.@{prefix}-icon {
+			height: @indicator-size;
+			font-size: @icon-font-size;
+		}
+
+		.@{prefix}-header {
+			min-height: @indicator-size;
+			padding-top: calc((@indicator-size - @font-size * @px-line-height) / 2);
+		}
+
+		.@{prefix}-arrow {
+			height: @font-size * @px-line-height;
+		}
+
+		.@{prefix}-header .px-chevron-up {
+			font-size: @font-size;
+		}
+	}
+
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	box-sizing: border-box;
+	color: var(--px-neutral-6);
+	.size-variant(var(--px-medium-sub-size), @px-medium-font-size, @px-title-font-size);
+
+	&__small {
+		.size-variant(var(--px-small-sub-size), @px-small-font-size, @px-medium-font-size);
+	}
+
+	&__large {
+		.size-variant(
+			var(--px-large-sub-size),
+			@px-large-font-size,
+			@px-title-font-size
+		);
+	}
+
+	&__running {
+		color: var(--px-primary-6);
+	}
+
+	&__success {
+		color: var(--px-success-6);
+	}
+
+	&__warning {
+		color: var(--px-warning-6);
+	}
+
+	&__error {
+		color: var(--px-danger-6);
+	}
+
+	&-indicator {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex: none;
+		box-sizing: border-box;
+		margin-right: @px-interval-2;
+	}
+
+	&-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: none;
+		box-sizing: border-box;
+		color: inherit;
+		fill: currentColor;
+	}
+
+	&-line {
+		box-sizing: border-box;
+		flex: 1;
+		width: 0;
+		min-height: @px-interval-2;
+		border-left-width: var(--px-bit);
+		border-left-style: solid;
+		border-color: var(--px-neutral-6);
+	}
+
+	&__line-dashed &-line {
+		border-left-style: dashed;
+	}
+
+	&:last-child &-line {
+		display: none;
+	}
+
+	&-main {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		flex: 1 1 auto;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	&:not(:last-child) &-main {
+		padding-bottom: @px-interval-3;
+	}
+
+	&-header {
+		display: flex;
+		flex-direction: row;
+		align-items: start;
+		flex-wrap: wrap;
+		gap: @px-interval-1;
+		box-sizing: border-box;
+		outline: none;
+	}
+
+	// The gap is a margin on the header: the hook locks the detail wrapper to the height of the
+	// measured box and re-reads it when the animation settles. A padding on that box would still
+	// be at its start value while the height is measured, so the row would jump by the gap at the
+	// end of the expand.
+	&__expandable&__expanded &-header {
+		margin-bottom: @px-interval-2;
+	}
+
+	&__expandable &-header {
+		cursor: pointer;
+	}
+
+	&__expandable &-header:focus-visible {
+		outline: none;
+	}
+
+	&-title {
+		flex: 0 1 auto;
+		min-width: 0;
+		color: var(--px-neutral-10);
+	}
+
+	&-content {
+		flex: 0 1 auto;
+		min-width: 0;
+		color: var(--px-neutral-8);
+	}
+
+	&__ellipsis &-header {
+		flex-wrap: nowrap;
+	}
+
+	&__ellipsis &-title {
+		flex: 0 1 auto;
+		min-width: max-content;
+	}
+
+	&__ellipsis &-title,
+	&__ellipsis &-content {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__title-overflow &-content {
+		display: none;
+	}
+
+	&__title-overflow &-title {
+		min-width: 0;
+		margin-right: @px-interval-1;
+	}
+
+	& &-arrow {
+		color: var(--px-neutral-8);
+	}
+
+	&-detail {
+		box-sizing: border-box;
+		overflow: hidden;
+		color: var(--px-neutral-8);
+
+		&-box {
+			box-sizing: border-box;
+		}
+	}
+}

@@ -89,6 +89,8 @@ import Typewriter from './typewriter/index.vue'
 import Carousel from './carousel/index.vue'
 import CountTo from './count-to/index.vue'
 import Bubble from './bubble/index.vue'
+import ActionList from './action-list/index.vue'
+import ActionListItem from './action-list-item/index.vue'
 
 const components = [
 	Button,
@@ -170,7 +172,9 @@ const components = [
 	Typewriter,
 	Carousel,
 	CountTo,
-	Bubble
+	Bubble,
+	ActionList,
+	ActionListItem
 ]
 
 const defaultPrefix = 'Px'
@@ -299,7 +303,9 @@ export {
 	Typewriter,
 	Carousel,
 	CountTo,
-	Bubble
+	Bubble,
+	ActionList,
+	ActionListItem
 }
 
 export default {
@@ -372,3 +378,10 @@ export type { NotificationOptions, NotificationBoxEvents } from './notification-
 export type { NotificationProps } from './notification/type.ts'
 
 export type { TypewriterText } from './typewriter/type.ts'
+
+export type { ActionItemStatus, ActionListItemIndex } from './action-list-item/type.ts'
+export type {
+	ActionListItemData,
+	ActionListSize,
+	ActionListLineVariant
+} from './action-list/type.ts'
