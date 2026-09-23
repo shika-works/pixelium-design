@@ -15,13 +15,15 @@ const newItems = [
 	'carousel',
 	'count-to',
 	'circle-progress',
-	'bubble'
+	'bubble',
+	'action-list'
 ]
 
 const titleMapEn = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
 	skill: 'AI Agent Skill',
+	'ai-agent': 'AI Agent',
 	theme: 'Custom Theme',
 	i18n: 'Internationalization',
 	'supported-color-parsing': 'Supported Color Parsing'
@@ -42,7 +44,8 @@ const titleMapZh = {
 	'controlled-and-uncontrolled': '受控 & 非受控模式',
 	example: '组件示例',
 	i18n: '多语言国际化',
-	'supported-color-parsing': '支持的颜色解析'
+	'supported-color-parsing': '支持的颜色解析',
+	'ai-agent': 'AI Agent'
 }
 const additionMapZh = {
 	button: '按钮',
@@ -113,19 +116,22 @@ const additionMapZh = {
 	typewriter: '打字机',
 	carousel: '轮播',
 	'count-to': '数字滚动',
-	bubble: '气泡'
+	bubble: '气泡',
+	'ai-agent': '组件',
+	'action-list': '操作列表'
 }
 const order = [
 	'guide',
 	'config',
 	'common',
-	'layout',
+	'ai-agent',
 	'data-input',
 	'data-display',
+	'layout',
 	'navigation',
 	'feedback',
-	'base',
-	'fabulous-idea'
+	'fabulous-idea',
+	'base'
 ]
 
 const guideOrder = [
