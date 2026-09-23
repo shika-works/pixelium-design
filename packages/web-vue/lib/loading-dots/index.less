@@ -1,0 +1,75 @@
+@import url(../share/style/variable.less);
+
+.px-loading-dots {
+	@prefix: px-loading-dots;
+	@theme: primary, sakura, success, warning, danger, notice;
+
+	display: inline-flex;
+	align-items: flex-end;
+	box-sizing: border-box;
+	gap: var(--px-bit);
+	vertical-align: middle;
+
+	each(@theme, {
+		&.@{prefix}__@{value} {
+			color: var(~"--px-@{value}-6");
+		}
+	});
+
+	&.@{prefix}__info {
+		color: var(--px-neutral-10);
+	}
+
+	&-dot {
+		display: block;
+		width: var(--px-bit);
+		height: var(--px-bit);
+		background: currentColor;
+		animation: 1200ms ease-in-out infinite px-loading-dots-bounce;
+	}
+
+	&__pixel &-dot {
+		animation-name: px-loading-dots-step;
+		animation-timing-function: step-end;
+	}
+}
+
+@keyframes px-loading-dots-bounce {
+	0%,
+	60%,
+	100% {
+		transform: translateY(0);
+		opacity: 0.7;
+	}
+
+	30% {
+		transform: translateY(-100%);
+		opacity: 1;
+	}
+}
+
+@keyframes px-loading-dots-step {
+	0%,
+	12% {
+		transform: translateY(0);
+	}
+	12%,
+	24% {
+		transform: translateY(-100%);
+	}
+	24%,
+	36% {
+		transform: translateY(-200%);
+	}
+	36%,
+	48% {
+		transform: translateY(-100%);
+	}
+	48%,
+	60% {
+		transform: translateY(-0%);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}

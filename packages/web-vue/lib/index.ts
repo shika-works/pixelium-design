@@ -91,6 +91,7 @@ import CountTo from './count-to/index.vue'
 import Bubble from './bubble/index.vue'
 import ActionList from './action-list/index.vue'
 import ActionListItem from './action-list-item/index.vue'
+import LoadingDots from './loading-dots/index.vue'
 
 const components = [
 	Button,
@@ -174,7 +175,8 @@ const components = [
 	CountTo,
 	Bubble,
 	ActionList,
-	ActionListItem
+	ActionListItem,
+	LoadingDots
 ]
 
 const defaultPrefix = 'Px'
@@ -305,7 +307,8 @@ export {
 	CountTo,
 	Bubble,
 	ActionList,
-	ActionListItem
+	ActionListItem,
+	LoadingDots
 }
 
 export default {
