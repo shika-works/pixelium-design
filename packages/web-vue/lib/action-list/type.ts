@@ -137,11 +137,17 @@ export type ActionListEvents = {
 	/**
 	 * @event expandedChange
 	 * @version 0.2.1
+	 * @param {Array<number | string | symbol>} expanded
+	 */
+	expandedChange: [expanded: ActionListItemIndex[]]
+	/**
+	 * @event itemExpandedChange
+	 * @version 0.2.1
 	 * @param {ActionListItemData} item
 	 * @param {boolean} expanded
 	 * @param {number | string | symbol} index
 	 */
-	expandedChange: [item: ActionListItemData, expanded: boolean, index: ActionListItemIndex]
+	itemExpandedChange: [item: ActionListItemData, expanded: boolean, index: ActionListItemIndex]
 	/**
 	 * @event update:collapsed
 	 * @version 0.2.1

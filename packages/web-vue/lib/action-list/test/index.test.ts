@@ -5,6 +5,7 @@ import ActionList from '../index.vue'
 import ActionListItem from '../../action-list-item/index.vue'
 import { createMocks } from '../../share/util/test'
 import type { ActionListItemData } from '../type'
+import type { ActionListItemIndex } from '../../action-list-item/type'
 
 const EXPANDABLE: ActionListItemData[] = [
 	{ title: 'Search settings', expandable: true },
@@ -160,7 +161,7 @@ describe('ActionList', () => {
 			})
 			await clickHeader(wrapper, 1)
 			expect(isExpandedDetail(details(wrapper)[1])).toBe(true)
-			expect(wrapper.emitted('expandedChange')).toEqual([
+			expect(wrapper.emitted('itemExpandedChange')).toEqual([
 				[
 					{ index: 'rewrite', title: 'Rewrite the draft', detail: 'Rewrite the outline' },
 					true,
@@ -170,8 +171,24 @@ describe('ActionList', () => {
 			await clickHeader(wrapper, 1)
 			vi.advanceTimersByTime(300)
 			await nextTick()
-			expect(wrapper.emitted('expandedChange')![1][1]).toBe(false)
+			expect(wrapper.emitted('itemExpandedChange')![1][1]).toBe(false)
 			expect(isExpandedDetail(details(wrapper)[1])).toBe(false)
+		})
+
+		it('reports the expanded set as a copy that cannot reach the state', async () => {
+			const wrapper = mountList({
+				items: [
+					{ title: 'Search settings', detail: '2 hits' },
+					{ title: 'Rewrite the draft', detail: 'Rewrite the outline' }
+				]
+			})
+			await clickHeader(wrapper, 0)
+			expect(wrapper.emitted('expandedChange')).toEqual([[[0]]])
+
+			const payload = wrapper.emitted('expandedChange')![0][0] as ActionListItemIndex[]
+			payload.push(1)
+			await nextTick()
+			expect(details(wrapper).map(isExpandedDetail)).toEqual([true, false])
 		})
 
 		it('reports the expanded array to the list and follows it back', async () => {
@@ -238,7 +255,9 @@ describe('ActionList', () => {
 			expect(classes).toContain('px-action-list-item__line-dashed')
 			expect(isExpandedDetail(el(wrapper, '.px-action-list-item-detail'))).toBe(true)
 			await clickHeader(wrapper, 0)
-			expect(wrapper.emitted('expandedChange')).toBeUndefined()
+			// the row event of ActionListItem is not re-emitted in slot mode, the set one still is
+			expect(wrapper.emitted('itemExpandedChange')).toBeUndefined()
+			expect(wrapper.emitted('expandedChange')).toEqual([[[]]])
 			vi.advanceTimersByTime(300)
 			await nextTick()
 			expect(isExpandedDetail(el(wrapper, '.px-action-list-item-detail'))).toBe(false)

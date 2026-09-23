@@ -44,14 +44,18 @@ A custom color can be passed through `color`, which overrides the color of the s
 
 当 ActionListItem 带有 `detail` 时，点击行标题即可展开详情。`expandable` 设为 `false` 可以让某一行始终保持收起，`defaultExpanded` 可以设置非受控模式下默认展开的行，`expanded` 则用于受控模式。
 
-展开的行索引变化时会触发 `update:expanded` 事件，某一行的展开状态变化时会触发 `expandedChange` 事件。`animationDuration` 控制展开与收起动画的时长。
+展开的行索引集合变化时会触发 `update:expanded` 与 `expandedChange` 事件，其中 `expandedChange` 携带的是该集合的副本；某一行的展开状态变化时会触发 `itemExpandedChange` 事件。
+
+`animationDuration` 控制展开与收起动画的时长。
 ]]]
 [[[en
 ## Expandable Detail
 
 When an ActionListItem carries a `detail`, clicking its header expands the detail. Set `expandable` to `false` to keep a row collapsed, use `defaultExpanded` to expand rows in uncontrolled mode, and `expanded` for the controlled mode.
 
-The `update:expanded` event is triggered when the set of expanded row indices changes, and the `expandedChange` event is triggered when the expanded state of a row changes. `animationDuration` controls the duration of the expand and collapse animation.
+The `update:expanded` and `expandedChange` events are triggered when the set of expanded row indices changes, and `expandedChange` carries a copy of that set. The `itemExpandedChange` event is triggered when the expanded state of a row changes.
+
+`animationDuration` controls the duration of the expand and collapse animation.
 ]]]
 
 <preview path="./action-list-expandable.vue"></preview>
@@ -184,7 +188,8 @@ defaultCollapsed: 非受控模式下默认的收起状态。
 foldPlacement: 折叠入口相对 ActionList 的位置。
 
 events.update:expanded: 展开的行索引集合变化时触发。
-events.expandedChange: 某一行的展开状态变化时触发。
+events.expandedChange: 展开的行索引集合变化时触发，参数为该集合的副本。
+events.itemExpandedChange: 某一行的展开状态变化时触发。
 events.update:collapsed: 收起状态变化时触发。
 events.collapsedChange: 收起状态变化时触发。
 
@@ -218,7 +223,8 @@ defaultCollapsed: The folded state in uncontrolled mode.
 foldPlacement: The position of the fold trigger relative to ActionList.
 
 events.update:expanded: Triggered when the set of expanded row indices changes.
-events.expandedChange: Triggered when the expanded state of a row changes.
+events.expandedChange: Triggered when the set of expanded row indices changes, with a copy of that set.
+events.itemExpandedChange: Triggered when the expanded state of a row changes.
 events.update:collapsed: Triggered when the folded state changes.
 events.collapsedChange: Triggered when the folded state changes.
 

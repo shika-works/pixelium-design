@@ -37,6 +37,8 @@ const props = withDefaults(defineProps<ActionListProps>(), {
 	animationDuration: 250,
 	collapsible: false,
 	maxDisplayItems: 3,
+	collapsed: undefined,
+	defaultCollapsed: undefined,
 	foldPlacement: 'start'
 })
 
@@ -57,9 +59,11 @@ const [collapsedState, updateCollapsedState] = useControlledMode('collapsed', pr
 
 const toggle = (index: ActionListItemIndex) => {
 	const current = expandedIndices.value ?? []
-	updateExpandedIndices(
-		current.includes(index) ? current.filter((item) => item !== index) : [...current, index]
-	)
+	const next = current.includes(index)
+		? current.filter((item) => item !== index)
+		: [...current, index]
+	updateExpandedIndices(next)
+	emits('expandedChange', [...next])
 }
 
 const id = useId()
@@ -132,7 +136,7 @@ const itemToggleHandler = (
 	expanded: boolean,
 	index: ActionListItemIndex
 ) => {
-	emits('expandedChange', item, expanded, index)
+	emits('itemExpandedChange', item, expanded, index)
 }
 
 const instance = getCurrentInstance()
