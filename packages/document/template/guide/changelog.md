@@ -8,7 +8,8 @@
 [[[zh
 ## v0.2.1
 - 新增：
-  - 新增数据展示组件：Bubble。
+  - 新增 AI Agent 组件：Bubble、ActionList、ActionListItem。
+  - Timeline 和 TimelineItem 组件新增属性 `spacing`。
 - 优化：
   - 优化 canvas 绘制，减少重复触发提高性能。
 - 调整：
@@ -23,7 +24,8 @@
 [[[en
 ## v0.2.1
 - New Features:
-  - New data display component: Bubble.
+  - New data AI Agent component: Bubble, ActionList, ActionListItem.
+  - Added a new `spacing` property to the Timeline & TimelineItem component.
 - Optimizations:
   - Optimize canvas rendering to reduce redundant triggers and improve performance.
 - Adjustment:
