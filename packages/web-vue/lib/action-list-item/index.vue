@@ -8,9 +8,9 @@ import { useExpandTransition } from '../share/hook/use-expand-transition'
 import { useResizeObserver } from '../share/hook/use-resize-observer'
 import { isNullish, isNumber } from 'parsnip-kit'
 import CheckSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/check-solid.svg'
+import EllipsesHorizontalSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/ellipses-horizontal-solid.svg'
 import ExclaimationSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/exclaimation-solid.svg'
 import MinusSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/minus-solid.svg'
-import PauseSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/pause-solid.svg'
 import RefreshSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/refresh-solid.svg'
 import TimesSolid from '@hackernoon/pixel-icon-library/icons/SVG/solid/times-solid.svg'
 import { ACTION_LIST_UPDATE } from '../share/const/event-bus-key.ts'
@@ -61,7 +61,7 @@ const detailBoxRef = shallowRef<HTMLDivElement | null>(null)
 useExpandTransition(detailRef, detailBoxRef, expandedComputed, () => animationDuration.value)
 
 const STATUS_ICON_MAP = {
-	pending: PauseSolid,
+	pending: EllipsesHorizontalSolid,
 	running: RefreshSolid,
 	success: CheckSolid,
 	warning: ExclaimationSolid,

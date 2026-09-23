@@ -9,9 +9,9 @@ import { createMocks } from '../../share/util/test'
 
 const stubs = {
 	CheckSolid: true,
+	EllipsesHorizontalSolid: true,
 	ExclaimationSolid: true,
 	Minus: true,
-	PauseSolid: true,
 	RefreshSolid: true,
 	TimesSolid: true
 }
