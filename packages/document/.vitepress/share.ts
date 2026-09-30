@@ -124,7 +124,7 @@ const additionMapZh = {
 }
 
 const dualCategoryItems: Record<string, string[]> = {
-	'ai-agent': ['bubble', 'action-list', 'typewriter', 'loading-dots']
+	'ai-agent': ['bubble', 'action-list', 'loading-dots']
 }
 
 const order = [
