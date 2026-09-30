@@ -59,10 +59,6 @@ const dfs = (
 	})
 }
 
-/**
- * 双重归属：把主分类中已有的组件条目复制一份挂到场景分类下，场景分类里没有页面时按分组规则补建。
- * 复制出的条目与主分类共用同一个 link，页面内容只有一份。
- */
 const injectDualCategoryItems = (
 	container: any[],
 	titleMap: Record<string, string>,
