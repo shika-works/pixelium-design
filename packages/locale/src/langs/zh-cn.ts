@@ -34,5 +34,9 @@ export default {
 	},
 	calendar: {
 		today: '今天'
+	},
+	'action-list': {
+		fold: (count: number) => `展开剩余 ${count} 条`,
+		unfold: '收起'
 	}
 }

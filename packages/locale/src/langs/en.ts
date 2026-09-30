@@ -34,5 +34,9 @@ export default {
 	},
 	calendar: {
 		today: 'Today'
+	},
+	'action-list': {
+		fold: (count: number) => `Show ${count} more`,
+		unfold: 'Show less'
 	}
 }

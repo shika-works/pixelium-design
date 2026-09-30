@@ -25,6 +25,11 @@ export type TimelineItemProps = {
 	 */
 	mark?: string
 	/**
+	 * @property {number | string} [spacing]
+	 * @version 0.2.1
+	 */
+	spacing?: number | string
+	/**
 	 * @property {string} [title]
 	 * @version 0.2.0
 	 */

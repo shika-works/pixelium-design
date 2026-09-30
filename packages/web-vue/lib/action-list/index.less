@@ -1,0 +1,69 @@
+@import url(../share/style/variable.less);
+
+.px-action-list {
+	@prefix: px-action-list;
+
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	box-sizing: border-box;
+	color: var(--px-neutral-10);
+	font-size: @px-medium-font-size;
+
+	&__small {
+		font-size: @px-small-font-size;
+	}
+
+	&__large {
+		font-size: @px-large-font-size;
+	}
+
+	&-items {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		box-sizing: border-box;
+	}
+
+	&-fold {
+		display: inline-flex;
+		flex-direction: row;
+		align-items: center;
+		gap: @px-interval-1;
+		box-sizing: border-box;
+		color: var(--px-neutral-8);
+		cursor: pointer;
+		transition: color 0.25s;
+		flex: 0;
+	}
+
+	&__fold-start &-fold {
+		padding-bottom: @px-interval-2;
+	}
+
+	&__fold-end &-fold {
+		order: 1;
+		padding-top: @px-interval-2;
+	}
+
+	&-fold:hover {
+		color: var(--px-neutral-10);
+	}
+
+	&-fold-text {
+		min-width: 0;
+	}
+
+	& &-fold-arrow {
+		color: inherit;
+		font-size: @px-medium-font-size;
+	}
+
+	&__small &-fold-arrow {
+		font-size: @px-small-font-size;
+	}
+
+	&__large &-fold-arrow {
+		font-size: @px-large-font-size;
+	}
+}

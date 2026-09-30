@@ -30,7 +30,6 @@
 				class="px-submenu-list"
 				ref="submenuListRef"
 				:style="{
-					maxHeight: maxHeight,
 					paddingLeft: indentComputed + 'px'
 				}"
 			>
@@ -96,7 +95,7 @@ import type { SubmenuProps, SubmenuProvide } from './type'
 import { createProvideComputed } from '../share/util/reactivity'
 import ChevronDown from '@hackernoon/pixel-icon-library/icons/SVG/regular/chevron-down.svg'
 import Popover from '../popover/index.vue'
-import { useExpand } from '../share/hook/use-expand'
+import { useExpandTransition } from '../share/hook/use-expand-transition'
 
 const ANIMATION_DURATION = 250
 
@@ -197,7 +196,12 @@ function clickHandler(e: MouseEvent) {
 }
 
 const submenuListRef = shallowRef<HTMLUListElement | null>(null)
-const [showContent, maxHeight] = useExpand(submenuListRef, expanded, ANIMATION_DURATION)
+const [showContent] = useExpandTransition(
+	submenuListRef,
+	undefined,
+	expanded,
+	ANIMATION_DURATION
+)
 
 const placement = computed(() => {
 	return menuProvide?.direction.value === 'horizontal'

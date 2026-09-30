@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, inject, shallowRef, useSlots } from 'vue'
+import { computed, inject, ref, shallowRef, useSlots } from 'vue'
 import type { TimelineItemProps } from './type'
 import { TIMELINE_PROVIDE } from '../share/const/provide-key'
+import { TIMELINE_UPDATE } from '../share/const/event-bus-key'
 import type { TimelineProvide } from '../timeline/type'
 import { useDraw } from './draw'
+import { useIndexOfChildren } from '../share/hook/use-index-of-children'
+import { isNumber } from 'parsnip-kit'
 
 defineOptions({
 	name: 'TimelineItem'
 })
 
 const props = withDefaults(defineProps<TimelineItemProps>(), {
-	lineVariant: 'solid',
 	theme: 'primary'
 })
 
@@ -18,12 +20,35 @@ const slots = useSlots()
 
 const timelineProvide = inject<TimelineProvide | undefined>(TIMELINE_PROVIDE, undefined)
 
+const [_0, _1, last] = timelineProvide
+	? useIndexOfChildren(TIMELINE_UPDATE + `-${timelineProvide.id}`)
+	: [ref(0), ref(false), ref(false)]
+
 const isHorizontal = computed(() => timelineProvide?.horizontal.value ?? false)
 const contentPlacement = computed(() => timelineProvide?.contentPlacement.value ?? 'end')
 const size = computed(() => timelineProvide?.size.value ?? 'medium')
 const hasMark = computed(() => timelineProvide?.hasMark.value ?? false)
 const smooth = computed(() => timelineProvide?.smooth.value ?? false)
 const contentSpan = computed(() => timelineProvide?.contentSpan.value ?? 70)
+
+const spacing = computed(() => props.spacing ?? timelineProvide?.spacing.value)
+
+const lineVariant = computed(
+	() => props.lineVariant ?? timelineProvide?.lineVariant.value ?? 'solid'
+)
+
+const spacingStyle = computed(() => {
+	// The last item has no following item to be kept away from.
+	if (last.value) {
+		return undefined
+	}
+	const value = spacing.value
+	if (value === undefined || value === null || value === '') {
+		return undefined
+	}
+	const spacingValue = isNumber(value) ? `${value}px` : value
+	return isHorizontal.value ? { paddingRight: spacingValue } : { paddingBottom: spacingValue }
+})
 
 const dotRef = shallowRef<HTMLDivElement | null>(null)
 const dotCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
@@ -72,14 +97,14 @@ const themeColorVar = computed(() => {
 			'px-timeline-item__horizontal': isHorizontal,
 			'px-timeline-item__vertical': !isHorizontal,
 			[`px-timeline-item__content-placement-${contentPlacement}`]: true,
-			[`px-timeline-item__${props.lineVariant}`]: true,
+			[`px-timeline-item__${lineVariant}`]: true,
 			[`px-timeline-item__${size}`]: true
 		}"
 	>
 		<div
 			class="px-timeline-item-mark"
 			v-if="hasMark"
-			:style="{ order: sectionOrder.indexOf('mark'), flexBasis: markFlexBasis }"
+			:style="[{ order: sectionOrder.indexOf('mark'), flexBasis: markFlexBasis }, spacingStyle]"
 		>
 			<slot name="mark">
 				{{ mark }}
@@ -101,7 +126,10 @@ const themeColorVar = computed(() => {
 
 		<div
 			class="px-timeline-item-content"
-			:style="{ order: sectionOrder.indexOf('content'), flexBasis: contentFlexBasis }"
+			:style="[
+				{ order: sectionOrder.indexOf('content'), flexBasis: contentFlexBasis },
+				spacingStyle
+			]"
 		>
 			<div class="px-timeline-item-header" v-if="slots.header || title">
 				<slot name="header">

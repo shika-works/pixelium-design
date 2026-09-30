@@ -1,8 +1,17 @@
 import fs from 'fs'
 import { titleCase } from 'parsnip-kit'
-import { order, guideOrder } from './share'
+import { order, guideOrder, dualCategoryItems } from './share'
 
 const badge = `<span class="VPBadge tip" style="background-color: rgba(203, 231, 202, 1);color: rgba(0, 180, 42, 1)">NEW!</span>`
+
+const groupText = (
+	name: string,
+	titleMap: Record<string, string>,
+	additionMap: Record<string, string>
+) => {
+	const add = additionMap?.[name.toLowerCase()]
+	return (titleMap[name.toLowerCase()] || titleCase(name)) + (add ? `  ${add}` : '')
+}
 
 const dfs = (
 	files: string[],
@@ -21,11 +30,10 @@ const dfs = (
 			const curFiles = fs.readdirSync(fullPath)
 			prefix.push(file)
 			const curContainer = [] as any[]
-			const add = additionMap?.[file.toLowerCase()]
 
 			container.push({
 				key: file,
-				text: (titleMap[file.toLowerCase()] || titleCase(file)) + (add ? `  ${add}` : ''),
+				text: groupText(file, titleMap, additionMap),
 				items: curContainer,
 				collapsible: true,
 				collapsed: false
@@ -51,6 +59,48 @@ const dfs = (
 	})
 }
 
+const injectDualCategoryItems = (
+	container: any[],
+	titleMap: Record<string, string>,
+	additionMap: Record<string, string>
+) => {
+	const findItem = (items: any[], key: string): any => {
+		for (const item of items) {
+			if (item.key?.toLowerCase() === key) {
+				return item
+			}
+			if (item.items) {
+				const found = findItem(item.items, key)
+				if (found) {
+					return found
+				}
+			}
+		}
+		return undefined
+	}
+
+	Object.keys(dualCategoryItems).forEach((groupKey) => {
+		let group = container.find((item) => item.key?.toLowerCase() === groupKey)
+		if (!group) {
+			group = {
+				key: groupKey,
+				text: groupText(groupKey, titleMap, additionMap),
+				items: [],
+				collapsible: true,
+				collapsed: false
+			}
+			container.push(group)
+		}
+		dualCategoryItems[groupKey].forEach((itemName) => {
+			const key = itemName.toLowerCase()
+			const entity = findItem(container, key)
+			if (entity && !group.items.some((item: any) => item.key?.toLowerCase() === key)) {
+				group.items.push({ ...entity })
+			}
+		})
+	})
+}
+
 export const dfs4Md = (
 	lang: string,
 	titleMap: Record<string, string>,
@@ -60,6 +110,7 @@ export const dfs4Md = (
 	const ans: any[] = []
 	const files = fs.readdirSync(lang)
 	dfs(files, [lang], ans, titleMap, additionMap, newItems)
+	injectDualCategoryItems(ans, titleMap, additionMap)
 	const orderedAns: any[] = []
 	order.forEach((e) => {
 		const entity = ans.find((item) => item.key?.toLowerCase() === e)

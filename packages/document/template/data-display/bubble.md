@@ -83,7 +83,7 @@ tail: 是否绘制小尾巴。
 tailPlacement: 小尾巴所在的角。
 tailWidth: 小尾巴根部的宽度。
 tailHeight: 小尾巴的高度。
-borderRadius: 圆角半径，优先级高于 `shape`，和 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。。
+borderRadius: 圆角半径，优先级高于 `shape`，和 CSS `border-radius` 行为一致；单值或长度为 1 的数组 → 四角同时生效；长度为 2 的数组 → [左上 & 右下, 右上 & 左下]；长度为 3 的数组 → [左上, 右上 & 左下, 右下]；长度为 4 的数组 → 按顺时针顺序依次作用于四角。
 shape: 圆角预设，优先级低于 `borderRadius`。
 pollSizeChange: 是否在容器大小变化时重新绘制。
 
