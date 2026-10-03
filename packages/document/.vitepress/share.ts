@@ -17,7 +17,8 @@ const newItems = [
 	'circle-progress',
 	'bubble',
 	'action-list',
-	'loading-dots'
+	'loading-dots',
+	'upload'
 ]
 
 const titleMapEn = {
@@ -120,7 +121,8 @@ const additionMapZh = {
 	bubble: '气泡',
 	'ai-agent': '组件',
 	'action-list': '操作列表',
-	'loading-dots': '点状加载'
+	'loading-dots': '点状加载',
+	upload: '上传'
 }
 
 const dualCategoryItems: Record<string, string[]> = {
