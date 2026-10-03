@@ -46,9 +46,11 @@
 						<Times z-index="0" @click="closeHandler" class="px-image-preview-close"></Times>
 						<img
 							z-index="0"
-							:src="curSrc"
-							:srcset="curSrcset"
+							ref="previewImgRef"
+							:src="previewSrcComputed"
+							:srcset="previewSrcsetComputed"
 							:alt="props.alt"
+							@load="previewLoadHandler"
 							:referrerpolicy="props.referrerpolicy as any"
 							:crossorigin="props.crossorigin"
 							class="px-image-preview-img"
@@ -65,7 +67,7 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, useSlots, watch } from 'vue'
+import { computed, ref, shallowRef, useSlots, watch } from 'vue'
 import type { ImageEvents, ImageProps } from './type'
 import { useLazyLoad } from '../share/hook/use-lazy-load'
 import { calculateZoomedSize } from '../share/util/dom'
@@ -101,9 +103,14 @@ const curSrcset = ref<string | undefined>(props.lazy ? undefined : props.srcset)
 const loadFailed = ref(false)
 const loaded = ref(false)
 
+const previewSrcComputed = computed(() => props.previewSrc || curSrc.value)
+
+const previewSrcsetComputed = computed(() => (props.previewSrc ? undefined : curSrcset.value))
+
 const previewVisible = ref(false)
 
 const imgRef = shallowRef<HTMLImageElement | null>(null)
+const previewImgRef = shallowRef<HTMLImageElement | null>(null)
 
 const emits = defineEmits<ImageEvents>()
 
@@ -155,11 +162,20 @@ const clickHandler = (e: MouseEvent) => {
 }
 
 useWindowResizeListener(() => {
-	if (!(loaded.value && props.previewable) || !imgRef.value || !previewVisible.value) {
+	const target = props.previewSrc ? previewImgRef.value : imgRef.value
+	if (!(loaded.value && props.previewable) || !previewVisible.value || !target) {
 		return
 	}
-	previewStyle.value = calculateZoomedSize(imgRef.value, props.zoomOptions)
+	previewStyle.value = calculateZoomedSize(target, props.zoomOptions)
 })
+
+const previewLoadHandler = () => {
+	const target = previewImgRef.value
+	if (!props.previewSrc || !previewVisible.value || !target) {
+		return
+	}
+	previewStyle.value = calculateZoomedSize(target, props.zoomOptions)
+}
 
 const closeHandler = (e: MouseEvent) => {
 	previewVisible.value = false
