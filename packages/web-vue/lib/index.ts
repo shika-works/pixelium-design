@@ -92,6 +92,10 @@ import Bubble from './bubble/index.vue'
 import ActionList from './action-list/index.vue'
 import ActionListItem from './action-list-item/index.vue'
 import LoadingDots from './loading-dots/index.vue'
+import Upload from './upload/index.vue'
+import UploadFileList from './upload-file-list/index.vue'
+import UploadImage from './upload-image/index.vue'
+import UploadDragger from './upload-dragger/index.vue'
 
 const components = [
 	Button,
@@ -176,7 +180,11 @@ const components = [
 	Bubble,
 	ActionList,
 	ActionListItem,
-	LoadingDots
+	LoadingDots,
+	Upload,
+	UploadFileList,
+	UploadImage,
+	UploadDragger
 ]
 
 const defaultPrefix = 'Px'
@@ -308,7 +316,11 @@ export {
 	Bubble,
 	ActionList,
 	ActionListItem,
-	LoadingDots
+	LoadingDots,
+	Upload,
+	UploadFileList,
+	UploadImage,
+	UploadDragger
 }
 
 export default {
@@ -388,3 +400,13 @@ export type {
 	ActionListSize,
 	ActionListLineVariant
 } from './action-list/type.ts'
+
+export type {
+	UploadData,
+	UploadHeaders,
+	UploadPatch,
+	UploadCustomRequestOptions,
+	CustomRequest,
+	CustomDownload,
+	FileInfo
+} from './upload/type.ts'
