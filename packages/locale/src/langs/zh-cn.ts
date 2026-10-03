@@ -38,5 +38,9 @@ export default {
 	'action-list': {
 		fold: (count: number) => `展开剩余 ${count} 条`,
 		unfold: '收起'
+	},
+	upload: {
+		uploadFile: '上传文件',
+		draggerText: '点击或拖拽文件到此区域上传'
 	}
 }
