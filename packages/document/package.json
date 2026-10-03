@@ -12,7 +12,7 @@
 		"format": "oxlint ./ --fix && prettier ./ --write --no-cache"
 	},
 	"devDependencies": {
-		"parsnip-kit": "^0.1.0",
+		"parsnip-kit": "^0.1.1",
 		"vitepress": "2.0.0-alpha.12"
 	},
 	"dependencies": {
