@@ -8,8 +8,10 @@
 [[[zh
 ## v0.2.1
 - 新增：
+  - 新增数据输入组件：Upload、UploadFileList、UploadImage、UploadDragger。
   - 新增 AI Agent 组件：Bubble、ActionList、ActionListItem、LoadingDots。
   - Timeline 和 TimelineItem 组件新增属性 `spacing`。Timeline 组件新增属性 `lineVariant`。
+  - Image 组件新增属性 `previewSrc`。
 - 优化：
   - 优化 canvas 绘制，减少重复触发提高性能。
 - 调整：
@@ -24,8 +26,10 @@
 [[[en
 ## v0.2.1
 - New Features:
+  - New data input components: Upload, UploadFileList, UploadImage, UploadDragger.
   - New data AI Agent component: Bubble, ActionList, ActionListItem, LoadingDots.
   - The Timeline and TimelineItem components have a new `spacing` prop. The Timeline component has a new `lineVariant` prop.
+  - The Image component has a new `previewSrc` prop.
 - Optimizations:
   - Optimize canvas rendering to reduce redundant triggers and improve performance.
 - Adjustment:
