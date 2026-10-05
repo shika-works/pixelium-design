@@ -1,7 +1,5 @@
 import type { NumberOrPercentage, RestAttrs } from '../share/type'
 
-export type CardShape = 'rect' | 'round'
-
 export type CardProps = {
 	/**
 	 * @property {string} [title]
@@ -9,10 +7,10 @@ export type CardProps = {
 	 */
 	title?: string
 	/**
-	 * @property {CardShape} [shape='rect']
+	 * @property {'rect' | 'round'} [shape='round']
 	 * @version 0.2.0
 	 */
-	shape?: CardShape
+	shape?: 'rect' | 'round'
 	/**
 	 * @property {NumberOrPercentage | NumberOrPercentage[]} [borderRadius]
 	 * @version 0.2.0
