@@ -7,7 +7,7 @@ import Progress from '../../progress/index.vue'
 import Mask from '../../mask/index.vue'
 import { UPLOAD_PROVIDE } from '../../share/const/provide-key'
 import { createMocks } from '../../share/util/test'
-import type { FileInfo, UploadProvide } from '../../upload/type'
+import type { FileInfo, UploadProvide } from '../../upload-provider/type'
 
 const item = (patch: Partial<FileInfo> = {}): FileInfo => ({
 	id: 'id-1',

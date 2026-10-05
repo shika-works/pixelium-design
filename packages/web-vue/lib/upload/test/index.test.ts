@@ -8,7 +8,7 @@ import UploadImage from '../../upload-image/index.vue'
 import UploadDragger from '../../upload-dragger/index.vue'
 import { FORM_ITEM_PROVIDE } from '../../share/const/provide-key'
 import { createMocks } from '../../share/util/test'
-import type { FileInfo, UploadCustomRequestOptions } from '../type'
+import type { FileInfo, UploadCustomRequestOptions } from '../../upload-provider/type'
 
 const file = (name: string, type = 'application/pdf') => new File(['x'], name, { type })
 

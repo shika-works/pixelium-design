@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import type { UploadDraggerProps } from './type'
-import type { UploadProvide } from '../upload/type'
+import type { UploadProvide } from '../upload-provider/type'
 import { UPLOAD_PROVIDE } from '../share/const/provide-key'
 import { useDropZone } from '../share/hook/use-drop-zone'
 import { useLocale } from '../share/util/locale'

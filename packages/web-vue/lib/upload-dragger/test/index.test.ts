@@ -4,7 +4,7 @@ import { computed, defineComponent, h, nextTick, provide } from 'vue'
 import UploadDragger from '../index.vue'
 import { UPLOAD_PROVIDE } from '../../share/const/provide-key'
 import { createMocks } from '../../share/util/test'
-import type { UploadProvide } from '../../upload/type'
+import type { UploadProvide } from '../../upload-provider/type'
 
 const file = (name: string, type = 'application/pdf') => new File(['x'], name, { type })
 

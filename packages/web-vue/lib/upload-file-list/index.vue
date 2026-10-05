@@ -71,7 +71,7 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import type { UploadFileListProps } from './type'
-import type { FileInfo, UploadProvide } from '../upload/type'
+import type { FileInfo, UploadProvide } from '../upload-provider/type'
 import { UPLOAD_PROVIDE } from '../share/const/provide-key'
 import { isImageFile } from '../share/util/file'
 import Progress from '../progress/index.vue'
