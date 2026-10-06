@@ -109,10 +109,10 @@ export type PopoverEvents = {
 	'update:visible': [value: boolean]
 	/**
 	 * @event close
-	 * @param {MouseEvent} e
+	 * @param {MouseEvent | KeyboardEvent | TouchEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e?: MouseEvent | TouchEvent]
+	close: [e?: MouseEvent | KeyboardEvent | TouchEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e
