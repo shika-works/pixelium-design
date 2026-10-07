@@ -28,7 +28,8 @@
 						v-if="showProgressComputed"
 						class="px-upload-image-progress"
 						:percentage="item.progress"
-						size="small"
+						:size="INTERVAL"
+						:border-width="0"
 					></Progress>
 					<div class="px-upload-image-actions">
 						<span
@@ -114,6 +115,7 @@ import Pause from '@hackernoon/pixel-icon-library/icons/SVG/regular/pause.svg'
 import ImageIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/image.svg'
 // @ts-ignore
 import FileIcon from 'pixelarticons/svg/file.svg'
+import { INTERVAL } from '../share/const/style.ts'
 
 defineOptions({
 	name: 'UploadImage'

@@ -21,13 +21,13 @@
 					{{ item.name }}
 				</span>
 				<Progress
-					v-show="pixelSize"
 					v-if="
 						showProgressComputed && (item.state === 'uploading' || item.state === 'queueing')
 					"
 					class="px-upload-file-list-progress"
 					:percentage="item.progress"
-					:size="pixelSize * 4 || undefined"
+					:size="INTERVAL"
+					:border-width="0"
 				></Progress>
 			</div>
 			<div class="px-upload-file-list-actions">
@@ -87,7 +87,7 @@ import Pause from '@hackernoon/pixel-icon-library/icons/SVG/regular/pause.svg'
 import ImageIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/image.svg'
 // @ts-ignore
 import FileIcon from 'pixelarticons/svg/file.svg'
-import { usePixelSize } from '../share/hook/use-pixel-size.ts'
+import { INTERVAL } from '../share/const/style.ts'
 
 defineOptions({
 	name: 'UploadFileList'
@@ -134,8 +134,6 @@ const abort = withEnabled((id) => uploadProvide?.abort(id))
 const retry = withEnabled((id) => uploadProvide?.retry(id))
 
 const remove = withEnabled((id) => uploadProvide?.remove(id))
-
-const pixelSize = usePixelSize()
 </script>
 
 <style lang="less" src="./index.less"></style>
