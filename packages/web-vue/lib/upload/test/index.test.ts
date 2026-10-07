@@ -209,6 +209,63 @@ describe('Upload', () => {
 		expect(states(auto)).toBe('finished')
 	})
 
+	it('settles a file-less pending item from the prop as finished on submit', async () => {
+		const wrapper = mountUpload({
+			defaultFileList: [
+				{
+					id: 'preset',
+					name: 'preset.pdf',
+					type: 'application/pdf',
+					state: 'pending',
+					progress: 0
+				}
+			]
+		})
+		expect(states(wrapper)).toBe('pending')
+
+		wrapper.vm.submit()
+		await flushPromises()
+		expect(states(wrapper)).toBe('finished')
+	})
+
+	it('aborts a file-less uploading item from the prop into the failed state', async () => {
+		const wrapper = mountUpload({
+			defaultFileList: [
+				{
+					id: 'preset',
+					name: 'preset.pdf',
+					type: 'application/pdf',
+					state: 'uploading',
+					progress: 40
+				}
+			]
+		})
+		expect(states(wrapper)).toBe('uploading')
+
+		wrapper.vm.abort('preset')
+		await flushPromises()
+		expect(states(wrapper)).toBe('error')
+		expect((argsOf(wrapper, 'abort')[0] as FileInfo).id).toBe('preset')
+	})
+
+	it('settles a file-less failed item from the prop as finished on retry', async () => {
+		const wrapper = mountUpload({
+			defaultFileList: [
+				{
+					id: 'preset',
+					name: 'preset.pdf',
+					type: 'application/pdf',
+					state: 'error',
+					progress: 0
+				}
+			]
+		})
+
+		wrapper.vm.retry()
+		await flushPromises()
+		expect(states(wrapper)).toBe('finished')
+	})
+
 	it('keeps the running requests at the concurrency limit', async () => {
 		const pendingResolvers: Array<() => void> = []
 		const customRequest = vi.fn(

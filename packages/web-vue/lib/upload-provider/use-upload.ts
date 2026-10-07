@@ -164,12 +164,7 @@ export const useUpload = (
 
 	const runRequest = (item: FileInfo): Promise<void> => {
 		queuedIds.delete(item.id)
-		if (
-			abortedIds.has(item.id) ||
-			!item.file ||
-			activeRequests.has(item.id) ||
-			!findItem(item.id)
-		) {
+		if (abortedIds.has(item.id) || activeRequests.has(item.id) || !findItem(item.id)) {
 			return Promise.resolve()
 		}
 		const controller = new AbortController()
@@ -245,8 +240,10 @@ export const useUpload = (
 		activeRequests.set(item.id, settle)
 		patchItem(item.id, { state: 'uploading', progress: 0 })
 
+		// Without a File object there is nothing to send, so a local entry (for example one
+		// seeded through defaultFileList) settles as finished instead of running a request.
 		const customRequest = props.customRequest
-		if (customRequest) {
+		if (item.file && customRequest) {
 			Promise.resolve()
 				.then(() => customRequest(requestOptions))
 				.then(
@@ -265,7 +262,7 @@ export const useUpload = (
 			return done
 		}
 
-		if (props.action) {
+		if (item.file && props.action) {
 			try {
 				runXhr(item, finalize)
 			} catch (error) {
@@ -498,7 +495,10 @@ export const useUpload = (
 		}
 		const targets = fileListComputed.value.filter(
 			(item) =>
-				(isActiveRequest(item) || queuedIds.has(item.id)) &&
+				(isActiveRequest(item) ||
+					queuedIds.has(item.id) ||
+					item.state === 'uploading' ||
+					item.state === 'queueing') &&
 				(id === undefined || item.id === id)
 		)
 		if (!targets.length) {
