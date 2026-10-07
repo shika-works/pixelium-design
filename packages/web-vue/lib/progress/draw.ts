@@ -83,6 +83,8 @@ type UseDrawOptions = {
 	progress: Ref<number>
 	progressPadding: ComputedRef<number>
 	trackColor: Ref<string | undefined>
+	borderWidth: Ref<number | undefined>
+	borderColor: Ref<string | undefined>
 	slots: Slots
 	pollSizeChange: Ref<boolean | undefined>
 	refresh?: () => void
@@ -98,21 +100,21 @@ export const useDraw = (options: UseDrawOptions) => {
 		}
 		const { ctx, width, height } = preprocessData
 
-		const pixelSize = pixelSizeRef.value
-
-		const borderColor = getGlobalThemeColor('neutral', 10)
-
 		const backgroundColor = getBackgroundColor(options.theme.value, options.palette.value)
 		const gradientColor = getGradientColor(options.theme.value, options.palette.value)
 
 		const padding = options.progressPadding.value
 
-		const borderWidth = pixelSize
+		const borderWidth = options.borderWidth.value ?? pixelSizeRef.value
 		const innerHeight = height - 2 * borderWidth - padding * 2
 		const innerWidth = width - 2 * borderWidth - padding * 2
 
+		const defaultBorderColor = getGlobalThemeColorString('neutral', 10)
+		const borderColor =
+			options.borderColor.value ?? defaultBorderColor
+
 		if (borderColor) {
-			drawRectBorder(ctx, rgbaColor2string(borderColor), pixelSize)
+			drawRectBorder(ctx, borderColor, borderWidth)
 		}
 
 		ctx.fillStyle = options.trackColor.value || getGlobalThemeColorString('neutral', 5)
@@ -157,7 +159,9 @@ export const useDraw = (options: UseDrawOptions) => {
 			() => options.slots,
 			options.progress,
 			options.progressPadding,
-			options.trackColor
+			options.trackColor,
+			options.borderWidth,
+			options.borderColor
 		],
 		() => {
 			debouncedTrigger()
