@@ -110,8 +110,7 @@ export const useDraw = (options: UseDrawOptions) => {
 		const innerWidth = width - 2 * borderWidth - padding * 2
 
 		const defaultBorderColor = getGlobalThemeColorString('neutral', 10)
-		const borderColor =
-			options.borderColor.value ?? defaultBorderColor
+		const borderColor = options.borderColor.value ?? defaultBorderColor
 
 		if (borderColor) {
 			drawRectBorder(ctx, borderColor, borderWidth)
