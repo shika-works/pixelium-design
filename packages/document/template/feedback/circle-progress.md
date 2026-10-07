@@ -38,7 +38,7 @@ Control the size of CircleProgress with the `size` prop (px). The default is `12
 ]]]
 [[[zh
 ## 尺寸
-通过 `size` 属性控制 CircleProgress 的尺寸（像素），默认值为 `128`。
+通过 `size` 属性控制 CircleProgress 的尺寸（px），默认值为 `128`。
 ]]]
 <preview path="./circle-progress-size.vue"></preview>
 
