@@ -192,14 +192,21 @@ describe('Upload', () => {
 		expect(options.signal.aborted).toBe(false)
 	})
 
-	it('leaves the item pending when neither customRequest nor action is given', async () => {
+	it('settles a pending item as finished on submit when no endpoint is given', async () => {
 		const manual = mountUpload({ autoUpload: false })
 		await pick(manual, [file('a.pdf')])
 		expect(states(manual)).toBe('pending')
 
+		manual.vm.submit()
+		await flushPromises()
+		expect(states(manual)).toBe('finished')
+	})
+
+	it('settles the auto upload as finished when no endpoint is given', async () => {
 		const auto = mountUpload()
 		await pick(auto, [file('a.pdf')])
-		expect(states(auto)).toBe('pending')
+		await flushPromises()
+		expect(states(auto)).toBe('finished')
 	})
 
 	it('keeps the running requests at the concurrency limit', async () => {

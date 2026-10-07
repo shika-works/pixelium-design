@@ -274,8 +274,8 @@ export const useUpload = (
 			return done
 		}
 
-		patchItem(item.id, { state: 'pending' })
-		settle()
+		patchItem(item.id, { progress: 100 })
+		void finalize('finished')
 		return done
 	}
 
