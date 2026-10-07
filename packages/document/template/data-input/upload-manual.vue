@@ -1,9 +1,5 @@
 <template>
-	<px-upload
-		ref="uploadRef"
-		:auto-upload="false"
-		:custom-request="uploadFile"
-	></px-upload>
+	<px-upload ref="uploadRef" :auto-upload="false" :custom-request="uploadFile"></px-upload>
 	<px-space style="margin-top: 8px">
 		<px-button size="small" @click="uploadRef?.submit()">Start all</px-button>
 		<px-button size="small" @click="uploadRef?.abort()">Abort</px-button>

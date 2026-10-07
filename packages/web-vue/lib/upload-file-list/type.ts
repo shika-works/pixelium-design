@@ -10,6 +10,11 @@ export type UploadFileListProps = {
 	 */
 	abortable?: boolean
 	/**
+	 * @property {boolean} [previewable=true]
+	 * @version 0.2.1
+	 */
+	previewable?: boolean
+	/**
 	 * @property {boolean} [showProgress=true]
 	 * @version 0.2.1
 	 */

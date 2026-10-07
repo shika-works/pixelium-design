@@ -2,12 +2,14 @@
 
 .px-upload-file-list {
 	@prefix: px-upload-file-list;
+	@icon-width: calc(1.5em + var(--px-bit) * 4 + @px-interval-mini-1);
+	@icon-height: calc(1.5em + var(--px-bit) * 4 + @px-interval-mini-1);
 
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
 	width: 100%;
-	gap: @px-interval-1;
+	gap: @px-interval-2;
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -35,10 +37,25 @@
 
 	& &-icon {
 		flex-shrink: 0;
-		width: calc(1em + var(--px-bit) * 4 + @px-interval-mini-1);
-		height: calc(1.5em + var(--px-bit) * 4 + @px-interval-mini-1);
+		width: @icon-width;
+		height: @icon-height;
 		color: var(--px-neutral-8);
 		fill: currentColor;
+	}
+
+	& &-thumb {
+		display: block;
+		flex-shrink: 0;
+		box-sizing: border-box;
+		overflow: hidden;
+		width: @icon-width;
+		height: @icon-height;
+	}
+
+	& &-thumb-image {
+		display: block;
+		width: 100%;
+		height: 100%;
 	}
 
 	&-body {
