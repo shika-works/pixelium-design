@@ -21,6 +21,10 @@
 	transition:
 		background-color 0.25s,
 		color 0.25s;
+	
+	&:focus, &:focus-visible {
+		outline: none;
+	}
 
 	&:hover:not(.@{prefix}__disabled) {
 		background-color: var(--px-neutral-3);
@@ -36,8 +40,14 @@
 	}
 
 	&__disabled {
-		color: var(--px-primary-3);
+		color: var(--px-neutral-7);
 		cursor: not-allowed;
+		background-color: transparent;
+	}
+
+	&__disabled.@{prefix}__active {
+		color: var(--px-primary-3);
+		background-color: transparent;
 	}
 
 	&-icon {
