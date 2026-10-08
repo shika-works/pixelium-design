@@ -22,4 +22,9 @@ export type PromptActionBaseSlots = {
 	 * @version 0.2.1
 	 */
 	icon: {}
+	/**
+	 * @slot suffix
+	 * @version 0.2.1
+	 */
+	suffix: {}
 }
