@@ -92,13 +92,13 @@ export type PromptSelectSlots = {
 	 * @param {string | PromptSelectOption} option
 	 * @version 0.2.1
 	 */
-	option: { option: string | PromptSelectOption }
+	option: {}
 	/**
 	 * @slot group-label
 	 * @param {PromptSelectGroupOption} option
 	 * @version 0.2.1
 	 */
-	'group-label': { option: PromptSelectGroupOption }
+	'group-label': {}
 }
 
 export type PromptSelectExpose = {
