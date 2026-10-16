@@ -221,7 +221,7 @@ export type UploadSlots = {
 	 * @param {() => void} open
 	 * @version 0.2.1
 	 */
-	trigger: { open: () => void }
+	trigger: {}
 	/**
 	 * @slot file-list
 	 * @param {FileInfo[]} fileList
@@ -232,14 +232,7 @@ export type UploadSlots = {
 	 * @param {(file: FileInfo) => void} download
 	 * @version 0.2.1
 	 */
-	'file-list': {
-		fileList: FileInfo[]
-		remove: (id: string) => void
-		abort: (id?: string) => void
-		submit: (fileId?: string) => void
-		retry: (fileId?: string) => void
-		download: (file: FileInfo) => void
-	}
+	'file-list': {}
 }
 
 export type UploadExpose = {

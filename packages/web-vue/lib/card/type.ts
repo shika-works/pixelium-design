@@ -60,20 +60,17 @@ export type CardEvents = {
 export type CardSlots = {
 	/**
 	 * @slot header
-	 * @description Custom header content
 	 * @version 0.2.0
 	 */
-	header?: Record<string, never>
+	header: {}
 	/**
 	 * @slot default
-	 * @description Card body content
 	 * @version 0.2.0
 	 */
-	default?: Record<string, never>
+	default: {}
 	/**
 	 * @slot footer
-	 * @description Custom footer content
 	 * @version 0.2.0
 	 */
-	footer?: Record<string, never>
+	footer: {}
 }

@@ -93,10 +93,8 @@ export type ActionListItemSlots = {
 	content: {}
 	/**
 	 * @slot icon
-	 * @param {'pending' | 'running' | 'success' | 'warning' | 'error' | 'skipped'} status
+	 * @param {ActionItemStatus} status
 	 * @version 0.2.1
 	 */
-	icon: {
-		status: ActionItemStatus
-	}
+	icon: {}
 }

@@ -102,17 +102,13 @@ export type TypewriterSlots = {
 	 * @param {string} text
 	 * @version 0.2.0
 	 */
-	default: {
-		text: string
-	}
+	default: {}
 	/**
 	 * @slot caret
 	 * @param {boolean} visible
 	 * @version 0.2.0
 	 */
-	caret: {
-		visible: boolean
-	}
+	caret: {}
 }
 
 export type TypewriterExpose = {

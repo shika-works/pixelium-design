@@ -288,7 +288,7 @@ export type UploadProviderSlots = {
 	 * @param {UploadProviderScope} upload
 	 * @version 0.2.1
 	 */
-	default: { upload: UploadProviderScope }
+	default: {}
 }
 
 export type UploadProvide = {
