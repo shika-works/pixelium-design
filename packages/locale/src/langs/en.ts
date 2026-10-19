@@ -42,5 +42,8 @@ export default {
 	upload: {
 		uploadFile: 'Upload File',
 		draggerText: 'Click or drag files here to upload'
+	},
+	prompt: {
+		holdText: 'Press and hold to talk'
 	}
 }

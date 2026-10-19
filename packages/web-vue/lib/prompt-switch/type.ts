@@ -10,15 +10,15 @@ export type PromptSwitchProps = {
 	 */
 	disabled?: boolean
 	/**
-	 * @property {boolean} [active=false]
+	 * @property {boolean} [modelValue=false]
 	 * @version 0.2.1
 	 */
-	active?: boolean
+	modelValue?: boolean
 	/**
-	 * @property {boolean} [defaultActive=false]
+	 * @property {boolean} [defaultValue=false]
 	 * @version 0.2.1
 	 */
-	defaultActive?: boolean
+	defaultValue?: boolean
 	/**
 	 * @property {boolean} [showClose=true]
 	 * @version 0.2.1
@@ -28,11 +28,11 @@ export type PromptSwitchProps = {
 
 export type PromptSwitchEvents = {
 	/**
-	 * @event update:active
+	 * @event update:modelValue
 	 * @param {boolean} value
 	 * @version 0.2.1
 	 */
-	'update:active': [value: boolean]
+	'update:modelValue': [value: boolean]
 }
 
 export type PromptSwitchSlots = {

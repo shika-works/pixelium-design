@@ -2,8 +2,14 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import PromptActionBase from '../index.vue'
 import { createMocks } from '../../share/util/test'
+import { computed } from 'vue'
+import { PROMPT_PROVIDE } from '../../share/const/provide-key'
+import type { PromptProvide } from '../../prompt/type'
 
 const baseOf = (wrapper: any) => wrapper.find('.px-prompt-action-base')
+
+const promptProvide = (context: Record<string, any> = {}) =>
+	({ disabled: computed(() => !!context.disabled) }) as unknown as PromptProvide
 
 describe('PromptActionBase', () => {
 	const { pre, post } = createMocks()
@@ -44,5 +50,15 @@ describe('PromptActionBase', () => {
 	it('marks the button active', () => {
 		const wrapper = mount(PromptActionBase, { props: { active: true } })
 		expect(baseOf(wrapper).classes()).toContain('px-prompt-action-base__active')
+	})
+
+	it('inherits the disabled state from the prompt context', () => {
+		const wrapper = mount(PromptActionBase, {
+			global: {
+				provide: { [PROMPT_PROVIDE]: promptProvide({ disabled: true }) }
+			}
+		})
+		expect(baseOf(wrapper).attributes('disabled')).toBeDefined()
+		expect(baseOf(wrapper).classes()).toContain('px-prompt-action-base__disabled')
 	})
 })

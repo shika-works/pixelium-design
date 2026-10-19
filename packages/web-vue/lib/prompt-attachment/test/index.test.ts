@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { computed, defineComponent, h, provide } from 'vue'
-import PromptFile from '../index.vue'
-import PromptFileItem from '../../prompt-file-item/index.vue'
+import PromptAttachment from '../index.vue'
+import PromptAttachmentItem from '../../prompt-attachment-item/index.vue'
 import { UPLOAD_PROVIDE } from '../../share/const/provide-key'
 import { createMocks } from '../../share/util/test'
 import type { FileInfo, UploadProvide } from '../../upload-provider/type'
@@ -39,15 +39,15 @@ const mountFile = (
 	const Host = defineComponent({
 		setup() {
 			provide(UPLOAD_PROVIDE, upload)
-			return () => h(PromptFile, props)
+			return () => h(PromptAttachment, props)
 		}
 	})
 	return { wrapper: mount(Host, { attachTo: 'body' }), upload }
 }
 
-const cards = (wrapper: any) => wrapper.findAll('.px-prompt-file-item')
+const cards = (wrapper: any) => wrapper.findAll('.px-prompt-attachment-item')
 
-describe('PromptFile', () => {
+describe('PromptAttachment', () => {
 	const { pre, post } = createMocks()
 
 	beforeEach(() => {
@@ -64,20 +64,19 @@ describe('PromptFile', () => {
 	it('renders the card of every file in the upload', () => {
 		const { wrapper } = mountFile({}, {}, [item(), item({ id: 'id-2', name: 'b.pdf' })])
 		expect(cards(wrapper)).toHaveLength(2)
-		expect(wrapper.findAll('.px-prompt-file-item-name').map((el: any) => el.text())).toEqual([
-			'report.pdf',
-			'b.pdf'
-		])
+		expect(
+			wrapper.findAll('.px-prompt-attachment-item-name').map((el: any) => el.text())
+		).toEqual(['report.pdf', 'b.pdf'])
 	})
 
 	it('renders no card when no upload provider is injected', () => {
-		const wrapper = mount(PromptFile)
+		const wrapper = mount(PromptAttachment)
 		expect(cards(wrapper)).toHaveLength(0)
 	})
 
 	it('forwards its props to the cards', () => {
 		const { wrapper } = mountFile({ abortable: false, showProgress: false, previewable: false })
-		const card = wrapper.findComponent(PromptFileItem)
+		const card = wrapper.findComponent(PromptAttachmentItem)
 		expect(card.props('abortable')).toBe(false)
 		expect(card.props('showProgress')).toBe(false)
 		expect(card.props('previewable')).toBe(false)
@@ -85,13 +84,13 @@ describe('PromptFile', () => {
 
 	it('follows the upload size, defaulting to medium', () => {
 		const fallback = mountFile()
-		expect(fallback.wrapper.find('.px-prompt-file').classes()).toContain(
-			'px-prompt-file__medium'
+		expect(fallback.wrapper.find('.px-prompt-attachment').classes()).toContain(
+			'px-prompt-attachment__medium'
 		)
 
 		const fromUpload = mountFile({}, { size: computed(() => 'large') })
-		expect(fromUpload.wrapper.find('.px-prompt-file').classes()).toContain(
-			'px-prompt-file__large'
+		expect(fromUpload.wrapper.find('.px-prompt-attachment').classes()).toContain(
+			'px-prompt-attachment__large'
 		)
 	})
 })

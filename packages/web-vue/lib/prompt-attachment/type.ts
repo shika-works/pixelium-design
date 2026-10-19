@@ -1,4 +1,4 @@
-export type PromptFileProps = {
+export type PromptAttachmentProps = {
 	/**
 	 * @property {boolean} [abortable=true]
 	 * @version 0.2.1

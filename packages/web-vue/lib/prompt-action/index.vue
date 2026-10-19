@@ -1,5 +1,5 @@
 <template>
-	<PromptActionBase v-bind="$attrs" :disabled="props.disabled" class="px-prompt-action">
+	<PromptActionBase v-bind="$attrs" :disabled="disabledComputed" class="px-prompt-action">
 		<template v-if="slots.icon" #icon>
 			<slot name="icon"></slot>
 		</template>
@@ -10,8 +10,10 @@
 	</PromptActionBase>
 </template>
 <script setup lang="ts">
-import { useSlots } from 'vue'
+import { computed, inject, useSlots } from 'vue'
 import type { PromptActionProps } from './type'
+import type { PromptProvide } from '../prompt/type'
+import { PROMPT_PROVIDE } from '../share/const/provide-key'
 import PromptActionBase from '../prompt-action-base/index.vue'
 
 defineOptions({
@@ -24,6 +26,12 @@ const props = withDefaults(defineProps<PromptActionProps>(), {
 })
 
 const slots = useSlots()
+
+const promptProvide = inject<PromptProvide | undefined>(PROMPT_PROVIDE, undefined)
+
+const disabledComputed = computed(
+	() => props.disabled || !!promptProvide?.readonly.value || !!promptProvide?.disabled.value
+)
 </script>
 
 <style src="../share/style/index.css" />

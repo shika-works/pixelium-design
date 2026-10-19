@@ -21,7 +21,7 @@
 			<template v-if="slots.icon" #icon>
 				<slot name="icon"></slot>
 			</template>
-			<slot>{{ props.label }}</slot>
+			<slot>{{ label }}</slot>
 			<template #suffix>
 				<ChevronUp
 					class="px-prompt-select-caret"
@@ -47,7 +47,7 @@
 	</Popup>
 </template>
 <script setup lang="ts">
-import { computed, inject, ref, useSlots } from 'vue'
+import { computed, inject, ref, useSlots, watch } from 'vue'
 import type {
 	PromptSelectEvents,
 	PromptSelectExpose,
@@ -61,7 +61,8 @@ import Popup from '../popup/index.vue'
 import OptionList from '../option-list/index.vue'
 import PromptActionBase from '../prompt-action-base/index.vue'
 import ChevronUp from '../chevron-up/index.vue'
-import { isNullish } from 'parsnip-kit'
+import { isNullish, isString } from 'parsnip-kit'
+import { findSameOption } from '../share/util/common.ts'
 
 defineOptions({
 	name: 'PromptSelect',
@@ -81,15 +82,23 @@ const promptProvide = inject<PromptProvide | undefined>(PROMPT_PROVIDE, undefine
 
 const menuVisible = ref(false)
 
-const [value, updateValue] = useControlledMode('value', props, emits, {
+const [modelValue, updateModelValue] = useControlledMode('modelValue', props, emits, {
 	defaultField: 'defaultValue'
 })
 
-const disabledComputed = computed(() => props.disabled || !!promptProvide?.disabled.value)
+const disabledComputed = computed(
+	() => props.disabled || !!promptProvide?.readonly.value || !!promptProvide?.disabled.value
+)
+
+watch(disabledComputed, (value) => {
+	if (value) {
+		menuVisible.value = false
+	}
+})
 
 const hasMenu = computed(() => !!props.options?.length)
 
-const activeValues = computed(() => (!isNullish(value.value) ? [value.value] : []))
+const activeValues = computed(() => (!isNullish(modelValue.value) ? [modelValue.value] : []))
 
 const visibleUpdateHandler = (visible: boolean) => {
 	menuVisible.value = visible
@@ -108,18 +117,32 @@ const selectHandler = (
 	option: string | PromptSelectOption,
 	e: MouseEvent
 ) => {
-	updateValue(optionValue)
+	if (disabledComputed.value) {
+		return
+	}
+	updateModelValue(optionValue)
 	menuVisible.value = false
 	emits('select', optionValue, option, e)
 }
 
 defineExpose<PromptSelectExpose>({
 	open: () => {
+		if (disabledComputed.value) {
+			return
+		}
 		menuVisible.value = true
 	},
 	close: () => {
 		menuVisible.value = false
 	}
+})
+
+const label = computed(() => {
+	const option = findSameOption(modelValue.value, props.options || [])[0]
+	if (isNullish(option)) {
+		return ''
+	}
+	return (isString(option) ? option : option.label) || ''
 })
 </script>
 

@@ -91,6 +91,15 @@ import CountTo from './count-to/index.vue'
 import Bubble from './bubble/index.vue'
 import ActionList from './action-list/index.vue'
 import ActionListItem from './action-list-item/index.vue'
+import Prompt from './prompt/index.vue'
+import PromptAction from './prompt-action/index.vue'
+import PromptSwitch from './prompt-switch/index.vue'
+import PromptSelect from './prompt-select/index.vue'
+import PromptSend from './prompt-send/index.vue'
+import PromptAttachment from './prompt-attachment/index.vue'
+import PromptSpeechTrigger from './prompt-speech-trigger/index.vue'
+import PromptSpeechPanel from './prompt-speech-panel/index.vue'
+import PromptSpeechProvider from './prompt-speech-provider/index.vue'
 import LoadingDots from './loading-dots/index.vue'
 import Upload from './upload/index.vue'
 import UploadFileList from './upload-file-list/index.vue'
@@ -180,6 +189,15 @@ const components = [
 	Bubble,
 	ActionList,
 	ActionListItem,
+	Prompt,
+	PromptAction,
+	PromptSwitch,
+	PromptSelect,
+	PromptSend,
+	PromptAttachment,
+	PromptSpeechTrigger,
+	PromptSpeechPanel,
+	PromptSpeechProvider,
 	LoadingDots,
 	Upload,
 	UploadFileList,
@@ -316,6 +334,15 @@ export {
 	Bubble,
 	ActionList,
 	ActionListItem,
+	Prompt,
+	PromptAction,
+	PromptSwitch,
+	PromptSelect,
+	PromptSend,
+	PromptAttachment,
+	PromptSpeechTrigger,
+	PromptSpeechPanel,
+	PromptSpeechProvider,
 	LoadingDots,
 	Upload,
 	UploadFileList,
@@ -409,4 +436,33 @@ export type {
 	CustomRequest,
 	CustomDownload,
 	FileInfo
-} from './upload/type.ts'
+} from './upload-provider/type.ts'
+
+export type {
+	PromptSubmitKey,
+	PromptCounterConfig,
+	PromptUploadConfig,
+	PromptUploadScope,
+	PromptChipConfig,
+	PromptChip,
+	PromptSegment,
+	PromptContent,
+	PromptSendScope,
+	PromptTriggerPayload,
+	PromptOption,
+	PromptGroupOption
+} from './prompt/type.ts'
+export type {
+	PromptSpeechBarConfig,
+	PromptSpeechMode,
+	PromptSpeechSpectrum
+} from './prompt-speech-provider/type.ts'
+export type {
+	PromptSpeechPanelScope,
+	PromptSpeechPanelSlots
+} from './prompt-speech-panel/type.ts'
+export type {
+	PromptSpeechProviderProps as PromptSpeechConfig,
+	CustomRecognize,
+	CustomRecognizeOptions
+} from './prompt-speech-provider/type.ts'

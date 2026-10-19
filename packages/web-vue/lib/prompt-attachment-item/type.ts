@@ -1,6 +1,6 @@
 import type { FileInfo } from '../upload-provider/type'
 
-export type PromptFileItemProps = {
+export type PromptAttachmentItemProps = {
 	/**
 	 * @property {FileInfo} item
 	 * @version 0.2.1

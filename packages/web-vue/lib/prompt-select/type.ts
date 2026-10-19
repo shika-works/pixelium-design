@@ -10,11 +10,6 @@ export interface PromptSelectGroupOption extends OptionListGroupOption {
 
 export type PromptSelectProps = {
 	/**
-	 * @property {string} [label]
-	 * @version 0.2.1
-	 */
-	label?: string
-	/**
 	 * @property {boolean} [disabled=false]
 	 * @version 0.2.1
 	 */
@@ -25,10 +20,10 @@ export type PromptSelectProps = {
 	 */
 	options?: (string | PromptSelectOption | PromptSelectGroupOption)[]
 	/**
-	 * @property {any} [value]
+	 * @property {any} [modelValue]
 	 * @version 0.2.1
 	 */
-	value?: any
+	modelValue?: any
 	/**
 	 * @property {any} [defaultValue]
 	 * @version 0.2.1
@@ -49,11 +44,11 @@ export type PromptSelectProps = {
 
 export type PromptSelectEvents = {
 	/**
-	 * @event update:value
+	 * @event update:modelValue
 	 * @param {any} value
 	 * @version 0.2.1
 	 */
-	'update:value': [value: any]
+	'update:modelValue': [value: any]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e

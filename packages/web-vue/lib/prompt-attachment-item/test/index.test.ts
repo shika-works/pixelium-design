@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { computed, defineComponent, h, provide } from 'vue'
-import PromptFileItem from '../index.vue'
+import PromptAttachmentItem from '../index.vue'
 import Image from '../../image/index.vue'
 import Progress from '../../progress/index.vue'
 import { UPLOAD_PROVIDE } from '../../share/const/provide-key'
@@ -36,15 +36,15 @@ const mountItem = (props: Record<string, any> = {}, overrides: Partial<UploadPro
 	const Host = defineComponent({
 		setup() {
 			provide(UPLOAD_PROVIDE, upload)
-			return () => h(PromptFileItem, { item: item(), ...props })
+			return () => h(PromptAttachmentItem, { item: item(), ...props })
 		}
 	})
 	return { wrapper: mount(Host, { attachTo: 'body' }), upload }
 }
 
-const actions = (wrapper: any) => wrapper.findAll('.px-prompt-file-item-action')
+const actions = (wrapper: any) => wrapper.findAll('.px-prompt-attachment-item-action')
 
-describe('PromptFileItem', () => {
+describe('PromptAttachmentItem', () => {
 	const { pre, post } = createMocks()
 
 	beforeEach(() => {
@@ -60,8 +60,7 @@ describe('PromptFileItem', () => {
 
 	it('renders the name and the actions of its state', () => {
 		const pending = mountItem()
-		expect(pending.wrapper.find('.px-prompt-file-item-name').text()).toBe('report.pdf')
-		// pending: submit + remove
+		expect(pending.wrapper.find('.px-prompt-attachment-item-name').text()).toBe('report.pdf')
 		expect(actions(pending.wrapper)).toHaveLength(2)
 
 		const uploading = mountItem({ item: item({ state: 'uploading' }) })
@@ -76,23 +75,23 @@ describe('PromptFileItem', () => {
 
 	it('draws the border on a canvas', () => {
 		const { wrapper } = mountItem()
-		expect(wrapper.find('canvas.px-prompt-file-item-canvas').exists()).toBe(true)
+		expect(wrapper.find('canvas.px-prompt-attachment-item-canvas').exists()).toBe(true)
 	})
 
 	it('links the name only when the item carries an url', () => {
 		const linked = mountItem({ item: item({ url: 'https://cdn.test/a.pdf' }) })
-		const link = linked.wrapper.find('a.px-prompt-file-item-name__link')
+		const link = linked.wrapper.find('a.px-prompt-attachment-item-name__link')
 		expect(link.attributes('href')).toBe('https://cdn.test/a.pdf')
 		expect(link.attributes('download')).toBe('report.pdf')
 
 		const plain = mountItem({ item: item({ state: 'error' }) })
-		expect(plain.wrapper.find('a.px-prompt-file-item-name').exists()).toBe(false)
-		expect(plain.wrapper.find('.px-prompt-file-item-name__error').exists()).toBe(true)
+		expect(plain.wrapper.find('a.px-prompt-attachment-item-name').exists()).toBe(false)
+		expect(plain.wrapper.find('.px-prompt-attachment-item-name__error').exists()).toBe(true)
 	})
 
 	it('asks the upload to download when the name link is clicked', async () => {
 		const { wrapper, upload } = mountItem({ item: item({ url: 'https://cdn.test/a.pdf' }) })
-		await wrapper.find('a.px-prompt-file-item-name__link').trigger('click')
+		await wrapper.find('a.px-prompt-attachment-item-name__link').trigger('click')
 		expect(upload.download).toHaveBeenCalledTimes(1)
 		expect((upload.download as any).mock.calls[0][0]).toMatchObject({ id: 'id-1' })
 	})
@@ -135,8 +134,8 @@ describe('PromptFileItem', () => {
 
 	it('ignores the actions while the upload is disabled', async () => {
 		const { wrapper, upload } = mountItem({}, { disabled: computed(() => true) })
-		expect(wrapper.find('.px-prompt-file-item__disabled').exists()).toBe(true)
-		expect(wrapper.find('.px-prompt-file-item-action__disabled').exists()).toBe(true)
+		expect(wrapper.find('.px-prompt-attachment-item__disabled').exists()).toBe(true)
+		expect(wrapper.find('.px-prompt-attachment-item-action__disabled').exists()).toBe(true)
 		await actions(wrapper)[0].trigger('click')
 		expect(upload.submit).not.toHaveBeenCalled()
 		await actions(wrapper)[1].trigger('click')
@@ -151,10 +150,10 @@ describe('PromptFileItem', () => {
 		expect(queueing.wrapper.findComponent(Progress).props('percentage')).toBe(0)
 
 		const finished = mountItem({ item: item({ state: 'finished', progress: 100 }) })
-		expect(finished.wrapper.find('.px-prompt-file-item-progress').exists()).toBe(false)
+		expect(finished.wrapper.find('.px-prompt-attachment-item-progress').exists()).toBe(false)
 
 		const noProgress = mountItem({ item: item({ state: 'uploading' }), showProgress: false })
-		expect(noProgress.wrapper.find('.px-prompt-file-item-progress').exists()).toBe(false)
+		expect(noProgress.wrapper.find('.px-prompt-attachment-item-progress').exists()).toBe(false)
 	})
 
 	it('shows a thumbnail for image items and a type icon for the rest', () => {
@@ -178,6 +177,6 @@ describe('PromptFileItem', () => {
 
 		const icon = mountItem()
 		expect(icon.wrapper.findComponent(Image).exists()).toBe(false)
-		expect(icon.wrapper.find('.px-prompt-file-item-thumb-icon').exists()).toBe(true)
+		expect(icon.wrapper.find('.px-prompt-attachment-item-thumb-icon').exists()).toBe(true)
 	})
 })

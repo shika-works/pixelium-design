@@ -1,0 +1,150 @@
+@import url(../share/style/variable.less);
+
+.px-prompt {
+	@prefix: px-prompt;
+
+	position: relative;
+	z-index: 0;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	width: 100%;
+	color: var(--px-neutral-10);
+	cursor: text;
+
+	padding: @px-interval-2 0;
+	font-size: @px-medium-font-size;
+
+	.@{prefix}-editor-inner,
+	.@{prefix}-placeholder {
+		font-size: @px-medium-font-size;
+		line-height: @px-line-height;
+	}
+
+	.@{prefix}-editor-inner {
+		min-height: 1em;
+	}
+
+	&-canvas {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+	}
+
+	&-surface {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		gap: @px-interval-2;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	&-attachment-area {
+		flex-shrink: 0;
+		min-width: 0;
+	}
+
+	&-editor {
+		position: relative;
+		flex: 0 0 auto;
+		min-width: 0;
+		overflow: auto;
+	}
+
+	&-editor-inner {
+		width: 100%;
+		min-height: 1em;
+		outline: none;
+		white-space: pre-wrap;
+		overflow-wrap: break-word;
+		cursor: text;
+	}
+
+	&-anchor {
+		position: absolute;
+		width: 0;
+		height: 0;
+	}
+
+	&-chip {
+		display: inline-flex;
+		align-items: center;
+		max-width: 100%;
+		padding: 0 @px-interval-1;
+		border-radius: @px-interval-1;
+		background-color: var(--px-neutral-2);
+		color: var(--px-neutral-8);
+		white-space: nowrap;
+		vertical-align: baseline;
+		cursor: default;
+		user-select: none;
+	}
+
+	&__disabled &-chip,
+	&__readonly &-chip {
+		color: var(--px-neutral-6);
+	}
+
+	&-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: @px-interval-2;
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	&-toolbar-start,
+	&-toolbar-end {
+		display: flex;
+		align-items: center;
+		gap: @px-interval-1;
+		min-width: 0;
+	}
+
+	&-toolbar-end {
+		margin-left: auto;
+		justify-content: flex-end;
+	}
+
+	&-count {
+		flex-shrink: 0;
+		color: var(--px-neutral-7);
+		font-size: @px-small-font-size;
+	}
+
+	&__disabled {
+		cursor: not-allowed;
+
+		.@{prefix}-editor-inner {
+			color: var(--px-neutral-8);
+			cursor: not-allowed;
+		}
+	}
+
+	&__readonly {
+		.@{prefix}-editor-inner {
+			cursor: default;
+		}
+	}
+
+	&-surface > * {
+		padding-left: @px-interval-2;
+		padding-right: @px-interval-2;
+		margin-left: var(--px-bit);
+		margin-right: var(--px-bit);
+	}
+
+	&-placeholder {
+		position: absolute;
+		top: 0;
+		left: 0;
+		color: var(--px-neutral-7);
+		padding: 0 @px-interval-2;
+		pointer-events: none;
+	}
+}

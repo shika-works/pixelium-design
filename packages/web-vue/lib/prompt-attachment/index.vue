@@ -1,27 +1,27 @@
 <template>
-	<ul class="pixelium px-prompt-file" :class="`px-prompt-file__${sizeComputed}`">
-		<PromptFileItem
+	<ul class="pixelium px-prompt-attachment" :class="`px-prompt-attachment__${sizeComputed}`">
+		<PromptAttachmentItem
 			v-for="item in fileListComputed"
 			:key="item.id"
 			:item="item"
 			:abortable="props.abortable"
 			:show-progress="props.showProgress"
 			:previewable="props.previewable"
-		></PromptFileItem>
+		></PromptAttachmentItem>
 	</ul>
 </template>
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import type { PromptFileProps } from './type'
+import type { PromptAttachmentProps } from './type'
 import type { UploadProvide } from '../upload-provider/type'
 import { UPLOAD_PROVIDE } from '../share/const/provide-key'
-import PromptFileItem from '../prompt-file-item/index.vue'
+import PromptAttachmentItem from '../prompt-attachment-item/index.vue'
 
 defineOptions({
-	name: 'PromptFile'
+	name: 'PromptAttachment'
 })
 
-const props = withDefaults(defineProps<PromptFileProps>(), {
+const props = withDefaults(defineProps<PromptAttachmentProps>(), {
 	abortable: true,
 	showProgress: true,
 	previewable: true
