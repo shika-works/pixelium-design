@@ -19,7 +19,9 @@ const newItems = [
 	'action-list',
 	'loading-dots',
 	'upload',
-	'prompt'
+	'prompt',
+	'prompt-action',
+	'prompt-speech'
 ]
 
 const titleMapEn = {
@@ -124,7 +126,9 @@ const additionMapZh = {
 	'action-list': '操作列表',
 	'loading-dots': '点状加载',
 	upload: '上传',
-	prompt: '提示词输入'
+	prompt: '提示词输入',
+	'prompt-action': '提示词操作',
+	'prompt-speech': '提示词语音输入'
 }
 
 const order = [

@@ -2,14 +2,14 @@
 	<px-space direction="vertical">
 		<px-space wrap>
 			Speech Mode
-			<px-radio-group v-model="speechConfig.mode" style="display: block;">
+			<px-radio-group v-model="speechConfig.mode" style="display: block">
 				<px-radio value="click">Click</px-radio>
 				<px-radio value="hold">Hold</px-radio>
 			</px-radio-group>
 		</px-space>
 		<px-space wrap>
 			Prompt State
-			<px-radio-group v-model="promptState" style="display: block;">
+			<px-radio-group v-model="promptState" style="display: block">
 				<px-radio value="normal">Normal</px-radio>
 				<px-radio value="readonly">Readonly</px-radio>
 				<px-radio value="disabled">Disabled</px-radio>

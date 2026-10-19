@@ -64,7 +64,7 @@ newlineKey: 插入换行的按键组合。
 requireContent: 输入内容为空时是否禁止提交。
 clearOnSubmit: 提交后是否清空输入内容。
 uploadConfig: 附件上传的配置，传入后启用附件能力。
-speechConfig: 语音输入的配置，传入后启用语音能力。
+speechConfig: 语音输入的配置，传入后启用语音能力，详见 [提示词语音输入](./prompt-speech)。
 chipConfig: chip 提及的配置。
 
 events.update:modelValue: 输入文本变化时触发。
@@ -147,7 +147,7 @@ newlineKey: The key combination that inserts a new line.
 requireContent: Whether submitting is forbidden while the input is empty.
 clearOnSubmit: Whether the input is cleared after a submission.
 uploadConfig: The configuration of the attachment upload; the attachment ability is enabled once it is given.
-speechConfig: The configuration of the speech input; the speech ability is enabled once it is given.
+speechConfig: The configuration of the speech input; the speech ability is enabled once it is given. See [PromptSpeech](./prompt-speech).
 chipConfig: The configuration of the chip mentions.
 
 events.update:modelValue: Triggered when the input text changes.
@@ -191,91 +191,6 @@ promptExpose.getContent: Reads the current input content.
 promptExpose.setContent: Overwrites the current input content.
 ]]]
 
-[[[api prompt-action zh
-label: PromptAction 的文本。
-disabled: PromptAction 是否禁用。
-
-slots.default: PromptAction 的文本内容。
-slots.icon: PromptAction 的图标。
-slots.suffix: PromptAction 的尾部内容。
-]]]
-[[[api prompt-action en
-label: The text of PromptAction.
-disabled: Whether PromptAction is disabled.
-
-slots.default: The text content of PromptAction.
-slots.icon: The icon of PromptAction.
-slots.suffix: The trailing content of PromptAction.
-]]]
-
-[[[api prompt-switch zh
-label: PromptSwitch 的文本。
-disabled: PromptSwitch 是否禁用。
-modelValue: 受控模式下的激活状态。
-defaultValue: 非受控模式下初始的激活状态。
-showClose: 激活时是否展示关闭入口。
-
-events.update:modelValue: 激活状态变化时触发。
-
-slots.default: PromptSwitch 的文本内容。
-slots.icon: PromptSwitch 的图标。
-]]]
-[[[api prompt-switch en
-label: The text of PromptSwitch.
-disabled: Whether PromptSwitch is disabled.
-modelValue: The active state in controlled mode.
-defaultValue: The initial active state in uncontrolled mode.
-showClose: Whether the close entry is shown while it is active.
-
-events.update:modelValue: Triggered when the active state changes.
-
-slots.default: The text content of PromptSwitch.
-slots.icon: The icon of PromptSwitch.
-]]]
-
-[[[api prompt-select zh
-disabled: PromptSelect 是否禁用。
-options: 下拉列表的数据。
-modelValue: 受控模式下的选中值。
-defaultValue: 非受控模式下初始的选中值。
-caretDuration: 下拉指示箭头动画的时长。
-dropdownProps: 下拉弹出层的属性与事件。
-
-events.update:modelValue: 选中值变化时触发。
-events.open: 下拉列表展开时触发。
-events.close: 下拉列表关闭时触发。
-events.select: 在下拉列表中选择一项时触发。
-
-slots.default: PromptSelect 的文本内容。
-slots.icon: PromptSelect 的图标。
-slots.option: 下拉列表中选项的内容。
-slots.group-label: 下拉列表中分组标题的内容。
-
-promptSelectExpose.open: 展开下拉列表。
-promptSelectExpose.close: 关闭下拉列表。
-]]]
-[[[api prompt-select en
-disabled: Whether PromptSelect is disabled.
-options: The data of the dropdown list.
-modelValue: The selected value in controlled mode.
-defaultValue: The initial selected value in uncontrolled mode.
-caretDuration: The duration of the animation of the dropdown caret.
-dropdownProps: The properties and events of the dropdown popup.
-
-events.update:modelValue: Triggered when the selected value changes.
-events.open: Triggered when the dropdown list opens.
-events.close: Triggered when the dropdown list closes.
-events.select: Triggered when an option is chosen from the dropdown list.
-
-slots.default: The text content of PromptSelect.
-slots.icon: The icon of PromptSelect.
-slots.option: The content of an option in the dropdown list.
-slots.group-label: The content of a group label in the dropdown list.
-
-promptSelectExpose.open: Opens the dropdown list.
-promptSelectExpose.close: Closes the dropdown list.
-]]]
-
 [[[api prompt-send zh
 disabled: PromptSend 是否禁用。
 loading: PromptSend 是否处于加载状态。
@@ -304,79 +219,6 @@ previewable: 是否允许预览附件列表中的图片。
 abortable: Whether the running and the queued uploads of the attachment list can be aborted.
 showProgress: Whether the upload progress is shown in the attachment list.
 previewable: Whether the images of the attachment list can be previewed.
-]]]
-
-[[[api prompt-speech-trigger zh
-slots.trigger: 语音开关区域，替换内置的按钮。
-slots.icon: 语音开关的图标。
-]]]
-[[[api prompt-speech-trigger en
-slots.trigger: The speech toggle area, replacing the internal button.
-slots.icon: The icon of the speech toggle.
-]]]
-
-[[[api prompt-speech-panel zh
-slots.cancel: 语音录制面板的取消入口。
-slots.visualizer: 语音录制面板的波形区域。
-slots.text: 语音识别的实时文本区域。
-slots.accept: 语音录制面板的确认入口。
-]]]
-[[[api prompt-speech-panel en
-slots.cancel: The cancel entry of the speech recording panel.
-slots.visualizer: The visualizer area of the speech recording panel.
-slots.text: The live text area of the speech recognition.
-slots.accept: The confirm entry of the speech recording panel.
-]]]
-
-[[[api prompt-speech-provider zh
-minHz: 频谱分析的最低频率。
-maxHz: 频谱分析的最高频率。
-minDb: 映射为最小高度的分贝值。
-maxDb: 映射为最大高度的分贝值。
-smoothing: 频谱变化的平滑系数。
-fftSize: 频谱分析使用的采样窗口大小。
-
-count: 波形柱的数量。
-minHeight: 波形柱的最小高度。
-maxHeight: 波形柱的最大高度。
-
-mode: 语音识别的交互方式。
-lang: 语音识别的语言。
-barConfig: 波形柱的配置。
-spectrumConfig: 音频频谱的配置。
-customRecognize: 自定义的识别过程，接管内置的语音识别。
-acceptTimeout: 确认录制后等待识别结果的最长时间。
-
-events.update:recording: 录制状态变化时触发。
-events.update:live: 实时录制状态变化时触发。
-events.accept: 识别结果被确认时触发。
-
-slots.default: PromptSpeechProvider 的内容。
-]]]
-[[[api prompt-speech-provider en
-minHz: The lowest frequency of the spectrum analysis.
-maxHz: The highest frequency of the spectrum analysis.
-minDb: The decibel value mapped to the minimum height.
-maxDb: The decibel value mapped to the maximum height.
-smoothing: The smoothing factor of the spectrum changes.
-fftSize: The sampling window size used by the spectrum analysis.
-
-count: The number of the visualizer bars.
-minHeight: The minimum height of the visualizer bars.
-maxHeight: The maximum height of the visualizer bars.
-
-mode: The interaction mode of the speech recognition.
-lang: The language of the speech recognition.
-barConfig: The configuration of the visualizer bars.
-spectrumConfig: The configuration of the audio spectrum.
-customRecognize: The custom recognition process, taking over the internal speech recognition.
-acceptTimeout: The longest waiting time for the recognition result after the recording is confirmed.
-
-events.update:recording: Triggered when the recording state changes.
-events.update:live: Triggered when the live recording state changes.
-events.accept: Triggered when a recognition result is confirmed.
-
-slots.default: The content of PromptSpeechProvider.
 ]]]
 
 ### PromptSubmitModifier
@@ -481,60 +323,6 @@ export interface FileInfo {
 	thumbnailUrl?: string
 	response?: any
 }
-```
-
-### PromptSpeechMode
-
-```ts
-export type PromptSpeechMode = 'click' | 'hold'
-```
-
-### PromptSpeechPanelScope
-
-```ts
-export type PromptSpeechPanelScope = {
-	mode: PromptSpeechMode
-	recording: boolean
-	live: boolean
-	committing: boolean
-	disabled: boolean
-	supported: boolean
-	text: string
-	pending: boolean
-	levels: number[]
-	source: 'microphone' | 'simulated' | null
-	barConfig: Required<PromptSpeechBarConfig>
-	enter: () => void
-	cancel: () => void
-	accept: () => void
-	press: () => void
-	release: () => void
-}
-```
-
-### PromptSelectOption
-
-```ts
-export interface PromptSelectOption extends OptionListOption {}
-
-export interface PromptSelectGroupOption extends OptionListGroupOption {
-	children: (PromptSelectOption | string)[]
-}
-```
-
-### CustomRecognizeOptions
-
-```ts
-export interface CustomRecognizeOptions {
-	stream: MediaStream | null
-	audio: () => Promise<Blob | null>
-	setText: (text: string, final?: boolean) => void
-	end: () => void
-	onAccept: (handler: () => void) => void
-	onClose: (handler: (committed: boolean) => void) => void
-}
-
-export type CustomRecognize = (options: CustomRecognizeOptions) => void
 ```
 
 [[[slice option-list]]]
