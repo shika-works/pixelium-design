@@ -18,7 +18,8 @@ const newItems = [
 	'bubble',
 	'action-list',
 	'loading-dots',
-	'upload'
+	'upload',
+	'prompt'
 ]
 
 const titleMapEn = {
@@ -122,11 +123,8 @@ const additionMapZh = {
 	'ai-agent': '组件',
 	'action-list': '操作列表',
 	'loading-dots': '点状加载',
-	upload: '上传'
-}
-
-const dualCategoryItems: Record<string, string[]> = {
-	'ai-agent': ['bubble', 'action-list', 'loading-dots']
+	upload: '上传',
+	prompt: '提示词输入'
 }
 
 const order = [
@@ -153,13 +151,4 @@ const guideOrder = [
 	'skill'
 ]
 
-export {
-	newItems,
-	titleMapEn,
-	additionMapEn,
-	titleMapZh,
-	additionMapZh,
-	dualCategoryItems,
-	order,
-	guideOrder
-}
+export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh, order, guideOrder }
