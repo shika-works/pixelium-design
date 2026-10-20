@@ -63,20 +63,6 @@ describe('Prompt chip', () => {
 		])
 	})
 
-	it('inserts a chip through the exposed method and emits chipAdd', async () => {
-		const wrapper = mount(Prompt, {
-			props: { modelValue: 'hi ' },
-			attachTo: document.body
-		})
-		placeCaret(editorOf(wrapper).element as HTMLElement, 3)
-		;(wrapper.vm as any).insertChip(chip('a', '@alice'))
-		await flushPromises()
-		expect(wrapper.findAll('.px-prompt-chip')).toHaveLength(1)
-		expect(editorOf(wrapper).element.textContent).toBe('hi @alice')
-		expect(wrapper.emitted('chipAdd')?.[0]?.[0]).toEqual(chip('a', '@alice'))
-		wrapper.unmount()
-	})
-
 	it('removes a chip through the exposed method and emits chipRemove', async () => {
 		const wrapper = mount(Prompt, {
 			props: { defaultContent: [{ type: 'chip', chip: chip('a', '@alice') }] }

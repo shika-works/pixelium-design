@@ -12,35 +12,32 @@ A rich input component for AI conversations, supporting adaptive multi-line inpu
 [[[zh
 ## 完整示例
 
-输入内容由 `modelValue` 与 `content` 分别维护文本与 chip 片段；`chipConfig` 配置提及的触发字符与候选列表，`uploadConfig` 启用附件上传（详见 [提示词附件](./prompt-attachment)），`speechConfig` 启用语音输入（详见 [提示词语音输入](./prompt-speech)）。工具栏通过 `start`、`end`、`send` 插槽组合，PromptAction、PromptSwitch、PromptSelect 与 PromptSend 分别提供动作、开关、下拉选择与发送入口。
+输入内容由 `modelValue` 与 `content` 分别维护文本与 chip 片段；`chipConfig` 配置提及的触发字符与候选列表（详见 [提示词标签](./prompt-chip)），`uploadConfig` 启用附件上传（详见 [提示词附件](./prompt-attachment)），`speechConfig` 启用语音输入（详见 [提示词语音输入](./prompt-speech)）。工具栏通过 `start`、`end`、`send` 插槽组合：PromptAction、PromptSwitch 与 PromptSelect 提供动作、开关与下拉选择（详见 [提示词操作](./prompt-action)），PromptSend 提供发送入口（详见 [提示词发送](./prompt-send)）。
 ]]]
 [[[en
 ## Full Example
 
-The input is kept by `modelValue` for the text and by `content` for the chips; `chipConfig` configures the mention triggers and candidates, `uploadConfig` enables the attachment upload (see [PromptAttachment](./prompt-attachment)), and `speechConfig` enables the speech input (see [PromptSpeech](./prompt-speech)). The toolbar is composed through the `start`, `end` and `send` slots, where PromptAction, PromptSwitch, PromptSelect and PromptSend provide the actions, the switches, the dropdown selection and the send entry.
+The input is kept by `modelValue` for the text and by `content` for the chips; `chipConfig` configures the mention triggers and candidates (see [PromptChip](./prompt-chip)), `uploadConfig` enables the attachment upload (see [PromptAttachment](./prompt-attachment)), and `speechConfig` enables the speech input (see [PromptSpeech](./prompt-speech)). The toolbar is composed through the `start`, `end` and `send` slots: PromptAction, PromptSwitch and PromptSelect provide the actions, the switches and the dropdown selection (see [PromptAction](./prompt-action)), and PromptSend provides the send entry (see [PromptSend](./prompt-send)).
 ]]]
 
 <preview path="./prompt-all-features.vue"></preview>
 
+[[[zh
+## 光标与文本操作
+
+除 `focus` 与 `blur` 外，ref 上还有一组直接操作输入区域的方法：`setCaret` 与 `placeCaretAtEnd` 定位光标，`select` 全选，`insertText` 在光标处插入文本，`removeText` 删除光标前的字符，`insertChip` 插入 chip（详见 [提示词标签](./prompt-chip)）。`disabled` 与 `readonly` 只拦截用户输入，这些方法仍然生效，和原生 `input` 的语义一致。下面的例子把这些方法都做成了按钮。
+]]]
+[[[en
+## Caret and Text Operations
+
+Beyond `focus` and `blur`, the ref exposes methods that operate on the input directly: `setCaret` and `placeCaretAtEnd` move the caret, `select` selects everything, `insertText` inserts text at the caret, `removeText` removes characters before it, and `insertChip` inserts a chip (see [PromptChip](./prompt-chip)). `disabled` and `readonly` only block user input; these methods still work, consistent with a native `input`. The following example turns them all into buttons.
+]]]
+
+<preview path="./prompt-selection.vue"></preview>
+
 ## API
 
 [[[api zh
-id: PromptChip 的唯一标识。
-type: PromptChip 的类型。
-label: PromptChip 展示的文本。
-value: PromptChip 携带的文本值。
-data: PromptChip 携带的自定义数据。
-
-trigger: 唤起候选列表的触发字符。
-options: 候选列表的数据。
-filter: 候选列表的自定义过滤函数。
-dropdownProps: 候选列表弹出层的属性与事件。
-
-char: 触发提及的字符。
-query: 触发字符之后已输入的关键词。
-active: 候选列表是否展开。
-rect: 触发字符所在位置的区域。
-
 modelValue: Prompt 的输入文本。
 defaultValue: 非受控模式下初始的输入文本。
 content: Prompt 的输入内容，包含文本与 chip 片段。
@@ -62,7 +59,7 @@ requireContent: 输入内容为空时是否禁止提交。
 clearOnSubmit: 提交后是否清空输入内容。
 uploadConfig: 附件上传的配置，传入后启用附件能力，详见 [提示词附件](./prompt-attachment)。
 speechConfig: 语音输入的配置，传入后启用语音能力，详见 [提示词语音输入](./prompt-speech)。
-chipConfig: chip 提及的配置。
+chipConfig: chip 提及的配置，详见 [提示词标签](./prompt-chip)。
 
 events.update:modelValue: 输入文本变化时触发。
 events.input: 在输入区域中输入时触发。
@@ -98,9 +95,12 @@ promptExpose.blur: 让输入区域失去焦点。
 promptExpose.clear: 清空输入内容。
 promptExpose.submit: 提交当前的输入内容。
 promptExpose.select: 选中输入区域中的全部内容。
+promptExpose.setCaret: 将光标移动到指定位置：`start`、`end` 或字符偏移，chip 计为其 label 的长度，偏移落在 chip 内时移动到 chip 之前；`setContent` 之后调用需先 `await nextTick()`。
+promptExpose.placeCaretAtEnd: 将光标移动到输入内容的末尾。
 promptExpose.insertChip: 在光标处插入 chip。
 promptExpose.removeChip: 移除指定 id 的 chip。
 promptExpose.insertText: 在光标处插入文本。
+promptExpose.removeText: 删除光标前的 `length` 个字符，区间覆盖到的 chip 整体删除。
 promptExpose.getContent: 读取当前的输入内容。
 promptExpose.setContent: 覆盖当前的输入内容。
 promptCounterConfig.maxLength: 输入内容的最大长度。
@@ -108,22 +108,6 @@ promptCounterConfig.countGraphemes: 自定义的文本长度统计函数，用�
 promptCounterConfig.sliceGraphemes: 自定义的文本截断函数，接收文本与长度上限。
 ]]]
 [[[api en
-id: The unique identifier of PromptChip.
-type: The type of PromptChip.
-label: The text shown by PromptChip.
-value: The text value carried by PromptChip.
-data: The custom data carried by PromptChip.
-
-trigger: The characters that open the candidate list.
-options: The data of the candidate list.
-filter: The custom filter of the candidate list.
-dropdownProps: The properties and events of the candidate list popup.
-
-char: The character that triggers the mention.
-query: The keyword typed after the trigger character.
-active: Whether the candidate list is open.
-rect: The area of the position where the trigger character sits.
-
 modelValue: The input text of Prompt.
 defaultValue: The initial input text in uncontrolled mode.
 content: The input content of Prompt, holding both text and chip segments.
@@ -145,7 +129,7 @@ requireContent: Whether submitting is forbidden while the input is empty.
 clearOnSubmit: Whether the input is cleared after a submission.
 uploadConfig: The configuration of the attachment upload; the attachment ability is enabled once it is given. See [PromptAttachment](./prompt-attachment).
 speechConfig: The configuration of the speech input; the speech ability is enabled once it is given. See [PromptSpeech](./prompt-speech).
-chipConfig: The configuration of the chip mentions.
+chipConfig: The configuration of the chip mentions; see [PromptChip](./prompt-chip).
 
 events.update:modelValue: Triggered when the input text changes.
 events.input: Triggered while typing in the input area.
@@ -181,9 +165,12 @@ promptExpose.blur: Removes the focus from the input area.
 promptExpose.clear: Clears the input.
 promptExpose.submit: Submits the current input.
 promptExpose.select: Selects everything inside the input area.
+promptExpose.setCaret: Moves the caret to the given position: `start`, `end` or a character offset. A chip counts as the length of its label, and an offset inside a chip moves before it. Wait for one `nextTick` before calling it after `setContent`.
+promptExpose.placeCaretAtEnd: Moves the caret to the end of the input.
 promptExpose.insertChip: Inserts a chip at the caret.
 promptExpose.removeChip: Removes the chip with the given id.
 promptExpose.insertText: Inserts text at the caret.
+promptExpose.removeText: Removes `length` characters before the caret; a chip covered by the range is removed as a whole.
 promptExpose.getContent: Reads the current input content.
 promptExpose.setContent: Overwrites the current input content.
 promptCounterConfig.maxLength: The maximum length of the input.
@@ -216,16 +203,6 @@ type SubmitKeyPrefix =
 export type PromptSubmitKey = 'enter' | `${SubmitKeyPrefix}+enter`
 ```
 
-### PromptCounterConfig
-
-```ts
-export type PromptCounterConfig = {
-	maxLength?: number
-	countGraphemes?: (value: string) => number
-	sliceGraphemes?: (value: string, limit: number) => string
-}
-```
-
 ### PromptSegment
 
 ```ts
@@ -238,28 +215,11 @@ export type PromptSegment = { type: 'text'; text: string } | { type: 'chip'; chi
 export type PromptContent = PromptSegment[]
 ```
 
-### PromptOption
+### PromptCaretPosition
 
 ```ts
-export interface PromptOption extends Omit<OptionListOption, 'value'> {
-	chipType?: string | ((option: PromptOption) => string)
-}
+export type PromptCaretPosition = 'start' | 'end' | number
 ```
-
-### PromptGroupOption
-
-```ts
-export interface PromptGroupOption {
-	label: string
-	key: string | number | symbol
-	children: (PromptOption | string)[]
-	type: typeof GROUP_OPTION_TYPE
-}
-```
-
-[[[slice option-list]]]
-
-[[[slice group-option]]]
 
 [[[slice emit-event]]]
 

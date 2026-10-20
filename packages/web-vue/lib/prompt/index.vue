@@ -96,6 +96,9 @@ const {
 	resetTrigger,
 	setValue: setEditorValue,
 	select: selectEditor,
+	setCaret,
+	placeCaretAtEnd,
+	removeText,
 	focus: focusEditor,
 	blur: blurEditor,
 	insertChip,
@@ -139,6 +142,11 @@ const insertTextHandler = (text: string) => {
 		return
 	}
 	insertTextAtCaret(text)
+	sync()
+}
+
+const removeTextHandler = (length: number) => {
+	removeText(length)
 	sync()
 }
 
@@ -293,9 +301,12 @@ defineExpose<PromptExpose>({
 	clear: () => clearHandler(),
 	submit: () => submitHandler(),
 	select: () => selectEditor(),
+	setCaret: (position) => setCaret(position),
+	placeCaretAtEnd: () => placeCaretAtEnd(),
 	insertChip: (chip) => insertChip(chip),
 	removeChip: (id) => removeChip(id),
 	insertText: (text) => insertTextHandler(text),
+	removeText: (length) => removeTextHandler(length),
 	getContent: () => getContent(),
 	setContent: (value) => setContent(value)
 })

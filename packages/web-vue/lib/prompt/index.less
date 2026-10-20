@@ -74,18 +74,19 @@
 		display: inline-flex;
 		align-items: center;
 		max-width: 100%;
+		margin: 0 @px-interval-mini-1;
 		padding: 0 @px-interval-1;
 		border-radius: @px-interval-1;
-		background-color: var(--px-neutral-2);
-		color: var(--px-neutral-8);
+		background-color: var(--px-primary-1);
+		color: var(--px-primary-6);
 		white-space: nowrap;
 		vertical-align: baseline;
 		cursor: default;
-		user-select: none;
 	}
 
 	&__disabled &-chip,
 	&__readonly &-chip {
+		background-color: var(--px-neutral-2);
 		color: var(--px-neutral-6);
 	}
 

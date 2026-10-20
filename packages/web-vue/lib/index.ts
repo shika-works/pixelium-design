@@ -442,6 +442,7 @@ export type {
 	PromptUploadScope,
 	PromptChipConfig,
 	PromptChip,
+	PromptCaretPosition,
 	PromptSegment,
 	PromptContent,
 	PromptSendScope,
