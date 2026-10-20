@@ -20,7 +20,11 @@ const cache = ((globalThis as any).__pxSpeechModel ??= {
 const status = (cache.status ??= ref(''))
 const onProgress = (info: any) => {
 	if (!info.file) return
-	cache.progress.set(info.file, info.status === 'done' ? (info.total ?? 0) : (info.loaded ?? 0))
+	// `done` carries neither `loaded` nor `total`, so keep the last known size
+	// instead of resetting the file to 0 and making the counter jump backwards.
+	const previous = cache.progress.get(info.file) ?? 0
+	const size = info.loaded ?? info.total ?? previous
+	cache.progress.set(info.file, Math.max(previous, size))
 	const loaded = [...cache.progress.values()].reduce((sum, n) => sum + n, 0)
 	cache.status.value = `Model loading... ${(loaded / 1048576).toFixed(1)} MB`
 }

@@ -31,7 +31,7 @@ Pass `speechConfig` to Prompt and place PromptSpeechTrigger in the toolbar to st
 
 `customRecognize` 用于接管内置的语音识别，你可以接入自己的语音识别模型，或者直接把音频交给服务器处理。
 
-下面的例子通过 Transformers.js 在浏览器本地运行 Whisper tiny 模型，对录音做本地转写；模型和运行时在页面加载时从 CDN 下载（约 41MB，之后使用浏览器缓存），音频不会离开浏览器。
+下面的例子通过 Transformers.js 在浏览器本地运行 Whisper tiny 模型，对录音做本地转写；模型和运行时在页面加载时从 CDN 下载（首次合计约 45MB 流量，之后使用浏览器缓存），音频不会离开浏览器。
 
 示例把 `acceptTimeout` 设为 `-1`，由自定义识别在转写完成后调用 `end()`。
 ]]]
@@ -40,7 +40,7 @@ Pass `speechConfig` to Prompt and place PromptSpeechTrigger in the toolbar to st
 
 `customRecognize` is used to take over the built-in speech recognition. You can plug in your own speech recognition model, or send the audio directly to a server for processing.
 
-The following example uses Transformers.js to run the Whisper tiny model locally in the browser and perform local transcription of the recording. The model and runtime are downloaded from a CDN when the page loads (about 41 MB; afterwards they are served from the browser cache), and the audio never leaves the browser.
+The following example uses Transformers.js to run the Whisper tiny model locally in the browser and perform local transcription of the recording. The model and runtime are downloaded from a CDN when the page loads (about 45 MB of traffic on the first load; afterwards they are served from the browser cache), and the audio never leaves the browser.
 
 The example sets `acceptTimeout` to `-1`, and the custom recognizer calls `end()` after transcription is complete.
 ]]]
