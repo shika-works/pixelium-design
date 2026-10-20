@@ -106,8 +106,6 @@ promptExpose.setContent: 覆盖当前的输入内容。
 promptCounterConfig.maxLength: 输入内容的最大长度。
 promptCounterConfig.countGraphemes: 自定义的文本长度统计函数，用于计数与截断。
 promptCounterConfig.sliceGraphemes: 自定义的文本截断函数，接收文本与长度上限。
-promptSendScope.cancel: 放弃当前的输入内容。
-promptSendScope.submit: 提交当前的输入内容。
 ]]]
 [[[api en
 id: The unique identifier of PromptChip.
@@ -191,27 +189,6 @@ promptExpose.setContent: Overwrites the current input content.
 promptCounterConfig.maxLength: The maximum length of the input.
 promptCounterConfig.countGraphemes: Custom function that counts the length of the text.
 promptCounterConfig.sliceGraphemes: Custom function that slices the text with a length limit.
-promptSendScope.cancel: Discards the current input.
-promptSendScope.submit: Submits the current input.
-]]]
-
-[[[api prompt-send zh
-disabled: PromptSend 是否禁用。
-loading: PromptSend 是否处于加载状态。
-
-events.click: 点击发送入口时触发。
-
-slots.trigger: 发送入口区域，替换内置的按钮。
-slots.icon: 发送入口的图标。
-]]]
-[[[api prompt-send en
-disabled: Whether PromptSend is disabled.
-loading: Whether PromptSend is loading.
-
-events.click: Triggered when the send entry is clicked.
-
-slots.trigger: The send entry area, replacing the internal button.
-slots.icon: The icon of the send entry.
 ]]]
 
 ### PromptSubmitModifier

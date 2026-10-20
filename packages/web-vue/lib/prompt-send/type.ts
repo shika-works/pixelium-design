@@ -38,3 +38,31 @@ export type PromptSendSlots = {
 	 */
 	icon: {}
 }
+
+export type PromptSendScope = {
+	/**
+	 * @property {(e?: MouseEvent) => void} cancel
+	 * @version 0.2.1
+	 */
+	cancel: (e?: MouseEvent) => void
+	/**
+	 * @property {(e?: KeyboardEvent | MouseEvent) => void} submit
+	 * @version 0.2.1
+	 */
+	submit: (e?: KeyboardEvent | MouseEvent) => void
+	/**
+	 * @property {boolean} disabled
+	 * @version 0.2.1
+	 */
+	disabled: boolean
+	/**
+	 * @property {boolean} loading
+	 * @version 0.2.1
+	 */
+	loading: boolean
+	/**
+	 * @property {boolean} cancellable
+	 * @version 0.2.1
+	 */
+	cancellable: boolean
+}
