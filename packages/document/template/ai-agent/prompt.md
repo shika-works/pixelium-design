@@ -12,12 +12,12 @@ A rich input component for AI conversations, supporting adaptive multi-line inpu
 [[[zh
 ## 完整示例
 
-输入内容由 `modelValue` 与 `content` 分别维护文本与 chip 片段；`chipConfig` 配置提及的触发字符与候选列表，`uploadConfig` 启用附件上传并用 `attachment` 插槽放置 PromptAttachment，`speechConfig` 启用语音输入。工具栏通过 `start`、`end`、`send` 插槽组合，PromptAction、PromptSwitch、PromptSelect 与 PromptSend 分别提供动作、开关、下拉选择与发送入口。
+输入内容由 `modelValue` 与 `content` 分别维护文本与 chip 片段；`chipConfig` 配置提及的触发字符与候选列表，`uploadConfig` 启用附件上传（详见 [提示词附件](./prompt-attachment)），`speechConfig` 启用语音输入（详见 [提示词语音输入](./prompt-speech)）。工具栏通过 `start`、`end`、`send` 插槽组合，PromptAction、PromptSwitch、PromptSelect 与 PromptSend 分别提供动作、开关、下拉选择与发送入口。
 ]]]
 [[[en
 ## Full Example
 
-The input is kept by `modelValue` for the text and by `content` for the chips; `chipConfig` configures the mention triggers and candidates, `uploadConfig` enables the attachment upload with PromptAttachment placed in the `attachment` slot, and `speechConfig` enables the speech input. The toolbar is composed through the `start`, `end` and `send` slots, where PromptAction, PromptSwitch, PromptSelect and PromptSend provide the actions, the switches, the dropdown selection and the send entry.
+The input is kept by `modelValue` for the text and by `content` for the chips; `chipConfig` configures the mention triggers and candidates, `uploadConfig` enables the attachment upload (see [PromptAttachment](./prompt-attachment)), and `speechConfig` enables the speech input (see [PromptSpeech](./prompt-speech)). The toolbar is composed through the `start`, `end` and `send` slots, where PromptAction, PromptSwitch, PromptSelect and PromptSend provide the actions, the switches, the dropdown selection and the send entry.
 ]]]
 
 <preview path="./prompt-all-features.vue"></preview>
@@ -25,9 +25,6 @@ The input is kept by `modelValue` for the text and by `content` for the chips; `
 ## API
 
 [[[api zh
-draggable: 是否允许把文件拖入 Prompt 的输入区域。
-pasteable: 是否允许把文件粘贴到 Prompt 的输入区域。
-
 id: PromptChip 的唯一标识。
 type: PromptChip 的类型。
 label: PromptChip 展示的文本。
@@ -63,7 +60,7 @@ submitKey: 触发提交的按键组合。
 newlineKey: 插入换行的按键组合。
 requireContent: 输入内容为空时是否禁止提交。
 clearOnSubmit: 提交后是否清空输入内容。
-uploadConfig: 附件上传的配置，传入后启用附件能力。
+uploadConfig: 附件上传的配置，传入后启用附件能力，详见 [提示词附件](./prompt-attachment)。
 speechConfig: 语音输入的配置，传入后启用语音能力，详见 [提示词语音输入](./prompt-speech)。
 chipConfig: chip 提及的配置。
 
@@ -113,9 +110,6 @@ promptSendScope.cancel: 放弃当前的输入内容。
 promptSendScope.submit: 提交当前的输入内容。
 ]]]
 [[[api en
-draggable: Whether files can be dropped into the input area of Prompt.
-pasteable: Whether files can be pasted into the input area of Prompt.
-
 id: The unique identifier of PromptChip.
 type: The type of PromptChip.
 label: The text shown by PromptChip.
@@ -151,7 +145,7 @@ submitKey: The key combination that submits the content.
 newlineKey: The key combination that inserts a new line.
 requireContent: Whether submitting is forbidden while the input is empty.
 clearOnSubmit: Whether the input is cleared after a submission.
-uploadConfig: The configuration of the attachment upload; the attachment ability is enabled once it is given.
+uploadConfig: The configuration of the attachment upload; the attachment ability is enabled once it is given. See [PromptAttachment](./prompt-attachment).
 speechConfig: The configuration of the speech input; the speech ability is enabled once it is given. See [PromptSpeech](./prompt-speech).
 chipConfig: The configuration of the chip mentions.
 
@@ -220,17 +214,6 @@ slots.trigger: The send entry area, replacing the internal button.
 slots.icon: The icon of the send entry.
 ]]]
 
-[[[api prompt-attachment zh
-abortable: 是否允许中断附件列表中进行中和排队中的上传。
-showProgress: 是否展示附件列表的上传进度。
-previewable: 是否允许预览附件列表中的图片。
-]]]
-[[[api prompt-attachment en
-abortable: Whether the running and the queued uploads of the attachment list can be aborted.
-showProgress: Whether the upload progress is shown in the attachment list.
-previewable: Whether the images of the attachment list can be previewed.
-]]]
-
 ### PromptSubmitModifier
 
 ```ts
@@ -294,44 +277,6 @@ export interface PromptGroupOption {
 	key: string | number | symbol
 	children: (PromptOption | string)[]
 	type: typeof GROUP_OPTION_TYPE
-}
-```
-
-### PromptUploadScope
-
-```ts
-export type UploadProviderScope = {
-	fileList: FileInfo[]
-	mode: UploadProviderProps['mode']
-	size: UploadProviderProps['size']
-	disabled: boolean | undefined
-	abortable: boolean | undefined
-	download: (file: FileInfo) => void
-	open: () => void
-	addFiles: (files: File[], e?: Event) => void
-	submit: (fileId?: string) => void
-	retry: (fileId?: string) => void
-	abort: (id?: string) => void
-	remove: (id: string, e?: MouseEvent) => Promise<void>
-	clear: () => void
-}
-
-export type PromptUploadScope = UploadProviderScope
-```
-
-### FileInfo
-
-```ts
-export interface FileInfo {
-	id: string
-	name: string
-	type?: string
-	file?: File
-	state: 'pending' | 'queueing' | 'uploading' | 'finished' | 'error'
-	progress: number
-	url?: string
-	thumbnailUrl?: string
-	response?: any
 }
 ```
 

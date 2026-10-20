@@ -2,8 +2,9 @@ import type { ComputedRef, Ref } from 'vue'
 import type { OptionListOption } from '../option-list/type'
 import type { PopupEvents, PopupProps } from '../popup/type'
 import type { EmitEvent, NumberOrPercentage } from '../share/type'
-import type { UploadProviderProps, UploadProviderScope } from '../upload-provider/type'
+import type { UploadProviderScope } from '../upload-provider/type'
 import type { PromptSpeechConfig } from '../prompt-speech-provider/type'
+import type { PromptUploadConfig } from '../prompt-attachment/type'
 import type { GROUP_OPTION_TYPE } from '../share/const'
 
 export type PromptSubmitModifier =
@@ -41,18 +42,7 @@ export type PromptCounterConfig = {
 	sliceGraphemes?: (value: string, limit: number) => string
 }
 
-export type PromptUploadConfig = UploadProviderProps & {
-	/**
-	 * @property {boolean} [draggable=true]
-	 * @version 0.2.1
-	 */
-	draggable?: boolean
-	/**
-	 * @property {boolean} [pasteable=true]
-	 * @version 0.2.1
-	 */
-	pasteable?: boolean
-}
+export type { PromptUploadConfig }
 
 export type PromptUploadScope = UploadProviderScope
 

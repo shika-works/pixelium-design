@@ -21,6 +21,7 @@ const newItems = [
 	'upload',
 	'prompt',
 	'prompt-action',
+	'prompt-attachment',
 	'prompt-speech'
 ]
 
@@ -128,6 +129,7 @@ const additionMapZh = {
 	upload: '上传',
 	prompt: '提示词输入',
 	'prompt-action': '提示词操作',
+	'prompt-attachment': '提示词附件',
 	'prompt-speech': '提示词语音输入'
 }
 
