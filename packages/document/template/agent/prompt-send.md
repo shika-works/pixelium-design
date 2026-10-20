@@ -16,7 +16,6 @@ The send entry of Prompt: a send button while idle, a stop entry while `loading`
 
 脱离 Prompt 使用时，自己传 `disabled` 与 `loading`：`loading` 展示加载状态，点击在禁用与加载时都不会派发。
 
-下面的例子用三个开关模拟提交中、可中断与禁用，并把点击分别接到 `submit` 与 `cancel` 上。
 ]]]
 [[[en
 ## Basic Usage
@@ -25,7 +24,6 @@ Place PromptSend in the `send` slot of Prompt to replace the internal send entry
 
 Used on its own, pass `disabled` and `loading` yourself: `loading` shows the loading state, and the click is not emitted while disabled or loading.
 
-The following example uses three switches to simulate submitting, cancellable and disabled, and wires the click to `submit` and `cancel` respectively.
 ]]]
 
 <preview path="./prompt-send-basic.vue"></preview>

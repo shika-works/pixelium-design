@@ -19,12 +19,6 @@
 				<px-prompt-send @click="loading ? send.cancel() : send.submit()"></px-prompt-send>
 			</template>
 		</px-prompt>
-		<px-space wrap>
-			<span>Standalone</span>
-			<px-prompt-send></px-prompt-send>
-			<px-prompt-send disabled></px-prompt-send>
-			<px-prompt-send loading></px-prompt-send>
-		</px-space>
 	</px-space>
 </template>
 

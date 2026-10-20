@@ -3,15 +3,25 @@ import { dfs4Md } from './dfs-4-md'
 import { additionMapZh, newItems, titleMapZh } from './share'
 
 const sidebar = dfs4Md('zh', titleMapZh, additionMapZh, newItems)
+const agentSidebar = sidebar.filter((item) => item.key === 'agent')
+const docSidebar = sidebar.filter((item) => item.key !== 'agent')
 
 export default defineConfig({
 	title: 'Pixelium Design',
 	themeConfig: {
 		nav: [
 			{ text: '首页', link: '/zh' },
-			{ text: '文档', link: '/zh/guide/intro' }
+			{ text: '文档', link: '/zh/guide/intro', activeMatch: '^/zh/(?!agent(?:/|$))' },
+			{
+				text: 'Agent 组件 <span class="vp-nav-beta">Beta</span>',
+				link: '/zh/agent/prompt',
+				activeMatch: '^/zh/agent(?:/|$)'
+			}
 		],
-		sidebar: sidebar,
+		sidebar: {
+			'/zh/agent/': agentSidebar,
+			'/zh/': docSidebar
+		},
 		search: {
 			provider: 'local',
 			options: {
