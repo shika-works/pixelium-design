@@ -112,7 +112,7 @@ export type AutoCompleteProps = {
 	 */
 	autofocus?: boolean
 	/**
-	 * @property {Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>} [popoverProps]
+	 * @property {Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>} [dropdownProps]
 	 * @version 0.2.0
 	 */
 	dropdownProps?: Omit<PopoverProps, 'visible' | 'content'> & EmitEvent<PopoverEvents>

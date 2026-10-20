@@ -73,11 +73,11 @@ export type MenuEvents = {
 	 */
 	'update:active': [value: number | string | symbol]
 	/**
-	 * @event update:expend
+	 * @event update:expanded
 	 * @param {(number | string | symbol)[]} value
 	 * @version 0.1.0
 	 */
-	'update:expend': [value: (number | string | symbol)[]]
+	'update:expanded': [value: (number | string | symbol)[]]
 	/**
 	 * @event select
 	 * @param {number | string | symbol} index

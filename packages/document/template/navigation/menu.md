@@ -180,6 +180,7 @@ target: The `target` attribute of the `<a>` tag.
 
 slots.default: Text label.
 slots.icon: Icon.
+route: The `to` parameter of RouterLink of Vue Router. When provided, the text label is rendered as `<a>` with RouterLink. If this property is used, make sure Vue Router is registered in the global Vue App.
 ]]]
 [[[api submenu zh
 label: 文本标签。
