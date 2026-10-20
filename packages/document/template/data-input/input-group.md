@@ -110,7 +110,7 @@ disabled: Whether to disable.
 readonly: Whether the input-group is readonly.
 size: Component size, overrides the `size` of child components.
 shape: Component shape, overrides the `shape` of child components; rounding only affects the outer borders on both sides of the child components.
-borderRadius: Corner radius, takes precedence over `shape`, overrides the `borderRadius` of child components; rounding only affects the outer borders on both sides of the child components. Behaves like CSS `border-radius`: a single value or array of length 1 → applies to all four corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → applies to the four corners in a clockwise order.
+borderRadius: Corner radius, takes precedence over `shape`, overrides the `borderRadius` of child components; rounding only affects the outer borders on both sides of the child components. Behaves like CSS `border-radius` — a single value or array of length 1 → applies to all four corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → applies to the four corners in a clockwise order.
 
 pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in data input components that are child components.
 
@@ -129,12 +129,13 @@ slots.default: 标签内容。
 ]]]
 [[[api input-group-label en
 backgroundColor: Background color. See [Supported Color Parsing](../config/supported-color-parsing).
-borderRadius: Corner radius, takes precedence over `shape`. Behaves like CSS `border-radius`: a single value or array of length 1 → applies to all four corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → applies to the four corners in a clockwise order.
+borderRadius: Corner radius, takes precedence over `shape`. Behaves like CSS `border-radius` — a single value or array of length 1 → applies to all four corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → applies to the four corners in a clockwise order.
 size: Component size.
 
 pollSizeChange: Enables polling for component size changes. This may impact performance.
 
 slots.default: Label content.
+shape: Component shape.
 ]]]
 
 [[[slice percent]]]

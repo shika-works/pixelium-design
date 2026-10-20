@@ -106,6 +106,11 @@ promptExpose.removeChip: 移除指定 id 的 chip。
 promptExpose.insertText: 在光标处插入文本。
 promptExpose.getContent: 读取当前的输入内容。
 promptExpose.setContent: 覆盖当前的输入内容。
+promptCounterConfig.maxLength: 输入内容的最大长度。
+promptCounterConfig.countGraphemes: 自定义的文本长度统计函数，用于计数与截断。
+promptCounterConfig.sliceGraphemes: 自定义的文本截断函数，接收文本与长度上限。
+promptSendScope.cancel: 放弃当前的输入内容。
+promptSendScope.submit: 提交当前的输入内容。
 ]]]
 [[[api en
 draggable: Whether files can be dropped into the input area of Prompt.
@@ -189,6 +194,11 @@ promptExpose.removeChip: Removes the chip with the given id.
 promptExpose.insertText: Inserts text at the caret.
 promptExpose.getContent: Reads the current input content.
 promptExpose.setContent: Overwrites the current input content.
+promptCounterConfig.maxLength: The maximum length of the input.
+promptCounterConfig.countGraphemes: Custom function that counts the length of the text.
+promptCounterConfig.sliceGraphemes: Custom function that slices the text with a length limit.
+promptSendScope.cancel: Discards the current input.
+promptSendScope.submit: Submits the current input.
 ]]]
 
 [[[api prompt-send zh

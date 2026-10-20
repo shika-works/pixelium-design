@@ -245,11 +245,13 @@ uploadExpose.clear: Clears the file list.
 size: UploadFileList 的尺寸，未设置时沿用 Upload 的尺寸。
 abortable: 是否允许中断进行中和排队中的上传，与 Upload 同时允许时才会展示中断入口。
 showProgress: 是否展示上传进度。
+previewable: 是否允许点击缩略图进行预览。
 ]]]
 [[[api upload-file-list en
 size: The size of UploadFileList, inheriting the size of Upload when it is not set.
 abortable: Whether the running and the queued uploads can be aborted, showing the abort affordance only when Upload allows it as well.
 showProgress: Whether the upload progress is shown.
+previewable: Whether the thumbnails can be previewed by click.
 ]]]
 
 [[[api upload-image zh

@@ -152,4 +152,5 @@ events.close: Callback when the tooltip closes.
 events.open: Callback when the tooltip opens.
 slots.default: The trigger element.
 slots.content: The tooltip content.
+borderRadius: Border radius.
 ]]]

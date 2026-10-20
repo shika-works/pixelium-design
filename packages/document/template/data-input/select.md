@@ -203,6 +203,7 @@ slots.label: 已选择的内容。
 selectExpose.focus: 聚焦当前控件。
 selectExpose.blur: 取消聚焦当前控件。
 selectExpose.clear: 清空当前输入内容。
+multiple: 是否开启多选。
 ]]]
 
 [[[api en
@@ -260,6 +261,7 @@ slots.label: Selected content.
 selectExpose.focus: Focus the selector.
 selectExpose.blur: Blur the selector.
 selectExpose.clear: Clear the current input.
+multiple: Whether multiple selection is enabled.
 ]]]
 
 [[[slice group-option]]]

@@ -70,7 +70,7 @@ fixedHeight: 是否为定高模式。
 estimatedHeight: 预估项高（用于初始化和测量前的估算），单位 px。
 buffer: 缓冲项数，控制视窗前后多渲染的项数以避免快速滚动时闪烁。
 
-slots:scroll-container: 自定义滚动容器。
+slots.scroll-container: 自定义滚动容器。
 ]]]
 
 [[[api en
@@ -79,6 +79,6 @@ fixedHeight: Whether to use fixed-height mode.
 estimatedHeight: Estimated item height in px (used for initialization and before measurements complete).
 buffer: Number of buffer items to render before/after the visible window to reduce flicker during fast scrolls.
 
-slots:scroll-container: Use to customize the scroll container.
+slots.scroll-container: Use to customize the scroll container.
 ]]]
 

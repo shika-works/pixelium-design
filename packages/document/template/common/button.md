@@ -177,6 +177,7 @@ loading: 是否加载状态，Button 子组件的 `loading` 和当前属性取�
 variant: 按钮样式变体，Button 子组件的 `variant` 和当前属性取或，决定该子组件的样式变体。
 pollSizeChange: 开启轮询组件尺寸变化，会影响 Button 子组件的同名属性。
 slots.default: 子按钮。
+theme: 按钮组的主题。
 ]]]
 [[[api button-group en
 borderRadius: Corner radius, takes precedence over `shape`, overrides the borderRadius of Button child components; rounding only affects the outer borders on both sides of Button child components; behaves like CSS `border-radius`. A single value or an array of length 1 → applies to all four corners simultaneously; an array of length 2 → [top-left & bottom-right, top-right & bottom-left]; an array of length 3 → [top-left, top-right & bottom-left, bottom-right]; an array of length 4 → applies to the four corners in a clockwise order.
@@ -187,6 +188,7 @@ loading: Whether to show loading state. The Button sub-component's `loading` and
 variant: Button style variant. The Button sub-component's `variant` and this prop are OR-ed to decide the style variant of the sub-component.
 pollSizeChange: Enables polling for component size changes. This also affects the property of the same name in Button sub-components.
 slots.default: The sub-buttons.
+theme: Theme of the button group.
 ]]]
 
 [[[slice percent]]]
