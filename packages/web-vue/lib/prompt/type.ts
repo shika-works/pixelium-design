@@ -3,7 +3,7 @@ import type { OptionListOption } from '../option-list/type'
 import type { PopupEvents, PopupProps } from '../popup/type'
 import type { EmitEvent, NumberOrPercentage } from '../share/type'
 import type { UploadProviderProps, UploadProviderScope } from '../upload-provider/type'
-import type { PromptSpeechProviderProps } from '../prompt-speech-provider/type'
+import type { PromptSpeechConfig } from '../prompt-speech-provider/type'
 import type { GROUP_OPTION_TYPE } from '../share/const'
 
 export type PromptSubmitModifier =
@@ -250,10 +250,10 @@ export type PromptProps = {
 	 */
 	uploadConfig?: PromptUploadConfig
 	/**
-	 * @property {PromptSpeechProviderProps} [speechConfig]
+	 * @property {PromptSpeechConfig} [speechConfig]
 	 * @version 0.2.1
 	 */
-	speechConfig?: PromptSpeechProviderProps
+	speechConfig?: PromptSpeechConfig
 	/**
 	 * @property {PromptChipConfig} [chipConfig]
 	 * @version 0.2.1
@@ -397,7 +397,7 @@ export type PromptSlots = {
 	 * @slot start
 	 * @param {PromptUploadScope | undefined} upload
 	 * @param {PromptSendScope} send
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	start: {}
@@ -405,7 +405,7 @@ export type PromptSlots = {
 	 * @slot end
 	 * @param {PromptUploadScope | undefined} upload
 	 * @param {PromptSendScope} send
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	end: {}
@@ -413,7 +413,7 @@ export type PromptSlots = {
 	 * @slot send
 	 * @param {PromptUploadScope | undefined} upload
 	 * @param {PromptSendScope} send
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	send: {}
@@ -439,31 +439,31 @@ export type PromptSlots = {
 	'chip-group-label': {}
 	/**
 	 * @slot speech-panel
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	'speech-panel': {}
 	/**
 	 * @slot speech-cancel
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	'speech-cancel': {}
 	/**
 	 * @slot speech-visualizer
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	'speech-visualizer': {}
 	/**
 	 * @slot speech-text
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	'speech-text': {}
 	/**
 	 * @slot speech-accept
-	 * @param {PromptSpeechPanelScope} speech
+	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
 	 */
 	'speech-accept': {}

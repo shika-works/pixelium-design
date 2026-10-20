@@ -1,5 +1,3 @@
-import type { ComputedRef, Ref } from 'vue'
-
 export type PromptSpeechMode = 'click' | 'hold'
 
 export type PromptSpeechSpectrum = {
@@ -64,7 +62,7 @@ export type PromptSpeechBarConfig = {
 	maxHeight?: number
 }
 
-export type PromptSpeechProviderProps = {
+export type PromptSpeechConfig = {
 	/**
 	 * @property {PromptSpeechMode} [mode='click']
 	 * @version 0.2.1
@@ -97,51 +95,85 @@ export type PromptSpeechProviderProps = {
 	acceptTimeout?: number
 }
 
-export type PromptSpeechProviderEvents = {
+export type PromptSpeechScope = {
 	/**
-	 * @event update:recording
-	 * @param {boolean} value
+	 * @property {PromptSpeechMode} mode
 	 * @version 0.2.1
 	 */
-	'update:recording': [value: boolean]
+	mode: PromptSpeechMode
 	/**
-	 * @event update:live
-	 * @param {boolean} value
+	 * @property {boolean} recording
 	 * @version 0.2.1
 	 */
-	'update:live': [value: boolean]
+	recording: boolean
 	/**
-	 * @event accept
-	 * @param {string} value
+	 * @property {boolean} live
 	 * @version 0.2.1
 	 */
-	accept: [value: string]
-}
-
-export type PromptSpeechProviderSlots = {
+	live: boolean
 	/**
-	 * @slot default
-	 * @param {PromptSpeechPanelScope} speech
+	 * @property {boolean} committing
 	 * @version 0.2.1
 	 */
-	default: {}
-}
-
-export type PromptSpeechProvide = {
-	recording: ComputedRef<boolean>
-	live: ComputedRef<boolean>
-	committing: ComputedRef<boolean>
-	text: ComputedRef<string>
-	pending: ComputedRef<boolean>
-	barConfig: ComputedRef<Required<PromptSpeechBarConfig>>
-	levels: Ref<number[]>
-	source: Ref<'microphone' | 'simulated' | null>
-	mode: ComputedRef<PromptSpeechMode>
-	disabled: ComputedRef<boolean>
-	supported: ComputedRef<boolean>
+	committing: boolean
+	/**
+	 * @property {boolean} disabled
+	 * @version 0.2.1
+	 */
+	disabled: boolean
+	/**
+	 * @property {boolean} supported
+	 * @version 0.2.1
+	 */
+	supported: boolean
+	/**
+	 * @property {string} text
+	 * @version 0.2.1
+	 */
+	text: string
+	/**
+	 * @property {boolean} pending
+	 * @version 0.2.1
+	 */
+	pending: boolean
+	/**
+	 * @property {number[]} levels
+	 * @version 0.2.1
+	 */
+	levels: number[]
+	/**
+	 * @property {'microphone' | 'simulated' | null} source
+	 * @version 0.2.1
+	 */
+	source: 'microphone' | 'simulated' | null
+	/**
+	 * @property {Required<PromptSpeechBarConfig>} barConfig
+	 * @version 0.2.1
+	 */
+	barConfig: Required<PromptSpeechBarConfig>
+	/**
+	 * @property {() => void} enter
+	 * @version 0.2.1
+	 */
 	enter: () => void
+	/**
+	 * @property {() => void} cancel
+	 * @version 0.2.1
+	 */
 	cancel: () => void
+	/**
+	 * @property {() => void} accept
+	 * @version 0.2.1
+	 */
 	accept: () => void
+	/**
+	 * @property {() => void} press
+	 * @version 0.2.1
+	 */
 	press: () => void
+	/**
+	 * @property {() => void} release
+	 * @version 0.2.1
+	 */
 	release: () => void
 }

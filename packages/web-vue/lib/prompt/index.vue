@@ -401,7 +401,7 @@ useDraw(wrapperRef, canvasRef, {
 						<slot v-if="speechRecording" name="speech-panel" :speech="speech">
 							<PromptSpeechPanel>
 								<template v-for="name in speechPanelSlots" #[name]>
-									<slot :name="`speech-${name}`" :speech-panel="speech"></slot>
+									<slot :name="`speech-${name}`" :speech="speech"></slot>
 								</template>
 							</PromptSpeechPanel>
 						</slot>

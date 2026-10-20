@@ -92,12 +92,8 @@ describe('PromptSpeech', () => {
 		const wrapper = mountPrompt(
 			{ mode: 'hold' },
 			{
-				'speech-visualizer': ({ speechPanel }: any) =>
-					h(
-						'i',
-						{ class: 'custom-visualizer' },
-						`${speechPanel.levels.length}-${speechPanel.mode}`
-					)
+				'speech-visualizer': ({ speech }: any) =>
+					h('i', { class: 'custom-visualizer' }, `${speech.levels.length}-${speech.mode}`)
 			}
 		)
 

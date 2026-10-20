@@ -138,7 +138,7 @@ async function copy() {
 			</button>
 		</div>
 
-		<section class="px-demo-code" :style="{ maxHeight: open ? '2000px' : '0px' }">
+		<section class="px-demo-code" :style="{ maxHeight: open ? '2500px' : '0px' }">
 			<div class="px-demo-source" v-html="highlighted" />
 			<div class="px-demo-close" @click="open = false">
 				{{ txt.hide }}

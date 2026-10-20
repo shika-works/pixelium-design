@@ -1,19 +1,17 @@
 <template>
-	<slot :speech="speechScope"></slot>
+	<slot :speech="scope"></slot>
 </template>
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, provide, ref, toRef, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, provide, reactive, ref, toRef, watch } from 'vue'
 import type {
 	CustomRecognizeOptions,
 	PromptSpeechBarConfig,
-	PromptSpeechProviderEvents,
-	PromptSpeechProviderProps,
-	PromptSpeechProvide
+	PromptSpeechConfig,
+	PromptSpeechScope
 } from './type'
 import type { PromptProvide } from '../prompt/type'
 import { PROMPT_PROVIDE, PROMPT_SPEECH_PROVIDE } from '../share/const/provide-key'
 import { logError } from '../share/util/console'
-import { useSpeechPanelScope } from '../prompt-speech-panel/use-panel-scope'
 import { useSpeechRecognition } from './use-speech-recognition'
 import { useAudioMeter, type AudioMeterSource } from './use-audio-meter'
 
@@ -22,12 +20,16 @@ defineOptions({
 	inheritAttrs: false
 })
 
-const props = withDefaults(defineProps<PromptSpeechProviderProps>(), {
+const props = withDefaults(defineProps<PromptSpeechConfig>(), {
 	mode: 'click',
 	acceptTimeout: 3000
 })
 
-const emits = defineEmits<PromptSpeechProviderEvents>()
+const emits = defineEmits<{
+	'update:recording': [value: boolean]
+	'update:live': [value: boolean]
+	accept: [value: string]
+}>()
 
 const promptProvide = inject<PromptProvide | undefined>(PROMPT_PROVIDE, undefined)
 
@@ -313,28 +315,26 @@ watch(disabled, (value) => {
 	exit(false)
 })
 
-const speechProvide: PromptSpeechProvide = {
-	recording: computed(() => recording.value),
-	live,
-	committing: computed(() => committing.value),
-	text: computed(() => text.value),
-	pending: computed(() => pending.value),
-	barConfig,
-	levels,
-	source,
+const scope: PromptSpeechScope = reactive({
 	mode: computed(() => props.mode),
+	recording,
+	live,
+	committing,
 	disabled,
 	supported,
+	text,
+	pending,
+	levels,
+	source,
+	barConfig,
 	enter,
 	cancel,
 	accept,
 	press,
 	release
-}
+})
 
-provide<PromptSpeechProvide>(PROMPT_SPEECH_PROVIDE, speechProvide)
-
-const speechScope = useSpeechPanelScope(speechProvide)
+provide<PromptSpeechScope>(PROMPT_SPEECH_PROVIDE, scope)
 </script>
 
 <style src="../share/style/index.css" />

@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import type { PromptSpeechProvide } from '../prompt-speech-provider/type'
+import type { PromptSpeechScope } from '../prompt-speech-provider/type'
 import { PROMPT_SPEECH_PROVIDE } from '../share/const/provide-key'
 import Button from '../button/index.vue'
 import Microphone from '../share/assets/icon/microphone.svg'
@@ -46,21 +46,21 @@ defineOptions({
 	inheritAttrs: false
 })
 
-const speechProvide = inject<PromptSpeechProvide | undefined>(PROMPT_SPEECH_PROVIDE, undefined)
+const speech = inject<PromptSpeechScope | undefined>(PROMPT_SPEECH_PROVIDE, undefined)
 
-const recording = computed(() => !!speechProvide?.recording.value)
+const recording = computed(() => !!speech?.recording)
 
-const disabledComputed = computed(() => !speechProvide || !!speechProvide.disabled.value)
+const disabledComputed = computed(() => !speech || speech.disabled)
 
 const toggleHandler = () => {
-	if (disabledComputed.value || !speechProvide) {
+	if (!speech || speech.disabled) {
 		return
 	}
-	if (recording.value) {
-		speechProvide.cancel()
+	if (speech.recording) {
+		speech.cancel()
 		return
 	}
-	speechProvide.enter()
+	speech.enter()
 }
 </script>
 

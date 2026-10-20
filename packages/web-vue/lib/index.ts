@@ -99,7 +99,6 @@ import PromptSend from './prompt-send/index.vue'
 import PromptAttachment from './prompt-attachment/index.vue'
 import PromptSpeechTrigger from './prompt-speech-trigger/index.vue'
 import PromptSpeechPanel from './prompt-speech-panel/index.vue'
-import PromptSpeechProvider from './prompt-speech-provider/index.vue'
 import LoadingDots from './loading-dots/index.vue'
 import Upload from './upload/index.vue'
 import UploadFileList from './upload-file-list/index.vue'
@@ -197,7 +196,6 @@ const components = [
 	PromptAttachment,
 	PromptSpeechTrigger,
 	PromptSpeechPanel,
-	PromptSpeechProvider,
 	LoadingDots,
 	Upload,
 	UploadFileList,
@@ -342,7 +340,6 @@ export {
 	PromptAttachment,
 	PromptSpeechTrigger,
 	PromptSpeechPanel,
-	PromptSpeechProvider,
 	LoadingDots,
 	Upload,
 	UploadFileList,
@@ -453,16 +450,14 @@ export type {
 	PromptGroupOption
 } from './prompt/type.ts'
 export type {
+	PromptSpeechScope,
 	PromptSpeechBarConfig,
 	PromptSpeechMode,
 	PromptSpeechSpectrum
 } from './prompt-speech-provider/type.ts'
+export type { PromptSpeechPanelSlots } from './prompt-speech-panel/type.ts'
 export type {
-	PromptSpeechPanelScope,
-	PromptSpeechPanelSlots
-} from './prompt-speech-panel/type.ts'
-export type {
-	PromptSpeechProviderProps as PromptSpeechConfig,
+	PromptSpeechConfig,
 	CustomRecognize,
 	CustomRecognizeOptions
 } from './prompt-speech-provider/type.ts'

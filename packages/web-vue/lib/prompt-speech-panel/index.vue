@@ -2,10 +2,10 @@
 	<div
 		class="pixelium px-prompt-speech-panel"
 		:class="`px-prompt-speech-panel__${speech.mode}`"
-		@pointerdown="pressHandler"
-		@pointerup="releaseHandler"
-		@pointerleave="releaseHandler"
-		@pointercancel="releaseHandler"
+		@pointerdown="speech.press()"
+		@pointerup="speech.release()"
+		@pointerleave="speech.release()"
+		@pointercancel="speech.release()"
 		@contextmenu.prevent
 	>
 		<slot name="cancel" :speech="speech">
@@ -16,7 +16,7 @@
 				size="small"
 				variant="plain"
 				:disabled="speech.disabled"
-				@click="cancelHandler"
+				@click="speech.cancel()"
 			>
 				<template #icon>
 					<span class="px-prompt-speech-panel-icon">
@@ -71,7 +71,7 @@
 				variant="plain"
 				:loading="speech.committing"
 				:disabled="speech.disabled"
-				@click="acceptHandler"
+				@click="speech.accept()"
 			>
 				<template #icon>
 					<span class="px-prompt-speech-panel-icon">
@@ -84,8 +84,7 @@
 </template>
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import { useSpeechPanelScope } from './use-panel-scope'
-import type { PromptSpeechProvide } from '../prompt-speech-provider/type'
+import type { PromptSpeechScope } from '../prompt-speech-provider/type'
 import { PROMPT_SPEECH_PROVIDE } from '../share/const/provide-key'
 import Button from '../button/index.vue'
 // @ts-ignore
@@ -100,28 +99,18 @@ defineOptions({
 	name: 'PromptSpeechPanel'
 })
 
-const speechProvide = inject<PromptSpeechProvide | undefined>(PROMPT_SPEECH_PROVIDE, undefined)
+const speech = inject<PromptSpeechScope>(PROMPT_SPEECH_PROVIDE)!
 
 const [t] = useLocale()
 
-const cancelHandler = () => speechProvide?.cancel()
-
-const acceptHandler = () => speechProvide?.accept()
-
-const pressHandler = () => speechProvide?.press()
-
-const releaseHandler = () => speechProvide?.release()
-
 const holdText = computed(() => t('prompt.holdText'))
 
-const speech = useSpeechPanelScope(speechProvide)
-
 const visualizerStyle = computed(() => ({
-	height: `${speech.value.barConfig.maxHeight}px`
+	height: `${speech.barConfig.maxHeight}px`
 }))
 
 const barStyle = (level: number) => {
-	const { minHeight, maxHeight } = speech.value.barConfig
+	const { minHeight, maxHeight } = speech.barConfig
 	return {
 		height: `${minHeight + level * (maxHeight - minHeight)}px`
 	}
