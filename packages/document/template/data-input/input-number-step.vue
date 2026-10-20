@@ -11,7 +11,7 @@
 			placeholder="Please input number"
 			v-model="input2"
 			:step="2"
-			strick-step
+			strict-step
 			:min="-13"
 			:max="23"
 		></px-input-number>
