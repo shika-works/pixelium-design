@@ -13,19 +13,22 @@
 	each(@theme, {
 		&.@{prefix}__@{value} {
 			color: var(~"--px-@{value}-6");
+			--loading-dots-idle-color: var(~"--px-@{value}-5");
 		}
 	});
 
 	&.@{prefix}__info {
-		color: var(--px-neutral-10);
+		color: var(--px-neutral-9);
+		--loading-dots-idle-color: var(--px-neutral-8);
 	}
 
 	&-dot {
 		display: block;
 		width: var(--px-bit);
 		height: var(--px-bit);
+		color: var(--loading-dots-idle-color);
 		background: currentColor;
-		animation: 1200ms ease-in-out infinite px-loading-dots-bounce;
+		animation: 1200ms ease-in-out infinite backwards px-loading-dots-bounce;
 	}
 
 	&__pixel &-dot {
@@ -39,12 +42,12 @@
 	60%,
 	100% {
 		transform: translateY(0);
-		opacity: 0.7;
+		color: var(--loading-dots-idle-color);
 	}
 
 	30% {
 		transform: translateY(-100%);
-		opacity: 1;
+		color: currentColor;
 	}
 }
 
@@ -52,24 +55,35 @@
 	0%,
 	12% {
 		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
 	}
+
 	12%,
 	24% {
 		transform: translateY(-100%);
+		color: currentColor;
 	}
+
 	24%,
 	36% {
 		transform: translateY(-200%);
+		color: currentColor;
 	}
+
 	36%,
 	48% {
 		transform: translateY(-100%);
+		color: currentColor;
 	}
+
 	48%,
 	60% {
-		transform: translateY(-0%);
+		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
 	}
+
 	100% {
 		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
 	}
 }

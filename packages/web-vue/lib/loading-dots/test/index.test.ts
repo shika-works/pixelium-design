@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import less from 'less'
 import { mount } from '@vue/test-utils'
 import LoadingDots from '../index.vue'
+import { generatePalette, rgbaColor2string } from '../../share/util/color'
 import { createMocks } from '../../share/util/test'
 
 const mountDots = (props: Record<string, any> = {}) => mount(LoadingDots, { props })
@@ -97,4 +101,56 @@ describe('LoadingDots', () => {
 		expect(styleOf(root(wrapper))).toContain('color: rgb(139, 92, 246)')
 		expect(wrapper.html()).not.toContain('--px')
 	})
+
+	it('takes the resting tone of a custom colour from its own 5th palette step', () => {
+		const wrapper = mountDots({ color: '#8b5cf6' })
+		const palette = generatePalette(139, 92, 246, 255, false)
+		expect(styleOf(root(wrapper))).toContain(
+			`--loading-dots-idle-color: ${rgbaColor2string(palette[4])}`
+		)
+		expect(styleOf(root(mountDots()))).not.toContain('--loading-dots-idle-color')
+	})
+
+	it('keeps the tone of a colour the parser cannot read', () => {
+		expect(styleOf(root(mountDots({ color: 'currentColor' })))).toContain(
+			'--loading-dots-idle-color: currentColor'
+		)
+	})
+})
+
+describe('LoadingDots stylesheet', () => {
+	// cwd is the package root, as in the other stylesheet tests
+	const lessFile = resolve('lib/loading-dots/index.less')
+	const css = less
+		.render(readFileSync(lessFile, 'utf-8'), { filename: lessFile })
+		.then((result) => result.css)
+
+	const keyframesOf = (source: string, name: string) => {
+		const start = source.indexOf(`@keyframes ${name}`)
+		const next = source.indexOf('@keyframes', start + 1)
+		return source.slice(start, next === -1 ? undefined : next)
+	}
+
+	it('uses the palette for the resting tone instead of opacity or blending', async () => {
+		const style = await css
+		expect(style).not.toContain('opacity')
+		expect(style).not.toContain('color-mix')
+		expect(style).toContain('--loading-dots-idle-color: var(--px-neutral-9)')
+	})
+
+	it.each(['primary', 'sakura', 'success', 'warning', 'danger', 'notice'])(
+		'takes the resting tone of the %s theme from the 5th palette step',
+		async (theme) => {
+			expect(await css).toContain(`--loading-dots-idle-color: var(--px-${theme}-5)`)
+		}
+	)
+
+	it.each(['px-loading-dots-bounce', 'px-loading-dots-step'])(
+		'changes the tone along the %s animation',
+		async (name) => {
+			const keyframes = keyframesOf(await css, name)
+			expect(keyframes).toContain('color: var(--loading-dots-idle-color)')
+			expect(keyframes).toContain('color: currentColor')
+		}
+	)
 })

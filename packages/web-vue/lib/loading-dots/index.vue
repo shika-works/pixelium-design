@@ -16,6 +16,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { LoadingDotsProps } from './type'
+import { generatePalette, parseColor, rgbaColor2string } from '../share/util/color'
+import { useDarkMode } from '../share/hook/use-dark-mode'
 
 defineOptions({
 	name: 'LoadingDots'
@@ -31,14 +33,26 @@ const props = withDefaults(defineProps<LoadingDotsProps>(), {
 	animationDuration: 1200
 })
 
+const darkMode = useDarkMode()
+
 const toSize = (value: number | string | undefined) =>
 	typeof value === 'number' ? `${value}px` : value
 
 const delayStep = computed(() => props.animationDuration / (props.count * 2 + 2))
 
+const toIdleColor = (color: string) => {
+	const parsed = parseColor(color)?.color
+	if (!parsed) {
+		return color
+	}
+	const palette = generatePalette(parsed.r, parsed.g, parsed.b, parsed.a, darkMode.value)
+	return rgbaColor2string(palette[4])
+}
+
 const rootStyle = computed(() => ({
 	color: props.color,
-	gap: toSize(props.interval)
+	gap: toSize(props.interval),
+	'--loading-dots-idle-color': props.color ? toIdleColor(props.color) : undefined
 }))
 
 const dotStyle = (index: number) => ({
