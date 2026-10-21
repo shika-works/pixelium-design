@@ -2,10 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { computed, defineComponent, h, provide } from 'vue'
 import UploadFileList from '../index.vue'
+import Image from '../../image/index.vue'
 import Progress from '../../progress/index.vue'
 import { UPLOAD_PROVIDE } from '../../share/const/provide-key'
 import { createMocks } from '../../share/util/test'
-import type { FileInfo, UploadProvide } from '../../upload/type'
+import type { FileInfo, UploadProvide } from '../../upload-provider/type'
 
 const item = (patch: Partial<FileInfo> = {}): FileInfo => ({
 	id: 'id-1',
@@ -158,6 +159,39 @@ describe('UploadFileList', () => {
 
 		const noProgress = mountList({ showProgress: false }, {}, [item({ state: 'uploading' })])
 		expect(noProgress.wrapper.find('.px-upload-file-list-progress').exists()).toBe(false)
+	})
+
+	it('renders a previewable thumbnail for image items with a source', () => {
+		const { wrapper } = mountList({}, {}, [
+			item({
+				name: 'photo.png',
+				type: 'image/png',
+				thumbnailUrl: 'https://cdn.test/thumb.png',
+				url: 'https://cdn.test/photo.png'
+			})
+		])
+		const image = wrapper.findComponent(Image)
+		expect(image.exists()).toBe(true)
+		expect(image.props('src')).toBe('https://cdn.test/thumb.png')
+		expect(image.props('previewSrc')).toBe('https://cdn.test/photo.png')
+		expect(image.props('previewable')).toBe(true)
+		expect(wrapper.find('.px-upload-file-list-thumb').exists()).toBe(true)
+		expect(wrapper.find('.px-upload-file-list-icon').exists()).toBe(false)
+
+		const off = mountList({ previewable: false }, {}, [
+			item({ name: 'photo.png', type: 'image/png', url: 'https://cdn.test/photo.png' })
+		])
+		expect(off.wrapper.findComponent(Image).props('previewable')).toBe(false)
+		expect(off.wrapper.find('.px-upload-file-list-thumb').exists()).toBe(true)
+		expect(off.wrapper.find('.px-upload-file-list-icon').exists()).toBe(false)
+
+		const noSource = mountList({}, {}, [item({ name: 'photo.png', type: 'image/png' })])
+		expect(noSource.wrapper.findComponent(Image).exists()).toBe(false)
+		expect(noSource.wrapper.find('.px-upload-file-list-icon').exists()).toBe(true)
+
+		const document = mountList({}, {}, [item()])
+		expect(document.wrapper.findComponent(Image).exists()).toBe(false)
+		expect(document.wrapper.find('.px-upload-file-list-icon').exists()).toBe(true)
 	})
 
 	it('prefers the upload size over its own prop', () => {

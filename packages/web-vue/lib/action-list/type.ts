@@ -179,11 +179,7 @@ export type ActionListSlots = {
 	 * @param {number} total
 	 * @version 0.2.1
 	 */
-	fold: {
-		collapsed: boolean
-		hiddenCount: number
-		total: number
-	}
+	fold: {}
 }
 
 export type ActionListProvide = {

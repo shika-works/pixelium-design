@@ -8,7 +8,7 @@ import UploadImage from '../../upload-image/index.vue'
 import UploadDragger from '../../upload-dragger/index.vue'
 import { FORM_ITEM_PROVIDE } from '../../share/const/provide-key'
 import { createMocks } from '../../share/util/test'
-import type { FileInfo, UploadCustomRequestOptions } from '../type'
+import type { FileInfo, UploadCustomRequestOptions } from '../../upload-provider/type'
 
 const file = (name: string, type = 'application/pdf') => new File(['x'], name, { type })
 
@@ -192,14 +192,78 @@ describe('Upload', () => {
 		expect(options.signal.aborted).toBe(false)
 	})
 
-	it('leaves the item pending when neither customRequest nor action is given', async () => {
+	it('settles a pending item as finished on submit when no endpoint is given', async () => {
 		const manual = mountUpload({ autoUpload: false })
 		await pick(manual, [file('a.pdf')])
 		expect(states(manual)).toBe('pending')
 
+		manual.vm.submit()
+		await flushPromises()
+		expect(states(manual)).toBe('finished')
+	})
+
+	it('settles the auto upload as finished when no endpoint is given', async () => {
 		const auto = mountUpload()
 		await pick(auto, [file('a.pdf')])
-		expect(states(auto)).toBe('pending')
+		await flushPromises()
+		expect(states(auto)).toBe('finished')
+	})
+
+	it('settles a file-less pending item from the prop as finished on submit', async () => {
+		const wrapper = mountUpload({
+			defaultFileList: [
+				{
+					id: 'preset',
+					name: 'preset.pdf',
+					type: 'application/pdf',
+					state: 'pending',
+					progress: 0
+				}
+			]
+		})
+		expect(states(wrapper)).toBe('pending')
+
+		wrapper.vm.submit()
+		await flushPromises()
+		expect(states(wrapper)).toBe('finished')
+	})
+
+	it('aborts a file-less uploading item from the prop into the failed state', async () => {
+		const wrapper = mountUpload({
+			defaultFileList: [
+				{
+					id: 'preset',
+					name: 'preset.pdf',
+					type: 'application/pdf',
+					state: 'uploading',
+					progress: 40
+				}
+			]
+		})
+		expect(states(wrapper)).toBe('uploading')
+
+		wrapper.vm.abort('preset')
+		await flushPromises()
+		expect(states(wrapper)).toBe('error')
+		expect((argsOf(wrapper, 'abort')[0] as FileInfo).id).toBe('preset')
+	})
+
+	it('settles a file-less failed item from the prop as finished on retry', async () => {
+		const wrapper = mountUpload({
+			defaultFileList: [
+				{
+					id: 'preset',
+					name: 'preset.pdf',
+					type: 'application/pdf',
+					state: 'error',
+					progress: 0
+				}
+			]
+		})
+
+		wrapper.vm.retry()
+		await flushPromises()
+		expect(states(wrapper)).toBe('finished')
 	})
 
 	it('keeps the running requests at the concurrency limit', async () => {

@@ -176,9 +176,9 @@ events.tagAdd: Callback when a tag is added.
 events.tagClose: Callback when a tag is closed.
 events.update:inputValue: Callback when `inputValue` is updated.
 slots.tag: Tag content.
-inputNumberExpose.focus: Focus the current input box.
-inputNumberExpose.blur: Remove focus from the current input box.
-inputNumberExpose.clear: Clear the current input box.
+inputTagExpose.focus: Focus the current input box.
+inputTagExpose.blur: Remove focus from the current input box.
+inputTagExpose.clear: Clear the current input box.
 inputNumberExpose.select: Select the content of the current input box.
 ]]]
 

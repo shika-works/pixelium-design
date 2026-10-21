@@ -113,6 +113,11 @@ slots.default: 滚动容器内容。
 
 scrollBarExpose.scrollTo: 效果同原生 `scrollTo`。
 scrollBarExpose.scrollBy: 效果同原生 `scrollBy`。
+ghost: 隐藏滚动条。
+scrollBarExpose.scrollHeight: 当前滚动高度。
+scrollBarExpose.scrollWidth: 当前滚动宽度。
+scrollBarExpose.scrollTop: 当前滚动位置距顶部的距离。
+scrollBarExpose.scrollLeft: 当前滚动位置距左侧的距离。
 ]]]
 
 [[[api en
@@ -132,6 +137,11 @@ slots.default: Content of the scroll container.
 
 scrollBarExpose.scrollTo: Same behavior as native `scrollTo`.
 scrollBarExpose.scrollBy: Same behavior as native `scrollBy`.
+ghost: Hides the scrollbar.
+scrollBarExpose.scrollHeight: The current scroll height.
+scrollBarExpose.scrollWidth: The current scroll width.
+scrollBarExpose.scrollTop: The current vertical scroll offset.
+scrollBarExpose.scrollLeft: The current horizontal scroll offset.
 ]]]
 
 ### useScrollBar

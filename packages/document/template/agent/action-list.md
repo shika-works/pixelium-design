@@ -207,6 +207,7 @@ color: ActionListItem 的自定义颜色。
 spacing: ActionListItem 的间距，会覆盖 ActionList 设置的间距。
 actionListItemData.lineVariant: ActionListItem 连接线的样式，会覆盖 ActionList 设置的样式。
 expandable: ActionListItem 在带有详情内容时是否可展开。
+actionListItemData.animationDuration: ActionListItemData 展开与收起动画的时长。
 ]]]
 [[[api en
 items: The row data of ActionList, the default slot is rendered when it is not provided.
@@ -242,6 +243,7 @@ color: The custom color of ActionListItem.
 spacing: The spacing of ActionListItem, which overrides the spacing set by ActionList.
 actionListItemData.lineVariant: The style of the ActionListItem connector line, which overrides the style set by ActionList.
 expandable: Whether ActionListItem can be expanded when it carries detail content.
+actionListItemData.animationDuration: The duration of the expand and collapse animation of ActionListItemData.
 ]]]
 
 [[[api action-list-item zh

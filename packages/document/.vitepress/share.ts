@@ -18,14 +18,20 @@ const newItems = [
 	'bubble',
 	'action-list',
 	'loading-dots',
-	'upload'
+	'upload',
+	'prompt',
+	'prompt-action',
+	'prompt-attachment',
+	'prompt-chip',
+	'prompt-send',
+	'prompt-speech'
 ]
 
 const titleMapEn = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
 	skill: 'AI Agent Skill',
-	'ai-agent': 'AI Agent',
+	agent: 'AI Agent',
 	theme: 'Custom Theme',
 	i18n: 'Internationalization',
 	'supported-color-parsing': 'Supported Color Parsing'
@@ -47,7 +53,7 @@ const titleMapZh = {
 	example: '组件示例',
 	i18n: '多语言国际化',
 	'supported-color-parsing': '支持的颜色解析',
-	'ai-agent': 'AI Agent'
+	agent: 'AI Agent'
 }
 const additionMapZh = {
 	button: '按钮',
@@ -119,21 +125,22 @@ const additionMapZh = {
 	carousel: '轮播',
 	'count-to': '数字滚动',
 	bubble: '气泡',
-	'ai-agent': '组件',
 	'action-list': '操作列表',
 	'loading-dots': '点状加载',
-	upload: '上传'
-}
-
-const dualCategoryItems: Record<string, string[]> = {
-	'ai-agent': ['bubble', 'action-list', 'loading-dots']
+	upload: '上传',
+	prompt: '提示词输入',
+	'prompt-action': '提示词操作',
+	'prompt-attachment': '提示词附件',
+	'prompt-chip': '提示词标签',
+	'prompt-send': '提示词发送',
+	'prompt-speech': '提示词语音输入'
 }
 
 const order = [
 	'guide',
 	'config',
 	'common',
-	'ai-agent',
+	'agent',
 	'data-input',
 	'data-display',
 	'layout',
@@ -153,13 +160,4 @@ const guideOrder = [
 	'skill'
 ]
 
-export {
-	newItems,
-	titleMapEn,
-	additionMapEn,
-	titleMapZh,
-	additionMapZh,
-	dualCategoryItems,
-	order,
-	guideOrder
-}
+export { newItems, titleMapEn, additionMapEn, titleMapZh, additionMapZh, order, guideOrder }

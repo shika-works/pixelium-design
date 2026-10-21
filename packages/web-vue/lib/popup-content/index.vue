@@ -5,6 +5,8 @@
 			:visible="props.visible"
 			:close-delay="props.animationDuration"
 			:destroy-on-hide="props.destroyOnHide"
+			:esc-to-close="props.escToClose"
+			@esc-keydown="escKeydownHandler"
 		>
 			<Transition
 				:name="'px-popup-content-fade__' + (popupFinalPlacement || popupRoughPlacement)"
@@ -74,6 +76,7 @@ const props = withDefaults(defineProps<PopupContentProps>(), {
 	visible: undefined,
 	widthEqual: false,
 	destroyOnHide: false,
+	escToClose: false,
 	animationDuration: 250
 })
 
@@ -268,6 +271,10 @@ const updateRenderState = () => {
 
 const contentMousedownHandler = (e: MouseEvent) => {
 	emits('contentMousedown', e)
+}
+
+const escKeydownHandler = (e: KeyboardEvent) => {
+	emits('escKeydown', e)
 }
 
 defineExpose({

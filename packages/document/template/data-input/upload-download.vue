@@ -18,7 +18,8 @@ const files: FileInfo[] = [
 		type: 'image/png',
 		state: 'finished',
 		progress: 100,
-		url: asset('logo.png')
+		url: asset('logo.png'),
+		thumbnailUrl: asset('logo.png')
 	},
 	{
 		id: 'chrome',
@@ -26,7 +27,8 @@ const files: FileInfo[] = [
 		type: 'image/svg+xml',
 		state: 'finished',
 		progress: 100,
-		url: asset('chrome_logo.svg')
+		url: asset('chrome_logo.svg'),
+		thumbnailUrl: asset('chrome_logo.svg')
 	}
 ]
 

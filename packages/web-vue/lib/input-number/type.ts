@@ -48,8 +48,15 @@ export type InputNumberProps = {
 	 */
 	precision?: number
 	/**
+	 * @property {boolean} [strictStep=false]
+	 * @version 0.2.1
+	 */
+	strictStep?: boolean
+	/**
 	 * @property {boolean} [strickStep=false]
 	 * @version 0.0.2
+	 * @deprecated Use `strictStep` instead.
+	 * @ignore
 	 */
 	strickStep?: boolean
 	/**

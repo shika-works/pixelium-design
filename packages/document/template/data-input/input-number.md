@@ -36,12 +36,12 @@ Set the value range using the `max` and `min` properties. Both ends are inclusiv
 [[[zh
 ## 步长
 
-通过 `step` 属性设置加减按钮的步长。`strickStep` 属性为 `true` 时，限制值必须为 `step` 的整数倍。
+通过 `step` 属性设置加减按钮的步长。`strictStep` 属性为 `true` 时，限制值必须为 `step` 的整数倍。
 ]]]
 [[[en
 ## Step
 
-Set the increment/decrement step using the `step` property. When the `strickStep` property is `true`, the value must be an integer multiple of `step`.
+Set the increment/decrement step using the `step` property. When the `strictStep` property is `true`, the value must be an integer multiple of `step`.
 ]]]
 <preview path="./input-number-step.vue"></preview>
 
@@ -104,7 +104,7 @@ disabled: 是否禁用。
 max: 最大值（闭区间）。
 min: 最小值（闭区间）。
 step: 加减按钮的步长。
-strickStep: 严格步长，限制值必须为 `step` 的整数倍。
+strictStep: 严格步长，限制值必须为 `step` 的整数倍。
 precision: 精确到小数位，取值为 [0, 100] 的整数。
 format: 将数字值转换为字符串展示的函数。
 allowInput: 检查数字输入框的文本是否允许输入的函数。
@@ -154,7 +154,7 @@ clearable: Whether to show a clear button.
 loading: Whether to show a loading state.
 size: Size of the number input.
 shape: Shape of the number input.
-borderRadius: Border-radius, takes precedence over `shape`. Follows CSS `border-radius` rules: single value or array of length 1 → all corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → clockwise starting from top-left.
+borderRadius: Border-radius, takes precedence over `shape`. Follows CSS `border-radius` rules — single value or array of length 1 → all corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → clockwise starting from top-left.
 maxLength: Maximum input length.
 autofocus: Native `<input>` `autofocus` attribute.
 

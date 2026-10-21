@@ -27,6 +27,7 @@ export type PopupContentProps = {
 	widthEqual?: boolean
 	contentStyle?: CSSProperties
 	destroyOnHide?: boolean
+	escToClose?: boolean
 	/**
 	 * @property {number} [animationDuration=250]
 	 * @version 0.1.5
@@ -38,4 +39,5 @@ export type PopupContentEvents = {
 	contentMouseenter: [e: MouseEvent]
 	contentMouseleave: [e: MouseEvent]
 	contentMousedown: [e: MouseEvent]
+	escKeydown: [event: KeyboardEvent]
 }

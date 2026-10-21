@@ -454,3 +454,19 @@ html.dark {
 	vertical-align: middle;
 }
 /* version badge end */
+
+/* nav beta badge start */
+.vp-nav-beta {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 0 6px;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 16px;
+	color: var(--vp-c-brand-1);
+	background: var(--vp-c-brand-soft);
+	border: 1px solid var(--vp-c-brand-1);
+	border-radius: 4px;
+	vertical-align: 15%;
+}
+/* nav beta badge end */

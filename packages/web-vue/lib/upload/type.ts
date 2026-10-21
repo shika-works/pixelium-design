@@ -1,55 +1,16 @@
-import type { ComputedRef } from 'vue'
 import type { ButtonProps, ButtonEvents } from '../button/type'
 import type { UploadFileListProps } from '../upload-file-list/type'
 import type { UploadImageProps } from '../upload-image/type'
 import type { UploadDraggerProps } from '../upload-dragger/type'
 import type { EmitEvent, RestAttrs } from '../share/type'
-
-export type UploadData =
-	| Record<string, string>
-	| ((params: { file: FileInfo }) => Record<string, string>)
-
-export type UploadHeaders =
-	| Record<string, string>
-	| ((params: { file: FileInfo }) => Record<string, string>)
-
-export type UploadPatch = {
-	url?: string
-	thumbnailUrl?: string
-	response?: any
-}
-
-export interface FileInfo {
-	id: string
-	name: string
-	type?: string
-	file?: File
-	state: 'pending' | 'queueing' | 'uploading' | 'finished' | 'error'
-	progress: number
-	url?: string
-	thumbnailUrl?: string
-	response?: any
-}
-
-export interface UploadCustomRequestOptions {
-	file: FileInfo
-	action?: string
-	withCredentials?: boolean
-	data?: UploadData
-	headers?: UploadHeaders
-	signal: AbortSignal
-	setProgress: (e: { percent: number }) => void
-	setFinish: (patch?: UploadPatch) => void
-	setError: (patch?: UploadPatch) => void
-}
-
-export type CustomRequest = (options: UploadCustomRequestOptions) => any
-
-export type CustomDownload = (params: { file: FileInfo }) => void
-
-export type CreateThumbnailUrl = (params: {
-	file: FileInfo
-}) => string | undefined | Promise<string | undefined>
+import type {
+	CreateThumbnailUrl,
+	CustomDownload,
+	CustomRequest,
+	FileInfo,
+	UploadData,
+	UploadHeaders
+} from '../upload-provider/type'
 
 export type UploadProps = {
 	/**
@@ -260,7 +221,7 @@ export type UploadSlots = {
 	 * @param {() => void} open
 	 * @version 0.2.1
 	 */
-	trigger: { open: () => void }
+	trigger: {}
 	/**
 	 * @slot file-list
 	 * @param {FileInfo[]} fileList
@@ -271,14 +232,7 @@ export type UploadSlots = {
 	 * @param {(file: FileInfo) => void} download
 	 * @version 0.2.1
 	 */
-	'file-list': {
-		fileList: FileInfo[]
-		remove: (id: string) => void
-		abort: (id?: string) => void
-		submit: (fileId?: string) => void
-		retry: (fileId?: string) => void
-		download: (file: FileInfo) => void
-	}
+	'file-list': {}
 }
 
 export type UploadExpose = {
@@ -312,19 +266,4 @@ export type UploadExpose = {
 	 * @version 0.2.1
 	 */
 	clear: () => void
-}
-
-export type UploadProvide = {
-	fileList: ComputedRef<FileInfo[]>
-	mode: ComputedRef<'file' | 'image'>
-	size: ComputedRef<'small' | 'medium' | 'large' | undefined>
-	disabled: ComputedRef<boolean | undefined>
-	abortable: ComputedRef<boolean>
-	download: (file: FileInfo) => void
-	open: () => void
-	addFiles: (files: File[], e?: Event) => void
-	submit: (fileId?: string) => void
-	retry: (fileId?: string) => void
-	abort: (id?: string) => void
-	remove: (id: string, e?: MouseEvent) => void
 }

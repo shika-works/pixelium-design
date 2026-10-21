@@ -593,7 +593,7 @@ loading: Whether table is loading.
 events.update:selectedKey: Callback when `selectedKeys` is updated.
 events.select: Callback when a row is selected.
 events.selectAll: Callback when select-all is triggered.
-events.update:selectedChange: Callback when the selected rows change.
+events.selectedChange: Callback when the selected rows change.
 events.update:expandedKeys: Callback when `expandedKeys` is updated.
 events.expand: Callback when a row is expanded.
 events.expandedChange: Callback when the expanded rows change.

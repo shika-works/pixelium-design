@@ -42,5 +42,8 @@ export default {
 	upload: {
 		uploadFile: '上传文件',
 		draggerText: '点击或拖拽文件到此区域上传'
+	},
+	prompt: {
+		holdText: '按住说话'
 	}
 }

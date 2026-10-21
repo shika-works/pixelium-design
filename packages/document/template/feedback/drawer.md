@@ -117,7 +117,7 @@ As shown in the example above, when using it as a component, you can directly pa
 drawerOptions.content: Drawer 的主体内容。
 drawerOptions.title: Drawer 标题。
 drawerOptions.footer: Drawer 底部区域。
-drawerOptions.placement: Drawer 弹出位置。
+placement: Drawer 弹出位置。
 drawerOptions.closable: 是否展示右上角关闭按钮。
 drawerOptions.mask: 是否展示遮罩层。
 drawerOptions.maskClosable: 点击遮罩层是否可以关闭 Drawer。
@@ -162,13 +162,14 @@ events.afterClose: Drawer 关闭动画结束后的回调。
 
 drawerExpose.close: 关闭 Drawer。
 drawerExpose.open: 打开 Drawer。
+events.exit: 点击关闭入口、遮罩或按下 Esc 键请求退出 Drawer 时触发。
 ]]]
 
 [[[api en
 drawerOptions.content: The main content of the Drawer.
 drawerOptions.title: The title of the Drawer.
 drawerOptions.footer: The footer area of the Drawer.
-drawerOptions.placement: The placement where the Drawer appears.
+placement: The placement where the Drawer appears.
 drawerOptions.closable: Whether to show the close button in the upper right corner.
 drawerOptions.mask: Whether to show the mask layer.
 drawerOptions.maskClosable: Whether clicking the mask layer closes the Drawer.
@@ -213,6 +214,7 @@ events.afterClose: Callback after the Drawer closing animation ends.
 
 drawerExpose.close: Closes the Drawer.
 drawerExpose.open: Opens the Drawer.
+events.exit: Triggered when closing is requested by the close entry, the mask or the Esc key.
 ]]]
 
 ### ValidContent, ValidVNodeContent

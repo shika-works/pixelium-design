@@ -101,6 +101,7 @@ events.preview: 开启预览图片的回调。
 events.close: 关闭预览图片的回调。
 slots.placeholder: 加载中的占位元素。
 slots.error: 加载失败的展示内容。
+previewSrc: 预览时显示的图片地址，不传时使用当前图片。
 ]]]
 [[[api en
 src: Image resource URL, behaves like the native `<img>` `src`.
@@ -125,4 +126,5 @@ events.preview: Callback when previewing the image.
 events.close: Callback when closing the image preview.
 slots.placeholder: Placeholder element while loading.
 slots.error: Content displayed when loading fails.
+previewSrc: The image source used in the preview; it falls back to the current image.
 ]]]

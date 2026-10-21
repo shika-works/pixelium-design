@@ -1,7 +1,17 @@
 <template>
 	<ul class="pixelium px-upload-file-list" :class="`px-upload-file-list__${sizeComputed}`">
 		<li v-for="item in fileListComputed" :key="item.id" class="px-upload-file-list-item">
-			<ImageIcon v-if="isImageFile(item)" class="px-upload-file-list-icon"></ImageIcon>
+			<span v-if="showThumb(item)" class="px-upload-file-list-thumb">
+				<Image
+					class="px-upload-file-list-thumb-image"
+					:src="item.thumbnailUrl ?? item.url"
+					:alt="item.name"
+					object-fit="contain"
+					:previewable="previewableComputed"
+					:preview-src="item.url ?? item.thumbnailUrl"
+				></Image>
+			</span>
+			<ImageIcon v-else-if="isImageFile(item)" class="px-upload-file-list-icon"></ImageIcon>
 			<FileIcon v-else class="px-upload-file-list-icon"></FileIcon>
 			<div class="px-upload-file-list-body">
 				<a
@@ -21,13 +31,13 @@
 					{{ item.name }}
 				</span>
 				<Progress
-					v-show="pixelSize"
 					v-if="
 						showProgressComputed && (item.state === 'uploading' || item.state === 'queueing')
 					"
 					class="px-upload-file-list-progress"
 					:percentage="item.progress"
-					:size="pixelSize * 4 || undefined"
+					:size="INTERVAL"
+					:border-width="0"
 				></Progress>
 			</div>
 			<div class="px-upload-file-list-actions">
@@ -71,9 +81,10 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import type { UploadFileListProps } from './type'
-import type { FileInfo, UploadProvide } from '../upload/type'
+import type { FileInfo, UploadProvide } from '../upload-provider/type'
 import { UPLOAD_PROVIDE } from '../share/const/provide-key'
 import { isImageFile } from '../share/util/file'
+import Image from '../image/index.vue'
 import Progress from '../progress/index.vue'
 // @ts-ignore
 import Upload from '@hackernoon/pixel-icon-library/icons/SVG/regular/upload.svg'
@@ -87,7 +98,7 @@ import Pause from '@hackernoon/pixel-icon-library/icons/SVG/regular/pause.svg'
 import ImageIcon from '@hackernoon/pixel-icon-library/icons/SVG/regular/image.svg'
 // @ts-ignore
 import FileIcon from 'pixelarticons/svg/file.svg'
-import { usePixelSize } from '../share/hook/use-pixel-size.ts'
+import { INTERVAL } from '../share/const/style.ts'
 
 defineOptions({
 	name: 'UploadFileList'
@@ -96,6 +107,7 @@ defineOptions({
 const props = withDefaults(defineProps<UploadFileListProps>(), {
 	size: 'medium',
 	abortable: true,
+	previewable: true,
 	showProgress: true
 })
 
@@ -112,6 +124,10 @@ const abortableComputed = computed(
 )
 
 const showProgressComputed = computed(() => !!props.showProgress)
+
+const previewableComputed = computed(() => !!props.previewable)
+
+const showThumb = (item: FileInfo) => isImageFile(item) && !!(item.thumbnailUrl ?? item.url)
 
 const withEnabled = (action: (id: string) => void) => (id: string) => {
 	if (!disabledComputed.value) {
@@ -134,8 +150,6 @@ const abort = withEnabled((id) => uploadProvide?.abort(id))
 const retry = withEnabled((id) => uploadProvide?.retry(id))
 
 const remove = withEnabled((id) => uploadProvide?.remove(id))
-
-const pixelSize = usePixelSize()
 </script>
 
 <style lang="less" src="./index.less"></style>

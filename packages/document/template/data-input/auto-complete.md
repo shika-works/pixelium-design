@@ -157,6 +157,7 @@ autoCompleteExpose.focus: 聚焦当前控件。
 autoCompleteExpose.blur: 取消聚焦当前控件。
 autoCompleteExpose.clear: 清空当前输入内容。
 autoCompleteExpose.select: 选中当前输入内容。
+dropdownProps: 下拉弹层的配置。
 ]]]
 
 [[[api en
@@ -174,7 +175,7 @@ filter: Function to filter the options.
 append: Append mode.
 size: Size of the auto complete input.
 shape: Shape of the auto complete input.
-borderRadius: Border-radius, takes precedence over `shape`. Follows CSS `border-radius` rules: single value or array of length 1 → all corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → clockwise starting from top-left.
+borderRadius: Border-radius, takes precedence over `shape`. Follows CSS `border-radius` rules — single value or array of length 1 → all corners; length 2 → [top-left & bottom-right, top-right & bottom-left]; length 3 → [top-left, top-right & bottom-left, bottom-right]; length 4 → clockwise starting from top-left.
 status: Form validation status.
 virtualScroll: Whether render options with virtual list.
 virtualListProps: Properties of virtual list.
@@ -201,6 +202,7 @@ autoCompleteExpose.focus: Focus the control.
 autoCompleteExpose.blur: Blur the control.
 autoCompleteExpose.clear: Clear the current input.
 autoCompleteExpose.select: Select all text in the input.
+dropdownProps: The configuration of the dropdown popover.
 ]]]
 
 [[[slice group-option]]]
