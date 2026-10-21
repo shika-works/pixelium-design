@@ -10,6 +10,8 @@ dts-bundle-generator.config.json
 
 node_modules
 
+*.log
+
 script
 plugin
 lib
