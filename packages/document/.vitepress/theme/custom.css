@@ -467,6 +467,6 @@ html.dark {
 	background: var(--vp-c-brand-soft);
 	border: 1px solid var(--vp-c-brand-1);
 	border-radius: 4px;
-	vertical-align: text-top;
+	vertical-align: 15%;
 }
 /* nav beta badge end */
