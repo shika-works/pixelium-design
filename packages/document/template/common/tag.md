@@ -106,6 +106,7 @@ pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 events.close: 关闭事件。
 slots.default: 标签内容。
+closable: 是否可以关闭。
 ]]]
 [[[api en
 borderRadius: Border radius, takes precedence over `shape`, and behaves the same as CSS `border-radius`. A single value or an array of length 1 → applies to all four corners; array of length 2 → [top left & bottom right, top right & bottom left]; array of length 3 → [top left, top right & bottom left, bottom right]; array of length 4 → applies to each corner in clockwise order.

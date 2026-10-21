@@ -117,4 +117,5 @@ contentProps: Additional properties passed through to the badge content containe
 pollSizeChange: Enable polling for component size changes, which may affect performance.
 slots.default: The slot for the wrapped attached element.
 slots.content: The slot for badge content (effective when `dot` is `false`).
+borderColor: Custom border color.
 ]]]

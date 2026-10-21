@@ -61,10 +61,7 @@ export type CountToSlots = {
 	 * @param {number} value
 	 * @version 0.2.0
 	 */
-	default: {
-		text: string
-		value: number
-	}
+	default: {}
 }
 
 export type CountToExpose = {

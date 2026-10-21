@@ -156,4 +156,5 @@ events.open: Callback when the popover opens.
 slots.default: The trigger element.
 slots.content: The popover content.
 contentStyle: Style of content area.
+widthEqual: The popover has the same width as the mounted element; takes effect when the popover is placed above or below the element.
 ]]]

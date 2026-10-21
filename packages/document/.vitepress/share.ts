@@ -15,13 +15,23 @@ const newItems = [
 	'carousel',
 	'count-to',
 	'circle-progress',
-	'bubble'
+	'bubble',
+	'action-list',
+	'loading-dots',
+	'upload',
+	'prompt',
+	'prompt-action',
+	'prompt-attachment',
+	'prompt-chip',
+	'prompt-send',
+	'prompt-speech'
 ]
 
 const titleMapEn = {
 	starting: 'Quickly Starting',
 	intro: 'Introduction',
 	skill: 'AI Agent Skill',
+	agent: 'AI Agent',
 	theme: 'Custom Theme',
 	i18n: 'Internationalization',
 	'supported-color-parsing': 'Supported Color Parsing'
@@ -42,7 +52,8 @@ const titleMapZh = {
 	'controlled-and-uncontrolled': '受控 & 非受控模式',
 	example: '组件示例',
 	i18n: '多语言国际化',
-	'supported-color-parsing': '支持的颜色解析'
+	'supported-color-parsing': '支持的颜色解析',
+	agent: 'AI Agent'
 }
 const additionMapZh = {
 	button: '按钮',
@@ -113,19 +124,30 @@ const additionMapZh = {
 	typewriter: '打字机',
 	carousel: '轮播',
 	'count-to': '数字滚动',
-	bubble: '气泡'
+	bubble: '气泡',
+	'action-list': '操作列表',
+	'loading-dots': '点状加载',
+	upload: '上传',
+	prompt: '提示词输入',
+	'prompt-action': '提示词操作',
+	'prompt-attachment': '提示词附件',
+	'prompt-chip': '提示词标签',
+	'prompt-send': '提示词发送',
+	'prompt-speech': '提示词语音输入'
 }
+
 const order = [
 	'guide',
 	'config',
 	'common',
-	'layout',
+	'agent',
 	'data-input',
 	'data-display',
+	'layout',
 	'navigation',
 	'feedback',
-	'base',
-	'fabulous-idea'
+	'fabulous-idea',
+	'base'
 ]
 
 const guideOrder = [

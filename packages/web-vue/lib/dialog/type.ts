@@ -167,7 +167,7 @@ export type DialogProps = {
 	 */
 	cancelText?: string
 	/**
-	 * @property {boolean} [boolean=false]
+	 * @property {boolean} [loading=false]
 	 * @version 0.1.0
 	 */
 	loading?: boolean

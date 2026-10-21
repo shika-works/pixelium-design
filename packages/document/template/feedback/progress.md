@@ -47,7 +47,7 @@ Control height with the `size` prop. Accepts `'small'`, `'medium'` (default), `'
 ]]]
 [[[zh
 ## 进度条尺寸
-通过 `size` 属性控制高度，可选 `'small'`、`'medium'`（默认）、`'large'` 或直接传入数字（像素）。
+通过 `size` 属性控制高度，可选 `'small'`、`'medium'`（默认）、`'large'` 或直接传入数字（px）。
 ]]]
 <preview path="./progress-size.vue"></preview>
 
@@ -71,6 +71,16 @@ Set a custom `color` string (CSS-like `rgb`/`rgba` or hex 3/4/6/8) to generate a
 ]]]
 <preview path="./progress-color.vue"></preview>
 
+[[[en
+## Border
+Use `borderWidth` (px) to set the thickness of the frame around Progress, and `borderColor` to set its color. When `borderColor` is omitted the frame follows the theme's neutral color, `borderWidth` defaults to the global pixel size, and `borderWidth: 0` removes the frame.
+]]]
+[[[zh
+## 边框
+通过 `borderWidth`（px）设置 Progress 外框的粗细，`borderColor` 设置外框的颜色。未设置 `borderColor` 时外框使用主题的中性色，`borderWidth` 默认为全局像素尺寸，设为 `0` 即可移除外框。
+]]]
+<preview path="./progress-border.vue"></preview>
+
 
 ## API
 [[[api zh
@@ -82,6 +92,8 @@ gap: 留白间隔（px），用于边框内间距。
 indicatorPlacement: 提示内容的位置，位于进度条填充部分的内侧还是外侧。
 color: 自定义主色，详见 [支持的颜色解析](../config/supported-color-parsing)。
 trackColor: 进度条轨道背景色。
+borderWidth: Progress 外框的宽度。
+borderColor: Progress 外框的颜色。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 
 slots.append: 在进度条后方的插槽。
@@ -97,6 +109,8 @@ gap: Gap spacing (px) inside the border.
 indicatorPlacement: The position of the indicator content, located inside or outside the filled portion of the progress bar.
 color: Custom primary color. See [Supported Color Parsing](../config/supported-color-parsing).
 trackColor: The background color of the progress bar track.
+borderWidth: The width of the frame around Progress.
+borderColor: The color of the frame around Progress.
 pollSizeChange: Enables polling for component size changes, which may affect performance.
 
 slots.append: Slot for content placed after the progress bar.

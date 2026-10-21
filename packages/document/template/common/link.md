@@ -96,6 +96,7 @@ href: HTML `<a>` 原生 `href` 属性。
 target: HTML `<a>` 原生 `target` 属性。
 slots.icon: 链接图标。
 slots.default: 链接内容。
+events.click: 点击时触发。
 ]]]
 [[[api en
 disabled: Whether the link is disabled.
@@ -106,4 +107,5 @@ href: Native HTML `<a>` `href` attribute.
 target: Native HTML `<a>` `target` attribute.
 slots.icon: The link's icon.
 slots.default: The link's content.
+events.click: Triggered when the Link is clicked.
 ]]]

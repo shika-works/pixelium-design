@@ -1,9 +1,23 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import notification from '..'
 import { nextTick } from 'vue'
-import { wait } from 'parsnip-kit'
 
 describe('notification function', () => {
+	beforeEach(() => {
+		vi.useFakeTimers()
+	})
+
+	afterEach(() => {
+		vi.useRealTimers()
+	})
+
+	// Let Vue render the leave transition and fire its afterLeave hook.
+	const settle = async (ms = 300) => {
+		await nextTick()
+		await vi.advanceTimersByTimeAsync(ms)
+		await nextTick()
+	}
+
 	it('should render a string notification and return an id', async () => {
 		const result = notification('Hello world')
 		await nextTick()
@@ -22,7 +36,7 @@ describe('notification function', () => {
 		expect(result).toHaveProperty('unmount')
 
 		result.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should render title and content correctly', async () => {
@@ -38,7 +52,7 @@ describe('notification function', () => {
 		expect(el[0].querySelector('.px-notification-title')?.textContent).toBe('Title')
 
 		result.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should support shortcut methods with correct type', async () => {
@@ -98,7 +112,7 @@ describe('notification function', () => {
 			expect(res).toHaveProperty('unmount')
 		}
 		infoRes.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should close a specific notification when close() is called', async () => {
@@ -107,7 +121,7 @@ describe('notification function', () => {
 		const msgs1 = document.querySelectorAll('.px-notification__normal')
 		expect(msgs1.length).toBe(1)
 		close()
-		await wait(100)
+		await settle()
 		const msgs2 = document.querySelectorAll('.px-notification__normal')
 		expect(msgs2.length).toBe(0)
 		unmount()
@@ -121,12 +135,12 @@ describe('notification function', () => {
 		expect(document.querySelectorAll('.px-notification__normal').length).toBe(2)
 
 		first.clear()
-		await wait(100)
+		await settle()
 
 		expect(document.querySelectorAll('.px-notification__normal').length).toBe(0)
 
 		first.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should separate notifications by placement', async () => {
@@ -137,19 +151,19 @@ describe('notification function', () => {
 		expect(document.querySelectorAll('.px-notification__normal').length).toBe(2)
 
 		bottomResult.close()
-		await wait(100)
+		await settle()
 
 		expect(document.querySelectorAll('.px-notification__normal').length).toBe(1)
 		expect(document.querySelectorAll('.px-notification__normal')[0].textContent).toBe('Top')
 
 		// top still has its notification
 		topResult.close()
-		await wait(100)
+		await settle()
 		expect(document.querySelectorAll('.px-notification__normal').length).toBe(0)
 
 		topResult.unmount()
 		bottomResult.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should default placement to "top-right"', async () => {
@@ -163,7 +177,7 @@ describe('notification function', () => {
 		expect(msgs.length).toBe(1)
 		expect(msgs[0].textContent).toBe('default placement')
 		res.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should use custom root element', async () => {
@@ -178,9 +192,9 @@ describe('notification function', () => {
 		expect(elInRoot).not.toBeNull()
 
 		res.unmount()
-		await wait(100)
+		await settle()
 		customRoot.remove()
-		await wait(100)
+		await settle()
 	})
 
 	it('should append wrapper to body when root is not found', async () => {
@@ -192,7 +206,7 @@ describe('notification function', () => {
 		expect(el).not.toBeNull()
 
 		res.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should return independent close for each notification call in the same placement', async () => {
@@ -201,15 +215,15 @@ describe('notification function', () => {
 		await nextTick()
 
 		res1.close()
-		await wait(100)
+		await settle()
 		expect(document.querySelectorAll('.px-notification').length).toBe(1)
 
 		res2.close()
-		await wait(100)
+		await settle()
 		expect(document.querySelectorAll('.px-notification').length).toBe(0)
 
 		res1.unmount()
-		await wait(100)
+		await settle()
 	})
 
 	it('should handle multiple notifications in the same placement', async () => {

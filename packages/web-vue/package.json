@@ -1,6 +1,6 @@
 {
 	"name": "@pixelium/web-vue",
-	"version": "0.2.1-delta",
+	"version": "0.2.1",
 	"type": "module",
 	"main": "./dist/pixelium-vue.js",
 	"exports": {
@@ -73,7 +73,7 @@
 		"mitt": "^3.0.1",
 		"overlayscrollbars": "^2.13.0",
 		"overlayscrollbars-vue": "^0.5.9",
-		"parsnip-kit": "^0.1.0"
+		"parsnip-kit": "^0.1.1"
 	},
 	"repository": {
 		"type": "git",

@@ -160,7 +160,7 @@ describe('Submenu Component', () => {
 		expect(popover.props('trigger')).toBe('hover')
 	})
 
-	it('expands and sets maxHeight to none after animation duration', async () => {
+	it('animates the list height between the collapsed and the expanded state', async () => {
 		vi.useFakeTimers()
 		try {
 			const menuProvide = {
@@ -183,29 +183,39 @@ describe('Submenu Component', () => {
 				global: { provide: { [MENU_PROVIDE]: menuProvide } }
 			})
 
-			await wrapper.vm.$nextTick()
-			expect(wrapper.find('.px-submenu-list').element).toBeTruthy()
-			expect(wrapper.find('.px-submenu-list').attributes('style')).include('display: none;')
+			const list = () => wrapper.find('.px-submenu-list')
 
+			await wrapper.vm.$nextTick()
+			expect(list().exists()).toBe(true)
+			// collapsed: hidden and pinned at zero
+			expect(list().attributes('style')).toContain('display: none;')
+			expect((list().element as HTMLElement).style.height).toBe('0px')
+
+			// jsdom lays nothing out, so the measured height is stubbed
+			Object.defineProperty(list().element, 'offsetHeight', { value: 60, configurable: true })
 			// @ts-ignore
 			menuProvide.expanded.value = [10]
 			await wrapper.vm.$nextTick()
-
-			// run the immediate setTimeout that measures scrollHeight
-			vi.advanceTimersByTime(0)
 			await wrapper.vm.$nextTick()
+			expect(list().attributes('style')).not.toContain('display: none;')
+			expect((list().element as HTMLElement).style.height).toBe('60px')
+			expect((list().element as HTMLElement).style.transition).toBe('height 250ms')
 
-			const ul = wrapper.find('.px-submenu-list')
-			expect(ul.exists()).toBe(true)
-			// initially measured height will likely be 0 in jsdom
-			// @ts-ignore
-			expect(ul.element.style.maxHeight).toBe('0px')
-
-			// advance through animation duration
+			// the expanded state is handed back to the content
 			vi.advanceTimersByTime(250)
 			await wrapper.vm.$nextTick()
+			expect((list().element as HTMLElement).style.height).toBe('')
+
 			// @ts-ignore
-			expect(ul.element.style.maxHeight).toBe('none')
+			menuProvide.expanded.value = []
+			await wrapper.vm.$nextTick()
+			await wrapper.vm.$nextTick()
+			expect((list().element as HTMLElement).style.height).toBe('0px')
+			expect((list().element as HTMLElement).style.transition).toBe('height 250ms')
+
+			vi.advanceTimersByTime(250)
+			await wrapper.vm.$nextTick()
+			expect(list().attributes('style')).toContain('display: none;')
 		} finally {
 			vi.useRealTimers()
 		}

@@ -4,6 +4,15 @@ import { order, guideOrder } from './share'
 
 const badge = `<span class="VPBadge tip" style="background-color: rgba(203, 231, 202, 1);color: rgba(0, 180, 42, 1)">NEW!</span>`
 
+const groupText = (
+	name: string,
+	titleMap: Record<string, string>,
+	additionMap: Record<string, string>
+) => {
+	const add = additionMap?.[name.toLowerCase()]
+	return (titleMap[name.toLowerCase()] || titleCase(name)) + (add ? `  ${add}` : '')
+}
+
 const dfs = (
 	files: string[],
 	prefix: string[],
@@ -21,11 +30,10 @@ const dfs = (
 			const curFiles = fs.readdirSync(fullPath)
 			prefix.push(file)
 			const curContainer = [] as any[]
-			const add = additionMap?.[file.toLowerCase()]
 
 			container.push({
 				key: file,
-				text: (titleMap[file.toLowerCase()] || titleCase(file)) + (add ? `  ${add}` : ''),
+				text: groupText(file, titleMap, additionMap),
 				items: curContainer,
 				collapsible: true,
 				collapsed: false

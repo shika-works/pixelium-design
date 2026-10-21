@@ -106,7 +106,7 @@ dropdownDestroyOnHide: 下拉选择面板是否会在隐藏时销毁。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 dropdownProps: 下拉选择面板的属性。
 needDropdown: 是否需要展示下拉选择面板。
-use12hours: 一天是否为十二小时。
+use12Hours: 一天是否为十二小时。
 quickAccess: 快速跳转按钮的选项。
 
 events.input: 时间选择器输入时的回调。
@@ -155,7 +155,7 @@ dropdownDestroyOnHide: Whether the dropdown panel is destroyed when hidden.
 pollSizeChange: Whether to poll for component size changes (may affect performance).
 dropdownProps: Properties for the dropdown panel.
 needDropdown: Whether to show the dropdown panel.
-use12hours: Whether the day uses 12-hour format.
+use12Hours: Whether the day uses 12-hour format.
 quickAccess: Options for the quick jump button.
 
 events.input: Callback when the time picker input is triggered.

@@ -3,6 +3,8 @@ import { dfs4Md } from './dfs-4-md'
 import { newItems, titleMapEn, additionMapEn } from './share'
 
 const sidebar = dfs4Md('en', titleMapEn, additionMapEn, newItems)
+const agentSidebar = sidebar.filter((item) => item.key === 'agent')
+const docSidebar = sidebar.filter((item) => item.key !== 'agent')
 
 export default defineConfig({
 	title: 'Pixelium Design',
@@ -10,9 +12,17 @@ export default defineConfig({
 		// https://vitepress.dev/reference/default-theme-config
 		nav: [
 			{ text: 'Home', link: '/en' },
-			{ text: 'Doc', link: '/en/guide/intro' }
+			{ text: 'Doc', link: '/en/guide/intro', activeMatch: '^/en/(?!agent(?:/|$))' },
+			{
+				text: 'Agent Components <span class="vp-nav-beta">Beta</span>',
+				link: '/en/agent/prompt',
+				activeMatch: '^/en/agent(?:/|$)'
+			}
 		],
-		sidebar: sidebar,
+		sidebar: {
+			'/en/agent/': agentSidebar,
+			'/en/': docSidebar
+		},
 		outline: {
 			level: [2, 4]
 		}

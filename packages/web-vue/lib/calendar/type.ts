@@ -42,11 +42,11 @@ export type CalendarSlots = {
 	 * @param {number} monthIndex
 	 * @version 0.2.0
 	 */
-	header: { year: number; monthIndex: number }
+	header: {}
 	/**
 	 * @slot cell
 	 * @param {CalendarItem} item
 	 * @version 0.2.0
 	 */
-	cell: { item: CalendarItem }
+	cell: {}
 }

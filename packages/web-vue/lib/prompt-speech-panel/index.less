@@ -1,0 +1,124 @@
+@import url(../share/style/variable.less);
+
+.px-prompt-speech-panel {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	gap: @px-interval-3;
+	min-width: 0;
+	min-height: var(--px-medium-sub-base-size);
+
+	&__hold {
+		touch-action: none;
+		border-bottom: @px-interval-mini-1 solid var(--px-neutral-8);
+	}
+
+	&-hold {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: @px-interval-1;
+		min-width: 0;
+		color: var(--px-neutral-9);
+	}
+
+	&-hold-text {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: @px-title-font-size;
+		line-height: 1;
+	}
+
+	&-hold__disabled {
+		color: var(--px-neutral-7);
+	}
+
+	&-icon {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1em;
+		height: 1em;
+		font-size: @px-title-font-size;
+		fill: currentColor;
+	}
+
+	&-body {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 1 auto;
+		min-width: 0;
+		padding-block: @px-interval-3;
+		overflow: hidden;
+	}
+
+	&-visualizer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		gap: @px-interval-1;
+	}
+
+	&-bar {
+		display: block;
+		flex-shrink: 0;
+		width: @px-interval-1;
+		background-color: var(--px-primary-6);
+		transition: height 90ms linear;
+	}
+
+	&-text {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		height: (@px-interval-3 + @px-interval-1);
+		margin-inline: auto;
+		overflow: hidden;
+		color: var(--px-neutral-8);
+		font-size: @px-small-font-size;
+		line-height: 1;
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent,
+			var(--px-neutral-8) @px-interval-3
+		);
+		mask-image: linear-gradient(to right, transparent, var(--px-neutral-8) @px-interval-3);
+	}
+
+	&-text-value {
+		flex-shrink: 0;
+		white-space: nowrap;
+	}
+
+	&-caret {
+		display: block;
+		flex-shrink: 0;
+		width: var(--px-half-bit);
+		height: 1em;
+		background-color: currentColor;
+		animation: 1000ms step-end infinite px-prompt-speech-panel-caret;
+	}
+}
+
+@keyframes px-prompt-speech-panel-caret {
+	0%,
+	50% {
+		opacity: 1;
+	}
+
+	50%,
+	100% {
+		opacity: 0;
+	}
+}
