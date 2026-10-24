@@ -22,6 +22,7 @@
   - 修复了 Mask 组件改写缓存的 `neutral-8` 主题色、导致未选中 Switch 在 Dialog 内圆角出现深色点的问题。
   - 修复了 Dialog 关闭后重新打开时，Slider 游标位置不正确的问题。
   - 修复了滚动条组件 CSS 特异性导致的奇奇怪怪的样式问题。
+  - 修复了 Button 组件高度被设置为固定值的问题。
 ]]]
 [[[en
 ## v0.2.1
@@ -40,6 +41,7 @@
   - Fixed the Mask component mutating the cached `neutral-8` theme colour, which made the inactive Switch show darker dots on its rounded corners inside a Dialog.
   - Fixed the Slider thumb being placed at the wrong offset after a Dialog was closed and re-opened.
   - Fixed the weird style issues of the scrollbar caused by CSS specificity.
+  - Fixed the issue where the Button component’s height was set to a fixed value.
 ]]]
 
 [[[zh
