@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { h } from 'vue'
 import Prompt from '../index.vue'
 import { createMocks } from '../../share/util/test'
@@ -22,6 +22,18 @@ describe('Prompt', () => {
 		expect(root(wrapper).exists()).toBe(true)
 		expect(wrapper.find('.px-prompt-editor-inner').exists()).toBe(true)
 		expect(wrapper.find('.px-prompt-placeholder').text()).toBe('Type here')
+	})
+
+	it('hides the placeholder while the input method is composing', async () => {
+		const wrapper = mount(Prompt, { props: { placeholder: 'Type here' } })
+		const editor = wrapper.find('.px-prompt-editor-inner')
+
+		await editor.trigger('compositionstart')
+		expect(wrapper.find('.px-prompt-placeholder').exists()).toBe(false)
+
+		await editor.trigger('compositionend')
+		await flushPromises()
+		expect(wrapper.find('.px-prompt-placeholder').exists()).toBe(true)
 	})
 
 	it('forwards extra attributes to the root element', () => {
@@ -64,6 +76,27 @@ describe('Prompt', () => {
 			})
 			expect(typeof scope.send.submit).toBe('function')
 			expect(typeof scope.send.cancel).toBe('function')
+		})
+	})
+
+	it('replaces the bottom row through the footer slot', () => {
+		let scope: any
+		const wrapper = mount(Prompt, {
+			props: { modelValue: 'hello' },
+			slots: {
+				footer: (params: any) => {
+					scope = params
+					return h('i', { class: 'footer-probe' })
+				}
+			}
+		})
+		expect(wrapper.find('.px-prompt-toolbar .footer-probe').exists()).toBe(true)
+		expect(wrapper.find('.px-prompt-toolbar-start').exists()).toBe(false)
+		expect(wrapper.find('.px-prompt-toolbar-end').exists()).toBe(false)
+		expect(scope.send).toMatchObject({
+			disabled: false,
+			loading: false,
+			cancellable: true
 		})
 	})
 

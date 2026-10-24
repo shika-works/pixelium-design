@@ -78,6 +78,7 @@ events.trigger: 输入提及触发字符时触发。
 events.select: 在候选列表中选择一项时触发。
 
 slots.attachment: 附件区域，用于放置 PromptAttachment 等附件内容，作用域提供附件上传的操作，其中未指定文件的操作作用于全部对应文件。
+slots.footer: 底部行区域，默认由 `start`、`end` 与 `send` 插槽组成，替换后由自定义内容接管整行；作用域提供附件上传的操作，其中未指定文件的操作作用于全部对应文件。
 slots.start: 工具栏的起始区域，作用域提供附件上传的操作，其中未指定文件的操作作用于全部对应文件。
 slots.end: 工具栏的末尾区域，位于发送入口之前，作用域提供附件上传的操作，其中未指定文件的操作作用于全部对应文件。
 slots.send: 发送入口区域，作用域提供附件上传的操作，其中未指定文件的操作作用于全部对应文件。
@@ -148,6 +149,7 @@ events.trigger: Triggered when a mention trigger character is typed.
 events.select: Triggered when an option is chosen from the candidate list.
 
 slots.attachment: The attachment area, holding PromptAttachment and other attachment content; its scope provides the attachment actions, and the actions run on every matching file when no file is given.
+slots.footer: The bottom row area, composed of the `start`, `end` and `send` slots by default and replaced as a whole when overridden; its scope provides the attachment actions, and the actions run on every matching file when no file is given.
 slots.start: The leading area of the toolbar, whose scope provides the attachment actions, and the actions run on every matching file when no file is given.
 slots.end: The trailing area of the toolbar, placed before the send entry, whose scope provides the attachment actions, and the actions run on every matching file when no file is given.
 slots.send: The send entry area, whose scope provides the attachment actions, and the actions run on every matching file when no file is given.
