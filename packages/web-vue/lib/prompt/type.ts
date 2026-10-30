@@ -276,13 +276,21 @@ export type { PromptSendScope } from '../prompt-send/type'
 export type PromptSlots = {
 	/**
 	 * @slot attachment
-	 * @param {PromptUploadScope | undefined} upload
+	 * @param {PromptUploadScope} upload
 	 * @version 0.2.1
 	 */
 	attachment: {}
 	/**
+	 * @slot footer
+	 * @param {PromptUploadScope} upload
+	 * @param {PromptSendScope} send
+	 * @param {PromptSpeechScope} speech
+	 * @version 0.2.1
+	 */
+	footer: {}
+	/**
 	 * @slot start
-	 * @param {PromptUploadScope | undefined} upload
+	 * @param {PromptUploadScope} upload
 	 * @param {PromptSendScope} send
 	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
@@ -290,7 +298,7 @@ export type PromptSlots = {
 	start: {}
 	/**
 	 * @slot end
-	 * @param {PromptUploadScope | undefined} upload
+	 * @param {PromptUploadScope} upload
 	 * @param {PromptSendScope} send
 	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1
@@ -298,7 +306,7 @@ export type PromptSlots = {
 	end: {}
 	/**
 	 * @slot send
-	 * @param {PromptUploadScope | undefined} upload
+	 * @param {PromptUploadScope} upload
 	 * @param {PromptSendScope} send
 	 * @param {PromptSpeechScope} speech
 	 * @version 0.2.1

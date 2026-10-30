@@ -800,6 +800,7 @@ export const useEditor = (options: UseEditorOptions) => {
 		insertChip,
 		removeChip,
 		getContent: readContent,
+		isComposing,
 		inputHandler,
 		pasteHandler,
 		keydownHandler,
