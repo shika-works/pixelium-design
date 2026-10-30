@@ -19,7 +19,8 @@
 			ref="progressInnerRef"
 			class="px-progress-inner"
 			:style="{
-				height: isNumber(props.size) ? `${props.size}px` : undefined
+				height: isNumber(props.size) ? `${props.size}px` : undefined,
+				borderWidth: isNumber(props.borderWidth) ? `${props.size}px` : undefined
 			}"
 		>
 			<canvas ref="canvasRef" class="px-progress-canvas"></canvas>
@@ -175,6 +176,8 @@ useDraw({
 	progress,
 	progressPadding,
 	trackColor: toRef(props, 'trackColor'),
+	borderWidth: toRef(props, 'borderWidth'),
+	borderColor: toRef(props, 'borderColor'),
 	slots,
 	pollSizeChange: toRef(props, 'pollSizeChange'),
 	refresh: refreshLayout

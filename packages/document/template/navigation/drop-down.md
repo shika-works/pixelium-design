@@ -144,7 +144,7 @@ events.open: 弹出层打开时触发。
 
 slots.default: 触发元素插槽。
 slots.option: 选项自定义渲染。
-slots.group-labe: 分组标题自定义渲染。
+slots.group-label: 分组标题自定义渲染。
 
 dropDownExpose.open: 打开确认弹出框。
 dropDownExpose.close: 关闭确认弹出框。

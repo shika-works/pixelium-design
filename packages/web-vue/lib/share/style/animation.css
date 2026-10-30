@@ -10,6 +10,9 @@
 .px-animation__loading {
 	animation: px-icon-spin 1s linear infinite;
 }
+.px-animation__loading-clockwise {
+	animation: px-icon-spin 1s linear infinite reverse;
+}
 
 @keyframes px-blink {
 	50% {

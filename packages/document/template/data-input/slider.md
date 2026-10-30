@@ -156,7 +156,7 @@ step: The step size of the values.
 marks: Marks on the slider.
 direction: The orientation of the slider.
 reverse: Whether to reverse the track.
-precision: Numerical minimum precision: an integer in [0, 100]; `null` means no limit.
+precision: Numerical minimum precision — an integer in [0, 100]; `null` means no limit.
 tooltip: Whether to enable text tooltip.
 tooltipProps: Props for the Tooltip component in single-value mode.
 tooltipStartProps: Props for the first Tooltip component in range selection mode.

@@ -8,7 +8,10 @@
 [[[zh
 ## v0.2.1
 - 新增：
-  - 新增数据展示组件：Bubble。
+  - 新增数据输入组件：Upload、UploadFileList、UploadImage、UploadDragger。
+  - 新增 AI Agent 组件：Bubble、ActionList、ActionListItem、LoadingDots、Prompt 系列。
+  - Timeline 和 TimelineItem 组件新增属性 `spacing`。Timeline 组件新增属性 `lineVariant`。
+  - Image 组件新增属性 `previewSrc`。
 - 优化：
   - 优化 canvas 绘制，减少重复触发提高性能。
 - 调整：
@@ -19,11 +22,15 @@
   - 修复了 Mask 组件改写缓存的 `neutral-8` 主题色、导致未选中 Switch 在 Dialog 内圆角出现深色点的问题。
   - 修复了 Dialog 关闭后重新打开时，Slider 游标位置不正确的问题。
   - 修复了滚动条组件 CSS 特异性导致的奇奇怪怪的样式问题。
+  - 修复了 Button 组件高度被设置为固定值的问题。
 ]]]
 [[[en
 ## v0.2.1
 - New Features:
-  - New data display component: Bubble.
+  - New data input components: Upload, UploadFileList, UploadImage, UploadDragger.
+  - New data AI Agent component: Bubble, ActionList, ActionListItem, LoadingDots, and the Prompt series.
+  - The Timeline and TimelineItem components have a new `spacing` prop. The Timeline component has a new `lineVariant` prop.
+  - The Image component has a new `previewSrc` prop.
 - Optimizations:
   - Optimize canvas rendering to reduce redundant triggers and improve performance.
 - Adjustment:
@@ -34,6 +41,7 @@
   - Fixed the Mask component mutating the cached `neutral-8` theme colour, which made the inactive Switch show darker dots on its rounded corners inside a Dialog.
   - Fixed the Slider thumb being placed at the wrong offset after a Dialog was closed and re-opened.
   - Fixed the weird style issues of the scrollbar caused by CSS specificity.
+  - Fixed the issue where the Button component’s height was set to a fixed value.
 ]]]
 
 [[[zh

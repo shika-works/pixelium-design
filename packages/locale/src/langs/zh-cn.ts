@@ -34,5 +34,16 @@ export default {
 	},
 	calendar: {
 		today: '今天'
+	},
+	'action-list': {
+		fold: (count: number) => `展开剩余 ${count} 条`,
+		unfold: '收起'
+	},
+	upload: {
+		uploadFile: '上传文件',
+		draggerText: '点击或拖拽文件到此区域上传'
+	},
+	prompt: {
+		holdText: '按住说话'
 	}
 }

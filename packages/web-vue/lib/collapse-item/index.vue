@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, ref, shallowRef, useSlots } from 'vue'
+import { computed, inject, shallowRef, useSlots } from 'vue'
 import type { CollapseItemProps } from './type'
 import { COLLAPSE_PROVIDE } from '../share/const/provide-key'
 import type { CollapseProvide } from '../collapse/type'
-import ChevronUp from '@hackernoon/pixel-icon-library/icons/SVG/regular/chevron-up.svg'
-import { debounce } from 'parsnip-kit'
-import { watch } from 'vue'
-import { useResizeObserver } from '../share/hook/use-resize-observer'
+import ChevronUp from '../chevron-up/index.vue'
+import { useExpandTransition } from '../share/hook/use-expand-transition'
 import { useDraw } from './draw'
 import { useHover } from '../share/hook/use-hover'
 
@@ -42,43 +40,16 @@ const animationDuration = computed(() => {
 	return collapseProvide?.animationDuration.value || 0
 })
 
+const contentRef = shallowRef<HTMLDivElement | null>(null)
 const contentWrapperRef = shallowRef<HTMLDivElement | null>(null)
-const contentWrapperHeight = ref(0)
+const contentBoxRef = shallowRef<HTMLDivElement | null>(null)
 
-let closeTimer = null as any
-
-const displayContent = ref(!!isActive.value)
-const transitionEnabled = ref(false)
-
-const setContentHeight = () => {
-	if (contentWrapperRef.value) {
-		contentWrapperHeight.value = contentWrapperRef.value.clientHeight
-	}
-}
-
-const activeHandler = (state: boolean) => {
-	if (!state) {
-		contentWrapperHeight.value = 0
-		closeTimer = setTimeout(() => {
-			displayContent.value = false
-			clearTimeout(closeTimer)
-			closeTimer = null
-		}, animationDuration.value)
-	} else {
-		setContentHeight()
-	}
-}
-const activeHandlerDebounce = debounce(activeHandler, 50)
-watch(isActive, (val) => {
-	transitionEnabled.value = true
-	if (closeTimer) {
-		clearTimeout(closeTimer)
-		closeTimer = null
-	}
-	displayContent.value = true
-	activeHandlerDebounce(val)
-})
-useResizeObserver(contentWrapperRef, setContentHeight)
+const [showContent] = useExpandTransition(
+	contentRef,
+	contentBoxRef,
+	isActive,
+	() => animationDuration.value
+)
 
 const destroyOnHideComputed = computed(() => {
 	return collapseProvide?.destroyOnHide.value || props.destroyOnHide
@@ -87,7 +58,6 @@ const destroyOnHideComputed = computed(() => {
 const headerRef = shallowRef<HTMLDivElement | null>(null)
 const headerCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 
-const contentRef = shallowRef<HTMLDivElement | null>(null)
 const contentCanvasRef = shallowRef<HTMLCanvasElement | null>(null)
 
 const [isHover, mouseenterHandler, mouseleaveHandler] = useHover()
@@ -95,7 +65,7 @@ const [isHover, mouseenterHandler, mouseleaveHandler] = useHover()
 useDraw(
 	headerRef,
 	headerCanvasRef,
-	contentRef,
+	contentWrapperRef,
 	contentCanvasRef,
 	slots,
 	{
@@ -131,20 +101,16 @@ useDraw(
 				class="px-collapse-item-header-canvas"
 				v-if="collapseProvide?.variant.value === 'card'"
 			></canvas>
-			<div
+			<ChevronUp
 				v-if="
 					collapseProvide &&
 					collapseProvide.showExpandIcon.value &&
 					collapseProvide.expandIconPlacement.value === 'left'
 				"
 				class="px-collapse-item-arrow px-collapse-item-arrow__left"
-				:class="{ 'px-collapse-item-arrow__active': isActive }"
-				:style="{
-					transition: `${animationDuration}ms`
-				}"
-			>
-				<ChevronUp />
-			</div>
+				:active="isActive"
+				:duration="animationDuration"
+			/>
 			<div v-if="slots.prefix" class="px-collapse-item-extra">
 				<slot name="prefix"></slot>
 			</div>
@@ -156,24 +122,20 @@ useDraw(
 			<div v-if="slots.suffix" class="px-collapse-item-extra">
 				<slot name="suffix"></slot>
 			</div>
-			<div
+			<ChevronUp
 				v-if="
 					collapseProvide &&
 					collapseProvide.showExpandIcon.value &&
 					collapseProvide.expandIconPlacement.value === 'right'
 				"
 				class="px-collapse-item-arrow px-collapse-item-arrow__right"
-				:class="{ 'px-collapse-item-arrow__active': isActive }"
-				:style="{
-					transition: `${animationDuration}ms`
-				}"
-			>
-				<ChevronUp />
-			</div>
+				:active="isActive"
+				:duration="animationDuration"
+			/>
 		</div>
 		<div
-			v-if="!(destroyOnHideComputed && !displayContent)"
-			v-show="displayContent"
+			v-if="!(destroyOnHideComputed && !showContent)"
+			v-show="showContent"
 			class="px-collapse-item-content-wrapper"
 			:class="{
 				'px-collapse-item-content-wrapper__active': isActive
@@ -181,22 +143,15 @@ useDraw(
 			:style="{
 				transition: `margin ${animationDuration}ms`
 			}"
-			ref="contentRef"
+			ref="contentWrapperRef"
 		>
 			<canvas
 				ref="contentCanvasRef"
 				class="px-collapse-item-content-canvas"
 				v-if="collapseProvide?.variant.value === 'card'"
 			></canvas>
-			<div
-				class="px-collapse-item-content"
-				:style="{
-					height: `${contentWrapperHeight || 0}px`,
-					transition: transitionEnabled ? `height ${animationDuration}ms` : 'none'
-				}"
-				ref="contentRef"
-			>
-				<div class="px-collapse-item-content-box" ref="contentWrapperRef">
+			<div class="px-collapse-item-content" ref="contentRef">
+				<div class="px-collapse-item-content-box" ref="contentBoxRef">
 					<slot></slot>
 				</div>
 			</div>

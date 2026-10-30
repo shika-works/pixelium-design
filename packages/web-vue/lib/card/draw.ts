@@ -5,14 +5,14 @@ import { offsetOutward } from '../share/util/common'
 import { canvasPreprocess, drawRoundRect, floodFill, floodFillEdge } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
-import type { CardShape } from './type'
 import type { NumberOrPercentage } from '../share/type'
 import { useDarkMode } from '../share/hook/use-dark-mode'
+import type { CardProps } from './type'
 
 type DrawCardOptions = {
 	bordered: Ref<boolean>
 	borderRadius: Ref<NumberOrPercentage | NumberOrPercentage[] | undefined>
-	shape: Ref<CardShape | undefined>
+	shape: Ref<CardProps['shape']>
 	pollSizeChange: Ref<boolean>
 }
 

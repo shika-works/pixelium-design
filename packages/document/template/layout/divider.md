@@ -52,10 +52,14 @@ direction: 分隔线方向。
 margin: 分割线间距，水平时为上下间距，垂直时为左右间距。
 size: 分隔线宽度。
 variant: 基于 CSS `border-style`  实现的分隔线样式。
+soft: 使用更浅的边框颜色。
+color: 自定义边框颜色。
 ]]]
 [[[api en 
 direction: The direction of the divider.
 margin: The spacing of the divider, which is the top and bottom spacing when horizontal, and the left and right spacing when vertical.
 size: The width of the divider.
 variant: The style of the divider based on CSS `border-style`.
+soft: Uses a lighter border color.
+color: Custom border color.
 ]]]

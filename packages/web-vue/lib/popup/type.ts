@@ -101,6 +101,11 @@ export type PopupProps = {
 	 */
 	cascade?: boolean
 	/**
+	 * @property {boolean} [escToClose=false]
+	 * @version 0.2.1
+	 */
+	escToClose?: boolean
+	/**
 	 * @property {RestAttrs} [contentProps]
 	 * @ignore
 	 * @version 0.1.0
@@ -117,10 +122,10 @@ export type PopupEvents = {
 	'update:visible': [value: boolean]
 	/**
 	 * @event close
-	 * @param {MouseEvent} e
+	 * @param {MouseEvent | TouchEvent | KeyboardEvent} e
 	 * @version 0.0.2
 	 */
-	close: [e?: MouseEvent | TouchEvent]
+	close: [e?: MouseEvent | TouchEvent | KeyboardEvent]
 	/**
 	 * @event open
 	 * @param {MouseEvent} e

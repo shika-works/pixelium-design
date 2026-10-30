@@ -1,0 +1,221 @@
+@import url(../share/style/variable.less);
+
+.px-upload-image {
+	@prefix: px-upload-image;
+
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	box-sizing: border-box;
+	width: 100%;
+	gap: @px-interval-4;
+	position: relative;
+
+	&__small {
+		font-size: @px-small-font-size;
+	}
+
+	&__medium {
+		font-size: @px-medium-font-size;
+	}
+
+	&__large {
+		font-size: @px-large-font-size;
+	}
+
+	&-item {
+		position: relative;
+		box-sizing: border-box;
+		background-color: var(--px-neutral-2);
+		width: @px-upload-image-size;
+		height: @px-upload-image-size;
+	}
+
+	&-thumb {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	&-mask {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	&-content {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		padding: @px-interval-2;
+	}
+
+	&-actions {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		gap: @px-interval-1;
+		padding: @px-interval-1;
+	}
+
+	&-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		padding: @px-interval-2;
+	}
+
+	& &-file-icon {
+		width: 3em;
+		height: 3em;
+		color: var(--px-neutral-8);
+		fill: currentColor;
+
+		&__error {
+			color: var(--px-danger-5);
+		}
+	}
+
+	&-progress {
+		width: 100%;
+	}
+
+	&-action {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 1em;
+		height: 1em;
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		color: var(--px-neutral-10);
+		cursor: pointer;
+		transition: color 0.25s;
+
+		&:hover:not(.@{prefix}-action__disabled) {
+			color: var(--px-primary-6);
+		}
+
+		&__disabled {
+			color: var(--px-neutral-7);
+			cursor: not-allowed;
+		}
+	}
+
+	&-action-icon {
+		width: 0.8em;
+		height: 0.8em;
+		fill: currentColor;
+	}
+
+	&-corner {
+		position: absolute;
+		z-index: 2;
+		top: 0;
+		right: 0;
+		display: flex;
+		align-items: center;
+		gap: @px-interval-mini-1;
+	}
+
+	&-download,
+	&-remove {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 1em;
+		height: 1em;
+		padding: 0;
+		border: 0;
+		background-color: rgba(0, 0, 0, 0.2);
+		color: var(--px-neutral-1);
+		cursor: pointer;
+		transition: background-color 0.25s;
+
+		&__disabled {
+			cursor: not-allowed;
+		}
+	}
+
+	&-download:hover:not(.@{prefix}-download__disabled) {
+		background-color: var(--px-primary-6);
+	}
+
+	&-remove:hover:not(.@{prefix}-remove__disabled) {
+		background-color: var(--px-danger-6);
+	}
+}
+
+.corner-gradient-light::after {
+	width: calc(var(--px-bit) * 2 + 100%);
+	height: calc(var(--px-bit) * 2 + 100%);
+	z-index: 0;
+	content: '';
+	display: block;
+	position: absolute;
+
+	left: calc(var(--px-bit) * -1);
+	top: calc(var(--px-bit) * -1);
+
+	pointer-events: none;
+
+	background:
+		linear-gradient(
+				to right,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-4) var(--px-bit),
+				var(--px-neutral-4) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			top left / 100% var(--px-bit) no-repeat,
+		linear-gradient(
+				to right,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-4) var(--px-bit),
+				var(--px-neutral-4) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			bottom left / 100% var(--px-bit) no-repeat,
+		linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-4) var(--px-bit),
+				var(--px-neutral-4) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			top left / var(--px-bit) 100% no-repeat,
+		linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent var(--px-bit),
+				var(--px-neutral-4) var(--px-bit),
+				var(--px-neutral-4) calc(100% - var(--px-bit)),
+				transparent calc(100% - var(--px-bit)),
+				transparent 100%
+			)
+			top right / var(--px-bit) 100% no-repeat;
+}

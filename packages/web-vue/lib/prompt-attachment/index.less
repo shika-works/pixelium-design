@@ -1,0 +1,28 @@
+@import url(../share/style/variable.less);
+
+.px-prompt-attachment {
+	@prefix: px-prompt-attachment;
+
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	box-sizing: border-box;
+	width: 100%;
+	gap: @px-interval-2;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: var(--px-neutral-10);
+
+	&__small {
+		font-size: @px-small-font-size;
+	}
+
+	&__medium {
+		font-size: @px-medium-font-size;
+	}
+
+	&__large {
+		font-size: @px-large-font-size;
+	}
+}

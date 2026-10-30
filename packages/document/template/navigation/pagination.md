@@ -182,6 +182,7 @@ events.pageJump: 页面跳转控件，修改输入框改变页码的回调。
 
 slots.total-label: 展示数据总数的标签文本。
 slots.jumper-label: 页面跳转控件的标签文本。
+hideWhenSinglePage: 只有一页时是否隐藏分页。
 ]]]
 
 [[[api en
@@ -216,6 +217,7 @@ events.pageJump: Callback for changing the page number by modifying the input bo
 
 slots.total-label: Label text for displaying total data count.
 slots.jumper-label: Label text for the page jumper control.
+hideWhenSinglePage: Whether to hide Pagination when there is only one page.
 ]]]
 
 [[[slice option]]]

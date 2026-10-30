@@ -43,7 +43,8 @@ const props = withDefaults(defineProps<PopupProps>(), {
 	defaultVisible: undefined,
 	widthEqual: false,
 	destroyOnHide: false,
-	cascade: false
+	cascade: false,
+	escToClose: false
 })
 
 const controlledMode = computed(() => {
@@ -220,6 +221,11 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 		}
 	}
 
+	await closeImpl()
+	emits('close', e)
+}
+
+async function closeImpl() {
 	if (!display.value) {
 		return
 	}
@@ -231,8 +237,12 @@ async function closeHandler(e: MouseEvent | TouchEvent) {
 	} else {
 		display.value = false
 	}
-	emits('close', e)
 	popupProvider?.triggerUpdate()
+}
+
+const escKeydownHandler = (e: KeyboardEvent) => {
+	closeImpl()
+	emits('close', e)
 }
 
 const contentMouseenterHandler = () => {
@@ -395,6 +405,8 @@ defineRender(() => {
 				onContentMouseleave={contentMouseleaveHandler}
 				contentStyle={props.contentStyle}
 				destroyOnHide={props.destroyOnHide}
+				escToClose={props.escToClose}
+				onEscKeydown={escKeydownHandler}
 				// @ts-ignore
 				ref={(node: InstanceType<typeof PopupContent>) => (contentRef.value = node)}
 				{...props.contentProps}

@@ -1,0 +1,89 @@
+@import url(../share/style/variable.less);
+
+.px-loading-dots {
+	@prefix: px-loading-dots;
+	@theme: primary, sakura, success, warning, danger, notice;
+
+	display: inline-flex;
+	align-items: flex-end;
+	box-sizing: border-box;
+	gap: var(--px-bit);
+	vertical-align: middle;
+
+	each(@theme, {
+		&.@{prefix}__@{value} {
+			color: var(~"--px-@{value}-6");
+			--loading-dots-idle-color: var(~"--px-@{value}-5");
+		}
+	});
+
+	&.@{prefix}__info {
+		color: var(--px-neutral-9);
+		--loading-dots-idle-color: var(--px-neutral-8);
+	}
+
+	&-dot {
+		display: block;
+		width: var(--px-bit);
+		height: var(--px-bit);
+		color: var(--loading-dots-idle-color);
+		background: currentColor;
+		animation: 1200ms ease-in-out infinite backwards px-loading-dots-bounce;
+	}
+
+	&__pixel &-dot {
+		animation-name: px-loading-dots-step;
+		animation-timing-function: step-end;
+	}
+}
+
+@keyframes px-loading-dots-bounce {
+	0%,
+	60%,
+	100% {
+		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
+	}
+
+	30% {
+		transform: translateY(-100%);
+		color: currentColor;
+	}
+}
+
+@keyframes px-loading-dots-step {
+	0%,
+	12% {
+		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
+	}
+
+	12%,
+	24% {
+		transform: translateY(-100%);
+		color: currentColor;
+	}
+
+	24%,
+	36% {
+		transform: translateY(-200%);
+		color: currentColor;
+	}
+
+	36%,
+	48% {
+		transform: translateY(-100%);
+		color: currentColor;
+	}
+
+	48%,
+	60% {
+		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
+	}
+
+	100% {
+		transform: translateY(0);
+		color: var(--loading-dots-idle-color);
+	}
+}

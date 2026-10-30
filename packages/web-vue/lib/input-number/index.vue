@@ -177,6 +177,7 @@ const pollSizeChangeComputed = createProvideComputed(
 	'or'
 )
 const statusComputed = createProvideComputed('status', [formItemProvide, props])
+const strictStepComputed = computed(() => props.strictStep || props.strickStep)
 
 const nextIsTextButton = computed(() => {
 	if (index.value >= 0) {
@@ -204,19 +205,19 @@ const adjustValue = (value: number) => {
 	const max = props.max ?? Number.MAX_SAFE_INTEGER
 	value = clamp(value, min, max)
 	if (
-		props.strickStep &&
+		strictStepComputed.value &&
 		!isInfinity(props.step) &&
 		!isNanValue(props.step) &&
 		props.step !== 0
 	) {
-		let valueWithStrickStep = Math.round(value / props.step) * props.step
-		if (valueWithStrickStep < min) {
-			valueWithStrickStep = Math.ceil(value / props.step) * props.step
+		let valueWithStrictStep = Math.round(value / props.step) * props.step
+		if (valueWithStrictStep < min) {
+			valueWithStrictStep = Math.ceil(value / props.step) * props.step
 		}
-		if (valueWithStrickStep > max) {
-			valueWithStrickStep = Math.floor(value / props.step) * props.step
+		if (valueWithStrictStep > max) {
+			valueWithStrictStep = Math.floor(value / props.step) * props.step
 		}
-		value = valueWithStrickStep
+		value = valueWithStrictStep
 	}
 	return value
 }

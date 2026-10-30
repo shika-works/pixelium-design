@@ -96,6 +96,11 @@ exposeName.method: Description.]]]
 
 Every `.md` file in [`packages/document/slice/`](packages/document/slice) is a reusable fragment (currently: `percent`, `rest-attrs`, `emit-event`, `option`, `option-list`, `group-option`, `date-format`, `quick-access-option`, `value-with-device-width`). The script reads `./slice/<name>.md`. Prefer these over rewriting common explanations; if a shared concept is missing, add a new `.md` file there instead of inlining it.
 
+### Prose rules (user-mandated)
+
+- Describe the COMPONENT only. Do NOT describe the examples themselves - no commentary about the sample data or how a demo is built (e.g. "the files below carry an `url` only, without a `file`"). The code panel already shows it, and it does not change how the component is used.
+- Example `.vue` files carry no explanatory text either: no hint / caption / status paragraphs, and no scoped styles that exist only to style them. The prose block above the `<preview>` is the place for explanation.
+
 ### API description rules (user-mandated)
 
 - Descriptions describe ONLY the meaning of the property/event/slot — NO types, NO default values, NO code-related details.
@@ -103,6 +108,17 @@ Every `.md` file in [`packages/document/slice/`](packages/document/slice) is a r
 - zh example: `direction: Timeline 的排列方向。`
 - en example: `direction: The arrangement direction of Timeline.`
 - Slot wording example: `slots.icon: TimelineItem 节点处的图标。` / `slots.icon: The icon at the node of TimelineItem.`
+
+- Optional parameters that change the scope of a call MUST be spelled out: when omitting a parameter makes the call act on every matching item (e.g. `submit(fileId?)`, `retry(fileId?)`, `abort(id?)`, and the same methods in the `file-list` slot scope), the description must say so - e.g. "handling every pending file when none is given". The signature alone does not explain what the call acts on.
+- The same applies to optional parameters of events, props and slot scope methods.
+
+### Type definition rules (user-mandated)
+
+- EVERY type that shows up in the rendered tables must be presented in full on the same page - a name alone is not enough.
+- Shared types that already have a slice: include the slice (`[[[slice emit-event]]]` for `EmitEvent`, `[[[slice rest-attrs]]]` for `RestAttrs`). When a shared type appears and no slice exists, add one under `packages/document/slice/`.
+- Types owned by the component (e.g. `UploadData`, `UploadHeaders`, `UploadPatch`, `UploadCustomRequestOptions`, `CustomRequest`, `CustomDownload`, `CreateThumbnailUrl`, `FileInfo`): add a `### <TypeName>` section holding a `ts` block copied verbatim from `<component>/type.ts`, ordered as the types are first referenced.
+- A type owned by ANOTHER component (e.g. `ButtonProps`, `ButtonEvents`) is only referenced - its definition belongs to that component's page.
+- Inline function/object shapes that a table already spells out need no extra section.
 
 ### Terminology rules (user-mandated)
 
@@ -157,7 +173,10 @@ The sidebar itself is auto-generated — do NOT hand-edit it.
 - [ ] Prose wrapped in `[[[zh ...]]]` / `[[[en ...]]]`; `## API` is NOT wrapped.
 - [ ] Every component reference is PascalCase in BOTH zh and en prose and API descriptions.
 - [ ] API descriptions contain no types/defaults/code.
+- [ ] Prose describes the component only; no commentary about an example's own data or implementation, and no hint/caption text inside the example `.vue` files.
 - [ ] All props/events/slots from `type.ts` have matching descriptions; sub-components each have their own `[[[api ...]]]` block.
 - [ ] Shared concepts use `[[[slice ...]]]` where applicable.
+- [ ] Every type name that appears in the tables is presented in full - a slice or a `### <TypeName>` section with the verbatim `ts` definition; no bare type name is left undefined.
+- [ ] Optional parameters that change the scope of a call (e.g. "handling every pending file when none is given") are explained in the descriptions.
 - [ ] Example .vue files: English only, `px-` prefix, kebab-case props, Icon imports, fixed hex colors, varied themes, mark + footer present, no last-item line-variant.
 - [ ] share.ts updated (badge + zh title); canonical Chinese name used (e.g. 时间线).

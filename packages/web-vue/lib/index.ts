@@ -89,6 +89,21 @@ import Typewriter from './typewriter/index.vue'
 import Carousel from './carousel/index.vue'
 import CountTo from './count-to/index.vue'
 import Bubble from './bubble/index.vue'
+import ActionList from './action-list/index.vue'
+import ActionListItem from './action-list-item/index.vue'
+import Prompt from './prompt/index.vue'
+import PromptAction from './prompt-action/index.vue'
+import PromptSwitch from './prompt-switch/index.vue'
+import PromptSelect from './prompt-select/index.vue'
+import PromptSend from './prompt-send/index.vue'
+import PromptAttachment from './prompt-attachment/index.vue'
+import PromptSpeechTrigger from './prompt-speech-trigger/index.vue'
+import PromptSpeechPanel from './prompt-speech-panel/index.vue'
+import LoadingDots from './loading-dots/index.vue'
+import Upload from './upload/index.vue'
+import UploadFileList from './upload-file-list/index.vue'
+import UploadImage from './upload-image/index.vue'
+import UploadDragger from './upload-dragger/index.vue'
 
 const components = [
 	Button,
@@ -170,7 +185,22 @@ const components = [
 	Typewriter,
 	Carousel,
 	CountTo,
-	Bubble
+	Bubble,
+	ActionList,
+	ActionListItem,
+	Prompt,
+	PromptAction,
+	PromptSwitch,
+	PromptSelect,
+	PromptSend,
+	PromptAttachment,
+	PromptSpeechTrigger,
+	PromptSpeechPanel,
+	LoadingDots,
+	Upload,
+	UploadFileList,
+	UploadImage,
+	UploadDragger
 ]
 
 const defaultPrefix = 'Px'
@@ -299,7 +329,22 @@ export {
 	Typewriter,
 	Carousel,
 	CountTo,
-	Bubble
+	Bubble,
+	ActionList,
+	ActionListItem,
+	Prompt,
+	PromptAction,
+	PromptSwitch,
+	PromptSelect,
+	PromptSend,
+	PromptAttachment,
+	PromptSpeechTrigger,
+	PromptSpeechPanel,
+	LoadingDots,
+	Upload,
+	UploadFileList,
+	UploadImage,
+	UploadDragger
 }
 
 export default {
@@ -372,3 +417,48 @@ export type { NotificationOptions, NotificationBoxEvents } from './notification-
 export type { NotificationProps } from './notification/type.ts'
 
 export type { TypewriterText } from './typewriter/type.ts'
+
+export type { ActionItemStatus, ActionListItemIndex } from './action-list-item/type.ts'
+export type {
+	ActionListItemData,
+	ActionListSize,
+	ActionListLineVariant
+} from './action-list/type.ts'
+
+export type {
+	UploadData,
+	UploadHeaders,
+	UploadPatch,
+	UploadCustomRequestOptions,
+	CustomRequest,
+	CustomDownload,
+	FileInfo
+} from './upload-provider/type.ts'
+
+export type {
+	PromptSubmitKey,
+	PromptCounterConfig,
+	PromptUploadConfig,
+	PromptUploadScope,
+	PromptChipConfig,
+	PromptChip,
+	PromptCaretPosition,
+	PromptSegment,
+	PromptContent,
+	PromptSendScope,
+	PromptTriggerPayload,
+	PromptOption,
+	PromptGroupOption
+} from './prompt/type.ts'
+export type {
+	PromptSpeechScope,
+	PromptSpeechBarConfig,
+	PromptSpeechMode,
+	PromptSpeechSpectrum
+} from './prompt-speech-provider/type.ts'
+export type { PromptSpeechPanelSlots } from './prompt-speech-panel/type.ts'
+export type {
+	PromptSpeechConfig,
+	CustomRecognize,
+	CustomRecognizeOptions
+} from './prompt-speech-provider/type.ts'

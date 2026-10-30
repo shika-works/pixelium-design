@@ -6,10 +6,6 @@ import { COLLAPSE_PROVIDE } from '../../share/const/provide-key'
 import type { CollapseProvide } from '../../collapse/type'
 import { createMocks } from '../../share/util/test'
 
-const stubs = {
-	ChevronUp: true
-}
-
 function createMockCollapseProvide(overrides: Partial<CollapseProvide> = {}): CollapseProvide {
 	const activeIndices = ref<(string | number | symbol)[] | undefined | null>([])
 	return {
@@ -45,7 +41,6 @@ function mountCollapseItem(
 		wrapper: mount(CollapseItem, {
 			props: { index: 0, ...props },
 			global: {
-				stubs,
 				provide: {
 					[COLLAPSE_PROVIDE]: mockProvide
 				}
@@ -115,7 +110,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -134,7 +128,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -155,7 +148,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -353,22 +345,30 @@ describe('CollapseItem', () => {
 			expect(wrapper.find('.px-collapse-item-arrow').exists()).toBe(false)
 		})
 
-		it('applies active class to arrow when item is active', async () => {
+		it('keeps the arrow on its initial angle while collapsed', () => {
+			const { wrapper } = mountCollapseItem()
+			expect(wrapper.find('.px-collapse-item-arrow').attributes('style') || '').toContain(
+				'transform: rotate(90deg)'
+			)
+		})
+
+		it('rotates the arrow and forwards the duration when the item is active', async () => {
 			const mockProvide = createMockCollapseProvide()
 			mockProvide.activeIndices.value = [0]
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
 				}
 			})
 			await nextTick()
-			expect(wrapper.find('.px-collapse-item-arrow').classes()).toContain(
-				'px-collapse-item-arrow__active'
-			)
+			const arrow = wrapper.find('.px-collapse-item-arrow')
+			expect(arrow.classes()).toContain('px-chevron-up__active')
+			const style = arrow.attributes('style') || ''
+			expect(style).toContain('transform: rotate(180deg)')
+			expect(style).toContain('transition: transform 250ms')
 		})
 	})
 
@@ -380,7 +380,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -398,7 +397,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0, destroyOnHide: true },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -416,7 +414,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -437,7 +434,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -467,7 +463,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -502,7 +497,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0, destroyOnHide: true },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -539,7 +533,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0 },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -563,7 +556,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 0, destroyOnHide: false },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}
@@ -586,8 +578,7 @@ describe('CollapseItem', () => {
 	describe('edge cases', () => {
 		it('handles undefined collapseProvide gracefully', () => {
 			const wrapper = mount(CollapseItem, {
-				props: { index: 0 },
-				global: { stubs }
+				props: { index: 0 }
 			})
 			expect(wrapper.find('.px-collapse-item').exists()).toBe(true)
 			expect(wrapper.find('.px-collapse-item-header').exists()).toBe(true)
@@ -602,7 +593,6 @@ describe('CollapseItem', () => {
 			const wrapper = mount(CollapseItem, {
 				props: { index: 'panel-a' },
 				global: {
-					stubs,
 					provide: {
 						[COLLAPSE_PROVIDE]: mockProvide
 					}

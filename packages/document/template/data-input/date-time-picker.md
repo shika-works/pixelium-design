@@ -106,7 +106,7 @@ dropdownDestroyOnHide: 下拉选择面板是否会在隐藏时销毁。
 pollSizeChange: 开启轮询组件尺寸变化，可能会影响性能。
 dropdownProps: 下拉选择面板的属性。
 needDropdown: 是否需要展示下拉选择面板。
-use12hours: 一天是否为十二小时。
+use12Hours: 一天是否为十二小时。
 quickAccess: 快速跳转按钮的选项。
 
 events.input: 日期时间选择器输入时的回调。
@@ -130,10 +130,10 @@ slots.suffix: 后缀内容。
 slots.splitter: 范围选择时，分隔符的内容。
 slots.quick: 下拉面板的底部插槽。
 
-datePickerExpose.focus: 聚焦当前控件，范围选择时不传 `placement` 默认作用于开始时间。
-datePickerExpose.blur: 取消聚焦当前控件，范围选择时不传 `placement` 默认作用于开始时间。
-datePickerExpose.clear: 清空当前输入内容。
-datePickerExpose.select: 选中当前输入内容，范围选择时不传 `placement` 默认作用于开始时间。
+dateTimePickerExpose.focus: 聚焦当前控件，范围选择时不传 `placement` 默认作用于开始时间。
+dateTimePickerExpose.blur: 取消聚焦当前控件，范围选择时不传 `placement` 默认作用于开始时间。
+dateTimePickerExpose.clear: 清空当前输入内容。
+dateTimePickerExpose.select: 选中当前输入内容，范围选择时不传 `placement` 默认作用于开始时间。
 ]]]
 
 [[[api en
@@ -161,7 +161,7 @@ dropdownDestroyOnHide: Whether the dropdown panel is destroyed when hidden.
 pollSizeChange: Whether to poll for component size changes (may affect performance).
 dropdownProps: Properties for the dropdown panel.
 needDropdown: Whether to show the dropdown panel.
-use12hours: Whether the day uses 12-hour format.
+use12Hours: Whether the day uses 12-hour format.
 quickAccess: Options for the quick jump button.
 
 events.input: Callback when the date-time picker input is triggered.

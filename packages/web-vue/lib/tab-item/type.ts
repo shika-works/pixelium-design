@@ -32,4 +32,9 @@ export type TabItemSlots = {
 	 * @version 0.2.0
 	 */
 	icon: {}
+	/**
+	 * @slot title
+	 * @version 0.2.0
+	 */
+	title: {}
 }

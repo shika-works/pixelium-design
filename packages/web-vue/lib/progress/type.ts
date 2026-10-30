@@ -35,10 +35,20 @@ export type ProgressProps = {
 	 */
 	color?: string
 	/**
-	 * @property {string} [color]
+	 * @property {string} [trackColor]
 	 * @version 0.1.0
 	 */
 	trackColor?: string
+	/**
+	 * @property {number} [borderWidth]
+	 * @version 0.2.1
+	 */
+	borderWidth?: number
+	/**
+	 * @property {string} [borderColor]
+	 * @version 0.2.1
+	 */
+	borderColor?: string
 	/**
 	 * @property {boolean} [pollSizeChange=false]
 	 * @version 0.1.0

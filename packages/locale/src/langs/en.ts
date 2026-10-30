@@ -34,5 +34,16 @@ export default {
 	},
 	calendar: {
 		today: 'Today'
+	},
+	'action-list': {
+		fold: (count: number) => `Show ${count} more`,
+		unfold: 'Show less'
+	},
+	upload: {
+		uploadFile: 'Upload File',
+		draggerText: 'Click or drag files here to upload'
+	},
+	prompt: {
+		holdText: 'Press and hold to talk'
 	}
 }

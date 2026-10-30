@@ -108,4 +108,62 @@ describe('Image', () => {
 			'https://example.com/image3.png 1x, https://example.com/image4.png 2x'
 		)
 	})
+
+	it('previews previewSrc instead of the current source, without the srcset', async () => {
+		const wrapper = mount(Image, {
+			props: {
+				src: 'thumb.png',
+				srcset: 'thumb-2x.png 2x',
+				previewSrc: 'https://example.com/original.png',
+				previewable: true
+			}
+		})
+		await wrapper.find('img').trigger('load')
+		await wrapper.trigger('click')
+		await nextTick()
+
+		const preview = wrapper.findComponent(Transition).find('.px-image-preview-img')
+		expect(preview.attributes('src')).toBe('https://example.com/original.png')
+		expect(preview.attributes('srcset')).toBeUndefined()
+		expect(wrapper.find('img').attributes('src')).toBe('thumb.png')
+	})
+
+	it('falls back to the current source when previewSrc is empty', async () => {
+		const wrapper = mount(Image, {
+			props: { src: 'thumb.png', srcset: 'thumb-2x.png 2x', previewSrc: '', previewable: true }
+		})
+		await wrapper.find('img').trigger('load')
+		await wrapper.trigger('click')
+		await nextTick()
+
+		const preview = wrapper.findComponent(Transition).find('.px-image-preview-img')
+		expect(preview.attributes('src')).toBe('thumb.png')
+		expect(preview.attributes('srcset')).toBe('thumb-2x.png 2x')
+	})
+
+	it('re-measures the preview zoom once the preview image loads', async () => {
+		const wrapper = mount(Image, {
+			props: {
+				src: 'thumb.png',
+				previewSrc: 'https://example.com/original.png',
+				previewable: true
+			}
+		})
+		await wrapper.find('img').trigger('load')
+		await wrapper.trigger('click')
+		await nextTick()
+
+		const preview = wrapper.findComponent(Transition).find('.px-image-preview-img')
+		const before = preview.attributes('style') ?? ''
+
+		const previewEl = preview.element as HTMLImageElement
+		Object.defineProperty(previewEl, 'complete', { value: true, configurable: true })
+		Object.defineProperty(previewEl, 'naturalWidth', { value: 2000, configurable: true })
+		Object.defineProperty(previewEl, 'naturalHeight', { value: 1000, configurable: true })
+		await preview.trigger('load')
+		await nextTick()
+
+		expect(preview.attributes('style')).not.toBe(before)
+		expect(preview.attributes('style')).not.toContain('width: 0px')
+	})
 })

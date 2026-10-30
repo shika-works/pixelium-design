@@ -5,10 +5,6 @@ import Collapse from '../index.vue'
 import CollapseItem from '../../collapse-item/index.vue'
 import { createMocks } from '../../share/util/test'
 
-const stubs = {
-	ChevronUp: true
-}
-
 const createCollapseItems = (count: number = 3) =>
 	Array.from({ length: count }, (_, i) => ({
 		index: i,
@@ -28,10 +24,7 @@ function mountCollapse(props: Record<string, any> = {}, items = createCollapseIt
 	return mount(Collapse, {
 		props,
 		global: {
-			stubs: {
-				...stubs,
-				CollapseItem
-			}
+			stubs: { CollapseItem }
 		},
 		slots
 	})
@@ -266,7 +259,7 @@ describe('Collapse', () => {
 		it('handles symbol type indices', async () => {
 			const wrapper = mount(Collapse, {
 				props: { defaultActive: [Symbol('panel-a')] },
-				global: { stubs: { ...stubs, CollapseItem } },
+				global: { stubs: { CollapseItem } },
 				slots: {
 					default: `
 						<CollapseItem :index="Symbol('panel-a')" title="Panel A"><span>Content A</span></CollapseItem>
@@ -282,7 +275,7 @@ describe('Collapse', () => {
 		it('handles numeric indices as strings', async () => {
 			const wrapper = mount(Collapse, {
 				props: { defaultActive: ['1'] },
-				global: { stubs: { ...stubs, CollapseItem } },
+				global: { stubs: { CollapseItem } },
 				slots: {
 					default: `
 						<CollapseItem index="1" title="Panel 1"><span>Content</span></CollapseItem>
