@@ -104,7 +104,8 @@ const {
 	insertChip,
 	removeChip,
 	getContent,
-	setContent
+	setContent,
+	isComposing
 } = useEditor({
 	modelValue,
 	content,
@@ -179,7 +180,9 @@ const currentLength = computed(() => {
 
 const counterVisible = computed(() => !!props.counterConfig)
 
-const showPlaceholder = computed(() => !modelValue.value && !!props.placeholder)
+const showPlaceholder = computed(
+	() => !isComposing.value && !modelValue.value && !!props.placeholder
+)
 
 const wrapperRef = shallowRef<HTMLDivElement | null>(null)
 const canvasRef = shallowRef<HTMLCanvasElement | null>(null)
@@ -433,31 +436,33 @@ useDraw(wrapperRef, canvasRef, {
 							</div>
 						</div>
 						<div v-show="!speechLive" class="px-prompt-toolbar">
-							<div class="px-prompt-toolbar-start">
-								<slot name="start" :upload="upload" :send="send" :speech="speech"></slot>
-							</div>
-							<div class="px-prompt-toolbar-end">
-								<div v-if="counterVisible" class="px-prompt-count">
-									<slot
-										name="count"
-										:value="modelValue ?? ''"
-										:count="currentLength"
-										:max-length="counterMaxLength"
-									>
-										<span>
-											{{ currentLength
-											}}{{ isNullish(counterMaxLength) ? '' : ' / ' + counterMaxLength }}
-										</span>
+							<slot name="footer" :upload="upload" :send="send" :speech="speech">
+								<div class="px-prompt-toolbar-start">
+									<slot name="start" :upload="upload" :send="send" :speech="speech"></slot>
+								</div>
+								<div class="px-prompt-toolbar-end">
+									<div v-if="counterVisible" class="px-prompt-count">
+										<slot
+											name="count"
+											:value="modelValue ?? ''"
+											:count="currentLength"
+											:max-length="counterMaxLength"
+										>
+											<span>
+												{{ currentLength
+												}}{{ isNullish(counterMaxLength) ? '' : ' / ' + counterMaxLength }}
+											</span>
+										</slot>
+									</div>
+									<slot name="end" :upload="upload" :send="send" :speech="speech"></slot>
+									<slot name="send" :upload="upload" :send="send" :speech="speech">
+										<PromptSend
+											:disabled="sendDisabled"
+											@click="showStop ? cancelHandler() : submitHandler()"
+										></PromptSend>
 									</slot>
 								</div>
-								<slot name="end" :upload="upload" :send="send" :speech="speech"></slot>
-								<slot name="send" :upload="upload" :send="send" :speech="speech">
-									<PromptSend
-										:disabled="sendDisabled"
-										@click="showStop ? cancelHandler() : submitHandler()"
-									></PromptSend>
-								</slot>
-							</div>
+							</slot>
 						</div>
 					</div>
 				</PromptSpeechProvider>
