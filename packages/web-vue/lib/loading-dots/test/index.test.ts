@@ -135,7 +135,8 @@ describe('LoadingDots stylesheet', () => {
 		const style = await css
 		expect(style).not.toContain('opacity')
 		expect(style).not.toContain('color-mix')
-		expect(style).toContain('--loading-dots-idle-color: var(--px-neutral-9)')
+		expect(style).toContain('color: var(--px-neutral-9)')
+		expect(style).toContain('--loading-dots-idle-color: var(--px-neutral-8)')
 	})
 
 	it.each(['primary', 'sakura', 'success', 'warning', 'danger', 'notice'])(
