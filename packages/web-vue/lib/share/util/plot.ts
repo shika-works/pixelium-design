@@ -32,33 +32,19 @@ const QUADRANT_TEMPLATES: [number, number][] = [
 	[-1, -1]
 ]
 
-function plot(
-	ctx: CanvasRenderingContext2D,
+function getPlottedPoints(
 	x: number,
 	y: number,
-	centerX: number,
-	centerY: number,
 	startRad: number,
-	endRad: number,
-	pixelSize: number
+	endRad: number
 ): [number, number][] {
-	const xRound = x
-	const yRound = y
-
 	const points: [number, number][] = []
 
 	for (let i = 0; i < QUADRANT_TEMPLATES.length; i++) {
 		const [sign1, sign2] = QUADRANT_TEMPLATES[i]
-		let px: number, py: number
-		if (i < 4) {
-			px = sign1 * xRound
-			py = sign2 * yRound
-		} else {
-			px = sign1 * yRound
-			py = sign2 * xRound
-		}
+		const px = i < 4 ? sign1 * x : sign1 * y
+		const py = i < 4 ? sign2 * y : sign2 * x
 		if (shouldPlot(px, py, startRad, endRad)) {
-			ctx.fillRect(centerX + px, centerY + py, pixelSize, pixelSize)
 			points.push([px, py])
 		}
 	}
@@ -86,20 +72,7 @@ function traceArc(
 	const dx = s
 
 	while (x <= end) {
-		for (let i = 0; i < QUADRANT_TEMPLATES.length; i++) {
-			const [sign1, sign2] = QUADRANT_TEMPLATES[i]
-			let px: number, py: number
-			if (i < 4) {
-				px = sign1 * x
-				py = sign2 * y
-			} else {
-				px = sign1 * y
-				py = sign2 * x
-			}
-			if (shouldPlot(px, py, startRad, endRad)) {
-				points.push([px, py])
-			}
-		}
+		points.push(...getPlottedPoints(x, y, startRad, endRad))
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
@@ -117,49 +90,14 @@ function traceArc(
 	return points
 }
 
-export function drawCircle(
-	ctx: CanvasRenderingContext2D,
-	centerX: number,
-	centerY: number,
+function traceSmoothArc(
 	radius: number,
-	startRad = 0,
-	endRad = Math.PI * 2,
 	pixelSize: number,
-	range?: number[][]
+	startRad: number,
+	endRad: number
 ): [number, number][] {
 	const s = pixelSize
 	if (s <= 0 || radius <= 0) return []
-
-	if (range) {
-		ctx.save()
-		ctx.beginPath()
-		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
-		ctx.clip()
-	}
-
-	const points = traceArc(radius, s, startRad, endRad)
-	for (let i = 0; i < points.length; i++) {
-		ctx.fillRect(centerX + points[i][0], centerY + points[i][1], s, s)
-	}
-
-	if (range) {
-		ctx.restore()
-	}
-
-	return points
-}
-
-export function drawSmoothCircle(
-	ctx: CanvasRenderingContext2D,
-	centerX: number,
-	centerY: number,
-	radius: number,
-	startRad = 0,
-	endRad = Math.PI * 2,
-	pixelSize: number
-) {
-	let s = pixelSize
-	if (s <= 0 || radius <= 0) return
 
 	const rate = radius / s
 	let x = 0
@@ -178,8 +116,9 @@ export function drawSmoothCircle(
 	const end = Math.ceil(tmp)
 
 	const dx = rate < 4 ? (s / 4) * 3 : s
+	const points: [number, number][] = []
 	while (x <= end) {
-		plot(ctx, Math.floor(x), Math.floor(y), centerX, centerY, startRad, endRad, s)
+		points.push(...getPlottedPoints(Math.floor(x), Math.floor(y), startRad, endRad))
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
@@ -191,6 +130,81 @@ export function drawSmoothCircle(
 			break
 		}
 	}
+
+	return points
+}
+
+function traceCircle(
+	radius: number,
+	startRad: number,
+	endRad: number,
+	pixelSize: number,
+	smooth = false
+): [number, number][] {
+	return smooth
+		? traceSmoothArc(radius, pixelSize, startRad, endRad)
+		: traceArc(radius, pixelSize, startRad, endRad)
+}
+
+const paintCirclePoints = (
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	points: [number, number][],
+	pixelSize: number,
+	range?: number[][]
+) => {
+	if (!points.length) return
+
+	if (range) {
+		ctx.save()
+		ctx.beginPath()
+		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
+		ctx.clip()
+	}
+
+	for (let i = 0; i < points.length; i++) {
+		ctx.fillRect(centerX + points[i][0], centerY + points[i][1], pixelSize, pixelSize)
+	}
+
+	if (range) {
+		ctx.restore()
+	}
+}
+
+export function drawCircle(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startRad = 0,
+	endRad = Math.PI * 2,
+	pixelSize: number,
+	range?: number[][]
+): [number, number][] {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return []
+
+	const points = traceCircle(radius, startRad, endRad, s)
+	paintCirclePoints(ctx, centerX, centerY, points, s, range)
+	return points
+}
+
+export function drawSmoothCircle(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startRad = 0,
+	endRad = Math.PI * 2,
+	pixelSize: number
+): [number, number][] {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return []
+
+	const points = traceCircle(radius, startRad, endRad, s, true)
+	paintCirclePoints(ctx, centerX, centerY, points, s)
+	return points
 }
 
 export type floodFillArgs = {
@@ -551,102 +565,138 @@ export const calcBorderCornerCenterWithPadding = (
 	] as [number, number][]
 }
 
-export const calcRoundRectInnerPoints = (
+type RoundRectCornerGeometry = {
+	radius: number[]
+	center: [number, number][]
+	angles: [number, number][]
+}
+
+const calcRoundRectCorners = (
 	canvas: HTMLCanvasElement,
 	pixelSize: number,
 	borderRadius: NumberOrPercentage | NumberOrPercentage[] | undefined,
 	shape: 'rect' | 'round' | 'circle' | 'square' | 'default' | undefined,
-	size: 'medium' | 'small' | 'large' = 'medium'
+	size: 'medium' | 'small' | 'large' = 'medium',
+	inner = false,
+	first = false,
+	last = false,
+	direction: 'horizontal' | 'vertical' = 'horizontal',
+	padding: number[] = [0, 0, 0, 0]
+): RoundRectCornerGeometry => {
+	const radius = getBorderRadius(
+		canvas,
+		pixelSize,
+		borderRadius,
+		shape,
+		size,
+		inner,
+		first,
+		last,
+		direction
+	)
+	return {
+		radius,
+		center: calcBorderCornerCenterWithPadding(
+			radius,
+			canvas.width,
+			canvas.height,
+			pixelSize,
+			padding
+		),
+		angles: BORDER_CORNER_RAD_RANGE
+	}
+}
+
+type InnerEdge = [y0: number, y1: number, x: number]
+
+const calcCornerEdges = (
+	offsets: [number, number][],
+	center: [number, number],
+	pixelSize: number,
+	height: number,
+	isLeft: boolean
+): InnerEdge[] => {
+	const rows = new Map<number, number>()
+	for (let i = 0; i < offsets.length; i++) {
+		const y = center[1] + offsets[i][1]
+		const x = center[0] + (isLeft ? offsets[i][0] + pixelSize : offsets[i][0])
+		const prev = rows.get(y)
+		if (prev === undefined || (isLeft ? x > prev : x < prev)) rows.set(y, x)
+	}
+
+	const edges: InnerEdge[] = []
+	for (const y of [...rows.keys()].sort((a, b) => a - b)) {
+		const x = rows.get(y)!
+		const from = Math.max(pixelSize, y)
+		const to = Math.min(height - pixelSize, y + pixelSize)
+		if (to <= from) continue
+		const last = edges[edges.length - 1]
+		if (last && last[2] === x && from <= last[1]) last[1] = Math.max(last[1], to)
+		else edges.push([from, to, x])
+	}
+	return edges
+}
+
+const calcInnerPoints = (
+	width: number,
+	height: number,
+	pixelSize: number,
+	center: [number, number][],
+	offsetsByCorner: [number, number][][]
 ): [number, number][] => {
-	const width = canvas.width
-	const height = canvas.height
-	const s = pixelSize
-	if (s <= 0 || width <= 2 * s || height <= 2 * s) return []
+	if (pixelSize <= 0 || width <= 0 || height <= 0) return []
 
-	const resolvedRadius = getBorderRadius(canvas, s, borderRadius, shape, size)
-	for (let i = 0; i < 4; i++) {
-		if (resolvedRadius[i] <= s) return []
-	}
-
-	const center = calcBorderCornerCenterWithPadding(resolvedRadius, width, height, s)
-	const rad = BORDER_CORNER_RAD_RANGE
-	const lefts: number[] = Array.from({ length: height }, () => s)
-	const rights: number[] = Array.from({ length: height }, () => width - s)
-
-	for (let i = 0; i < 4; i++) {
-		const offsets = traceArc(resolvedRadius[i], s, rad[i][0], rad[i][1])
-		if (!offsets.length) return []
-		const bands = new Map<number, { min: number; max: number }>()
-		for (let j = 0; j < offsets.length; j++) {
-			const px = offsets[j][0]
-			const py = offsets[j][1]
-			const band = bands.get(py)
-			if (!band) {
-				bands.set(py, { min: px, max: px })
-			} else {
-				if (px < band.min) band.min = px
-				if (px > band.max) band.max = px
-			}
-		}
-		const isLeft = i === 0 || i === 3
-		for (const [py, band] of bands) {
-			const from = Math.max(0, center[i][1] + py)
-			const to = Math.min(height, center[i][1] + py + s)
-			for (let y = from; y < to; y++) {
-				if (isLeft) {
-					const edge = center[i][0] + band.max + s
-					if (edge > lefts[y]) lefts[y] = edge
-				} else {
-					const edge = center[i][0] + band.min
-					if (edge < rights[y]) rights[y] = edge
-				}
-			}
-		}
-	}
-
-	for (let y = 0; y < height; y++) {
-		lefts[y] = clamp(lefts[y], s, width - s)
-		rights[y] = clamp(rights[y], s, width - s)
-		if (rights[y] <= lefts[y]) return []
-	}
-
-	const top = s
-	const bottom = height - s - 1
 	const points: [number, number][] = []
 	const push = (x: number, y: number) => {
 		const last = points[points.length - 1]
-		if (last && last[0] === x && last[1] === y) return
-		points.push([x, y])
+		if (!last || last[0] !== x || last[1] !== y) points.push([x, y])
 	}
-
-	push(lefts[top], top)
-	push(rights[top] - 1, top)
-
-	let rightX = rights[top] - 1
-	for (let y = top + 1; y <= bottom; y++) {
-		const nextX = rights[y] - 1
-		if (nextX !== rightX) {
-			push(rightX, y)
-			push(nextX, y)
-			rightX = nextX
+	const walk = (index: number, down: boolean) => {
+		const edges = calcCornerEdges(
+			offsetsByCorner[index],
+			center[index],
+			pixelSize,
+			height,
+			index === 0 || index === 3
+		)
+		if (!edges.length) {
+			push(
+				index === 0 || index === 3 ? pixelSize : width - pixelSize,
+				down ? pixelSize : height - pixelSize
+			)
+			return
+		}
+		for (let i = 0; i < edges.length; i++) {
+			const [y0, y1, x] = edges[down ? i : edges.length - 1 - i]
+			push(x, down ? y0 : y1)
+			push(x, down ? y1 : y0)
 		}
 	}
-	push(rightX, bottom)
 
-	push(lefts[bottom], bottom)
-
-	let leftX = lefts[bottom]
-	for (let y = bottom - 1; y >= top; y--) {
-		const nextX = lefts[y]
-		if (nextX !== leftX) {
-			push(leftX, y)
-			push(nextX, y)
-			leftX = nextX
-		}
-	}
-	push(leftX, top)
+	walk(1, true)
+	walk(2, true)
+	walk(3, false)
+	walk(0, false)
 
 	return points
+}
+
+export const fillPolygon = (
+	ctx: CanvasRenderingContext2D,
+	points: [number, number][],
+	color: RgbaColor
+) => {
+	if (!points.length) {
+		return
+	}
+	ctx.fillStyle = rgbaColor2string(color)
+	ctx.beginPath()
+	ctx.moveTo(points[0][0], points[0][1])
+	for (let i = 1; i < points.length; i++) {
+		ctx.lineTo(points[i][0], points[i][1])
+	}
+	ctx.closePath()
+	ctx.fill()
 }
 
 export const canvasPreprocess = (
@@ -663,7 +713,6 @@ export const canvasPreprocess = (
 
 	const el = wrapperRef.value
 	const rect = el.getBoundingClientRect()
-	// getBoundingClientRect is transform-aware (a dialog scales in), ResizeObserver is not.
 	const scaled =
 		Math.abs(rect.width - el.offsetWidth) > 1 || Math.abs(rect.height - el.offsetHeight) > 1
 	const width = (scaled ? el.offsetWidth : rect.width) - paddingX * 2
@@ -680,7 +729,6 @@ export const canvasPreprocess = (
 		canvas.width = pixelWidth
 		canvas.height = pixelHeight
 	} else {
-		// clearRect instead of canvas.width: the latter dirties the element's style.
 		ctx.clearRect(0, 0, canvas.width, canvas.height)
 	}
 
@@ -837,7 +885,6 @@ function collectFloodFillRegion(
 	while (stack.length) {
 		const { y, left, right } = stack.pop()!
 
-		// Check the row above the span
 		if (y - 1 >= 0) {
 			let x = left
 			while (x <= right) {
@@ -853,7 +900,6 @@ function collectFloodFillRegion(
 			}
 		}
 
-		// Check the row below the span
 		if (y + 1 < h) {
 			let x = left
 			while (x <= right) {
@@ -945,7 +991,6 @@ export function floodFillEdgePadding(
 	const distances = new Uint16Array(w * h)
 	const queue: [number, number][] = []
 
-	// restore original region color before drawing the padding band
 	for (let i = 0; i < result.w * result.h; i++) {
 		if (result.filled[i] === 1) {
 			data32[i] = result.targetColor
@@ -1084,7 +1129,7 @@ export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number]
 }
 
 export type DrawRoundRectOptions = {
-	// For getBorderRadius
+	// Used by getBorderRadius
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	shape?: 'rect' | 'round' | 'circle' | 'square' | 'default'
 	size?: 'medium' | 'small' | 'large'
@@ -1092,12 +1137,11 @@ export type DrawRoundRectOptions = {
 	first?: boolean
 	last?: boolean
 	direction?: 'horizontal' | 'vertical'
-	// For drawCircle
+	// Used by drawCircle
 	ranges?: number[][][]
 	padding?: number[]
-	// For inner-group (input/button group) borders
+	// Used by inner-group borders
 	nextIsTextButton?: boolean
-	// Smooth rounded corners
 	smooth?: boolean
 	// Draw corners regardless of borderRadius size
 	miniRadius?: boolean
@@ -1105,10 +1149,10 @@ export type DrawRoundRectOptions = {
 
 export const drawRoundRect = (
 	ctx: CanvasRenderingContext2D,
-	borderColor: RgbaColor,
+	borderColor: RgbaColor | null | undefined,
 	pixelSize: number,
 	options: DrawRoundRectOptions = {}
-) => {
+): [number, number][] => {
 	const {
 		borderRadius,
 		shape = 'rect',
@@ -1127,7 +1171,10 @@ export const drawRoundRect = (
 	const width = ctx.canvas.width
 	const height = ctx.canvas.height
 
-	const resolvedRadius = getBorderRadius(
+	const hasLeftNeighbor = inner && !first
+	const hasRightNeighbor = inner && !last
+
+	const { radius: resolvedRadius, center, angles: rad } = calcRoundRectCorners(
 		ctx.canvas,
 		pixelSize,
 		borderRadius,
@@ -1136,88 +1183,74 @@ export const drawRoundRect = (
 		inner,
 		first,
 		last,
-		direction
-	)
-
-	const hasLeftNeighbor = inner && !first
-	const hasRightNeighbor = inner && !last
-
-	const rad = BORDER_CORNER_RAD_RANGE
-	const center = calcBorderCornerCenterWithPadding(
-		resolvedRadius,
-		width,
-		height,
-		pixelSize,
+		direction,
 		padding
 	)
 
-	ctx.fillStyle = rgbaColor2string(borderColor)
+	const paint = borderColor != null
+	if (borderColor) {
+		ctx.fillStyle = rgbaColor2string(borderColor)
+	}
+
+	const offsetsByCorner: [number, number][][] = []
 	for (let i = 0; i < 4; i++) {
-		if (resolvedRadius[i] > pixelSize || miniRadius) {
-			if (smooth) {
-				drawSmoothCircle(
-					ctx,
-					center[i][0],
-					center[i][1],
-					resolvedRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize
-				)
-			} else {
-				drawCircle(
-					ctx,
-					center[i][0],
-					center[i][1],
-					resolvedRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize,
-					ranges?.[i]
-				)
+		const offsets = traceCircle(resolvedRadius[i], rad[i][0], rad[i][1], pixelSize, smooth)
+		if (paint && (resolvedRadius[i] > pixelSize || miniRadius)) {
+			paintCirclePoints(
+				ctx,
+				center[i][0],
+				center[i][1],
+				offsets,
+				pixelSize,
+				smooth ? undefined : ranges?.[i]
+			)
+		}
+		offsetsByCorner[i] = offsets
+	}
+
+	if (paint) {
+		if (center[1][0] + pixelSize > center[0][0]) {
+			let length = center[1][0] - center[0][0] + pixelSize
+			if (hasRightNeighbor) {
+				length -= pixelSize
 			}
+			ctx.fillRect(center[0][0], padding[0], length, pixelSize)
 		}
-	}
 
-	if (center[1][0] + pixelSize > center[0][0]) {
-		let length = center[1][0] - center[0][0] + pixelSize
+		if (center[2][1] + pixelSize > center[1][1] && !hasRightNeighbor) {
+			ctx.fillRect(
+				width - padding[1] - pixelSize,
+				center[1][1],
+				pixelSize,
+				center[2][1] - center[1][1] + pixelSize
+			)
+		}
+
+		if (center[3][0] < center[2][0] + pixelSize) {
+			let length = center[2][0] - center[3][0] + pixelSize
+			if (hasRightNeighbor) {
+				length -= pixelSize
+			}
+			ctx.fillRect(center[3][0], height - padding[2] - pixelSize, length, pixelSize)
+		}
+
+		if (!hasLeftNeighbor && center[3][1] + pixelSize > center[0][1]) {
+			ctx.fillRect(padding[3], center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
+		}
+
+		if (hasLeftNeighbor) {
+			ctx.fillRect(padding[3] + pixelSize / 2, 0, pixelSize / 2, height)
+		}
 		if (hasRightNeighbor) {
-			length -= pixelSize
+			let length = pixelSize
+			if (nextIsTextButton) {
+				length /= 2
+			}
+			ctx.fillRect(width - padding[1] - 2 * pixelSize - 1, 0, length, height)
 		}
-		ctx.fillRect(center[0][0], padding[0], length, pixelSize)
 	}
 
-	if (center[2][1] + pixelSize > center[1][1] && !hasRightNeighbor) {
-		ctx.fillRect(
-			width - padding[1] - pixelSize,
-			center[1][1],
-			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
-		)
-	}
-
-	if (center[3][0] < center[2][0] + pixelSize) {
-		let length = center[2][0] - center[3][0] + pixelSize
-		if (hasRightNeighbor) {
-			length -= pixelSize
-		}
-		ctx.fillRect(center[3][0], height - padding[2] - pixelSize, length, pixelSize)
-	}
-
-	if (!hasLeftNeighbor && center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(padding[3], center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
-	}
-
-	if (hasLeftNeighbor) {
-		ctx.fillRect(padding[3] + pixelSize / 2, 0, pixelSize / 2, height)
-	}
-	if (hasRightNeighbor) {
-		let length = pixelSize
-		if (nextIsTextButton) {
-			length /= 2
-		}
-		ctx.fillRect(width - padding[1] - 2 * pixelSize - 1, 0, length, height)
-	}
+	return calcInnerPoints(width, height, pixelSize, center, offsetsByCorner)
 }
 
 export const drawRectBorder = (

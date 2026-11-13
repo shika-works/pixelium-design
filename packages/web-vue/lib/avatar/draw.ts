@@ -3,8 +3,7 @@ import { getGlobalThemeColor, parseColor } from '../share/util/color'
 import {
 	canvasPreprocess,
 	drawRoundRect,
-	floodFill,
-	floodFillEdge,
+	fillPolygon,
 	outerEdgePoints
 } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
@@ -49,44 +48,47 @@ export const useDraw = (options: UseDrawOptions) => {
 				getGlobalThemeColor('neutral', 10)
 			: backgroundColor
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize, {
-				shape: options.shapeComputed.value,
-				smooth: true
-			})
-		}
-
-		let dots = options.bordered.value
-			? backgroundColor
-				? floodFillEdge(
-						ctx,
-						Math.round(width / 2 + pixelSize / 2),
-						Math.round(height / 2 + pixelSize / 2),
-						backgroundColor
-					)
-				: []
-			: outerEdgePoints(ctx)
-
-		if (dots.length) {
-			dots.push(dots.at(-1)!)
-			dots = offsetOutward(
-				[Math.round(width / 2), Math.round(height / 2)],
-				dots,
-				pixelSize / 4
-			).map((e) => {
-				return [e[0] + 0.5, e[1] + 0.5]
-			})
-			polygon.value = dots
-				.map((e) => {
-					return `${e[0]}px ${e[1]}px`
-				})
-				.join(',')
-		} else {
-			polygon.value = ''
-		}
+		const shapeValue = options.shapeComputed.value
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+			shape: shapeValue,
+			smooth: true
+		})
 
 		if (backgroundColor) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+			fillPolygon(ctx, innerPoints, backgroundColor)
+		}
+
+		if (options.bordered.value) {
+			polygon.value = backgroundColor
+				? offsetOutward(
+						[Math.round(width / 2), Math.round(height / 2)],
+						innerPoints,
+						pixelSize / 4
+					)
+						.map((e) => {
+							return `${e[0] + 0.5}px ${e[1] + 0.5}px`
+						})
+						.join(',')
+				: ''
+		} else {
+			let dots = outerEdgePoints(ctx)
+			if (dots.length) {
+				dots.push(dots.at(-1)!)
+				dots = offsetOutward(
+					[Math.round(width / 2), Math.round(height / 2)],
+					dots,
+					pixelSize / 4
+				).map((e) => {
+					return [e[0] + 0.5, e[1] + 0.5] as [number, number]
+				})
+				polygon.value = dots
+					.map((e) => {
+						return `${e[0]}px ${e[1]}px`
+					})
+					.join(',')
+			} else {
+				polygon.value = ''
+			}
 		}
 	}
 
