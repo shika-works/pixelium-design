@@ -66,25 +66,15 @@ function plot(
 	return points
 }
 // Bresenham algorithm
-export function drawCircle(
-	ctx: CanvasRenderingContext2D,
-	centerX: number,
-	centerY: number,
+function traceArc(
 	radius: number,
-	startRad = 0,
-	endRad = Math.PI * 2,
 	pixelSize: number,
-	range?: number[][]
+	startRad: number,
+	endRad: number
 ): [number, number][] {
-	let s = pixelSize
-	if (s <= 0 || radius <= 0) return []
-
-	if (range) {
-		ctx.save()
-		ctx.beginPath()
-		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
-		ctx.clip()
-	}
+	const s = pixelSize
+	const points: [number, number][] = []
+	if (s <= 0 || radius <= 0) return points
 
 	let x = 0
 	let y = radius
@@ -95,10 +85,21 @@ export function drawCircle(
 
 	const dx = s
 
-	const points: [number, number][] = []
-
 	while (x <= end) {
-		points.push(...plot(ctx, x, y, centerX, centerY, startRad, endRad, s))
+		for (let i = 0; i < QUADRANT_TEMPLATES.length; i++) {
+			const [sign1, sign2] = QUADRANT_TEMPLATES[i]
+			let px: number, py: number
+			if (i < 4) {
+				px = sign1 * x
+				py = sign2 * y
+			} else {
+				px = sign1 * y
+				py = sign2 * x
+			}
+			if (shouldPlot(px, py, startRad, endRad)) {
+				points.push([px, py])
+			}
+		}
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
@@ -111,6 +112,34 @@ export function drawCircle(
 		if (x >= end && originalY === y) {
 			break
 		}
+	}
+
+	return points
+}
+
+export function drawCircle(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startRad = 0,
+	endRad = Math.PI * 2,
+	pixelSize: number,
+	range?: number[][]
+): [number, number][] {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return []
+
+	if (range) {
+		ctx.save()
+		ctx.beginPath()
+		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
+		ctx.clip()
+	}
+
+	const points = traceArc(radius, s, startRad, endRad)
+	for (let i = 0; i < points.length; i++) {
+		ctx.fillRect(centerX + points[i][0], centerY + points[i][1], s, s)
 	}
 
 	if (range) {
@@ -520,6 +549,104 @@ export const calcBorderCornerCenterWithPadding = (
 		],
 		[padding[3] + borderRadius[3], height - padding[2] - borderRadius[3] - pixelSize]
 	] as [number, number][]
+}
+
+export const calcRoundRectInnerPoints = (
+	canvas: HTMLCanvasElement,
+	pixelSize: number,
+	borderRadius: NumberOrPercentage | NumberOrPercentage[] | undefined,
+	shape: 'rect' | 'round' | 'circle' | 'square' | 'default' | undefined,
+	size: 'medium' | 'small' | 'large' = 'medium'
+): [number, number][] => {
+	const width = canvas.width
+	const height = canvas.height
+	const s = pixelSize
+	if (s <= 0 || width <= 2 * s || height <= 2 * s) return []
+
+	const resolvedRadius = getBorderRadius(canvas, s, borderRadius, shape, size)
+	for (let i = 0; i < 4; i++) {
+		if (resolvedRadius[i] <= s) return []
+	}
+
+	const center = calcBorderCornerCenterWithPadding(resolvedRadius, width, height, s)
+	const rad = BORDER_CORNER_RAD_RANGE
+	const lefts: number[] = Array.from({ length: height }, () => s)
+	const rights: number[] = Array.from({ length: height }, () => width - s)
+
+	for (let i = 0; i < 4; i++) {
+		const offsets = traceArc(resolvedRadius[i], s, rad[i][0], rad[i][1])
+		if (!offsets.length) return []
+		const bands = new Map<number, { min: number; max: number }>()
+		for (let j = 0; j < offsets.length; j++) {
+			const px = offsets[j][0]
+			const py = offsets[j][1]
+			const band = bands.get(py)
+			if (!band) {
+				bands.set(py, { min: px, max: px })
+			} else {
+				if (px < band.min) band.min = px
+				if (px > band.max) band.max = px
+			}
+		}
+		const isLeft = i === 0 || i === 3
+		for (const [py, band] of bands) {
+			const from = Math.max(0, center[i][1] + py)
+			const to = Math.min(height, center[i][1] + py + s)
+			for (let y = from; y < to; y++) {
+				if (isLeft) {
+					const edge = center[i][0] + band.max + s
+					if (edge > lefts[y]) lefts[y] = edge
+				} else {
+					const edge = center[i][0] + band.min
+					if (edge < rights[y]) rights[y] = edge
+				}
+			}
+		}
+	}
+
+	for (let y = 0; y < height; y++) {
+		lefts[y] = clamp(lefts[y], s, width - s)
+		rights[y] = clamp(rights[y], s, width - s)
+		if (rights[y] <= lefts[y]) return []
+	}
+
+	const top = s
+	const bottom = height - s - 1
+	const points: [number, number][] = []
+	const push = (x: number, y: number) => {
+		const last = points[points.length - 1]
+		if (last && last[0] === x && last[1] === y) return
+		points.push([x, y])
+	}
+
+	push(lefts[top], top)
+	push(rights[top] - 1, top)
+
+	let rightX = rights[top] - 1
+	for (let y = top + 1; y <= bottom; y++) {
+		const nextX = rights[y] - 1
+		if (nextX !== rightX) {
+			push(rightX, y)
+			push(nextX, y)
+			rightX = nextX
+		}
+	}
+	push(rightX, bottom)
+
+	push(lefts[bottom], bottom)
+
+	let leftX = lefts[bottom]
+	for (let y = bottom - 1; y >= top; y--) {
+		const nextX = lefts[y]
+		if (nextX !== leftX) {
+			push(leftX, y)
+			push(nextX, y)
+			leftX = nextX
+		}
+	}
+	push(leftX, top)
+
+	return points
 }
 
 export const canvasPreprocess = (

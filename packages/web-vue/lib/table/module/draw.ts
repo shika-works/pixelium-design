@@ -2,10 +2,9 @@ import { ref, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { getGlobalThemeColor, rgbaColor2string } from '../../share/util/color'
 import { fillArr, offsetOutward } from '../../share/util/common'
 import {
+	calcRoundRectInnerPoints,
 	canvasPreprocess,
-	drawRoundRect,
-	floodFill,
-	floodFillEdge
+	drawRoundRect
 } from '../../share/util/plot'
 import type { TableProps } from '../type'
 import type { LooseRequired } from '../../share/type'
@@ -35,49 +34,58 @@ const drawTableBorder = (
 
 	const r = borderRadiusValue ?? pixelSizeValue * 4
 
-	if (bordered.table) {
-		const borderRadius = fillArr(r, 4)
+	const backgroundColor = getGlobalThemeColor('neutral', 1)
+	if (backgroundColor) {
+		let innerPoints: [number, number][] = []
+		if (bordered.table && bordered.side) {
+			innerPoints = calcRoundRectInnerPoints(ctx.canvas, pixelSizeValue, r, 'rect')
+		}
+		if (!innerPoints.length) {
+			innerPoints = [
+				[0, 0],
+				[width - 1, 0],
+				[width - 1, height - 1],
+				[0, height - 1]
+			] as [number, number][]
+		}
 
+		const polygonPoints = offsetOutward(
+			[Math.round(width / 2), Math.round(height / 2)],
+			innerPoints,
+			pixelSizeValue / 4
+		).map((e) => {
+			return [e[0] + 0.5, e[1] + 0.5] as [number, number]
+		})
+
+		ctx.fillStyle = rgbaColor2string(backgroundColor)
+		ctx.beginPath()
+		ctx.moveTo(polygonPoints[0][0], polygonPoints[0][1])
+		for (let i = 1; i < polygonPoints.length; i++) {
+			ctx.lineTo(polygonPoints[i][0], polygonPoints[i][1])
+		}
+		ctx.closePath()
+		ctx.fill()
+
+		polygon.value = polygonPoints
+			.map((e) => {
+				return `${e[0]}px ${e[1]}px`
+			})
+			.join(',')
+	} else {
+		polygon.value = ''
+	}
+
+	if (bordered.table) {
 		const borderColor = getGlobalThemeColor('neutral', 9)
 		if (borderColor) {
 			if (bordered.side) {
-				drawRoundRect(ctx, borderColor, pixelSizeValue, { borderRadius })
+				drawRoundRect(ctx, borderColor, pixelSizeValue, { borderRadius: fillArr(r, 4) })
 			} else {
 				ctx.fillStyle = rgbaColor2string(borderColor)
 				ctx.fillRect(0, height - pixelSizeValue, width, pixelSizeValue)
 				ctx.fillRect(0, 0, width, pixelSizeValue)
 			}
 		}
-	}
-
-	const backgroundColor = getGlobalThemeColor('neutral', 1)
-	if (backgroundColor) {
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-		let points = floodFillEdge(
-			ctx,
-			Math.round(width / 2),
-			Math.round(height / 2),
-			backgroundColor
-		)
-		if (points.length) {
-			points.push(points.at(-1)!)
-			points = offsetOutward(
-				[Math.round(width / 2), Math.round(height / 2)],
-				points,
-				pixelSizeValue / 4
-			).map((e) => {
-				return [e[0] + 0.5, e[1] + 0.5]
-			})
-			polygon.value = points
-				.map((e) => {
-					return `${e[0]}px ${e[1]}px`
-				})
-				.join(',')
-		} else {
-			polygon.value = ''
-		}
-	} else {
-		polygon.value = ''
 	}
 }
 
