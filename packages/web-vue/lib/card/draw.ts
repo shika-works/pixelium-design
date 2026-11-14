@@ -50,9 +50,7 @@ export const useDrawPixel = (
 			}
 		}
 
-		const borderColor = options.bordered.value
-			? getGlobalThemeColor('neutral', 9)
-			: undefined
+		const borderColor = options.bordered.value ? getGlobalThemeColor('neutral', 9) : undefined
 		const innerPoints = drawRoundRect(ctx, borderColor, pixelSizeValue, {
 			borderRadius: brValue,
 			shape: shapeValue,

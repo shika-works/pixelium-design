@@ -1,7 +1,7 @@
 import { watch } from 'vue'
 import { useDarkMode } from '../../share/hook/use-dark-mode'
 import { getGlobalThemeColor } from '../../share/util/color'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../../share/util/plot'
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
 import type { BaseDatePickerProps } from '../type'
 import type { InputGroupProvide } from '../../input-group/type'
@@ -56,7 +56,7 @@ export const useDraw = (
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 
 		const borderColor =
 			statusComputed.value !== 'normal'
@@ -70,24 +70,22 @@ export const useDraw = (
 					? getGlobalThemeColor('primary', 6)
 					: getGlobalThemeColor('neutral', 10)
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize.value, {
-				borderRadius: borderRadiusComputed.value,
-				shape: shapeComputed.value || 'rect',
-				size: sizeComputed.value || 'medium',
-				inner: !!inputGroupProvide,
-				first: first.value,
-				last: last.value,
-				nextIsTextButton: nextIsTextButton.value
-			})
-		}
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize.value, {
+			borderRadius: borderRadiusComputed.value,
+			shape: shapeComputed.value || 'rect',
+			size: sizeComputed.value || 'medium',
+			inner: !!inputGroupProvide,
+			first: first.value,
+			last: last.value,
+			nextIsTextButton: nextIsTextButton.value
+		})
 
 		const backgroundColor = disabledComputed.value
 			? getGlobalThemeColor('neutral', 6)
 			: getGlobalThemeColor('neutral', 1)
 
 		if (backgroundColor) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+			fillPolygon(ctx, innerPoints, backgroundColor)
 		}
 	}
 

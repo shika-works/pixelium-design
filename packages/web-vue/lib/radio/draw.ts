@@ -4,7 +4,7 @@ import { INTERVAL } from '../share/const/style'
 import { parseColor, getGlobalThemeColorString } from '../share/util/color'
 import {
 	drawSmoothCircle,
-	floodFill,
+	fillPolygon,
 	roundToPixel,
 	canvasPreprocess,
 	drawRoundRect
@@ -67,23 +67,25 @@ export const drawRadioCircleMark = (
 	pixelSize: number
 ) => {
 	ctx.fillStyle = color
-	const intervalSize = INTERVAL
-	drawSmoothCircle(
-		ctx,
-		size / 2 - pixelSize / 2,
-		size / 2 - pixelSize / 2,
-		Math.round((size - pixelSize / 2) / 2 - intervalSize * 2),
-		0,
-		Math.PI * 2,
-		pixelSize
-	)
-	const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
 
-	const rgbaColor = color ? parseColor(color)?.color : null
-	if (rgbaColor) {
-		floodFill(ctx, fillStart, fillStart, rgbaColor)
+	const center = size / 2 - pixelSize / 2
+	const radius = Math.round((size - pixelSize / 2) / 2 - INTERVAL * 2)
+	const points = drawSmoothCircle(ctx, center, center, radius, 0, Math.PI * 2, pixelSize)
+
+	const rows = new Map<number, [number, number]>()
+	for (const [x, y] of points) {
+		const span = rows.get(y)
+		if (span) {
+			if (x < span[0]) span[0] = x
+			if (x > span[1]) span[1] = x
+		} else {
+			rows.set(y, [x, x])
+		}
 	}
-	ctx.fillRect(fillStart, fillStart, pixelSize, pixelSize)
+
+	for (const [row, [from, to]] of rows) {
+		ctx.fillRect(center + from, center + row, to - from + pixelSize, pixelSize)
+	}
 }
 
 type UseDrawOptions = {
@@ -136,20 +138,16 @@ export const useDraw = (
 				drawMaskedPixelTriangle(ctx, width, height, mainColor, pixelSize)
 			}
 		} else {
-			const parsedMainColor = parseColor(mainColor)?.color
-			if (parsedMainColor) {
-				drawRoundRect(ctx, parsedMainColor, pixelSize, {
-					borderRadius: undefined,
-					shape: 'round'
-				})
-			}
-
 			const size = Math.min(width, height)
-			const fillStart = Math.ceil(size / 2 - pixelSize / 2) + 1
 
 			const parsedBackgroundColor = parseColor(backgroundColor)?.color
+			const innerPoints = drawRoundRect(ctx, parseColor(mainColor)?.color, pixelSize, {
+				borderRadius: undefined,
+				shape: 'round'
+			})
+
 			if (parsedBackgroundColor) {
-				floodFill(ctx, fillStart, fillStart, parsedBackgroundColor)
+				fillPolygon(ctx, innerPoints, parsedBackgroundColor)
 			}
 
 			if (options.modelValue.value) {

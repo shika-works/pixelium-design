@@ -1,5 +1,5 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef, type Slots } from 'vue'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { getGlobalThemeColor, parseColor } from '../share/util/color'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
@@ -34,29 +34,27 @@ export const useDraw = (
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 
 		const pixelSize = pixelSizeRef.value
 
 		const borderColor = getGlobalThemeColor('neutral', 10)
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize, {
-				borderRadius: options.borderRadiusComputed.value,
-				shape: options.shapeComputed.value,
-				size: options.sizeComputed.value || 'medium',
-				inner: options.innerInputGroup,
-				first: options.first.value,
-				last: options.last.value,
-				nextIsTextButton: options.nextIsTextButton.value
-			})
-		}
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+			borderRadius: options.borderRadiusComputed.value,
+			shape: options.shapeComputed.value,
+			size: options.sizeComputed.value || 'medium',
+			inner: options.innerInputGroup,
+			first: options.first.value,
+			last: options.last.value,
+			nextIsTextButton: options.nextIsTextButton.value
+		})
 
 		const bgColorStr = options.backgroundColor.value
 		const backgroundColor =
 			(bgColorStr && parseColor(bgColorStr)?.color) || getGlobalThemeColor('neutral', 3)
 		if (backgroundColor) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+			fillPolygon(ctx, innerPoints, backgroundColor)
 		}
 	}
 

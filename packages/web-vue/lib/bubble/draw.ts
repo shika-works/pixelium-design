@@ -5,7 +5,8 @@ import {
 	calcBorderCornerCenterWithPadding,
 	canvasPreprocess,
 	drawCircle,
-	floodFill,
+	drawRoundRect,
+	fillPolygon,
 	getBorderRadius
 } from '../share/util/plot'
 import { BORDER_CORNER_RAD_RANGE, TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
@@ -118,7 +119,44 @@ export const drawBubbleFrame = (ctx: CanvasRenderingContext2D, opts: BubbleFrame
 	const seedX = Math.round(left + boxW / 2)
 	const seedY = Math.round(top + boxH / 2)
 	if (ctx.getImageData(seedX, seedY, 1, 1).data[3] === 0) {
-		floodFill(ctx, seedX, seedY, opts.fill)
+		const sharpCorners = tail
+			? tailAtTop
+				? tailAtLeft
+					? [true, false, false, false]
+					: [false, true, false, false]
+				: tailAtLeft
+					? [false, false, false, true]
+					: [false, false, true, false]
+			: undefined
+		const innerPoints = drawRoundRect(ctx, null, cell, {
+			borderRadius: opts.borderRadius,
+			shape: opts.shape,
+			padding: [top, ctx.canvas.width - left - boxW, ctx.canvas.height - top - boxH, left],
+			sharpCorners
+		})
+		fillPolygon(ctx, innerPoints, opts.fill)
+
+		if (tail && tailRows > 0) {
+			ctx.fillStyle = rgbaColor2string(opts.fill)
+			for (let j = 0; j < tailRows; j++) {
+				const w = Math.max(1, tailWidth - (tailAtTop ? tailRows - 1 - j : j))
+				if (w <= 2) continue
+				ctx.fillRect(
+					left + (tailAtLeft ? 1 : bodyCols - w + 1) * cell,
+					top + (tailAtTop ? j - tailRows : bodyRows + j) * cell,
+					(w - 2) * cell,
+					cell
+				)
+			}
+			if (tailWidth > 1) {
+				ctx.fillRect(
+					left + (tailAtLeft ? 1 : bodyCols - tailWidth) * cell,
+					tailAtTop ? top : bottom,
+					(tailWidth - 1) * cell,
+					cell
+				)
+			}
+		}
 	}
 }
 

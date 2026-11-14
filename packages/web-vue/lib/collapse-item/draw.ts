@@ -4,7 +4,7 @@ import type { RgbaColor } from '../share/type'
 import type { CollapseProvide } from '../collapse/type'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { getGlobalThemeColor } from '../share/util/color'
 import { fillArr } from '../share/util/common'
 
@@ -32,11 +32,11 @@ const getRanges = (width: number, height: number) => {
 const drawBorder = (
 	ctx: CanvasRenderingContext2D,
 	borderRadius: number[],
-	borderColor: RgbaColor,
+	borderColor: RgbaColor | null,
 	pixelSize: number
 ) => {
 	const ranges = getRanges(ctx.canvas.width, ctx.canvas.height)
-	drawRoundRect(ctx, borderColor, pixelSize, { borderRadius, ranges })
+	return drawRoundRect(ctx, borderColor, pixelSize, { borderRadius, ranges })
 }
 
 const HEAD_BORDER_RADIUS = fillArr(4, 4)
@@ -68,16 +68,14 @@ export const useDraw = (
 			if (!preprocessData) {
 				return
 			}
-			const { ctx, width, height } = preprocessData
+			const { ctx } = preprocessData
 
 			const pixelSize = pixelSizeRef.value
 
-			if (borderColor) {
-				drawBorder(ctx, borderRadius, borderColor, pixelSize)
-			}
+			const innerPoints = drawBorder(ctx, borderRadius, borderColor, pixelSize)
 
 			if (backgroundColor) {
-				floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+				fillPolygon(ctx, innerPoints, backgroundColor)
 			}
 		}
 	}

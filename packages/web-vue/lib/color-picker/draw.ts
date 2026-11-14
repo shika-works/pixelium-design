@@ -1,18 +1,12 @@
 import { ref, watch } from 'vue'
 import { alphaBlend, getGlobalThemeColor } from '../share/util/color'
-import {
-	canvasPreprocess,
-	drawRoundRect,
-	floodFillEdgePadding,
-	floodFillEdge
-} from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
 import type { ColorPickerProps } from './type'
 import type { InputGroupProvide } from '../input-group/type'
 import type { RgbaColor } from '../share/type'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { INTERVAL } from '../share/const/style'
-import { offsetOutward } from '../share/util/common'
 
 const DARK_DIV = { r: 192, g: 192, b: 192 } // #c0c0c0
 const LIGHT_DIV = { r: 229, g: 229, b: 229 } // #e5e5e5
@@ -119,7 +113,7 @@ export const useDraw = (
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 
 		const borderColor =
 			statusComputed.value !== 'normal'
@@ -133,36 +127,35 @@ export const useDraw = (
 					? getGlobalThemeColor('neutral', 10)
 					: getGlobalThemeColor('neutral', 10)
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize.value, {
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize.value, {
+			borderRadius: borderRadiusComputed.value,
+			shape: shapeComputed.value || 'rect',
+			size: sizeComputed.value || 'medium',
+			inner: !!inputGroupProvide,
+			first: first.value,
+			last: last.value,
+			nextIsTextButton: nextIsTextButton.value
+		})
+
+		const bg = getGlobalThemeColor('neutral', 1)
+		if (bg) {
+			fillPolygon(ctx, innerPoints, bg)
+			const gridPoints = drawRoundRect(ctx, null, pixelSize.value, {
 				borderRadius: borderRadiusComputed.value,
 				shape: shapeComputed.value || 'rect',
 				size: sizeComputed.value || 'medium',
 				inner: !!inputGroupProvide,
 				first: first.value,
 				last: last.value,
-				nextIsTextButton: nextIsTextButton.value
+				nextIsTextButton: nextIsTextButton.value,
+				padding: [
+					pixelSize.value / 2,
+					pixelSize.value / 2,
+					pixelSize.value / 2,
+					pixelSize.value / 2
+				]
 			})
-		}
-		const bg = getGlobalThemeColor('neutral', 1)
-		if (bg) {
-			floodFillEdgePadding(
-				ctx,
-				Math.round(width / 2),
-				Math.round(height / 2),
-				bg,
-				pixelSize.value / 2
-			)
-			let polygon = floodFillEdge(ctx, Math.round(width / 2), Math.round(height / 2), bg)
-			polygon = offsetOutward(
-				[Math.round(width / 2), Math.round(height / 2)],
-				polygon,
-				0.5
-			).map((e) => {
-				return [e[0] + 0.5, e[1] + 0.5]
-			})
-
-			drawTransparencyGridInPolygon(rgbColor.value, ctx, INTERVAL * 2, polygon)
+			drawTransparencyGridInPolygon(rgbColor.value, ctx, INTERVAL * 2, gridPoints)
 		}
 	}
 
