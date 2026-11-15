@@ -1,7 +1,7 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef, type Slots } from 'vue'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import type { SliderProps } from './type'
 import { isArray, isNumber, type Nullish } from 'parsnip-kit'
 import { fillArr } from '../share/util/common'
@@ -102,14 +102,20 @@ export const drawThumb = (
 			? getGlobalThemeColor('neutral', 10)
 			: getGlobalThemeColor('primary', 6)
 		if (thumbStartPreprocessData && startBorderColor) {
-			const { ctx, width, height } = thumbStartPreprocessData
-			drawRoundRect(ctx, startBorderColor, pixelSize, { shape: 'round', size: 'medium' })
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
+			const { ctx } = thumbStartPreprocessData
+			const innerPoints = drawRoundRect(ctx, startBorderColor, pixelSize, {
+				shape: 'round',
+				size: 'medium'
+			})
+			fillPolygon(ctx, innerPoints, thumbColor)
 		}
 		if (thumbEndPreprocessData && endBorderColor) {
-			const { ctx, width, height } = thumbEndPreprocessData
-			drawRoundRect(ctx, endBorderColor, pixelSize, { shape: 'round', size: 'medium' })
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
+			const { ctx } = thumbEndPreprocessData
+			const innerPoints = drawRoundRect(ctx, endBorderColor, pixelSize, {
+				shape: 'round',
+				size: 'medium'
+			})
+			fillPolygon(ctx, innerPoints, thumbColor)
 		}
 	} else {
 		const thumbPreprocessData = canvasPreprocess(thumbRef, thumbCanvasRef)
@@ -117,9 +123,12 @@ export const drawThumb = (
 			? getGlobalThemeColor('neutral', 10)
 			: getGlobalThemeColor('primary', 6)
 		if (thumbPreprocessData && borderColor) {
-			const { ctx, width, height } = thumbPreprocessData
-			drawRoundRect(ctx, borderColor, pixelSize, { shape: 'round', size: 'medium' })
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), thumbColor)
+			const { ctx } = thumbPreprocessData
+			const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+				shape: 'round',
+				size: 'medium'
+			})
+			fillPolygon(ctx, innerPoints, thumbColor)
 		}
 	}
 }
@@ -201,21 +210,14 @@ export const drawMark = (
 					: reverse
 						? markOffset + pixelSize
 						: areaWidth - markOffset - dotSize - pixelSize
-			if (borderColor) {
-				drawRoundRect(ctx, borderColor, pixelSize, {
-					shape: 'round',
-					size: 'medium',
-					direction,
-					padding: [paddingY, width - paddingX - dotSize, height - paddingY - dotSize, paddingX]
-				})
-			}
+			const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+				shape: 'round',
+				size: 'medium',
+				direction,
+				padding: [paddingY, width - paddingX - dotSize, height - paddingY - dotSize, paddingX]
+			})
 			if (dotColor) {
-				floodFill(
-					ctx,
-					Math.round(paddingX + dotSize / 2),
-					Math.round(paddingY + dotSize / 2),
-					dotColor
-				)
+				fillPolygon(ctx, innerPoints, dotColor)
 			}
 		}
 	}

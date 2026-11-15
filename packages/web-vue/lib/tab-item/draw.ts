@@ -1,112 +1,9 @@
 import { watch, type ComputedRef, type ShallowRef } from 'vue'
-import {
-	calcBorderCornerCenter,
-	canvasPreprocess,
-	drawCircle,
-	floodFill
-} from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import { useDarkMode } from '../share/hook/use-dark-mode'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import type { RgbaColor } from '../share/type'
-import { BORDER_CORNER_RAD_RANGE } from '../share/const'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
-
-const drawCorners = (
-	ctx: CanvasRenderingContext2D,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	ps: number,
-	indices: readonly [number, number],
-	fillStyle: string
-) => {
-	ctx.fillStyle = fillStyle
-	for (const i of indices) {
-		if (borderRadius[i] > ps) {
-			drawCircle(ctx, center[i][0], center[i][1], borderRadius[i], rad[i][0], rad[i][1], ps)
-		}
-	}
-}
-
-const doDraw = (
-	ctx: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-	center: [number, number][],
-	borderRadius: number[],
-	rad: [number, number][],
-	borderColor: RgbaColor,
-	backgroundColor: RgbaColor,
-	bottomBorderColor: RgbaColor,
-	pixelSize: number,
-	placement: string = 'top'
-) => {
-	const borderColorStr = rgbaColor2string(borderColor)
-	const bottomBorderColorStr = rgbaColor2string(bottomBorderColor)
-	const ps = pixelSize
-
-	if (placement === 'bottom' || placement === 'top') {
-		const isTop = placement === 'top'
-		const leftIdx = isTop ? 0 : 3
-		const rightIdx = isTop ? 1 : 2
-
-		drawCorners(ctx, center, borderRadius, rad, ps, [leftIdx, rightIdx], borderColorStr)
-
-		if (center[rightIdx][0] + ps > center[leftIdx][0]) {
-			const connectY = isTop ? 0 : height - ps
-			ctx.fillRect(
-				center[leftIdx][0],
-				connectY,
-				center[rightIdx][0] - center[leftIdx][0] + ps,
-				ps
-			)
-		}
-
-		const rightSideH = isTop ? height - center[rightIdx][1] : center[rightIdx][1]
-		if (rightSideH > 0) {
-			ctx.fillRect(width - ps, isTop ? center[rightIdx][1] : 0, ps, rightSideH)
-		}
-		const leftSideH = isTop ? height - center[leftIdx][1] : center[leftIdx][1]
-		if (leftSideH > 0) {
-			ctx.fillRect(0, isTop ? center[leftIdx][1] : 0, ps, leftSideH)
-		}
-
-		ctx.fillStyle = bottomBorderColorStr
-		ctx.fillRect(ps, isTop ? height - ps : 0, width - ps * 2, ps)
-	} else {
-		// left or right
-		const isLeft = placement === 'left'
-		const topIdx = isLeft ? 0 : 1
-		const bottomIdx = isLeft ? 3 : 2
-
-		drawCorners(ctx, center, borderRadius, rad, ps, [topIdx, bottomIdx], borderColorStr)
-
-		if (center[bottomIdx][1] + ps > center[topIdx][1]) {
-			const connectX = isLeft ? 0 : width - ps
-			ctx.fillRect(
-				connectX,
-				center[topIdx][1],
-				ps,
-				center[bottomIdx][1] - center[topIdx][1] + ps
-			)
-		}
-
-		const topSideW = isLeft ? width + ps - center[topIdx][0] : center[topIdx][0]
-		if (topSideW > 0) {
-			ctx.fillRect(isLeft ? center[topIdx][0] : 0, 0, topSideW, ps)
-		}
-		const bottomSideW = isLeft ? width + ps - center[bottomIdx][0] : center[bottomIdx][0]
-		if (bottomSideW > 0) {
-			ctx.fillRect(isLeft ? center[bottomIdx][0] : 0, height - ps, bottomSideW, ps)
-		}
-
-		ctx.fillStyle = bottomBorderColorStr
-		ctx.fillRect(isLeft ? width - ps : 0, ps, ps, height - ps * 2)
-	}
-
-	floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-}
 
 const TAB_RADIUS = 12
 
@@ -134,33 +31,40 @@ export const useDraw = (
 		const bottomBorderColor = options.active.value
 			? getGlobalThemeColor('neutral', 1)
 			: getGlobalThemeColor('neutral', 9)
+
+		if (!borderColor || !backgroundColor || !bottomBorderColor) {
+			return
+		}
+
 		const ps = pixelSize.value
 		const placement = options.placement.value
 		const borderRadius =
 			placement === 'bottom'
-				? [ps, ps, TAB_RADIUS, TAB_RADIUS]
+				? [0, 0, TAB_RADIUS, TAB_RADIUS]
 				: placement === 'left'
-					? [TAB_RADIUS, ps, ps, TAB_RADIUS]
+					? [TAB_RADIUS, 0, 0, TAB_RADIUS]
 					: placement === 'right'
-						? [ps, TAB_RADIUS, TAB_RADIUS, ps]
-						: /* top */ [TAB_RADIUS, TAB_RADIUS, ps, ps]
-		const center = calcBorderCornerCenter(borderRadius, width, height, ps)
-		const rad = BORDER_CORNER_RAD_RANGE
-		if (borderColor && backgroundColor && bottomBorderColor) {
-			doDraw(
-				ctx,
-				width,
-				height,
-				center,
-				borderRadius,
-				rad,
-				borderColor,
-				backgroundColor,
-				bottomBorderColor,
-				ps,
-				placement
-			)
+						? [0, TAB_RADIUS, TAB_RADIUS, 0]
+						: /* top */ [TAB_RADIUS, TAB_RADIUS, 0, 0]
+		const sharpCorners =
+			placement === 'bottom'
+				? [true, true, false, false]
+				: placement === 'left'
+					? [false, true, true, false]
+					: placement === 'right'
+						? [true, false, false, true]
+						: [false, false, true, true]
+
+		const innerPoints = drawRoundRect(ctx, borderColor, ps, { borderRadius, sharpCorners })
+
+		ctx.fillStyle = rgbaColor2string(bottomBorderColor)
+		if (placement === 'bottom' || placement === 'top') {
+			ctx.fillRect(ps, placement === 'top' ? height - ps : 0, width - ps * 2, ps)
+		} else {
+			ctx.fillRect(placement === 'left' ? width - ps : 0, ps, ps, height - ps * 2)
 		}
+
+		fillPolygon(ctx, innerPoints, backgroundColor)
 	}
 	const { debouncedTrigger, triggerDraw } = useDrawCanvas(wrapperRef, draw, {
 		pollSizeChange: options.pollSizeChange

@@ -32,33 +32,19 @@ const QUADRANT_TEMPLATES: [number, number][] = [
 	[-1, -1]
 ]
 
-function plot(
-	ctx: CanvasRenderingContext2D,
+function getPlottedPoints(
 	x: number,
 	y: number,
-	centerX: number,
-	centerY: number,
 	startRad: number,
-	endRad: number,
-	pixelSize: number
+	endRad: number
 ): [number, number][] {
-	const xRound = x
-	const yRound = y
-
 	const points: [number, number][] = []
 
 	for (let i = 0; i < QUADRANT_TEMPLATES.length; i++) {
 		const [sign1, sign2] = QUADRANT_TEMPLATES[i]
-		let px: number, py: number
-		if (i < 4) {
-			px = sign1 * xRound
-			py = sign2 * yRound
-		} else {
-			px = sign1 * yRound
-			py = sign2 * xRound
-		}
+		const px = i < 4 ? sign1 * x : sign1 * y
+		const py = i < 4 ? sign2 * y : sign2 * x
 		if (shouldPlot(px, py, startRad, endRad)) {
-			ctx.fillRect(centerX + px, centerY + py, pixelSize, pixelSize)
 			points.push([px, py])
 		}
 	}
@@ -66,25 +52,15 @@ function plot(
 	return points
 }
 // Bresenham algorithm
-export function drawCircle(
-	ctx: CanvasRenderingContext2D,
-	centerX: number,
-	centerY: number,
+function traceArc(
 	radius: number,
-	startRad = 0,
-	endRad = Math.PI * 2,
 	pixelSize: number,
-	range?: number[][]
+	startRad: number,
+	endRad: number
 ): [number, number][] {
-	let s = pixelSize
-	if (s <= 0 || radius <= 0) return []
-
-	if (range) {
-		ctx.save()
-		ctx.beginPath()
-		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
-		ctx.clip()
-	}
+	const s = pixelSize
+	const points: [number, number][] = []
+	if (s <= 0 || radius <= 0) return points
 
 	let x = 0
 	let y = radius
@@ -95,10 +71,8 @@ export function drawCircle(
 
 	const dx = s
 
-	const points: [number, number][] = []
-
 	while (x <= end) {
-		points.push(...plot(ctx, x, y, centerX, centerY, startRad, endRad, s))
+		points.push(...getPlottedPoints(x, y, startRad, endRad))
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
@@ -113,24 +87,17 @@ export function drawCircle(
 		}
 	}
 
-	if (range) {
-		ctx.restore()
-	}
-
 	return points
 }
 
-export function drawSmoothCircle(
-	ctx: CanvasRenderingContext2D,
-	centerX: number,
-	centerY: number,
+function traceSmoothArc(
 	radius: number,
-	startRad = 0,
-	endRad = Math.PI * 2,
-	pixelSize: number
-) {
-	let s = pixelSize
-	if (s <= 0 || radius <= 0) return
+	pixelSize: number,
+	startRad: number,
+	endRad: number
+): [number, number][] {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return []
 
 	const rate = radius / s
 	let x = 0
@@ -149,8 +116,9 @@ export function drawSmoothCircle(
 	const end = Math.ceil(tmp)
 
 	const dx = rate < 4 ? (s / 4) * 3 : s
+	const points: [number, number][] = []
 	while (x <= end) {
-		plot(ctx, Math.floor(x), Math.floor(y), centerX, centerY, startRad, endRad, s)
+		points.push(...getPlottedPoints(Math.floor(x), Math.floor(y), startRad, endRad))
 		x += dx
 		const yP = radius * radius - x * x
 		const originalY = y
@@ -162,137 +130,81 @@ export function drawSmoothCircle(
 			break
 		}
 	}
+
+	return points
 }
 
-export type floodFillArgs = {
-	x: number
-	y: number
-	width: number
-	height: number
-	fillColor: RgbaColor
-	targetColor: RgbaColor
-	pixels: number[]
+function traceCircle(
+	radius: number,
+	startRad: number,
+	endRad: number,
+	pixelSize: number,
+	smooth = false
+): [number, number][] {
+	return smooth
+		? traceSmoothArc(radius, pixelSize, startRad, endRad)
+		: traceArc(radius, pixelSize, startRad, endRad)
 }
 
-type FloodFillScan = {
-	minX: number
-	minY: number
-	maxX: number
-	maxY: number
-}
-
-let scanStack = new Int32Array(1024)
-
-const growStack = (needed: number) => {
-	if (scanStack.length < needed) {
-		scanStack = new Int32Array(Math.max(needed, scanStack.length * 2))
-	}
-	return scanStack
-}
-
-function scanFloodFill(
-	data32: Uint32Array,
-	w: number,
-	h: number,
-	startX: number,
-	startY: number,
-	uint32Color: number
-): FloodFillScan | null {
-	const targetColor = data32[startY * w + startX]
-	if (targetColor === uint32Color) return null
-
-	const seedRow = startY * w
-	let runStart = startX
-	while (runStart > 0 && data32[seedRow + runStart - 1] === targetColor) runStart--
-	let runEnd = startX
-	while (runEnd < w - 1 && data32[seedRow + runEnd + 1] === targetColor) runEnd++
-	for (let i = runStart; i <= runEnd; i++) data32[seedRow + i] = uint32Color
-
-	let minX = runStart
-	let maxX = runEnd
-	let minY = startY
-	let maxY = startY
-
-	let stack = growStack(3)
-	let top = 0
-	stack[top++] = startY
-	stack[top++] = runStart
-	stack[top++] = runEnd
-
-	while (top > 0) {
-		const spanRight = stack[--top]
-		const spanLeft = stack[--top]
-		const y = stack[--top]
-
-		for (let side = 0; side < 2; side++) {
-			const ny = side === 0 ? y - 1 : y + 1
-			if (ny < 0 || ny >= h) continue
-
-			const row = ny * w
-			let x = spanLeft
-			while (x <= spanRight) {
-				while (x <= spanRight && data32[row + x] !== targetColor) x++
-				if (x > spanRight) break
-
-				if (ny < minY) minY = ny
-				else if (ny > maxY) maxY = ny
-
-				const start = x
-				let l = start
-				while (l > 0 && data32[row + l - 1] === targetColor) l--
-				let r = start
-				while (r < w - 1 && data32[row + r + 1] === targetColor) r++
-
-				for (let i = l; i <= r; i++) data32[row + i] = uint32Color
-
-				if (l < minX) minX = l
-				if (r > maxX) maxX = r
-
-				if (top + 3 > stack.length) stack = growStack(top + 3)
-				stack[top++] = ny
-				stack[top++] = l
-				stack[top++] = r
-
-				x = r + 1
-			}
-		}
-	}
-
-	return { minX, minY, maxX, maxY }
-}
-
-export function floodFill(
+const paintCirclePoints = (
 	ctx: CanvasRenderingContext2D,
-	startX: number,
-	startY: number,
-	fillColor: RgbaColor
-): void {
-	const w = ctx.canvas.width
-	const h = ctx.canvas.height
-	if (w <= 0 || h <= 0) {
-		return
+	centerX: number,
+	centerY: number,
+	points: [number, number][],
+	pixelSize: number,
+	range?: number[][]
+) => {
+	if (!points.length) return
+
+	if (range) {
+		ctx.save()
+		ctx.beginPath()
+		ctx.rect(range[0][0], range[0][1], range[1][0] - range[0][0], range[1][1] - range[0][1])
+		ctx.clip()
 	}
-	if (startX < 0 || startX >= w || startY < 0 || startY >= h) {
-		return
+
+	for (let i = 0; i < points.length; i++) {
+		ctx.fillRect(centerX + points[i][0], centerY + points[i][1], pixelSize, pixelSize)
 	}
-	const img = ctx.getImageData(0, 0, w, h)
 
-	const data32 = new Uint32Array(img.data.buffer)
-	const uint32Color =
-		((fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r) >>> 0
+	if (range) {
+		ctx.restore()
+	}
+}
 
-	const scan = scanFloodFill(data32, w, h, startX, startY, uint32Color)
-	if (!scan) return
+export function drawCircle(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startRad = 0,
+	endRad = Math.PI * 2,
+	pixelSize: number,
+	range?: number[][]
+): [number, number][] {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return []
 
-	ctx.putImageData(
-		img,
-		0,
-		0,
-		scan.minX,
-		scan.minY,
-		scan.maxX - scan.minX + 1,
-		scan.maxY - scan.minY + 1
-	)
+	const points = traceCircle(radius, startRad, endRad, s)
+	paintCirclePoints(ctx, centerX, centerY, points, s, range)
+	return points
+}
+
+export function drawSmoothCircle(
+	ctx: CanvasRenderingContext2D,
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startRad = 0,
+	endRad = Math.PI * 2,
+	pixelSize: number
+): [number, number][] {
+	const s = pixelSize
+	if (s <= 0 || radius <= 0) return []
+
+	const points = traceCircle(radius, startRad, endRad, s, true)
+	paintCirclePoints(ctx, centerX, centerY, points, s)
+	return points
 }
 
 export const transformBorderRadiusSizeValue = (
@@ -522,6 +434,152 @@ export const calcBorderCornerCenterWithPadding = (
 	] as [number, number][]
 }
 
+type RoundRectCornerGeometry = {
+	radius: number[]
+	center: [number, number][]
+	angles: [number, number][]
+}
+
+const calcRoundRectCorners = (
+	canvas: HTMLCanvasElement,
+	pixelSize: number,
+	borderRadius: NumberOrPercentage | NumberOrPercentage[] | undefined,
+	shape: 'rect' | 'round' | 'circle' | 'square' | 'default' | undefined,
+	size: 'medium' | 'small' | 'large' = 'medium',
+	inner = false,
+	first = false,
+	last = false,
+	direction: 'horizontal' | 'vertical' = 'horizontal',
+	padding: number[] = [0, 0, 0, 0],
+	sharpCorners?: boolean[]
+): RoundRectCornerGeometry => {
+	const radius = getBorderRadius(
+		canvas,
+		pixelSize,
+		borderRadius,
+		shape,
+		size,
+		inner,
+		first,
+		last,
+		direction
+	)
+	if (sharpCorners) {
+		for (let i = 0; i < 4; i++) {
+			if (sharpCorners[i]) radius[i] = 0
+		}
+	}
+	return {
+		radius,
+		center: calcBorderCornerCenterWithPadding(
+			radius,
+			canvas.width,
+			canvas.height,
+			pixelSize,
+			padding
+		),
+		angles: BORDER_CORNER_RAD_RANGE
+	}
+}
+
+type InnerEdge = [y0: number, y1: number, x: number]
+
+const calcCornerEdges = (
+	offsets: [number, number][],
+	center: [number, number],
+	pixelSize: number,
+	top: number,
+	bottom: number,
+	isLeft: boolean
+): InnerEdge[] => {
+	const rows = new Map<number, number>()
+	for (let i = 0; i < offsets.length; i++) {
+		const y = center[1] + offsets[i][1]
+		const x = center[0] + (isLeft ? offsets[i][0] + pixelSize : offsets[i][0])
+		const prev = rows.get(y)
+		if (prev === undefined || (isLeft ? x > prev : x < prev)) rows.set(y, x)
+	}
+
+	const edges: InnerEdge[] = []
+	for (const y of [...rows.keys()].sort((a, b) => a - b)) {
+		const x = rows.get(y)!
+		const from = Math.max(top, y)
+		const to = Math.min(bottom, y + pixelSize)
+		if (to <= from) continue
+		const last = edges[edges.length - 1]
+		if (last && last[2] === x && from <= last[1]) last[1] = Math.max(last[1], to)
+		else edges.push([from, to, x])
+	}
+	return edges
+}
+
+const calcInnerPoints = (
+	width: number,
+	height: number,
+	pixelSize: number,
+	center: [number, number][],
+	offsetsByCorner: [number, number][][],
+	padding: number[]
+): [number, number][] => {
+	if (pixelSize <= 0 || width <= 0 || height <= 0) return []
+
+	const top = padding[0] + pixelSize
+	const bottom = height - padding[2] - pixelSize
+
+	const points: [number, number][] = []
+	const push = (x: number, y: number) => {
+		const last = points[points.length - 1]
+		if (!last || last[0] !== x || last[1] !== y) points.push([x, y])
+	}
+	const walk = (index: number, down: boolean) => {
+		const edges = calcCornerEdges(
+			offsetsByCorner[index],
+			center[index],
+			pixelSize,
+			top,
+			bottom,
+			index === 0 || index === 3
+		)
+		if (!edges.length) {
+			push(
+				index === 0 || index === 3 ? padding[3] + pixelSize : width - padding[1] - pixelSize,
+				index < 2 ? top : bottom
+			)
+			return
+		}
+		for (let i = 0; i < edges.length; i++) {
+			const [y0, y1, x] = edges[down ? i : edges.length - 1 - i]
+			push(x, down ? y0 : y1)
+			push(x, down ? y1 : y0)
+		}
+	}
+
+	walk(1, true)
+	walk(2, true)
+	walk(3, false)
+	walk(0, false)
+
+	return points
+}
+
+export const fillPolygon = (
+	ctx: CanvasRenderingContext2D,
+	points: [number, number][],
+	color: RgbaColor
+) => {
+	if (!points.length) {
+		return
+	}
+	ctx.fillStyle = rgbaColor2string(color)
+	ctx.beginPath()
+	ctx.moveTo(points[0][0], points[0][1])
+	for (let i = 1; i < points.length; i++) {
+		ctx.lineTo(points[i][0], points[i][1])
+	}
+	ctx.closePath()
+	ctx.fill()
+}
+
 export const canvasPreprocess = (
 	wrapperRef: ShallowRef<HTMLElement | null>,
 	canvasRef: ShallowRef<HTMLCanvasElement | null>,
@@ -536,7 +594,6 @@ export const canvasPreprocess = (
 
 	const el = wrapperRef.value
 	const rect = el.getBoundingClientRect()
-	// getBoundingClientRect is transform-aware (a dialog scales in), ResizeObserver is not.
 	const scaled =
 		Math.abs(rect.width - el.offsetWidth) > 1 || Math.abs(rect.height - el.offsetHeight) > 1
 	const width = (scaled ? el.offsetWidth : rect.width) - paddingX * 2
@@ -553,7 +610,6 @@ export const canvasPreprocess = (
 		canvas.width = pixelWidth
 		canvas.height = pixelHeight
 	} else {
-		// clearRect instead of canvas.width: the latter dirties the element's style.
 		ctx.clearRect(0, 0, canvas.width, canvas.height)
 	}
 
@@ -627,268 +683,6 @@ const clockOrderSort = (points: [number, number][]) => {
 	})
 }
 
-type FillRegionResult = {
-	w: number
-	h: number
-	img: ImageData
-	data32: Uint32Array
-	filled: Uint8Array
-	targetColor: number
-}
-
-const getDistinctFillColor = (targetColor: number): RgbaColor => {
-	const r = targetColor & 0xff
-	const g = (targetColor >> 8) & 0xff
-	const b = (targetColor >> 16) & 0xff
-	const a = (targetColor >> 24) & 0xff
-	return {
-		r: r === 255 ? 254 : 255,
-		g,
-		b,
-		a
-	}
-}
-
-function collectFloodFillRegion(
-	ctx: CanvasRenderingContext2D,
-	startX: number,
-	startY: number,
-	fillColor: RgbaColor
-): FillRegionResult | null {
-	const w = ctx.canvas.width
-	const h = ctx.canvas.height
-	if (w <= 0 || h <= 0) return null
-	if (startX < 0 || startX >= w || startY < 0 || startY >= h) return null
-
-	const img = ctx.getImageData(0, 0, w, h)
-	const data32 = new Uint32Array(img.data.buffer)
-	const uint32Color =
-		((fillColor.a << 24) | (fillColor.b << 16) | (fillColor.g << 8) | fillColor.r) >>> 0
-
-	const startPos = startY * w + startX
-	const targetColor = data32[startPos]
-
-	const filled = new Uint8Array(w * h)
-	type Span = { y: number; left: number; right: number; dy: number }
-	const stack: Span[] = []
-
-	function fillLine(x: number, y: number, dy: number): Span | null {
-		if (y < 0 || y >= h) return null
-
-		let left = x
-		while (
-			left > 0 &&
-			data32[y * w + (left - 1)] === targetColor &&
-			filled[y * w + (left - 1)] === 0
-		) {
-			left--
-		}
-
-		let right = x
-		while (
-			right < w - 1 &&
-			data32[y * w + (right + 1)] === targetColor &&
-			filled[y * w + (right + 1)] === 0
-		) {
-			right++
-		}
-
-		for (let i = left; i <= right; i++) {
-			const pos = y * w + i
-			if (filled[pos] === 0) {
-				filled[pos] = 1
-				data32[pos] = uint32Color
-			}
-		}
-
-		return { y, left, right, dy }
-	}
-
-	const firstSpan = fillLine(startX, startY, 1)
-	if (firstSpan) stack.push(firstSpan)
-
-	while (stack.length) {
-		const { y, left, right } = stack.pop()!
-
-		// Check the row above the span
-		if (y - 1 >= 0) {
-			let x = left
-			while (x <= right) {
-				const pos = (y - 1) * w + x
-				if (data32[pos] !== targetColor || filled[pos] === 1) {
-					x++
-					continue
-				}
-
-				const newSpan = fillLine(x, y - 1, -1)
-				if (newSpan) stack.push(newSpan)
-				x = newSpan ? newSpan.right + 1 : x + 1
-			}
-		}
-
-		// Check the row below the span
-		if (y + 1 < h) {
-			let x = left
-			while (x <= right) {
-				const pos = (y + 1) * w + x
-				if (data32[pos] !== targetColor || filled[pos] === 1) {
-					x++
-					continue
-				}
-
-				const newSpan = fillLine(x, y + 1, 1)
-				if (newSpan) stack.push(newSpan)
-				x = newSpan ? newSpan.right + 1 : x + 1
-			}
-		}
-	}
-
-	return { w, h, img, data32, filled, targetColor }
-}
-
-function getEdgePointsFromFilled(filled: Uint8Array, w: number, h: number): [number, number][] {
-	const edgePoints = new Set<number>()
-	for (let y = 0; y < h; y++) {
-		for (let x = 0; x < w; x++) {
-			const pos = y * w + x
-			if (filled[pos] === 1) {
-				let isEdge = false
-				if (x === 0 || filled[y * w + (x - 1)] === 0) {
-					isEdge = true
-				} else if (x === w - 1 || filled[y * w + (x + 1)] === 0) {
-					isEdge = true
-				} else if (y === 0 || filled[(y - 1) * w + x] === 0) {
-					isEdge = true
-				} else if (y === h - 1 || filled[(y + 1) * w + x] === 0) {
-					isEdge = true
-				}
-
-				if (isEdge) {
-					edgePoints.add(x * h + y)
-				}
-			}
-		}
-	}
-
-	const points: [number, number][] = Array.from(edgePoints).map((enc) => {
-		const x = Math.floor(enc / h)
-		const y = enc % h
-		return [x, y]
-	})
-
-	if (points.length === 0) return []
-
-	clockOrderSort(points)
-
-	return filterLine(points)
-}
-
-export function floodFillEdge(
-	ctx: CanvasRenderingContext2D,
-	startX: number,
-	startY: number,
-	fillColor: RgbaColor
-): [number, number][] {
-	const result = collectFloodFillRegion(ctx, startX, startY, fillColor)
-	if (!result) return []
-	return getEdgePointsFromFilled(result.filled, result.w, result.h)
-}
-
-export function floodFillEdgePadding(
-	ctx: CanvasRenderingContext2D,
-	startX: number,
-	startY: number,
-	color: RgbaColor,
-	padding: number
-): void {
-	if (padding <= 0) return
-	const w = ctx.canvas.width
-	const h = ctx.canvas.height
-	if (w <= 0 || h <= 0) return
-	if (startX < 0 || startX >= w || startY < 0 || startY >= h) return
-
-	const img = ctx.getImageData(0, 0, w, h)
-	const data32 = new Uint32Array(img.data.buffer)
-	const fillColor = getDistinctFillColor(data32[startY * w + startX])
-	const result = collectFloodFillRegion(ctx, startX, startY, fillColor)
-	if (!result) return
-
-	const bandColor = (color.a << 24) | (color.b << 16) | (color.g << 8) | color.r
-	const bandMask = new Uint8Array(w * h)
-	const distances = new Uint16Array(w * h)
-	const queue: [number, number][] = []
-
-	// restore original region color before drawing the padding band
-	for (let i = 0; i < result.w * result.h; i++) {
-		if (result.filled[i] === 1) {
-			data32[i] = result.targetColor
-		}
-	}
-
-	for (let y = 0; y < h; y++) {
-		for (let x = 0; x < w; x++) {
-			const pos = y * w + x
-			if (result.filled[pos] !== 1) continue
-
-			const left = x === 0 || result.filled[pos - 1] === 0
-			const right = x === w - 1 || result.filled[pos + 1] === 0
-			const top = y === 0 || result.filled[pos - w] === 0
-			const bottom = y === h - 1 || result.filled[pos + w] === 0
-			const topLeft = x === 0 || y === 0 || result.filled[pos - w - 1] === 0
-			const topRight = x === w - 1 || y === 0 || result.filled[pos - w + 1] === 0
-			const bottomLeft = x === 0 || y === h - 1 || result.filled[pos + w - 1] === 0
-			const bottomRight = x === w - 1 || y === h - 1 || result.filled[pos + w + 1] === 0
-			if (left || right || top || bottom || topLeft || topRight || bottomLeft || bottomRight) {
-				queue.push([x, y])
-				bandMask[pos] = 1
-				distances[pos] = 0
-			}
-		}
-	}
-
-	const dirs = [
-		[0, 1],
-		[0, -1],
-		[1, 0],
-		[-1, 0],
-		[1, 1],
-		[1, -1],
-		[-1, 1],
-		[-1, -1]
-	] as const
-
-	let head = 0
-	while (head < queue.length) {
-		const [x, y] = queue[head++]!
-		const pos = y * w + x
-		const distance = distances[pos]
-		if (distance >= padding - 1) {
-			continue
-		}
-
-		for (const [dx, dy] of dirs) {
-			const nx = x + dx
-			const ny = y + dy
-			if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue
-
-			const npos = ny * w + nx
-			if (result.filled[npos] !== 1 || bandMask[npos] === 1) continue
-
-			bandMask[npos] = 1
-			distances[npos] = distance + 1
-			queue.push([nx, ny])
-		}
-	}
-
-	for (let i = 0; i < bandMask.length; i++) {
-		if (bandMask[i] === 1) {
-			data32[i] = bandColor
-		}
-	}
-
-	ctx.putImageData(img, 0, 0)
-}
-
 export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number][] {
 	const canvas = ctx.canvas
 	const width = canvas.width
@@ -957,7 +751,7 @@ export function outerEdgePoints(ctx: CanvasRenderingContext2D): [number, number]
 }
 
 export type DrawRoundRectOptions = {
-	// For getBorderRadius
+	// Used by getBorderRadius
 	borderRadius?: NumberOrPercentage | NumberOrPercentage[]
 	shape?: 'rect' | 'round' | 'circle' | 'square' | 'default'
 	size?: 'medium' | 'small' | 'large'
@@ -965,23 +759,23 @@ export type DrawRoundRectOptions = {
 	first?: boolean
 	last?: boolean
 	direction?: 'horizontal' | 'vertical'
-	// For drawCircle
+	// Used by drawCircle
 	ranges?: number[][][]
 	padding?: number[]
-	// For inner-group (input/button group) borders
+	// Used by inner-group borders
 	nextIsTextButton?: boolean
-	// Smooth rounded corners
 	smooth?: boolean
 	// Draw corners regardless of borderRadius size
 	miniRadius?: boolean
+	sharpCorners?: boolean[]
 }
 
 export const drawRoundRect = (
 	ctx: CanvasRenderingContext2D,
-	borderColor: RgbaColor,
+	borderColor: RgbaColor | null | undefined,
 	pixelSize: number,
 	options: DrawRoundRectOptions = {}
-) => {
+): [number, number][] => {
 	const {
 		borderRadius,
 		shape = 'rect',
@@ -994,13 +788,21 @@ export const drawRoundRect = (
 		padding = [0, 0, 0, 0],
 		nextIsTextButton = false,
 		smooth = false,
-		miniRadius = false
+		miniRadius = false,
+		sharpCorners
 	} = options
 
 	const width = ctx.canvas.width
 	const height = ctx.canvas.height
 
-	const resolvedRadius = getBorderRadius(
+	const hasLeftNeighbor = inner && !first
+	const hasRightNeighbor = inner && !last
+
+	const {
+		radius: resolvedRadius,
+		center,
+		angles: rad
+	} = calcRoundRectCorners(
 		ctx.canvas,
 		pixelSize,
 		borderRadius,
@@ -1009,88 +811,87 @@ export const drawRoundRect = (
 		inner,
 		first,
 		last,
-		direction
+		direction,
+		padding,
+		sharpCorners
 	)
 
-	const hasLeftNeighbor = inner && !first
-	const hasRightNeighbor = inner && !last
+	const paint = borderColor != null
+	if (borderColor) {
+		ctx.fillStyle = rgbaColor2string(borderColor)
+	}
 
-	const rad = BORDER_CORNER_RAD_RANGE
-	const center = calcBorderCornerCenterWithPadding(
-		resolvedRadius,
-		width,
-		height,
-		pixelSize,
-		padding
-	)
-
-	ctx.fillStyle = rgbaColor2string(borderColor)
+	const offsetsByCorner: [number, number][][] = []
 	for (let i = 0; i < 4; i++) {
-		if (resolvedRadius[i] > pixelSize || miniRadius) {
-			if (smooth) {
-				drawSmoothCircle(
-					ctx,
-					center[i][0],
-					center[i][1],
-					resolvedRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize
-				)
-			} else {
-				drawCircle(
-					ctx,
-					center[i][0],
-					center[i][1],
-					resolvedRadius[i],
-					rad[i][0],
-					rad[i][1],
-					pixelSize,
-					ranges?.[i]
-				)
+		const offsets = traceCircle(resolvedRadius[i], rad[i][0], rad[i][1], pixelSize, smooth)
+		if (paint && (resolvedRadius[i] > pixelSize || miniRadius)) {
+			paintCirclePoints(
+				ctx,
+				center[i][0],
+				center[i][1],
+				offsets,
+				pixelSize,
+				smooth ? undefined : ranges?.[i]
+			)
+		}
+		offsetsByCorner[i] = offsets
+	}
+
+	if (paint) {
+		if (center[1][0] + pixelSize > center[0][0]) {
+			let length = center[1][0] - center[0][0] + pixelSize
+			if (hasRightNeighbor) {
+				length -= pixelSize
 			}
+			ctx.fillRect(center[0][0], padding[0], length, pixelSize)
 		}
-	}
 
-	if (center[1][0] + pixelSize > center[0][0]) {
-		let length = center[1][0] - center[0][0] + pixelSize
+		if (center[2][1] + pixelSize > center[1][1] && !hasRightNeighbor) {
+			ctx.fillRect(
+				width - padding[1] - pixelSize,
+				center[1][1],
+				pixelSize,
+				center[2][1] - center[1][1] + pixelSize
+			)
+		}
+
+		if (center[3][0] < center[2][0] + pixelSize) {
+			let length = center[2][0] - center[3][0] + pixelSize
+			if (hasRightNeighbor) {
+				length -= pixelSize
+			}
+			ctx.fillRect(center[3][0], height - padding[2] - pixelSize, length, pixelSize)
+		}
+
+		if (!hasLeftNeighbor && center[3][1] + pixelSize > center[0][1]) {
+			ctx.fillRect(padding[3], center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
+		}
+
+		if (hasLeftNeighbor) {
+			ctx.fillRect(padding[3] + pixelSize / 2, 0, pixelSize / 2, height)
+		}
 		if (hasRightNeighbor) {
-			length -= pixelSize
+			let length = pixelSize
+			if (nextIsTextButton) {
+				length /= 2
+			}
+			ctx.fillRect(width - padding[1] - 2 * pixelSize - 1, 0, length, height)
 		}
-		ctx.fillRect(center[0][0], padding[0], length, pixelSize)
 	}
 
-	if (center[2][1] + pixelSize > center[1][1] && !hasRightNeighbor) {
-		ctx.fillRect(
-			width - padding[1] - pixelSize,
-			center[1][1],
+	if (hasRightNeighbor) {
+		const innerPadding = [padding[0], padding[1] + pixelSize + 1, padding[2], padding[3]]
+		return calcInnerPoints(
+			width,
+			height,
 			pixelSize,
-			center[2][1] - center[1][1] + pixelSize
+			calcBorderCornerCenterWithPadding(resolvedRadius, width, height, pixelSize, innerPadding),
+			offsetsByCorner,
+			innerPadding
 		)
 	}
 
-	if (center[3][0] < center[2][0] + pixelSize) {
-		let length = center[2][0] - center[3][0] + pixelSize
-		if (hasRightNeighbor) {
-			length -= pixelSize
-		}
-		ctx.fillRect(center[3][0], height - padding[2] - pixelSize, length, pixelSize)
-	}
-
-	if (!hasLeftNeighbor && center[3][1] + pixelSize > center[0][1]) {
-		ctx.fillRect(padding[3], center[0][1], pixelSize, center[3][1] - center[0][1] + pixelSize)
-	}
-
-	if (hasLeftNeighbor) {
-		ctx.fillRect(padding[3] + pixelSize / 2, 0, pixelSize / 2, height)
-	}
-	if (hasRightNeighbor) {
-		let length = pixelSize
-		if (nextIsTextButton) {
-			length /= 2
-		}
-		ctx.fillRect(width - padding[1] - 2 * pixelSize - 1, 0, length, height)
-	}
+	return calcInnerPoints(width, height, pixelSize, center, offsetsByCorner, padding)
 }
 
 export const drawRectBorder = (

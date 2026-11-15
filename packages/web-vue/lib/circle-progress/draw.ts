@@ -1,6 +1,6 @@
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, parseColor, rgbaColor2string } from '../share/util/color'
-import { canvasPreprocess, drawCircle, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawCircle } from '../share/util/plot'
 import { watch, type Ref, type ShallowRef } from 'vue'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -38,7 +38,6 @@ type RingSpan = {
 }
 
 // Row runs of the band enclosed by the inner/outer outline pixels drawn by drawCircle.
-// Used instead of floodFill when the ring is too thin for 4-directional fill.
 const getRingSpans = (
 	outerPoints: [number, number][],
 	innerPoints: [number, number][],
@@ -110,25 +109,6 @@ const fillRingSpans = (
 			}
 			ctx.fillRect(centerX + x, centerY + y, pixelSize, pixelSize)
 		}
-	}
-}
-
-// Draw a 1-pixel radial line between the inner and outer circle at a given angle.
-const drawRadialLine = (
-	ctx: CanvasRenderingContext2D,
-	centerX: number,
-	centerY: number,
-	innerRadius: number,
-	outerRadius: number,
-	angle: number,
-	pixelSize: number
-) => {
-	const cosA = Math.cos(angle)
-	const sinA = Math.sin(angle)
-	for (let r = innerRadius + pixelSize; r < outerRadius; r += pixelSize) {
-		const px = Math.round((r * cosA) / pixelSize) * pixelSize
-		const py = Math.round((r * sinA) / pixelSize) * pixelSize
-		ctx.fillRect(centerX + px, centerY + py, pixelSize, pixelSize)
 	}
 }
 
@@ -224,76 +204,34 @@ export const useDraw = (options: UseDrawOptions) => {
 			parseColor(options.trackColor.value)?.color) ||
 			getGlobalThemeColor('neutral', 5) || { r: 255, g: 255, b: 255, a: 1 }
 
-		// 4-directional floodFill fails for rings <= 3 pixels; fill the row intervals instead.
-		const isThinRing = outerRadius - innerRadius <= pixelSize * 3
-		const ringSpans = isThinRing
-			? getRingSpans(ringOutline.outer, ringOutline.inner, pixelSize)
-			: []
-
-		const trackStartX = Math.round(centerX + (innerRadius + outerRadius) / 2)
-		const trackStartY = Math.round(centerY)
+		const ringSpans = getRingSpans(ringOutline.outer, ringOutline.inner, pixelSize)
 
 		ctx.fillStyle = rgbaColor2string(trackColorRgba)
-		if (isThinRing) {
-			fillRingSpans(ctx, centerX, centerY, ringSpans, pixelSize)
-		} else {
-			floodFill(ctx, trackStartX, trackStartY, trackColorRgba)
-		}
+		fillRingSpans(ctx, centerX, centerY, ringSpans, pixelSize)
+
 		const startAngle = -Math.PI / 2
 		const endAngle = startAngle + Math.PI * 2 * options.progress.value
 
 		if (backgroundColor && options.progress.value > 0) {
 			ctx.fillStyle = rgbaColor2string(backgroundColor)
 			if (options.progress.value >= 1) {
-				if (isThinRing) {
-					fillRingSpans(ctx, centerX, centerY, ringSpans, pixelSize)
-				} else {
-					floodFill(ctx, trackStartX, trackStartY, backgroundColor)
-				}
-			} else if (isThinRing) {
-				fillRingSpans(ctx, centerX, centerY, ringSpans, pixelSize, startAngle, endAngle)
+				fillRingSpans(ctx, centerX, centerY, ringSpans, pixelSize)
 			} else {
-				if (borderColor) {
-					ctx.fillStyle = rgbaColor2string(backgroundColor)
-					drawRadialLine(ctx, centerX, centerY, innerRadius, outerRadius, startAngle, pixelSize)
-					drawRadialLine(ctx, centerX, centerY, innerRadius, outerRadius, endAngle, pixelSize)
-					drawRingBorder(
-						ctx,
-						centerX,
-						centerY,
-						innerRadius,
-						outerRadius,
-						0,
-						Math.PI * 2,
-						pixelSize,
-						borderColor
-					)
-				}
-				const midAngle = (startAngle + endAngle) / 2
-				const arcStartX = Math.round(
-					centerX + ((innerRadius + outerRadius) / 2) * Math.cos(midAngle)
-				)
-				const arcStartY = Math.round(
-					centerY + ((innerRadius + outerRadius) / 2) * Math.sin(midAngle)
-				)
-				ctx.fillStyle = rgbaColor2string(backgroundColor)
-				floodFill(ctx, arcStartX, arcStartY, backgroundColor)
+				fillRingSpans(ctx, centerX, centerY, ringSpans, pixelSize, startAngle, endAngle)
 			}
 		}
 
-		if (isThinRing) {
-			drawRingBorder(
-				ctx,
-				centerX,
-				centerY,
-				innerRadius,
-				outerRadius,
-				0,
-				Math.PI * 2,
-				pixelSize,
-				borderColor
-			)
-		}
+		drawRingBorder(
+			ctx,
+			centerX,
+			centerY,
+			innerRadius,
+			outerRadius,
+			0,
+			Math.PI * 2,
+			pixelSize,
+			borderColor
+		)
 	}
 
 	const { debouncedTrigger } = useDrawCanvas(options.wrapperRef, drawPixel, {
