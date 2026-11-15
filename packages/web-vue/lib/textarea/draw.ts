@@ -71,8 +71,7 @@ export const useDraw = (
 	}
 
 	const { debouncedTrigger } = useDrawCanvas(wrapperRef, drawPixel, {
-		pollSizeChange: options.pollSizeChangeComputed,
-		renderImmediatelyWhenResize: true
+		pollSizeChange: options.pollSizeChangeComputed
 	})
 
 	watch(

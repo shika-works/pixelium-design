@@ -1,6 +1,6 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { getGlobalThemeColor } from '../share/util/color'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -30,7 +30,7 @@ export const useDraw = (
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 		const pixelSize = pixelSizeRef.value
 
 		const borderColor =
@@ -56,19 +56,17 @@ export const useDraw = (
 			}
 		}
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize, {
-				borderRadius: radiusValue,
-				shape: shapeValue,
-				size: 'medium'
-			})
-		}
-
 		const backgroundColor = options.disabled.value
 			? getGlobalThemeColor('neutral', 6)
 			: getGlobalThemeColor('neutral', 1)
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+			borderRadius: radiusValue,
+			shape: shapeValue,
+			size: 'medium'
+		})
+
 		if (backgroundColor) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+			fillPolygon(ctx, innerPoints, backgroundColor)
 		}
 	}
 

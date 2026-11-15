@@ -1,6 +1,6 @@
 import { watch, type ComputedRef, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { getGlobalThemeColor } from '../share/util/color'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -22,7 +22,7 @@ export const useDraw = (
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 
 		const pixelSize = pixelSizeRef.value
 		const disabled = options.disabled.value
@@ -32,11 +32,10 @@ export const useDraw = (
 			return
 		}
 
-		drawRoundRect(ctx, borderColor, pixelSize, {
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
 			borderRadius: pixelSize * 3
 		})
-
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+		fillPolygon(ctx, innerPoints, backgroundColor)
 	}
 
 	const { debouncedTrigger } = useDrawCanvas(wrapperRef, drawPixel)

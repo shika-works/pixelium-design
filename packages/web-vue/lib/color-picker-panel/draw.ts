@@ -1,6 +1,6 @@
 import { watch, type Ref, type ShallowRef } from 'vue'
 import { useDarkMode } from '../share/hook/use-dark-mode'
-import { canvasPreprocess, drawRoundRect, floodFill, roundToPixel } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon, roundToPixel } from '../share/util/plot'
 import type { HsvaColor } from '../share/type'
 import { getGlobalThemeColor, hsvToRgba } from '../share/util/color'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
@@ -17,13 +17,22 @@ export const useDraw = (
 			return
 		}
 
-		const { ctx, width, height } = data
+		const { ctx, width } = data
 
 		const borderColor = getGlobalThemeColor('neutral', 10)
 		const borderColorInner = getGlobalThemeColor('neutral', 1)
 		if (!borderColor || !borderColorInner) {
 			return
 		}
+
+		const innerPoints = drawRoundRect(ctx, null, pixelSize.value, {
+			shape: 'round'
+		})
+
+		if (hsvColor?.value) {
+			fillPolygon(ctx, innerPoints, hsvToRgba(hsvColor.value))
+		}
+
 		drawRoundRect(ctx, borderColorInner, pixelSize.value, {
 			padding: fillArr(pixelSize.value / 2, 4),
 			borderRadius: fillArr(roundToPixel(width / 2, pixelSize.value), 4).map(
@@ -33,10 +42,6 @@ export const useDraw = (
 		drawRoundRect(ctx, borderColor, pixelSize.value, {
 			shape: 'round'
 		})
-
-		if (hsvColor?.value) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), hsvToRgba(hsvColor.value))
-		}
 	}
 	const darkMode = useDarkMode()
 

@@ -1,4 +1,5 @@
-import { type ShallowRef, nextTick, onBeforeUnmount, onMounted, type WatchSource } from 'vue'
+import { type ShallowRef, nextTick, onMounted, type WatchSource } from 'vue'
+import { useMutationObserver } from './use-mutation-observer'
 import { usePolling } from './use-polling'
 import { useResizeObserver } from './use-resize-observer'
 import { useTransitionEnd } from './use-transition-end'
@@ -24,7 +25,6 @@ export const ignoreNonSizeTransition = (event: TransitionEvent) => {
 
 export interface UseDrawCanvasOptions {
 	pollSizeChange?: WatchSource<any>
-	renderImmediatelyWhenResize?: boolean
 }
 
 export function useDrawCanvas(
@@ -35,24 +35,43 @@ export function useDrawCanvas(
 	const { pollSizeChange } = options
 
 	let wrapperSize = { width: 0, height: 0 }
-	let rafId: number | null = null
+	let queued = false
 	const scheduleDraw = () => {
-		if (rafId !== null) return
-		rafId = requestAnimationFrame(() => {
-			rafId = null
+		if (queued) return
+		queued = true
+		queueMicrotask(() => {
+			queued = false
 			drawFunc()
 		})
 	}
+
+	// Canvas self-resizes while drawing; ignore those mutations to avoid redraw loops.
+	// Other DOM changes can resize the wrapper after ResizeObserver delivery
+	// (e.g. microtask style flush), so redraw in the same microtask turn before paint.
+	useMutationObserver(
+		wrapperRef,
+		(records) => {
+			for (let i = 0; i < records.length; i++) {
+				if (records[i].target instanceof HTMLCanvasElement) {
+					continue
+				}
+				scheduleDraw()
+				return
+			}
+		},
+		{
+			attributes: true,
+			attributeFilter: ['style', 'class'],
+			childList: true,
+			subtree: true,
+			characterData: true
+		}
+	)
 
 	onMounted(() => {
 		nextTick(() => {
 			drawFunc()
 		})
-	})
-
-	onBeforeUnmount(() => {
-		if (rafId !== null) cancelAnimationFrame(rafId)
-		rafId = null
 	})
 
 	useResizeObserver(wrapperRef, drawFunc)

@@ -1,7 +1,7 @@
 import { watch, type Ref, type ShallowRef, type Slots } from 'vue'
 import type { NumberOrPercentage, RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
 import type { AlertProps } from './type'
@@ -103,7 +103,7 @@ export const useDraw = (options: UseDrawOptions) => {
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 
 		const pixelSize = pixelSizeRef.value
 
@@ -113,22 +113,20 @@ export const useDraw = (options: UseDrawOptions) => {
 			options.palette.value
 		)
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize, {
-				borderRadius: options.borderRadius.value,
-				shape: options.shape.value,
-				size: 'medium'
-			})
-		}
-
 		const backgroundColor = getBackgroundColor(
 			options.variant.value,
 			options.type.value,
 			options.palette.value
 		)
 
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+			borderRadius: options.borderRadius.value,
+			shape: options.shape.value,
+			size: 'medium'
+		})
+
 		if (backgroundColor) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+			fillPolygon(ctx, innerPoints, backgroundColor)
 		}
 	}
 

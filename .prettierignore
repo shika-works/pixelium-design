@@ -25,3 +25,5 @@ packages/document/.vitepress/dist
 packages/document/.vitepress/cache
 packages/document/.vitepress/.temp
 packages/document/public
+
+.pnpm-store

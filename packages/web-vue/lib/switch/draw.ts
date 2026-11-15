@@ -1,9 +1,4 @@
-import {
-	drawRoundRect,
-	drawSmoothCircle,
-	canvasPreprocess,
-	floodFill
-} from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, parseColor, rgbaColor2string } from '../share/util/color'
 import { TRANSPARENT_RGBA_COLOR_OBJECT } from '../share/const'
@@ -68,7 +63,7 @@ export const useDraw = (options: UseDrawOptions) => {
 		if (!preprocessData) {
 			return
 		}
-		const { ctx, width, height } = preprocessData
+		const { ctx } = preprocessData
 
 		const pixelSize = options.pixelSizeRef.value
 
@@ -80,11 +75,11 @@ export const useDraw = (options: UseDrawOptions) => {
 		)
 
 		if (backgroundColor) {
-			drawRoundRect(ctx, backgroundColor, pixelSize, {
+			const innerPoints = drawRoundRect(ctx, backgroundColor, pixelSize, {
 				shape: options.shape.value,
 				miniRadius: options.sizeComputed.value === 'small' && options.shape.value === 'round'
 			})
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
+			fillPolygon(ctx, innerPoints, backgroundColor)
 		}
 
 		const buttonPreprocessData = canvasPreprocess(
@@ -103,16 +98,17 @@ export const useDraw = (options: UseDrawOptions) => {
 			return
 		}
 
-		buttonCtx.fillStyle = rgbaColor2string(sliceColor)
-
-		const radius = Math.round(buttonSize / 2 - pixelSize / 2)
 		if (options.shape.value === 'round') {
-			drawSmoothCircle(buttonCtx, radius, radius, radius, 0, Math.PI * 2, pixelSize)
+			const radius = Math.round(buttonSize / 2 - pixelSize / 2)
+			const innerPoints = drawRoundRect(buttonCtx, sliceColor, pixelSize, {
+				borderRadius: radius,
+				smooth: true
+			})
+			fillPolygon(buttonCtx, innerPoints, sliceColor)
 		} else {
+			buttonCtx.fillStyle = rgbaColor2string(sliceColor)
 			buttonCtx.fillRect(0, 0, buttonSize, buttonSize)
 		}
-
-		floodFill(buttonCtx, Math.round(radius + 1), Math.round(radius + 1), sliceColor)
 	}
 
 	const drawAndRefresh = () => {
