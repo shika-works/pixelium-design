@@ -6,6 +6,26 @@
 ]]]
 
 [[[zh
+## v0.2.2
+- 调整：
+  PromptSwitch 组件未选中时文字置灰。
+  Select 组件右侧箭头图标颜色减淡。
+- 优化：
+  - 优化 canvas 绘制，大幅减少大面积填充耗时。
+- 修复：
+  - 优化 canvas 绘制触发时机，修复 ResizeObserver 和 Vue 更新页面触发时机不同引起的闪烁。
+]]]
+[[[en
+- Adjustments:
+  - PromptSwitch component: text is now greyed out when unselected.
+  - Select component: lightened the color of the right-side arrow icon.
+- Optimizations:
+  - Optimized the canvas draw trigger timing, fixing flickering caused by the differing trigger timings of ResizeObserver and Vue page updates.
+- Fixes:
+  - Optimized the canvas draw trigger timing and fixed flickering caused by the resize-loop issue.
+]]]
+
+[[[zh
 ## v0.2.1
 - 新增：
   - 新增数据输入组件：Upload、UploadFileList、UploadImage、UploadDragger。
@@ -33,7 +53,7 @@
   - The Image component has a new `previewSrc` prop.
 - Optimizations:
   - Optimize canvas rendering to reduce redundant triggers and improve performance.
-- Adjustment:
+- Adjustments:
   - The `pollSizeChange` property is no longer needed (kept to handle unknown cases); components inside a Dialog and similar containers now render automatically from their layout size.
 - Fixes
   - Fixed an issue where components inside a Dialog failed to render their canvas without `pollSizeChange`.

@@ -9,7 +9,7 @@ import {
 	canvasPreprocess,
 	drawCircle,
 	drawRoundRect,
-	floodFill,
+	fillPolygon,
 	getBorderRadius
 } from '../share/util/plot'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
@@ -421,6 +421,32 @@ export const useDraw = (
 		const center = calcBorderCornerCenter(borderRadius, width, height, pixelSize)
 		const rad = BORDER_CORNER_RAD_RANGE
 
+		const rectOptions = {
+			borderRadius: options.borderRadiusComputed.value,
+			shape: options.shapeComputed.value || 'rect',
+			size: options.sizeComputed.value || 'medium',
+			inner: options.innerButtonGroup.value || options.innerInputGroup.value,
+			first: options.first.value,
+			last: options.last.value,
+			nextIsTextButton: options.typeComputed.value === 'text' || options.nextIsTextButton.value
+		}
+
+		const innerPoints = drawRoundRect(ctx, null, pixelSize, rectOptions)
+
+		const backgroundColor = getBackgroundColor(
+			!!options.disabledComputed.value,
+			!!options.loadingComputed.value,
+			options.typeComputed.value || 'primary',
+			options.themeComputed.value || 'primary',
+			options.palette.value,
+			options.hoverFlag.value,
+			options.activeFlag.value
+		)
+
+		if (backgroundColor) {
+			fillPolygon(ctx, innerPoints, backgroundColor)
+		}
+
 		if (!options.typeComputed.value || options.typeComputed.value === 'primary') {
 			drawGradient(
 				ctx,
@@ -441,31 +467,7 @@ export const useDraw = (
 				options.activeFlag.value
 			)
 		}
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize, {
-				borderRadius: options.borderRadiusComputed.value,
-				shape: options.shapeComputed.value || 'rect',
-				size: options.sizeComputed.value || 'medium',
-				inner: options.innerButtonGroup.value || options.innerInputGroup.value,
-				first: options.first.value,
-				last: options.last.value,
-				nextIsTextButton:
-					options.typeComputed.value === 'text' || options.nextIsTextButton.value
-			})
-		}
-		const backgroundColor = getBackgroundColor(
-			!!options.disabledComputed.value,
-			!!options.loadingComputed.value,
-			options.typeComputed.value || 'primary',
-			options.themeComputed.value || 'primary',
-			options.palette.value,
-			options.hoverFlag.value,
-			options.activeFlag.value
-		)
-
-		if (backgroundColor) {
-			floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-		}
+		drawRoundRect(ctx, borderColor, pixelSize, rectOptions)
 	}
 
 	const { debouncedTrigger, triggerDraw } = useDrawCanvas(wrapperRef, drawPixel, {

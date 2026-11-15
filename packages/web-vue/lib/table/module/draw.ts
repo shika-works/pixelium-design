@@ -1,12 +1,7 @@
 import { ref, watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import { getGlobalThemeColor, rgbaColor2string } from '../../share/util/color'
 import { fillArr, offsetOutward } from '../../share/util/common'
-import {
-	canvasPreprocess,
-	drawRoundRect,
-	floodFill,
-	floodFillEdge
-} from '../../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../../share/util/plot'
 import type { TableProps } from '../type'
 import type { LooseRequired } from '../../share/type'
 import { useDrawCanvas } from '../../share/hook/use-draw-canvas'
@@ -34,50 +29,40 @@ const drawTableBorder = (
 	const { ctx, width, height } = preprocessData
 
 	const r = borderRadiusValue ?? pixelSizeValue * 4
+	const rounded = !!(bordered.table && bordered.side)
+	const borderColor = getGlobalThemeColor('neutral', 9)
 
-	if (bordered.table) {
-		const borderRadius = fillArr(r, 4)
-
-		const borderColor = getGlobalThemeColor('neutral', 9)
-		if (borderColor) {
-			if (bordered.side) {
-				drawRoundRect(ctx, borderColor, pixelSizeValue, { borderRadius })
-			} else {
-				ctx.fillStyle = rgbaColor2string(borderColor)
-				ctx.fillRect(0, height - pixelSizeValue, width, pixelSizeValue)
-				ctx.fillRect(0, 0, width, pixelSizeValue)
-			}
-		}
-	}
+	const innerPoints: [number, number][] = rounded
+		? drawRoundRect(ctx, borderColor, pixelSizeValue, { borderRadius: fillArr(r, 4) })
+		: [
+				[0, 0],
+				[width - 1, 0],
+				[width - 1, height - 1],
+				[0, height - 1]
+			]
 
 	const backgroundColor = getGlobalThemeColor('neutral', 1)
 	if (backgroundColor) {
-		floodFill(ctx, Math.round(width / 2), Math.round(height / 2), backgroundColor)
-		let points = floodFillEdge(
-			ctx,
-			Math.round(width / 2),
-			Math.round(height / 2),
-			backgroundColor
+		fillPolygon(ctx, innerPoints, backgroundColor)
+		polygon.value = offsetOutward(
+			[Math.round(width / 2), Math.round(height / 2)],
+			innerPoints,
+			pixelSizeValue / 4
 		)
-		if (points.length) {
-			points.push(points.at(-1)!)
-			points = offsetOutward(
-				[Math.round(width / 2), Math.round(height / 2)],
-				points,
-				pixelSizeValue / 4
-			).map((e) => {
-				return [e[0] + 0.5, e[1] + 0.5]
+			.map((e) => {
+				return `${e[0] + 0.5}px ${e[1] + 0.5}px`
 			})
-			polygon.value = points
-				.map((e) => {
-					return `${e[0]}px ${e[1]}px`
-				})
-				.join(',')
-		} else {
-			polygon.value = ''
-		}
+			.join(',')
 	} else {
 		polygon.value = ''
+	}
+
+	if (bordered.table && !bordered.side) {
+		if (borderColor) {
+			ctx.fillStyle = rgbaColor2string(borderColor)
+			ctx.fillRect(0, height - pixelSizeValue, width, pixelSizeValue)
+			ctx.fillRect(0, 0, width, pixelSizeValue)
+		}
 	}
 }
 

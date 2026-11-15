@@ -1,7 +1,7 @@
 import { watch, type ComputedRef, type Ref, type ShallowRef } from 'vue'
 import type { RgbaColor } from '../share/type'
 import { getGlobalThemeColor, rgbaColor2string } from '../share/util/color'
-import { canvasPreprocess, drawRoundRect, floodFill } from '../share/util/plot'
+import { canvasPreprocess, drawRoundRect, fillPolygon } from '../share/util/plot'
 import { fillArr } from '../share/util/common'
 import { useDrawCanvas } from '../share/hook/use-draw-canvas'
 import { usePixelSize } from '../share/hook/use-pixel-size'
@@ -193,22 +193,15 @@ export const useDraw = (options: UseDrawOptions) => {
 		const offsetTop = options.popupFinalPlacement.value === 'bottom' ? offset : 0
 		const offsetLeft = options.popupFinalPlacement.value === 'right' ? offset : 0
 
-		if (borderColor) {
-			drawRoundRect(ctx, borderColor, pixelSize, {
-				borderRadius,
-				padding: [offsetTop, offsetX - offsetLeft, offsetY - offsetTop, offsetLeft]
-			})
-		}
+		const innerPoints = drawRoundRect(ctx, borderColor, pixelSize, {
+			borderRadius,
+			padding: [offsetTop, offsetX - offsetLeft, offsetY - offsetTop, offsetLeft]
+		})
 
 		const backgroundColor = getBackgroundColor(options.variant.value)
 
 		if (backgroundColor) {
-			floodFill(
-				ctx,
-				Math.round((width - offsetX) / 2 + offsetLeft),
-				Math.round((height - offsetY) / 2 + offsetTop),
-				backgroundColor
-			)
+			fillPolygon(ctx, innerPoints, backgroundColor)
 		}
 		if (options.arrow.value && borderColor && backgroundColor) {
 			drawArrow(
